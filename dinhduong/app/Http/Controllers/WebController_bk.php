@@ -1,0 +1,203 @@
+<?php
+namespace App\Http\Controllers;
+
+use App\Models\Ethnic;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use App\Models\History;
+use App\Models\Province;
+use App\Models\District;
+use App\Models\Ward;
+use Validator;
+class WebController_bk extends Controller
+{
+    public function __construct()
+    {
+
+    }
+
+    public function index(){
+        return redirect()->route('form.index',['slug'=>'tu-0-5-tuoi']);
+    }
+
+    public function form($slug = '', Request $request){
+        if($request->method() == 'POST'){
+//            dd($request->all());
+        }
+        $provinces = Province::select('name','code')->get();
+        $ethnics = Ethnic::where('active',1)->get();
+        return view($slug, compact('slug', 'provinces', 'ethnics'));
+    }
+
+    public function form_post(Request $request){
+//        dd($request->all());
+        // Validation rules
+        $rules = [
+            'slug' => 'required|in:tu-0-5-tuoi,tu-5-19-tuoi,tu-19-tuoi',
+            'fullname' => 'required|string|max:50',
+            'over19' => 'nullable|boolean',
+            'cal_date' => 'nullable|date_format:d/m/Y',
+            'gender' => 'nullable|in:0,1', // Assuming gender is either 0 or 1
+            'address' => 'nullable|string|max:500',
+            'province_code' => 'required|exists:provinces,code',
+            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
+            'ward_code' => 'required|exists:wards,code,district_code,' . $request->district_code,
+            'weight' => 'nullable|numeric|max:500',
+            'height' => 'nullable|numeric|max:200',
+            'realAge' => 'required|nullable|numeric|max:150',
+            'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ];
+
+        if($request->slug == 'tu-0-5-tuoi' || $request->slug == 'tu-5-19-tuoi'){
+            $rules['age'] = 'required|numeric';
+            $rules['birthday'] = 'required|date_format:d/m/Y';
+        }
+        if($request->phone){
+            $rules['phone'] = 'digits_between:10,12';
+        }
+        if($request->cccd){
+            $rules['cccd'] = 'digits_between:10,12';
+        }
+//        dd($rules);
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $districts = [];
+            $wards = [];
+            if($request->province_code && Province::where('code', $request->province_code)->exists()){
+                $districts = District::select('name','code')->where('province_code', $request->province_code)->get();
+                if($request->district_code && District::where('code', $request->district_code)->exists()){
+                    $wards = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+                }
+            }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('districts', $districts)
+                ->with('wards', $wards);
+        }
+        $uid   = Str::uuid()->toString();
+        $input = $request->all();
+        if ($request->filled('birthday')) {
+            try {
+                $date = Carbon::createFromFormat('d/m/Y', $request->birthday);
+                $input['birthday'] = $date->format('Y-m-d');
+            } catch (\Exception $e) {
+                return back()->withErrors(['birthday' => 'Ngày sinh không hợp lệ.'])->withInput();
+            }
+        } else {
+            unset($input['birthday']);
+        }
+        if ($request->filled('cal_date')) {
+            try {
+                $date = Carbon::createFromFormat('d/m/Y', $request->cal_date);
+                $input['cal_date'] = $date->format('Y-m-d');
+            } catch (\Exception $e) {
+                return back()->withErrors(['cal_date' => 'Ngày cân không hợp lệ.'])->withInput();
+            }
+        } else {
+            unset($input['cal_date']);
+        }
+        if($request->slug == 'tu-19-tuoi' || $request->slug == 'tu-5-19-tuoi'){
+            $input['bim'] = $request->input('bmi');
+        }
+        $input['uid'] = $uid;
+        $input['id_number'] = $request->cccd;
+        $input['created_by'] = Auth::check() ? Auth::id() : 0;
+        $input['unit_id'] = Auth::check() ? Auth::user()->unit_id : 0;
+        //Xử lý ảnh
+        $input = $request->except(['thumb']);  // Lấy các input khác nếu có
+
+        if ($request->hasFile('thumb')) {
+            $file = $request->file('thumb');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Lưu vào thư mục public/uploads/thumbs
+            $file->move(public_path('uploads/avatars'), $filename);
+
+            // Gán đường dẫn ảnh vào mảng input
+            $input['thumb'] = '/uploads/avatars/' . $filename;
+        }
+
+//        dd($input);
+        // Validation passed, create a new History record
+        $history = History::create($input);
+        if($history){
+            $is_risk = 0;
+            if($history->check_bmi_for_age()['result'] !== 'normal' || $history->check_weight_for_age()['result'] !== 'normal' || $history->check_height_for_age()['result'] !== 'normal' || $history->check_weight_for_height()['result'] !== 'normal'){
+                $is_risk = 1;
+            }
+            $history->is_risk = $is_risk;
+            $history->result_bmi_age = $history->check_bmi_for_age();
+            $history->result_height_age = $history->check_weight_for_age();
+            $history->result_weight_age = $history->check_height_for_age();
+            $history->result_weight_height = $history->check_weight_for_height();
+            $history->save();
+            return redirect(url('/ketqua?uid='.$uid));
+        }
+        $districts = [];
+        $wards = [];
+        if($request->province_code && Province::where('code', $request->province_code)->exists()){
+            $districts = District::select('name','code')->where('province_code', $request->province_code)->get();
+            if($request->district_code && District::where('code', $request->district_code)->exists()){
+                $wards = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+            }
+        }
+        return redirect()->back()
+            ->withErrors(['error' => 'Thêm khảo sát không thành công!'])
+            ->withInput()
+            ->with('districts', $districts)
+            ->with('wards', $wards);
+    }
+
+    public function result(Request $request){
+        $uid = $request->query('uid');
+        $row = History::where('uid',$uid)->first();
+        if($row){
+            $slug = $row->slug;
+            return view('ketqua', compact('row', 'slug'));
+        }
+        abort(404);
+    }
+
+    public function print(Request $request){
+        $uid = $request->get('uid');
+        $row = History::where('uid',$uid)->first();
+        if($row){
+            $slug = $row->slug;
+            return view('in', compact('row', 'slug'));
+        }
+        echo 'Không tìm dữ liệu theo thông số cung cấp, vui lòng kiểm tra lại.';
+    }
+
+
+    public function tinh_so_thang($begin, $end){
+        // Ngày sinh của người dùng
+        $dob = Carbon::createFromFormat('d/m/Y',  $begin);
+        // Ngày hiện tại
+        $now = Carbon::createFromFormat('d/m/Y', $end);
+        // Tính toán sự chênh lệch giữa ngày hiện tại và ngày sinh
+        $month = $now->diffInMonths($dob);
+        return $month;
+    }
+    public function ajax_tinh_ngay_sinh(Request $request){
+        return $this->tinh_so_thang($request->input('birthday'), $request->input('date'));
+    }
+
+
+    public function ajax_get_district_by_province(Request $request){
+        $provinceCode = $request->input('province_code');
+        // Lấy danh sách các district thuộc province
+        $districts = District::select('name','code')->where('province_code', $provinceCode)->get();
+        return response()->json(['districts' => $districts]);
+    }
+
+    public function ajax_get_ward_by_district(Request $request){
+        $districtCode = $request->input('district_code');
+        // Lấy danh sách các district thuộc province
+        $wards = Ward::select('name','code')->where('district_code', $districtCode)->get();
+
+        return response()->json(['wards' => $wards]);
+    }
+}

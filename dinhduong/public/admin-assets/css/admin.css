@@ -1,0 +1,63 @@
+.alert-top{
+    position: absolute;
+    top: 90px;
+    right: 27px;
+    z-index: 99;
+}
+.page_title{
+    padding: 10px 0px;
+}
+
+.pl-4{
+    padding-left: 4px !important;
+}
+.tab-text-count{
+    font-size: 12px;
+}
+
+.font-size-12{
+    font-size: 12px;
+}
+.table-responsive, .dataTables_scrollBody {
+    overflow: visible !important;
+}
+.dt-button-collection .dropdown-menu {
+    position:relative !important
+}
+.datatable table td {
+    overflow: visible;
+}
+.none-btn {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+.w-100px{ width: 100px !important;}
+.w-50px{ width: 50px !important;}
+
+.nav-pills .nav-link{
+    border-radius: 0 !important;
+}
+.nav-pills .nav-link.active{
+    background: none;
+    color: #2f55d4 !important;
+    border-bottom: 2px solid #2f55d4;
+}
+.text-weight{
+    font-weight: bold !important;
+}
+
+.btn-group-sm>.btn, .btn.btn-sm {
+    padding: .375rem .75rem !important;
+    font-size: 12px;
+}
+.form-control.text-white{
+    color:white !important;
+}
+
+.ta-r{ text-align: right}
+.pl-45px{padding-left: 45px; !important;}

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head lang="vi">
+    <title>Nâng tầm vóc Việt</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta http-equiv="cleartype" content="on">
+
+    <link href="/web/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="/web/frontend/css/all.min.css" rel="stylesheet"> <!--load all styles -->
+
+
+
+        <style type="text/css">
+        .chosen-container-multi .chosen-choices {
+            border-radius: 5px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="login">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-0">
+                            <a href="/" class="brand"
+                               >
+                                <img class="img-responsive" src="/web/frontend/images/logo.png"/>
+                            </a>
+                        </div>
+                        <div class="col-sm-4 col-xs-8">
+                            <div class="hotline">
+                                <h4 class="title-hotline">HOTLINE</h4>
+                                <h3 class="phone-number">(028) 38 25 39 39</h3>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-xs-4">
+                            <ul class="user-action">
+                                <li><a href="#"><span><i class="ion-ios-search-strong"></i></span></a></li>
+                                                                    <li><a href="#" data-toggle="modal" data-target="#register">    <span>Đăng Ký</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-toggle="modal" data-target="#login">
+                                            <span>Đăng Nhập</span>
+                                                                                    </a>
+                                    </li>
+                                                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navigation">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed nav-icon" data-toggle="collapse"
+                                data-target="#navigation-bar" aria-expanded="false">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse no-padding" id="navigation-bar">
+                        <center>
+                            <ul class="navigation-header">
+                                <li>
+                                    <a href="https://nangtamvocviet.vn/"><span>
+                                        <i class="fa fa-home" style="font-size: 24px"></i> Trang chủ</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="sub-menu"><span>Đánh giá tình trạng dinh dưỡng</span>
+                                        <i class="ion-chevron-down"></i></a>
+                                    <ul class="dropDown-navigation">
+                                        <li><a href="https://nangtamvocviet.vn/bac-sy/bmi/0-5-tuoi">Trẻ 0-5 tuổi</a></li>
+                                        <li><a href="https://nangtamvocviet.vn/bac-sy/bmi/5-19-tuoi">Trẻ 5-19 tuổi</a></li>
+                                        <li><a href="https://nangtamvocviet.vn/bac-sy/bmi/tren-19-tuoi">Người trên 19 tuổi</a></li>
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </ul>
+                                </li>
+                                                                                                                                                                                                                                                                                                                                <li>
+                                    <a href="#" class="sub-menu"><span>Kỹ thuật cân đo và tính tuổi</span>
+                                        <i class="ion-chevron-down"></i></a>
+                                    <ul class="dropDown-navigation" aria-labelledby="menu1">
+                                        <li>
+                                            <a href="https://nangtamvocviet.vn/thong-tin/cach-tinh-tuoi">Cách tính tuổi</a>
+                                        </li>
+                                        <li>
+                                            <a href="https://nangtamvocviet.vn/thong-tin/ky-thuat-can">Kỹ thuật cân</a>
+                                        </li>
+                                        <li>
+                                            <a href="https://nangtamvocviet.vn/thong-tin/ky-thuat-do-chieu-cao">Kỹ thuật đo chiều cao</a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="https://nangtamvocviet.vn/bai-viet/ban-tin/"><span>Bản tin</span></a>
+                                </li>
+                                <li>
+                                                                        <a href="https://nangtamvocviet.vn/tai-lieu/cam-nang-dinh-duong " target="_blank"><span>Cẩm nang dinh dưỡng</span></a>
+                                </li>
+                                <li><a href="#" class="sub-menu"><span>Phần mềm đánh giá tình trạng dinh dưỡng NUTI</span>
+                                        <i class="ion-chevron-down"></i>
+                                    </a>
+                                    <ul class="dropDown-navigation" aria-labelledby="menu1">
+                                        <li>
+                                            <a href="https://nangtamvocviet.vn/cho-truong-hoc/">Nhập số liệu</a>
+                                        </li>
+                                                                                    <li>
+                                                <a href="https://nangtamvocviet.vn/thong-ke/">Báo cáo - Thống kê</a>
+                                                                                                                                                
+                                                                                            </li>
+                                                                                <li>
+                                            <a href="https://nangtamvocviet.vn/tai-lieu/huong-dan/huong-dan-su-dung-phan-mem-y-hoc-chuyen-dung">Hướng dẫn sử dụng</a>
+                                        </li>
+
+                                    </ul>
+                                                                                                                                                                                                                                                        </li>
+                                                                                                    
+                            </ul>
+                        </center>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+    <section id="nuti-404">
+        <div class="container">
+            <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <div class="error-wrapper">
+                    <div class="error-image">
+                        <figure>
+                            <img class="img-responsive" src="/web/frontend/images/404.png">
+                        </figure>
+                    </div>
+                    <div class="error-message">
+                                                <p>Không tìm thấy trang như yêu cầu của bạn</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10">
+                <p class="copyright">Phần mềm đánh giá tình trạng dinh dưỡng Nuti - Bản quyền thuộc về công ty NutiFood - Được thẩm định bởi Viện Dinh dưỡng Quốc gia.</p>
+                <p class="copyright">
+                    <strong>Hotline: </strong>(028) 38 25 39 39 | <strong>Email: </strong>nutifood@nutifood.com.vn | <strong>Địa chỉ: </strong>281-283 Hoàng Diệu, P.6, Q.4, TP. HCM.
+                </p>
+                <p class="copyright">
+                    <strong>Đơn vị phối hợp vận hành: </strong>Viện nghiên cứu dinh dưỡng Thành phố Hồ Chí Minh - <strong>Hotline: </strong>(028) 39 700 886 - <strong>Địa chỉ: </strong>Số J4, Đường Bửu Long, Phường 15,  Quận 10, Thành Phố Hồ Chí Minh - <strong>Email: </strong> viendinhduong@nrihcm.vn
+                </p>
+            </div>
+            <div class="col-sm-2">
+                <div class="block-social">
+                    <ul class="social-footer">
+                        <li><a href="https://www.facebook.com/nutifoodvietnam/" class="social-item"><i class="ion-social-facebook"></i></a></li>
+                                                <li><a href="https://www.youtube.com/user/NutiFoodVietNam/" class="social-item"><i class="fa fa-youtube"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal nuti-modal common-modal fade modal400" id='amz_common_error_modal' tabindex="-1" role="dialog"
+     aria-labelledby="nutiModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon close-icon"></i>
+                </button>
+                <h4 class="modal-title" id="nutiModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" class="redirect_url" value="" />
+                <strong></strong>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Validate start -->
+<div class="modal nuti-modal fade" id='validate_statistic' tabindex="-1" role="dialog"
+     aria-labelledby="nutiModalLabel">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon close-icon"></i>
+                </button>
+                <h4 class="modal-title" id="nutiModalLabel">AAAAAAAA</h4>
+                <!-- Vui lòng chọn lớp và năm học -->
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .nuti-modal#validate_statistic .close {
+        margin-top: 3px;
+    }
+    .nuti-modal#validate_statistic .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+<!-- Validate end -->
+
+<!-- Preloader start -->
+<div class="nuti_loader">
+    <div class="nuti_loader_item"></div>
+</div>
+<!-- Preloader end -->
+
+
+    <div class="modal nuti-modal fade modal450" id="login" tabindex="-1" role="dialog" aria-labelledby="nutiModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon close-icon"></i>
+                    </button>
+                    <h4 class="modal-title" id="nutiModalLabel">Đăng nhập</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="login-popup-form" method="post" action="/check-login"
+                          novalidate>
+                        <div class="alert alert-danger" role="alert" style="display: none;">
+                            <strong>Lỗi!</strong> <span class="error-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="_username" class="form-control username_box" id="old-pw"
+                                   placeholder="Tài khoản *"
+                                   autocomplete="off" required>
+                            <i class="icon user-login"></i>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="_password" class="form-control password_box" id="new-pw"
+                                   placeholder="Mật khẩu *"
+                                   autocomplete="off" required>
+                                   <!-- <input type="checkbox" name="show_pass" value="show" class="icon lock-icon">Show Password -->
+                            <i id="SP" class="fas fa-eye-slash"></i>
+
+                        </div>
+                        
+                        
+                        <div class="form-action">
+                            <button type="button" class="nuti-button popup-frm-submit white">
+                                <i class="fa fa-spin fa-spinner" style="display: none"></i>
+                                Đăng nhập
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6 text-left">
+                                    
+                                        <a class="sub-action" href="#login" data-dismiss="modal" data-toggle="modal" data-target="#forgotPw">
+                                             Quên mật khẩu?
+                                        </a>
+                                    
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                    <a class="sub-action" href="#login" data-dismiss="modal" data-toggle="modal"
+                                       data-target="#register">
+                                        Chưa có tài khoản
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal nuti-modal school-modal fade modal400" id="registerComplete" tabindex="-1" role="dialog"
+         aria-labelledby="nutiModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon close-icon"></i>
+                    </button>
+                    <h4 class="modal-title" id="nutiModalLabel">Đăng ký thành công</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="redirect_url" value="" />
+                    Tài khoản của bạn đã được đăng ký thành công!<br/>
+                    Vui lòng đóng thông báo để tiếp tục.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal nuti-modal fade modal450" id="register" tabindex="-1" role="dialog"
+         aria-labelledby="nutiModalLabelRegister">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon close-icon"></i>
+                    </button>
+                    <h4 class="modal-title" id="nutiModalLabelRegister">Đăng ký tài khoản</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/security/dang-ky" method="post" class="register-form"
+                          novalidate>
+                        <div class="alert alert-danger" role="alert" style="display: none;">
+                            <strong>Lỗi!</strong> <span class="error-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <input name="fullName" type="text" class="form-control" id="input-user-name"
+                                   placeholder="Tên của bạn *"/>
+                            <i class="icon user-name"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="username" type="text" class="form-control" id="input-user-login"
+                                   placeholder="Tên đăng nhập *">
+                            <i class="icon user-login"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="password" type="password" class="form-control" id="input-pw"
+                                   placeholder="Mật khẩu *">
+                            <i class="icon lock-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="confirm-password" type="password" class="form-control" id="input-confirm-pw"
+                                   placeholder="Nhập lại mật khẩu *">
+                            <i class="icon lock-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="email" type="email" class="form-control" id="input-email"
+                                   placeholder="Địa chỉ email *">
+                            <i class="icon user-mail"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="phone" type="phone" class="form-control" id="input-phone"
+                                   placeholder="Điện thoại">
+                            <i class="icon user-phone"></i>
+                        </div>
+                        <div class="form-action">
+                            <button class="nuti-button white btn-submit-form" type="button">
+                                <i class="fa fa-spin fa-spinner" style="display: none"></i> Đăng ký
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-12 text-center">
+                                    <a class="sub-action" href="#login" data-dismiss="modal" data-toggle="modal"
+                                       data-target="#login">
+                                        Đã có tài khoản?
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot password Modal -->
+    <div class="modal nuti-modal school-modal fade modal400" id="forgotPwComplete" tabindex="-1" role="dialog"
+         aria-labelledby="nutiModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon close-icon"></i>
+                    </button>
+                    <h4 class="modal-title" id="nutiModalLabel">Lấy lại mật khẩu thành công</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="redirect_url" value="" />
+                    Tài khoản của bạn đã được lấy lại mật khẩu thành công!<br/>
+                    Thông tin tài khoản được gửi qua email.<br/>
+                    Vui lòng đóng thông báo và kiểm tra email để tiếp tục.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal nuti-modal fade modal450" id="forgotPw" tabindex="-1" role="dialog"
+         aria-labelledby="nutiModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="icon close-icon"></i>
+                    </button>
+                    <h4 class="modal-title" id="nutiModalLabel">Quên mật khẩu</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/security/quen-mat-khau" method="post" class="forgot-password-form" novalidate>
+                        <div class="alert alert-danger" role="alert" style="display: none;">
+                            <strong>Lỗi!</strong> <span class="error-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" name="password_receiving_method" value="email">
+                            <input name="username" type="text" class="form-control" id="input-user-login"
+                                   placeholder="Tên đăng nhập *"
+                                   autocomplete="off"
+                                   required>
+                            <i class="icon person-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <input name="email" type="email" class="form-control" id="input-email"
+                                   placeholder="Địa chỉ email *"
+                                   autocomplete="off"
+                                   required>
+                            <i class="icon user-mail"></i>
+                        </div>
+                        <div class="form-group">
+                            <div id="recaptcha_email"></div>
+                        </div>
+                        <div class="form-action">
+                            <button class="nuti-button white btn-submit-form" type="button">
+                                <i class="fa fa-spin fa-spinner" style="display: none"></i> Gửi mật khẩu qua Email
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6 text-left">
+                                                                    </div>
+                                <div class="col-sm-6 text-right">
+                                    <a class="sub-action" href="#login" data-dismiss="modal" data-toggle="modal"
+                                       data-target="#login">
+                                        Đăng nhập
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=vi" async defer></script>
+<script>
+    function onloadCallback() {
+        var siteKey = "6LdXXK0UAAAAALVNNFLJNDRlgzfny_xzYznGGoXm";
+        if ( $('#recaptcha_email').length ) {
+            recaptcha_email = grecaptcha.render('recaptcha_email', {
+                'sitekey' : siteKey, 'theme' : 'light'
+            });
+        }
+        if ( $('#recaptcha_sms').length ) {
+            recaptcha_sms = grecaptcha.render('recaptcha_sms', {
+                'sitekey' : siteKey, 'theme' : 'light'
+            });
+        }
+    }
+</script>
+
+<script>
+    var _ajaxRemoveHistoryIdUrl = "https://nangtamvocviet.vn/cho-truong-hoc/remove_history";
+</script>
+<script src="/web/js/b47b5bf.js"></script>
+
+<script src="/web/frontend/js/custom2.js"></script>
+
+
+<!-- CSS Styles -->
+<link rel="stylesheet" href="/web/css/a585b32.css"/>
+
+</body>
+</html>
