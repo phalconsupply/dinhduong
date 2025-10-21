@@ -21,12 +21,26 @@
 
 ## 💻 BƯỚC 2: CÀI ĐẶT COMPOSER
 
+### Cách 1: Cài đặt Composer toàn hệ thống (Khuyến nghị)
+
 1. Tải Composer từ: https://getcomposer.org/download/
 2. Cài đặt Composer (chọn PHP từ XAMPP: `C:\xampp\php\php.exe`)
 3. Kiểm tra cài đặt thành công:
 ```bash
 composer --version
 ```
+
+### Cách 2: Dùng composer.phar (Nếu chưa cài Composer)
+
+```powershell
+# Tải composer.phar về thư mục dự án
+Invoke-WebRequest -Uri "https://getcomposer.org/composer-stable.phar" -OutFile "composer.phar"
+
+# Kiểm tra hoạt động
+C:\xampp\php\php.exe composer.phar --version
+```
+
+**Lưu ý:** Nếu dùng composer.phar, thay `composer` bằng `C:\xampp\php\php.exe composer.phar` trong các lệnh sau.
 
 ---
 
@@ -63,14 +77,36 @@ code .
 
 ## ⚙️ BƯỚC 4: CÀI ĐẶT DEPENDENCIES
 
+### 4.1. Bật các PHP Extensions cần thiết
+
+Trước khi cài đặt dependencies, cần bật các extensions trong PHP:
+
+```powershell
+# Bật extension GD (xử lý hình ảnh)
+(Get-Content "C:\xampp\php\php.ini") -replace ';extension=gd', 'extension=gd' | Set-Content "C:\xampp\php\php.ini"
+
+# Bật extension ZIP (nén/giải nén file)
+(Get-Content "C:\xampp\php\php.ini") -replace ';extension=zip', 'extension=zip' | Set-Content "C:\xampp\php\php.ini"
+
+# Kiểm tra extensions đã được bật
+C:\xampp\php\php.exe -m | Select-String "gd|zip"
+```
+
+### 4.2. Cài đặt PHP và Node.js dependencies
+
 Mở Terminal trong VS Code (Ctrl + `) và chạy:
 
 ```bash
 # Cài đặt PHP dependencies
 composer install
+# Hoặc nếu dùng composer.phar:
+# C:\xampp\php\php.exe composer.phar install
 
-# Cài đặt Node.js dependencies (nếu có)
+# Cài đặt Node.js dependencies
 npm install
+
+# Build assets
+npm run build
 ```
 
 ---
@@ -112,22 +148,51 @@ DB_PASSWORD=
 
 ## 🗄️ BƯỚC 6: TẠO VÀ IMPORT DATABASE
 
-### 6.1. Tạo Database qua phpMyAdmin
+### 6.1. Tạo Database với charset đúng
+
+**⚠️ QUAN TRỌNG:** Database phải dùng charset `utf8mb4` để hiển thị đúng tiếng Việt.
+
+**Cách 1: Dùng MySQL Command Line (Khuyến nghị)**
+
+```powershell
+# Tạo database với charset utf8mb4
+C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS dinhduong CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+**Cách 2: Dùng phpMyAdmin**
 
 1. Mở trình duyệt, truy cập: http://localhost/phpmyadmin
 2. Đăng nhập (user: `root`, password: để trống)
 3. Click tab **"Databases"**
 4. Tạo database mới tên: `dinhduong`
-5. Chọn Collation: `utf8mb4_unicode_ci`
+5. **Chọn Collation: `utf8mb4_unicode_ci`** (Rất quan trọng!)
 
-### 6.2. Import file SQL (nếu có)
+### 6.2. Import file SQL với encoding đúng
+
+**⚠️ QUAN TRỌNG:** Phải import với encoding UTF-8 để hiển thị đúng tiếng Việt.
+
+**Cách 1: Dùng Command Line (Khuyến nghị - Đảm bảo encoding đúng)**
+
+```powershell
+# Import file SQL với charset utf8mb4
+cmd /c "chcp 65001 >nul & type `"dinhduong (3).sql`" | C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dinhduong"
+```
+
+**Cách 2: Dùng phpMyAdmin**
 
 Dự án có file `dinhduong (3).sql`, bạn import như sau:
 
 1. Trong phpMyAdmin, chọn database `dinhduong`
 2. Click tab **"Import"**
 3. Click **"Choose File"** và chọn file `dinhduong (3).sql`
-4. Click **"Go"** để import
+4. Trong phần **"Format"**, chọn **"SQL"**
+5. Trong **"Format-specific options"**, set **"Character set of the file"** = `utf8` hoặc `utf8mb4`
+6. Click **"Go"** để import
+
+**⚠️ Lưu ý:** Nếu sau khi import tiếng Việt bị lỗi font (hiển thị dạng ???), hãy:
+1. Drop database: `C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE dinhduong;"`
+2. Tạo lại database với utf8mb4 (xem bước 6.1)
+3. Import lại bằng **Cách 1** (Command Line)
 
 ### 6.3. Hoặc chạy Migration (nếu không có file SQL)
 
@@ -142,10 +207,14 @@ php artisan migrate --seed
 
 ---
 
-## 🔗 BƯỚC 7: TẠO SYMBOLIC LINK
+## 🔗 BƯỚC 7: TẠO SYMBOLIC LINK VÀ CLEAR CACHE
 
 ```bash
+# Tạo symbolic link cho storage
 php artisan storage:link
+
+# Clear tất cả cache
+php artisan optimize:clear
 ```
 
 ---
@@ -231,8 +300,21 @@ git push origin ten-tinh-nang
 ## 🐛 XỬ LÝ LỖI THƯỜNG GẶP
 
 ### Lỗi: "composer: command not found"
-- Cài đặt lại Composer
+- Cài đặt lại Composer hoặc dùng composer.phar (xem Bước 2)
 - Thêm Composer vào PATH
+- Hoặc dùng: `C:\xampp\php\php.exe composer.phar` thay cho `composer`
+
+### Lỗi: "ext-gd * is missing" hoặc "ext-zip * is missing"
+```powershell
+# Bật extension GD
+(Get-Content "C:\xampp\php\php.ini") -replace ';extension=gd', 'extension=gd' | Set-Content "C:\xampp\php\php.ini"
+
+# Bật extension ZIP
+(Get-Content "C:\xampp\php\php.ini") -replace ';extension=zip', 'extension=zip' | Set-Content "C:\xampp\php\php.ini"
+
+# Kiểm tra
+C:\xampp\php\php.exe -m | Select-String "gd|zip"
+```
 
 ### Lỗi: "The stream or file storage/logs/laravel.log could not be opened"
 ```bash
@@ -246,15 +328,48 @@ echo. > storage\logs\laravel.log
 php artisan key:generate
 ```
 
-### Lỗi: Database connection
+### Lỗi: Database connection / "Unknown database 'dinhduong'"
 - Kiểm tra MySQL đang chạy trong XAMPP
 - Kiểm tra thông tin DB trong file `.env`
-- Kiểm tra database đã tạo chưa
+- Kiểm tra database đã tạo chưa (xem Bước 6.1)
 
 ### Lỗi: "Class 'PDO' not found"
 - Mở file `C:\xampp\php\php.ini`
 - Tìm và bỏ dấu `;` trước dòng: `;extension=pdo_mysql`
 - Restart Apache
+
+### ❌ Lỗi: Tiếng Việt hiển thị sai (??? hoặc H??? th???ng)
+
+**Nguyên nhân:** Database hoặc bảng không dùng charset `utf8mb4`
+
+**Giải pháp:**
+
+1. **Drop và tạo lại database với charset đúng:**
+```powershell
+# Drop database cũ
+C:\xampp\mysql\bin\mysql.exe -u root -e "DROP DATABASE dinhduong;"
+
+# Tạo lại với utf8mb4
+C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE dinhduong CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+2. **Import lại file SQL với encoding đúng:**
+```powershell
+# Dùng cmd với UTF-8 encoding
+cmd /c "chcp 65001 >nul & type `"dinhduong (3).sql`" | C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dinhduong"
+```
+
+3. **Clear cache Laravel:**
+```bash
+php artisan optimize:clear
+```
+
+4. **Kiểm tra lại dữ liệu:**
+```powershell
+cmd /c "chcp 65001 >nul & C:\xampp\mysql\bin\mysql.exe -u root --default-character-set=utf8mb4 dinhduong -e `"SELECT * FROM settings LIMIT 3;`""
+```
+
+**Lưu ý:** File `config/database.php` đã được cấu hình đúng với `utf8mb4`. Vấn đề thường do import database không đúng encoding.
 
 ---
 
@@ -262,10 +377,15 @@ php artisan key:generate
 
 1. ⚠️ **KHÔNG** commit file `.env` lên Git (đã được gitignore)
 2. ⚠️ Thư mục `vendor/` và `node_modules/` sẽ tự động tạo lại, không có trên Git
-3. ✅ Luôn chạy `composer install` sau khi pull code mới
-4. ✅ Luôn chạy `php artisan migrate` nếu có migration mới
-5. ✅ Clear cache nếu gặp lỗi lạ:
+3. ⚠️ **Database phải dùng `utf8mb4`** để hiển thị đúng tiếng Việt
+4. ⚠️ **Import SQL phải dùng Command Line** với UTF-8 encoding để đảm bảo dữ liệu đúng
+5. ✅ Luôn chạy `composer install` sau khi pull code mới
+6. ✅ Luôn chạy `npm install` và `npm run build` sau khi pull code mới
+7. ✅ Luôn chạy `php artisan migrate` nếu có migration mới
+8. ✅ Clear cache nếu gặp lỗi lạ:
 ```bash
+php artisan optimize:clear
+# Hoặc clear từng loại cache:
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
@@ -285,14 +405,18 @@ Nếu gặp vấn đề, hãy kiểm tra:
 ## ✅ CHECKLIST HOÀN THÀNH
 
 - [ ] Đã cài đặt XAMPP và start Apache + MySQL
-- [ ] Đã cài đặt Composer
+- [ ] Đã cài đặt Composer (hoặc tải composer.phar)
 - [ ] Đã clone code từ GitHub
+- [ ] Đã bật extensions PHP (gd, zip) trong php.ini
 - [ ] Đã chạy `composer install`
+- [ ] Đã chạy `npm install` và `npm run build`
 - [ ] Đã tạo file `.env` và cấu hình
 - [ ] Đã chạy `php artisan key:generate`
-- [ ] Đã tạo database và import SQL
+- [ ] Đã tạo database với charset `utf8mb4`
+- [ ] Đã import SQL với encoding đúng (dùng cmd với chcp 65001)
 - [ ] Đã chạy `php artisan storage:link`
-- [ ] Đã truy cập được website
+- [ ] Đã chạy `php artisan optimize:clear`
+- [ ] Đã truy cập được website với tiếng Việt hiển thị đúng
 
 ---
 
