@@ -68,17 +68,21 @@ class DashboardController extends Controller
         // Clone query để không ảnh hưởng các lần đếm sau
         $baseQuery = clone $history;
         $ethnicQuery = clone $history;
+        
+        // Tính toán nguy cơ dựa trên 3 chỉ số WHO
+        $riskCounts = $this->calculateRiskByWHOStandards($baseQuery);
+        
         $count = [
             'total_survey' => $baseQuery->count(),
             'total_my_survey' => (clone $baseQuery)->where('created_by', $user->id)->count(),
-            'total_risk' => (clone $baseQuery)->where('is_risk', 1)->count(),
-            'total_normal' => (clone $baseQuery)->where('is_risk', 0)->count(),
+            'total_risk' => $riskCounts['total_risk'],
+            'total_normal' => $riskCounts['total_normal'],
             'total_0_5' => (clone $baseQuery)->where('slug', 'tu-0-5-tuoi')->count(),
-            'total_risk_0_5' => (clone $baseQuery)->where('slug', 'tu-0-5-tuoi')->where('is_risk', 1)->count(),
+            'total_risk_0_5' => $this->calculateRiskByWHOStandards((clone $baseQuery)->where('slug', 'tu-0-5-tuoi'))['total_risk'],
             'total_5_19' => (clone $baseQuery)->where('slug', 'tu-5-19-tuoi')->count(),
-            'total_risk_5_19' => (clone $baseQuery)->where('slug', 'tu-5-19-tuoi')->where('is_risk', 1)->count(),
+            'total_risk_5_19' => $this->calculateRiskByWHOStandards((clone $baseQuery)->where('slug', 'tu-5-19-tuoi'))['total_risk'],
             'total_19_over' => (clone $baseQuery)->where('slug', 'tren-19-tuoi')->count(),
-            'total_risk_19_over' => (clone $baseQuery)->where('slug', 'tren-19-tuoi')->where('is_risk', 1)->count(),
+            'total_risk_19_over' => $this->calculateRiskByWHOStandards((clone $baseQuery)->where('slug', 'tren-19-tuoi'))['total_risk'],
         ];
 
 
@@ -113,10 +117,9 @@ class DashboardController extends Controller
 
         foreach ($ethnics as $ethnic) {
             $labels[] = $ethnic->name;
-            $normalCount = (clone $ethnicQuery)->where('ethnic_id', $ethnic->id)->where('is_risk', 0)->count();
-            $riskCount = (clone $ethnicQuery)->where('ethnic_id', $ethnic->id)->where('is_risk', 1)->count();
-            $dataNormal[] = $normalCount;
-            $dataRisk[] = $riskCount;
+            $ethnicStats = $this->calculateRiskByWHOStandards((clone $ethnicQuery)->where('ethnic_id', $ethnic->id));
+            $dataNormal[] = $ethnicStats['total_normal'];
+            $dataRisk[] = $ethnicStats['total_risk'];
         }
 //        dd($dataRisk);
         return view('admin.dashboards.index-admin',
@@ -131,11 +134,10 @@ class DashboardController extends Controller
 
     public function getRiskStatistics($request)
     {
-
         // Lấy year từ request nếu có, ngược lại lấy năm hiện tại
         $year = $request->filled('year') ? (int) $request->year : now()->year;
 
-        $query = History::byUserRole()->selectRaw('MONTH(created_at) as month, is_risk, COUNT(*) as count')
+        $query = History::byUserRole()->selectRaw('MONTH(created_at) as month')
             ->whereYear('created_at', $year);
 
         $query->when($request->filled('province_code'), function ($q) use ($request) {
@@ -160,19 +162,18 @@ class DashboardController extends Controller
             }
         );
 
-        // Lấy thống kê sau khi đã áp dụng bộ lọc
-        $stats = $query->groupByRaw('MONTH(created_at), is_risk')->get();
-
         // Chuẩn bị dữ liệu mặc định
-        $riskData = array_fill(1, 12, 0);       // is_risk = 1
-        $normalData = array_fill(1, 12, 0);     // is_risk = 0
+        $riskData = array_fill(1, 12, 0);
+        $normalData = array_fill(1, 12, 0);
 
-        foreach ($stats as $stat) {
-            if ($stat->is_risk == 1) {
-                $riskData[$stat->month] = $stat->count;
-            } else {
-                $normalData[$stat->month] = $stat->count;
-            }
+        // Lấy dữ liệu theo từng tháng và tính toán nguy cơ
+        for ($month = 1; $month <= 12; $month++) {
+            $monthQuery = clone $query;
+            $monthQuery->whereMonth('created_at', $month);
+            
+            $monthStats = $this->calculateRiskByWHOStandards($monthQuery);
+            $riskData[$month] = $monthStats['total_risk'];
+            $normalData[$month] = $monthStats['total_normal'];
         }
 
         return [
@@ -208,5 +209,39 @@ class DashboardController extends Controller
             default:
                 return $query;
         }
+    }
+
+    /**
+     * Tính toán nguy cơ suy dinh dưỡng dựa trên 3 chỉ số WHO
+     * Có nguy cơ: Ít nhất 1 trong 3 chỉ số không phải "Trẻ bình thường"
+     * Bình thường: Cả 3 chỉ số đều là "Trẻ bình thường"
+     */
+    private function calculateRiskByWHOStandards($query)
+    {
+        $records = $query->get();
+        $totalRisk = 0;
+        $totalNormal = 0;
+
+        foreach ($records as $record) {
+            $weightForAge = $record->check_weight_for_age()['result'];
+            $heightForAge = $record->check_height_for_age()['result'];
+            $weightForHeight = $record->check_weight_for_height()['result'];
+
+            // Kiểm tra nếu cả 3 chỉ số đều bình thường
+            $isAllNormal = ($weightForAge === 'normal' && 
+                           $heightForAge === 'normal' && 
+                           $weightForHeight === 'normal');
+
+            if ($isAllNormal) {
+                $totalNormal++;
+            } else {
+                $totalRisk++;
+            }
+        }
+
+        return [
+            'total_risk' => $totalRisk,
+            'total_normal' => $totalNormal
+        ];
     }
 }
