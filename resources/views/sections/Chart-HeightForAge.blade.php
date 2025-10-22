@@ -1,8 +1,8 @@
-<canvas id="chartHeightForAge"  style="width: 100%; height: 400px;"></canvas>
+<canvas id="chartHeightForAge"  style="width: 100%; height: 300px;"></canvas>
 <script>
 (function () {
-    let month = 2.5;
-    let height = 57;
+    let month = {{ $row->age ?? 0 }};
+    let height = {{ $row->height ?? 0 }};
 
     let datasets = [
         {
@@ -82,7 +82,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Biểu đồ 1: Chiều cao theo tuổi (bé trai)',
+                    text: 'Biểu đồ 1: Chiều cao theo tuổi (bé {{ $row->gender == 1 ? "trai" : "gái" }})',
                     font: { size: 12 }
                 },
                 legend: { display: false },

@@ -32,13 +32,59 @@
         .btn-print i {
             font-size: 16px;
         }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .nuti-print {
+                padding: 0;
+                margin: 0 auto;
+                width: 720px;
+            }
+            .btn-print {
+                display: none;
+            }
+            h1 {
+                font-size: 18px;
+                margin: 8px 0;
+            }
+            h2, h5 {
+                font-size: 14px;
+                margin: 3px 0;
+            }
+            p {
+                font-size: 14px;
+                line-height: 17px;
+            }
+            .print-info {
+                margin-bottom: 6px;
+            }
+            .print-recommendation {
+                margin-top: 6px;
+            }
+            .print-recommendation ul {
+                font-size: 14px;
+                line-height: 17px;
+            }
+            table {
+                font-size: 14px;
+            }
+            .print-header figure img {
+                width: 80px !important;
+            }
+            .re-item {
+                margin-bottom: 8px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="nuti-print">
-    <div class="print-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="print-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <figure style="margin: 0;">
-            <img src="{{$setting['logo-light']}}" width="100px">
+            <img src="{{$setting['logo-light']}}" width="90px">
         </figure>
         <button class="btn-print" onclick="window.print()">
             <i class="bi bi-printer"></i> In kết quả
@@ -185,7 +231,7 @@
         <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>
     </div>
 
-    <div style="display: flex; margin-top: 15px">
+    <div style="display: flex; margin-top: 8px; gap: 8px;">
         <div style="width: 50%;">
             @include('sections.Chart-HeightForAge')
         </div>
@@ -193,14 +239,11 @@
             @include('sections.Chart-WeightForAge')
         </div>
     </div>
-    <div class="container" style="">
-        <div style="width: 100%">
-            <a class="showchartWeight no-print" style="text-decoration:none;color: #000" href="javascript:void(0)">
-                Biểu đồ cân nặng theo tuổi
-                <img style="width: 25px; padding: 5px 0 0 10px; margin: -2px;" src="/web/frontend/images/line-graph-chart-svgrepo-com.svg"><i>(Vui lòng click vào biểu tượng nếu muốn xem và In Biểu đồ này)</i>
-            </a>
+    
+    <div style="margin-top: 8px;">
+        <div style="width: 100%;">
+            @include('sections.Chart-WeightForHeight')
         </div>
-
     </div>
 
 

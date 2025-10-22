@@ -1,10 +1,18 @@
 <style >
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+    
     body{
         font-family: "Times New Roman", sans-serif;
+        margin: 0;
+        padding: 0;
     }
     .nuti-print {
-        width: 750px;
-        margin: 0px auto;
+        width: 720px;
+        margin: 0 auto;
+        padding: 0;
     }
     figure {
         margin: 0;
@@ -14,32 +22,33 @@
     }
     p {
         font-family: "Times New Roman", sans-serif;
-        font-size: 16px;
+        font-size: 15px;
         margin: 0;
         line-height: 18px;
     }
     h1 {
         color: #000;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         text-transform: uppercase;
         text-align: center;
+        margin: 10px 0;
     }
     h2 {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
         margin-bottom: 3px;
-        margin-top:3px;
+        margin-top: 3px;
         /*text-transform: uppercase;*/
     }
 
     h5 {
         font-family: "Times New Roman", sans-serif;
-        font-size: 16px;
-        line-height: 20px;
+        font-size: 15px;
+        line-height: 18px;
         font-weight: bold;
         /*text-transform: uppercase;*/
-        margin-top:0px;
+        margin-top: 0px;
         margin-bottom: 3px;
     }
 
@@ -128,7 +137,7 @@
     .re-item {
         display: table;
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     .re-item > div {
         display: table-cell;
@@ -154,7 +163,7 @@
     .print-signature {
         float: right;
         text-align: right;
-        margin-top: 10px;
+        margin-top: 8px;
         width: 100%;
     }
     .print-recommendation {
@@ -162,21 +171,21 @@
         text-align: justify;
         /*font-family: Arial, sans-serif;*/
         /*font-size: 17px;*/
-        line-height: 20px;
+        line-height: 18px;
         /*margin-left: 20px;*/
     }
     .print-recommendation p{
-        margin-top:6px;
+        margin-top: 5px;
     }
     .print-recommendation ul{
-        font-size:16px;
-        line-height: 20px;
+        font-size: 15px;
+        line-height: 18px;
         padding: 0px;
         margin: 0px;
         font-family: "Times New Roman";
     }
     .print-recommendation > ul > li{
-        margin-top: 6px;
+        margin-top: 5px;
         color: #000 !important;
         display: -webkit-box;
     }
@@ -199,15 +208,15 @@
         margin-bottom: 0px;;
     }
     table{
-        font-size: 16px;
-        width: 760px;
-        margin-left: 0px;;
+        font-size: 15px;
+        width: 720px;
+        margin-left: 0px;
     }
     table tr th{
-        padding:3px;
+        padding: 2px;
     }
     table tr td{
-        padding:3px;
+        padding: 2px;
     }
     .label {
         width: 73px;
@@ -224,7 +233,7 @@
         /*display: block;*/
     }
     .print-info p{
-        line-height: 20px;
+        line-height: 18px;
     }
     .print-recommendation p a{
         text-decoration: none;
