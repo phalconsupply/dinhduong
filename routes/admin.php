@@ -19,6 +19,8 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin'], f
 Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  'middleware' => 'auth.adminpanel'], function () {
     //Dashboard
     Route::get('/', 'DashboardController@index')->name('admin.dashboard.index');
+    Route::get('/statistics', 'DashboardController@statistics')->name('admin.dashboard.statistics');
+    Route::get('/statistics/export-csv', 'DashboardController@exportMeanStatisticsCSV')->name('admin.dashboard.export_mean_csv');
     //Media
     Route::get('/media', 'MediaController@index')->name('admin.media.index');
 

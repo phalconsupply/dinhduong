@@ -29,6 +29,7 @@
                             </div>
                         </a>
                         <a class="dropdown-item text-dark" href="{{route('admin.dashboard.index')}}"><span class="mb-0 d-inline-block me-1"><i class="ti ti-home"></i></span> Tổng quát</a>
+                        <a class="dropdown-item text-dark" href="{{route('admin.dashboard.statistics')}}"><span class="mb-0 d-inline-block me-1"><i class="ti ti-chart-bar"></i></span> Thống kê chi tiết</a>
                         <a class="dropdown-item text-dark" href="{{route('admin.profile.index')}}"><span class="mb-0 d-inline-block me-1"><i class="ti ti-user-circle"></i></span> Tài khoản</a>
                         <div class="dropdown-divider border-top"></div>
                         <a class="dropdown-item text-dark" href="{{route('admin.auth.logout')}}"><span class="mb-0 d-inline-block me-1"><i class="ti ti-logout"></i></span> Đăng xuất</a>
