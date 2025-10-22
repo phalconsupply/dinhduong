@@ -73,23 +73,42 @@
                                 </div>
                             </form>
                             @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi')
+                                @php
+                                    $weight_for_age = $row->check_weight_for_age();
+                                    $height_for_age = $row->check_height_for_age();
+                                    $weight_for_height = $row->check_weight_for_height();
+                                    
+                                    // Kiểm tra nếu cả 3 chỉ số đều bình thường
+                                    $all_normal = ($weight_for_age['result'] == 'normal' && 
+                                                   $height_for_age['result'] == 'normal' && 
+                                                   $weight_for_height['result'] == 'normal');
+                                @endphp
+                                
                                 <table style="width: 100%; margin-top: 15px;">
                                     <thead>
                                     <th colspan="2" style="text-align: center; background: #2daab8; color: white">Đánh giá chung</th>
                                     </thead>
                                     <tbody>
-                                    <tr style="background-color: {{$row->check_weight_for_age()['color']}}">
-                                        <td>Cân nặng theo tuổi</td>
-                                        <td>{{$row->check_weight_for_age()['text']}}</td>
-                                    </tr>
-                                    <tr style="background-color: {{$row->check_height_for_age()['color']}}">
-                                        <td>Chiều cao theo tuổi</td>
-                                        <td>{{$row->check_height_for_age()['text']}}</td>
-                                    </tr>
-                                    <tr  style="background-color: {{$row->check_weight_for_height()['color']}}">
-                                        <td>Cân nặng theo chiều cao</td>
-                                        <td>{{$row->check_weight_for_height()['text']}}</td>
-                                    </tr>
+                                    @if($all_normal)
+                                        <!-- Nếu cả 3 chỉ số đều bình thường, gộp thành 1 dòng -->
+                                        <tr style="background-color: green">
+                                            <td colspan="2" style="text-align: center; font-weight: bold;">Trẻ bình thường</td>
+                                        </tr>
+                                    @else
+                                        <!-- Hiển thị chi tiết từng chỉ số nếu có bất thường -->
+                                        <tr style="background-color: {{$weight_for_age['color']}}">
+                                            <td>Cân nặng theo tuổi</td>
+                                            <td>{{$weight_for_age['text']}}</td>
+                                        </tr>
+                                        <tr style="background-color: {{$height_for_age['color']}}">
+                                            <td>Chiều cao theo tuổi</td>
+                                            <td>{{$height_for_age['text']}}</td>
+                                        </tr>
+                                        <tr style="background-color: {{$weight_for_height['color']}}">
+                                            <td>Cân nặng theo chiều cao</td>
+                                            <td>{{$weight_for_height['text']}}</td>
+                                        </tr>
+                                    @endif
                                     </tbody>
                                 </table>
                             @else
