@@ -84,9 +84,10 @@ try {
     // Backup old structure
     $newAdvices['_backup_old_structure'] = $oldAdvices;
 
-    // Save new structure
-    $setting->value = json_encode($newAdvices, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    $setting->save();
+    // Save new structure - Use update() instead of save() to avoid id issue
+    \App\Models\Setting::where('key', 'advices')->update([
+        'value' => json_encode($newAdvices, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+    ]);
 
     echo "<br><div style='background: #d4edda; padding: 15px; border-radius: 5px;'>";
     echo "<h3>✅ Migration Successful!</h3>";
