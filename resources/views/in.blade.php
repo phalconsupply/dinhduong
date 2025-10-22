@@ -221,11 +221,28 @@
     <div class="print-recommendation">
         @php
             $advices = json_decode($setting['advices'], true);
+            $ageGroup = $row->getAgeGroupKey(); // Get age group: '0-5', '6-11', etc.
+            
+            // Get advice for specific age group, fallback to old structure if not found
+            $waResult = $row->check_weight_for_age()['result'];
+            $waAdvice = $advices[$ageGroup]['weight_for_age'][$waResult] 
+                     ?? $advices['weight_for_age'][$waResult] 
+                     ?? '';
+            
+            $whResult = $row->check_weight_for_height()['result'];
+            $whAdvice = $advices[$ageGroup]['weight_for_height'][$whResult] 
+                     ?? $advices['weight_for_height'][$whResult] 
+                     ?? '';
+            
+            $haResult = $row->check_height_for_age()['result'];
+            $haAdvice = $advices[$ageGroup]['height_for_age'][$haResult] 
+                     ?? $advices['height_for_age'][$haResult] 
+                     ?? '';
         @endphp
         <ul>
-            <li>{{$advices['weight_for_age'][$row->check_weight_for_age()['result']]}}</li>
-            <li>{{$advices['weight_for_height'][$row->check_weight_for_height()['result']]}}</li>
-            <li>{{$advices['height_for_age'][$row->check_height_for_age()['result']]}}</li>
+            @if($waAdvice)<li>{{ $waAdvice }}</li>@endif
+            @if($whAdvice)<li>{{ $whAdvice }}</li>@endif
+            @if($haAdvice)<li>{{ $haAdvice }}</li>@endif
         </ul>
 
         <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>

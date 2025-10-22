@@ -129,11 +129,30 @@
                             <div class="nuti-recommendations">
                                 @php
                                     $advices = json_decode($setting['advices'], true);
+                                    $ageGroup = $row->getAgeGroupKey(); // Get age group: '0-5', '6-11', etc.
 
                                     $default_advice = '<ul>';
-                                    $default_advice .= '<li>' . ($advices['weight_for_age'][$row->check_weight_for_age()['result']] ?? '') . '</li>';
-                                    $default_advice .= '<li>' . ($advices['weight_for_height'][$row->check_weight_for_height()['result']] ?? '') . '</li>';
-                                    $default_advice .= '<li>' . ($advices['height_for_age'][$row->check_height_for_age()['result']] ?? '') . '</li>';
+                                    
+                                    // Get advice for specific age group, fallback to old structure if not found
+                                    $waResult = $row->check_weight_for_age()['result'];
+                                    $waAdvice = $advices[$ageGroup]['weight_for_age'][$waResult] 
+                                             ?? $advices['weight_for_age'][$waResult] 
+                                             ?? '';
+                                    
+                                    $whResult = $row->check_weight_for_height()['result'];
+                                    $whAdvice = $advices[$ageGroup]['weight_for_height'][$whResult] 
+                                             ?? $advices['weight_for_height'][$whResult] 
+                                             ?? '';
+                                    
+                                    $haResult = $row->check_height_for_age()['result'];
+                                    $haAdvice = $advices[$ageGroup]['height_for_age'][$haResult] 
+                                             ?? $advices['height_for_age'][$haResult] 
+                                             ?? '';
+                                    
+                                    if ($waAdvice) $default_advice .= '<li>' . $waAdvice . '</li>';
+                                    if ($whAdvice) $default_advice .= '<li>' . $whAdvice . '</li>';
+                                    if ($haAdvice) $default_advice .= '<li>' . $haAdvice . '</li>';
+                                    
                                     $default_advice .= '</ul>';
                                 @endphp
 

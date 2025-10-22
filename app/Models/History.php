@@ -76,6 +76,34 @@ class History extends Model
     {
         return $this->belongsTo(Ward::class, 'ward_code', 'code');
     }
+    
+    /**
+     * Get age group key for advice configuration
+     * Returns: '0-5', '6-11', '12-23', '24-35', '36-47', '48-59'
+     */
+    public function getAgeGroupKey()
+    {
+        $ageInMonths = $this->age; // age is stored in months
+        
+        if ($ageInMonths >= 0 && $ageInMonths <= 5) {
+            return '0-5';
+        } elseif ($ageInMonths >= 6 && $ageInMonths <= 11) {
+            return '6-11';
+        } elseif ($ageInMonths >= 12 && $ageInMonths <= 23) {
+            return '12-23';
+        } elseif ($ageInMonths >= 24 && $ageInMonths <= 35) {
+            return '24-35';
+        } elseif ($ageInMonths >= 36 && $ageInMonths <= 47) {
+            return '36-47';
+        } elseif ($ageInMonths >= 48 && $ageInMonths <= 59) {
+            return '48-59';
+        }
+        
+        // Default to nearest group if age is out of range
+        if ($ageInMonths < 0) return '0-5';
+        return '48-59';
+    }
+    
     public function birthday_f()
     {
         if($this->birthday != null)
