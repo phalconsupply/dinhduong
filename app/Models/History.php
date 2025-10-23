@@ -244,12 +244,12 @@ class History extends Model
                 $color = 'yellow';
             } else if ($height >= $row['3SD']) {
                 $result = 'above_3sd';
-                $text = '';
-                $color = '';
+                $text = 'Trẻ cao bất thường';
+                $color = 'blue';
             } else if ($height > $row['2SD']) {
                 $result = 'above_2sd';
-                $text = '';
-                $color = '';
+                $text = 'Trẻ cao hơn bình thường';
+                $color = 'green';
             }
         }
         return ['text'=>$text, 'color'=>$color, 'result'=>$result];
