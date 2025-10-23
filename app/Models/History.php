@@ -170,7 +170,7 @@ class History extends Model
             } else if ($bmi < $row['-2SD']) {
                 $result = 'wasted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = 'red';
+                $color = 'orange';
             } else if ($bmi > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
@@ -178,7 +178,7 @@ class History extends Model
             } else if ($bmi >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'yellow';
+                $color = 'orange';
             }
         }
 
@@ -208,7 +208,7 @@ class History extends Model
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
-                $color = 'red';
+                $color = 'orange';
             } else if ($weight > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
@@ -216,7 +216,7 @@ class History extends Model
             } else if ($weight >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'yellow';
+                $color = 'orange';
             }
         }
 
@@ -241,7 +241,7 @@ class History extends Model
             } else if ($height < $row['-2SD']) {
                 $result = 'stunted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
-                $color = 'yellow';
+                $color = 'orange';
             } else if ($height >= $row['3SD']) {
                 $result = 'above_3sd';
                 $text = 'Trẻ cao bất thường';
@@ -249,7 +249,7 @@ class History extends Model
             } else if ($height > $row['2SD']) {
                 $result = 'above_2sd';
                 $text = 'Trẻ cao hơn bình thường';
-                $color = 'green';
+                $color = 'cyan';
             }
         }
         return ['text'=>$text, 'color'=>$color, 'result'=>$result];
@@ -272,7 +272,7 @@ class History extends Model
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = 'yellow';
+                $color = 'orange';
             } else if ($weight >= $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
@@ -280,7 +280,7 @@ class History extends Model
             } else if ($weight > $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'yellow';
+                $color = 'orange';
             }
         }
         return ['text'=>$text, 'color'=>$color, 'result'=>$result];
