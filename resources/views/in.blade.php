@@ -18,6 +18,20 @@
         .print-header figure {
             margin: 0;
         }
+        .print-header-info {
+            text-align: center;
+            flex: 1;
+            margin: 0 20px;
+        }
+        .print-header-info p {
+            margin: 0;
+            line-height: 1.4;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .print-header-info p:first-child {
+            font-size: 13px;
+        }
         .btn-print {
             background: none;
             border: 1px solid #ccc;
@@ -86,6 +100,10 @@
         <figure style="margin: 0;">
             <img src="{{$setting['logo-light']}}" width="90px">
         </figure>
+        <div class="print-header-info">
+            <p>SỞ Y TẾ LÂM ĐỒNG</p>
+            <p>TRUNG TÂM Y TẾ KHU VỰC ĐỨC TRỌNG</p>
+        </div>
         <button class="btn-print" onclick="window.print()">
             <i class="bi bi-printer"></i> In kết quả
         </button>
