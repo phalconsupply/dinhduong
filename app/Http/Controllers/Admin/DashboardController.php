@@ -496,7 +496,7 @@ class DashboardController extends Controller
 
         // Collect data by age group and gender
         foreach ($records as $record) {
-            $ageInMonths = $record->age_in_months;
+            $ageInMonths = $record->age; // age is stored in months in the database
             $gender = $record->gender == 1 ? 'male' : 'female';
 
             // Find age group
