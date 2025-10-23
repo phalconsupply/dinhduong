@@ -61,6 +61,13 @@
                                         <div class="clearfix"></div>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-4">
+                                                <p>Ngày cân đo (<span class="text-danger">*</span>)</p>
+                                                <div class="form-group calendar-group">
+                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/YYYY'))}}" class="form-control" id="cal-date" placeholder="Ngày cân đo dd/mm/yyyy" required>
+                                                    <i class="icon calendar-icon"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
                                                 @if($category != 3)
                                                 <p>Ngày sinh (<span class="text-danger">*</span>)</p>
                                                 <div class="form-group calendar-group">
@@ -69,13 +76,6 @@
                                                     <i class="icon calendar-icon"></i>
                                                 </div>
                                                 @endif
-                                            </div>
-                                            <div class="col-xs-12 col-sm-4">
-                                                <p>Ngày cân đo (<span class="text-danger">*</span>)</p>
-                                                <div class="form-group calendar-group">
-                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/YYYY'))}}" class="form-control" id="cal-date" placeholder="Ngày cân đo dd/mm/yyyy" required>
-                                                    <i class="icon calendar-icon"></i>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="clearfix"></div>
@@ -436,7 +436,11 @@
                 // decrementDay.subtract(1, 'days');
                 $('#calendar-birth').data('DateTimePicker').maxDate(decrementDay);
                 $(this).data("DateTimePicker").hide();
-                getMonthAjax($("#calendar-birth").val(), $("#cal-date").val());
+                
+                // Chỉ gọi AJAX nếu cả 2 trường đã có giá trị
+                if ($("#calendar-birth").val() && $("#cal-date").val()) {
+                    getMonthAjax($("#calendar-birth").val(), $("#cal-date").val());
+                }
             });
 
             $("#calendar-birth").datetimepicker({
@@ -450,7 +454,11 @@
                 // incrementDay.add(1, 'days');
                 $('#cal-date').data('DateTimePicker').minDate(incrementDay);
                 $(this).data("DateTimePicker").hide();
-                getMonthAjax($("#calendar-birth").val(), $("#cal-date").val());
+                
+                // Chỉ gọi AJAX nếu cả 2 trường đã có giá trị
+                if ($("#calendar-birth").val() && $("#cal-date").val()) {
+                    getMonthAjax($("#calendar-birth").val(), $("#cal-date").val());
+                }
             });
 
             $("#last-name").focus();
