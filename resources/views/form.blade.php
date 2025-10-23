@@ -425,7 +425,7 @@
                 return (d1M + 12 * d1Y) - (d2M + 12 * d2Y);
             }
 
-            var category = 1;
+            var category = {{ $category }}; // Get category from server-side blade variable
 
             $("#cal-date").datetimepicker({
                 format: 'DD/MM/YYYY',

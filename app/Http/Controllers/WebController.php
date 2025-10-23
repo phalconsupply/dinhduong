@@ -230,10 +230,14 @@ class WebController extends Controller
     public function tinh_so_thang($begin, $end){
         // Ngày sinh của người dùng
         $dob = Carbon::createFromFormat('d/m/Y',  $begin);
-        // Ngày hiện tại
+        // Ngày hiện tại (ngày cân đo)
         $now = Carbon::createFromFormat('d/m/Y', $end);
-        // Tính toán sự chênh lệch giữa ngày hiện tại và ngày sinh
+        
+        // Tính số tháng đầy đủ theo chuẩn WHO
+        // WHO sử dụng full calendar months (tháng dương lịch đầy đủ)
+        // Ví dụ: 31/8/2020 → 30/5/2025 = 56 tháng (vì chưa đến 31/5/2025)
         $month = $now->diffInMonths($dob);
+        
         return $month;
     }
     public function ajax_tinh_ngay_sinh(Request $request){
