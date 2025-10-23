@@ -77,11 +77,13 @@
                                     $weight_for_age = $row->check_weight_for_age();
                                     $height_for_age = $row->check_height_for_age();
                                     $weight_for_height = $row->check_weight_for_height();
+                                    $bmi_for_age = $row->check_bmi_for_age();
                                     
-                                    // Kiểm tra nếu cả 3 chỉ số đều bình thường
+                                    // Kiểm tra nếu cả 4 chỉ số đều bình thường
                                     $all_normal = ($weight_for_age['result'] == 'normal' && 
                                                    $height_for_age['result'] == 'normal' && 
-                                                   $weight_for_height['result'] == 'normal');
+                                                   $weight_for_height['result'] == 'normal' &&
+                                                   $bmi_for_age['result'] == 'normal');
                                 @endphp
                                 
                                 <table style="width: 100%; margin-top: 15px;">
@@ -90,7 +92,7 @@
                                     </thead>
                                     <tbody>
                                     @if($all_normal)
-                                        <!-- Nếu cả 3 chỉ số đều bình thường, gộp thành 1 dòng -->
+                                        <!-- Nếu cả 4 chỉ số đều bình thường, gộp thành 1 dòng -->
                                         <tr style="background-color: green">
                                             <td colspan="2" style="text-align: center; font-weight: bold;">Trẻ bình thường</td>
                                         </tr>
@@ -107,6 +109,10 @@
                                         <tr style="background-color: {{$weight_for_height['color']}}">
                                             <td>Cân nặng theo chiều cao</td>
                                             <td>{{$weight_for_height['text']}}</td>
+                                        </tr>
+                                        <tr style="background-color: {{$bmi_for_age['color']}}">
+                                            <td>BMI theo tuổi</td>
+                                            <td>{{$bmi_for_age['text']}}</td>
                                         </tr>
                                     @endif
                                     </tbody>
