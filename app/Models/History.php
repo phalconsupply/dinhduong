@@ -48,7 +48,9 @@ class History extends Model
         // Thông tin lúc sinh
         'birth_weight',           // Cân nặng lúc sinh (gram)
         'gestational_age',        // Tuổi thai lúc sinh (Đủ tháng / Thiếu tháng)
-        'birth_weight_category'   // Phân loại cân nặng lúc sinh
+        'birth_weight_category',  // Phân loại cân nặng lúc sinh
+        // Tình trạng dinh dưỡng tổng hợp (trẻ dưới 5 tuổi)
+        'nutrition_status'        // Tình trạng dinh dưỡng tổng hợp
     ];
 
     protected $casts = [
@@ -288,6 +290,94 @@ class History extends Model
             }
         }
         return ['text'=>$text, 'color'=>$color, 'result'=>$result];
+    }
+
+    /**
+     * Xác định tình trạng dinh dưỡng tổng hợp cho trẻ dưới 5 tuổi
+     * Dựa trên Z-score của Weight-for-Age (W/A), Height-for-Age (H/A), Weight-for-Height (W/H)
+     * 
+     * @return array ['text' => string, 'color' => string, 'code' => string]
+     */
+    public function get_nutrition_status()
+    {
+        // Lấy kết quả các chỉ số
+        $wfa = $this->check_weight_for_age();      // Cân nặng/tuổi
+        $hfa = $this->check_height_for_age();      // Chiều cao/tuổi
+        $wfh = $this->check_weight_for_height();   // Cân nặng/chiều cao
+        
+        $text = 'Chưa xác định';
+        $color = 'gray';
+        $code = 'unknown';
+        
+        // Kiểm tra dữ liệu có đủ không
+        if ($wfa['result'] === 'unknown' || $hfa['result'] === 'unknown' || $wfh['result'] === 'unknown') {
+            return ['text' => 'Chưa có đủ dữ liệu', 'color' => 'gray', 'code' => 'unknown'];
+        }
+        
+        // 1. SUY DINH DƯỠNG PHỐI HỢP (vừa thấp còi vừa gầy còm)
+        // Cả H/A và W/H đều < -2SD
+        if (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe']) && 
+            in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
+            $text = 'Suy dinh dưỡng phối hợp';
+            $color = 'red';
+            $code = 'malnutrition_combined';
+        }
+        // 2. SDD GẦY CÒM (W/H < -2SD nhưng H/A bình thường)
+        elseif (in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
+            if ($wfh['result'] === 'underweight_severe') {
+                $text = 'Suy dinh dưỡng gầy còm nặng';
+                $color = 'red';
+                $code = 'wasted_severe';
+            } else {
+                $text = 'Suy dinh dưỡng gầy còm';
+                $color = 'orange';
+                $code = 'wasted';
+            }
+        }
+        // 3. SDD THẤP CÒI (H/A < -2SD nhưng W/H bình thường)
+        elseif (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe'])) {
+            if ($hfa['result'] === 'stunted_severe') {
+                $text = 'Suy dinh dưỡng thấp còi nặng';
+                $color = 'red';
+                $code = 'stunted_severe';
+            } else {
+                $text = 'Suy dinh dưỡng thấp còi';
+                $color = 'orange';
+                $code = 'stunted';
+            }
+        }
+        // 4. SDD NHẸ CÂN (W/A < -2SD)
+        elseif (in_array($wfa['result'], ['underweight_moderate', 'underweight_severe'])) {
+            if ($wfa['result'] === 'underweight_severe') {
+                $text = 'Suy dinh dưỡng nhẹ cân nặng';
+                $color = 'red';
+                $code = 'underweight_severe';
+            } else {
+                $text = 'Suy dinh dưỡng nhẹ cân';
+                $color = 'orange';
+                $code = 'underweight';
+            }
+        }
+        // 5. BÉO PHÌ (W/A > +3SD hoặc W/H > +3SD)
+        elseif ($wfa['result'] === 'obese' || $wfh['result'] === 'obese') {
+            $text = 'Béo phì';
+            $color = 'red';
+            $code = 'obese';
+        }
+        // 6. THỪA CÂN (W/A > +2SD hoặc W/H > +2SD)
+        elseif ($wfa['result'] === 'overweight' || $wfh['result'] === 'overweight') {
+            $text = 'Thừa cân';
+            $color = 'orange';
+            $code = 'overweight';
+        }
+        // 7. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
+        elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
+            $text = 'Bình thường';
+            $color = 'green';
+            $code = 'normal';
+        }
+        
+        return ['text' => $text, 'color' => $color, 'code' => $code];
     }
 
     public function scopeByUserRole(Builder $query, $user = null)

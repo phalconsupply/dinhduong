@@ -217,6 +217,7 @@
                 $height_for_age = $row->check_height_for_age();
                 $weight_for_height = $row->check_weight_for_height();
                 $bmi_for_age = $row->check_bmi_for_age();
+                $nutrition_status = $row->get_nutrition_status();  // Tình trạng dinh dưỡng tổng hợp
                 
                 // Kiểm tra nếu cả 4 chỉ số đều bình thường
                 $all_normal = ($weight_for_age['result'] == 'normal' && 
@@ -225,6 +226,21 @@
                                $bmi_for_age['result'] == 'normal');
             @endphp
             
+            <!-- Tình trạng dinh dưỡng tổng hợp -->
+            <table style="width: 100%; margin-bottom: 10px; page-break-inside: avoid;">
+                <thead>
+                <th style="text-align: center; background: #418c39; color: white">Tình trạng dinh dưỡng</th>
+                </thead>
+                <tbody>
+                <tr style="background-color: {{$nutrition_status['color']}}">
+                    <td style="text-align: center; font-weight: bold; padding: 8px; font-size: 14px;">
+                        {{$nutrition_status['text']}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            
+            <!-- Đánh giá chi tiết từng chỉ số -->
             <table style="width: 100%">
                 <thead>
                 <th colspan="2" style="text-align: center; background: #eeeeee; color: black">Đánh giá chung</th>

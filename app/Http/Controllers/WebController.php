@@ -184,6 +184,13 @@ class WebController extends Controller
             $history->result_height_age = $history->check_weight_for_age();
             $history->result_weight_age = $history->check_height_for_age();
             $history->result_weight_height = $history->check_weight_for_height();
+            
+            // Lưu tình trạng dinh dưỡng tổng hợp (chỉ cho trẻ dưới 5 tuổi - category = 1)
+            if ($request->category == 1 || $history->slug == 'tu-0-5-tuoi') {
+                $nutrition_status = $history->get_nutrition_status();
+                $history->nutrition_status = $nutrition_status['text'];
+            }
+            
             $history->save();
 
             return redirect(url('/ketqua?uid=' . $history->uid));

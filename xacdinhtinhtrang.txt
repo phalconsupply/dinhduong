@@ -1,0 +1,50 @@
+Bổ sung dòng trạng thái tình trạng dinh dưỡng tình trạng dinh dưỡng của trẻ em dưới 5 tuổi (áp dụng cho đối tượng category = 1)
+Diễn giải: Việc phân loại tình trạng dinh dưỡng của trẻ được thực hiện dựa trên các chỉ số Z-score theo chuẩn tăng trưởng của Tổ chức Y tế Thế giới (WHO). Các chỉ tiêu được so sánh theo tuổi và chiều cao của trẻ, cụ thể như sau:
+
+Tại trang kết quả và trang in kết quả, bổ sung thêm dòng "Tình trạng dinh dưỡng: " với các giá trị được tự động tính toán và xác định ra kết quả đúng thuộc một trong các trường hợp sau:
+
+1. Suy dinh dưỡng thể nhẹ cân (SDD nhẹ cân)
+
+Cơ sở đánh giá: So sánh cân nặng theo tuổi (Weight-for-Age, W/A).
+
+Tiêu chuẩn phân loại:
+
+Trẻ có Z-score cân nặng theo tuổi từ dưới -2SD đến ≥ -4SD được xác định là "suy dinh dưỡng thể nhẹ cân."
+
+Trẻ có Z-score < -3SD được coi là "suy dinh dưỡng thể nặng."
+
+2. Suy dinh dưỡng thể thấp còi (SDD thấp còi)
+
+Cơ sở đánh giá: So sánh chiều cao theo tuổi (Height-for-Age, H/A).
+
+Tiêu chuẩn phân loại:
+
+Trẻ có Z-score chiều cao theo tuổi dưới -2SD đến -3SD được xác định là "suy dinh dưỡng thể thấp còi."
+
+Trẻ có Z-score < -3SD được xem là "Suy dinh dưỡng thấp còi nặng."
+
+3. Suy dinh dưỡng thể gầy còm (SDD gầy còm)
+
+Cơ sở đánh giá: So sánh cân nặng theo chiều cao (Weight-for-Height, W/H).
+
+Tiêu chuẩn phân loại:
+
+Trẻ có Z-score cân nặng theo chiều cao < -2SD được coi là "suy dinh dưỡng thể gầy còm."
+
+Trường hợp cả hai chỉ số chiều cao theo tuổi (H/A) và cân nặng theo chiều cao (W/H) đều thấp hơn -2SD, trẻ được xác định là "suy dinh dưỡng thể phối hợp" (vừa thấp còi vừa gầy còm), phản ánh tình trạng suy dinh dưỡng mạn tính kèm cấp tính.
+
+4. Thể trạng bình thường
+
+Trẻ có các chỉ số Z-score nằm trong khoảng từ -2SD đến +2SD được coi là "Trẻ có tình trạng dinh dưỡng bình thường", tức có tình trạng dinh dưỡng đạt chuẩn theo lứa tuổi.
+
+5. Thừa cân và béo phì
+
+Cơ sở đánh giá: Dựa trên cân nặng theo tuổi (W/A) và cân nặng theo chiều cao (W/H).
+
+Tiêu chuẩn phân loại:
+
+Trẻ có Z-score > +2SD được xác định là "Trẻ thừa cân".
+
+Trẻ có Z-score > +3SD được xác định là "Trẻ béo phì".
+
+Lưu ý: Bổ sung các trường dữ liệu cần thiết để lưu các trạng thái này của trẻ em dưới 5 tuổi, dữ liệu này sẽ được sử dụng để phục vụ một bảng báo cáo khác do đó hãy tính toán đến khả năng cần thống kê tỷ lệ % các tình trạng dinh dưỡng này theo các điều kiện như: "độ tuổi" "giới tính" ...
