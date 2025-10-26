@@ -17,6 +17,7 @@
     var _ajaxRemoveHistoryIdUrl = "";
 </script>
 <script src="{{asset('/web/js/b47b5bf.js')}}"></script>
+<script src="{{asset('/web/js/bmi-fix.js')}}"></script>
 <script src="{{asset('/web/frontend/js/custom2.js')}}"></script>
 <script src="{{asset('/web/frontend/plugins/datatimepickerbootstrap/moment.min.js')}}"></script>
 <script src="{{asset('/web/frontend/plugins/datatimepickerbootstrap/bootstrap-datetimepicker.min.js')}}"></script>
