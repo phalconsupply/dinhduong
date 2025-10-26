@@ -1,0 +1,34 @@
+lập thêm bảng thống kê mới, bảng số 8 tại /admin/statistics 
+Tên bảng: Đặc điểm dân số của trẻ
+cấu trúc bảng thống kê như sau
+
+    Đặc điểm	                Tần số (n)	            Tỉ lệ (%)
+1	Tháng tuổi:		
+	¨     < 24 tháng SDD		
+	¨     < 24 tháng không SDD		
+	¨     0 - 60 tháng SDD		
+	¨     0 - 60 tháng không SDD		
+2	Giới		
+	¨     Nam		
+	¨     Nữ		
+3	Dân tộc		
+	¨     Kinh		
+	¨     Khác		
+4	Cân nặng lúc sinh		
+	"¨     Nhẹ cân: 	
+	"¨     Đủ cân:  	
+	"¨     Thừa cân: 	
+5	Tuổi thai lúc sinh		
+	¨     Đủ tháng: 		
+	¨     Thiếu tháng: 		
+6	Kết quả tình trạng dinh dưỡng của trẻ		
+	¨     SDD nhẹ cân: 		
+	¨     SDD thấp còi: 		
+	¨     SDD gầy còm: 		
+	¨     Bình thường:		
+	¨     Thừa cân + béo phì:		
+
+Trong đó:
+- SDD: là trẻ có một trong các tình trạng suy dinh dưỡng được phân loại trong db cột nutrition_status
+- Tần số (n): là tổng số trẻ theo điều kiện thống kê
+- Tỉ lệ (%): tính trên tổng số trẻ trong độ tuổi 0-5 Tuổi

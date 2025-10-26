@@ -810,6 +810,172 @@
     </div>
 </div>
 
+<!-- TABLE 8: Population Characteristics of Children Under 5 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">8. Đặc điểm dân số của trẻ (Trẻ dưới 5 tuổi)</h4>
+                <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-population-char', 'Dac_diem_dan_so_tre')">
+                    <i class="uil uil-export"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="table-population-char">
+                        <thead class="table-primary">
+                            <tr>
+                                <th class="fw-bold">Đặc điểm</th>
+                                <th class="text-center fw-bold">Tần số (n)</th>
+                                <th class="text-center fw-bold">Tỉ lệ (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 1. Tháng tuổi -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">1. Tháng tuổi</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">< 24 tháng tuổi có SDD</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">< 24 tháng tuổi không SDD</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">0-60 tháng tuổi có SDD</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">0-60 tháng tuổi không SDD</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- 2. Giới tính -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">2. Giới tính</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Nam</td>
+                                <td class="text-center">{{ $table8Stats['gender']['male']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gender']['male']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Nữ</td>
+                                <td class="text-center">{{ $table8Stats['gender']['female']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gender']['female']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- 3. Dân tộc -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">3. Dân tộc</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Kinh</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Khác</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- 4. Cân nặng lúc sinh -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">4. Cân nặng lúc sinh</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Nhẹ cân (< 2500g)</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Đủ cân (2500-4000g)</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Thừa cân (> 4000g)</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- 5. Tuổi thai lúc sinh -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">5. Tuổi thai lúc sinh</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Đủ tháng</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Thiếu tháng</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- 6. Kết quả tình trạng dinh dưỡng -->
+                            <tr class="table-secondary">
+                                <td colspan="3" class="fw-bold">6. Kết quả tình trạng dinh dưỡng</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">SDD nhẹ cân</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">SDD thấp còi</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">SDD gầy còm</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Bình thường</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['percentage'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">Thừa cân/Béo phì</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['count'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['percentage'] }}</td>
+                            </tr>
+
+                            <!-- Tổng cộng -->
+                            <tr class="table-info fw-bold">
+                                <td>Tổng số trẻ 0-60 tháng</td>
+                                <td class="text-center">{{ $table8Stats['total_children'] }}</td>
+                                <td class="text-center">100.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong><i class="uil uil-info-circle"></i> Giải thích:</strong>
+                    <ul class="mb-0 mt-2" style="font-size: 13px;">
+                        <li><strong>Bảng đặc điểm dân số:</strong> Thống kê các đặc điểm nhân khẩu học của trẻ dưới 5 tuổi (0-60 tháng)</li>
+                        <li><strong>SDD (Suy dinh dưỡng):</strong> Bao gồm các trạng thái nhẹ cân, thấp còi, gầy còm và phối hợp</li>
+                        <li><strong>Tỉ lệ %:</strong> Được tính dựa trên tổng số trẻ 0-60 tháng tuổi trong mẫu khảo sát</li>
+                        <li><strong>Cân nặng lúc sinh:</strong> Nhẹ cân (<2500g), Đủ cân (2500-4000g), Thừa cân (>4000g)</li>
+                        <li><strong>Tuổi thai:</strong> Đủ tháng (≥37 tuần), Thiếu tháng (<37 tuần)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>

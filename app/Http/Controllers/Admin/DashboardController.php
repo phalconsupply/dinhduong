@@ -301,6 +301,9 @@ class DashboardController extends Controller
         // 7. Bảng tổng hợp WHO - Female only
         $whoFemaleStats = $this->getWHOCombinedStatistics($records, 0); // gender = 0 (female)
 
+        // 8. Bảng đặc điểm dân số của trẻ (Population Characteristics)
+        $table8Stats = $this->getPopulationCharacteristics($records);
+
         // Get filter data
         $provinces = Province::byUserRole($user)->select('name','code')->get();
         $districts = [];
@@ -321,6 +324,7 @@ class DashboardController extends Controller
             'whoCombinedStats',
             'whoMaleStats',
             'whoFemaleStats',
+            'table8Stats',
             'provinces',
             'districts',
             'wards',
@@ -614,6 +618,199 @@ class DashboardController extends Controller
             }
         }
         return $result;
+    }
+
+    /**
+     * Bảng 8: Đặc điểm dân số của trẻ (trẻ dưới 5 tuổi)
+     * Population Characteristics of Children Under 5
+     */
+    private function getPopulationCharacteristics($records)
+    {
+        // Lọc chỉ lấy trẻ 0-60 tháng (5 tuổi)
+        $children = $records->where('slug', 'tu-0-5-tuoi')->where('age', '<=', 60);
+        $totalChildren = $children->count();
+
+        $stats = [];
+
+        // 1. Tháng tuổi (Age groups)
+        $under24Malnutrition = $children->where('age', '<', 24)->filter(function($child) {
+            return $this->hasMalnutrition($child);
+        })->count();
+        
+        $under24Normal = $children->where('age', '<', 24)->filter(function($child) {
+            return !$this->hasMalnutrition($child);
+        })->count();
+        
+        $age0to60Malnutrition = $children->filter(function($child) {
+            return $this->hasMalnutrition($child);
+        })->count();
+        
+        $age0to60Normal = $children->filter(function($child) {
+            return !$this->hasMalnutrition($child);
+        })->count();
+
+        $stats['age_groups'] = [
+            'under_24_malnutrition' => [
+                'count' => $under24Malnutrition,
+                'percentage' => $totalChildren > 0 ? round(($under24Malnutrition / $totalChildren) * 100, 2) : 0
+            ],
+            'under_24_normal' => [
+                'count' => $under24Normal,
+                'percentage' => $totalChildren > 0 ? round(($under24Normal / $totalChildren) * 100, 2) : 0
+            ],
+            'age_0_60_malnutrition' => [
+                'count' => $age0to60Malnutrition,
+                'percentage' => $totalChildren > 0 ? round(($age0to60Malnutrition / $totalChildren) * 100, 2) : 0
+            ],
+            'age_0_60_normal' => [
+                'count' => $age0to60Normal,
+                'percentage' => $totalChildren > 0 ? round(($age0to60Normal / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        // 2. Giới tính (Gender)
+        $maleCount = $children->where('gender', 1)->count();
+        $femaleCount = $children->where('gender', 0)->count();
+        
+        $stats['gender'] = [
+            'male' => [
+                'count' => $maleCount,
+                'percentage' => $totalChildren > 0 ? round(($maleCount / $totalChildren) * 100, 2) : 0
+            ],
+            'female' => [
+                'count' => $femaleCount,
+                'percentage' => $totalChildren > 0 ? round(($femaleCount / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        // 3. Dân tộc (Ethnicity)
+        $kinhCount = $children->where('ethnic_id', 1)->count();
+        $otherCount = $children->where('ethnic_id', '!=', 1)->count();
+        
+        $stats['ethnicity'] = [
+            'kinh' => [
+                'count' => $kinhCount,
+                'percentage' => $totalChildren > 0 ? round(($kinhCount / $totalChildren) * 100, 2) : 0
+            ],
+            'other' => [
+                'count' => $otherCount,
+                'percentage' => $totalChildren > 0 ? round(($otherCount / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        // 4. Cân nặng lúc sinh (Birth weight)
+        $birthWeightLow = $children->where('birth_weight_category', 'Nhẹ cân')->count();
+        $birthWeightNormal = $children->where('birth_weight_category', 'Đủ cân')->count();
+        $birthWeightHigh = $children->where('birth_weight_category', 'Thừa cân')->count();
+        
+        $stats['birth_weight'] = [
+            'low' => [
+                'count' => $birthWeightLow,
+                'percentage' => $totalChildren > 0 ? round(($birthWeightLow / $totalChildren) * 100, 2) : 0
+            ],
+            'normal' => [
+                'count' => $birthWeightNormal,
+                'percentage' => $totalChildren > 0 ? round(($birthWeightNormal / $totalChildren) * 100, 2) : 0
+            ],
+            'high' => [
+                'count' => $birthWeightHigh,
+                'percentage' => $totalChildren > 0 ? round(($birthWeightHigh / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        // 5. Tuổi thai lúc sinh (Gestational age)
+        $fullTerm = $children->where('gestational_age', 'Đủ tháng')->count();
+        $preterm = $children->where('gestational_age', 'Thiếu tháng')->count();
+        
+        $stats['gestational_age'] = [
+            'full_term' => [
+                'count' => $fullTerm,
+                'percentage' => $totalChildren > 0 ? round(($fullTerm / $totalChildren) * 100, 2) : 0
+            ],
+            'preterm' => [
+                'count' => $preterm,
+                'percentage' => $totalChildren > 0 ? round(($preterm / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        // 6. Kết quả tình trạng dinh dưỡng (Nutrition status)
+        // Đọc từ cột nutrition_status (đã được cập nhật bằng SQL)
+        $underweight = $children->filter(function($child) {
+            $status = $child->nutrition_status ?? '';
+            return !empty($status) && stripos($status, 'nhẹ cân') !== false;
+        })->count();
+        
+        $stunted = $children->filter(function($child) {
+            $status = $child->nutrition_status ?? '';
+            return !empty($status) && stripos($status, 'thấp còi') !== false;
+        })->count();
+        
+        $wasted = $children->filter(function($child) {
+            $status = $child->nutrition_status ?? '';
+            return !empty($status) && (stripos($status, 'gầy còm') !== false || stripos($status, 'phối hợp') !== false);
+        })->count();
+        
+        $normal = $children->filter(function($child) {
+            $status = $child->nutrition_status ?? '';
+            return $status === 'Bình thường';
+        })->count();
+        
+        $overweightObese = $children->filter(function($child) {
+            $status = $child->nutrition_status ?? '';
+            return !empty($status) && (stripos($status, 'Thừa cân') !== false || stripos($status, 'Béo phì') !== false);
+        })->count();
+        
+        $stats['nutrition_status'] = [
+            'underweight' => [
+                'count' => $underweight,
+                'percentage' => $totalChildren > 0 ? round(($underweight / $totalChildren) * 100, 2) : 0
+            ],
+            'stunted' => [
+                'count' => $stunted,
+                'percentage' => $totalChildren > 0 ? round(($stunted / $totalChildren) * 100, 2) : 0
+            ],
+            'wasted' => [
+                'count' => $wasted,
+                'percentage' => $totalChildren > 0 ? round(($wasted / $totalChildren) * 100, 2) : 0
+            ],
+            'normal' => [
+                'count' => $normal,
+                'percentage' => $totalChildren > 0 ? round(($normal / $totalChildren) * 100, 2) : 0
+            ],
+            'overweight_obese' => [
+                'count' => $overweightObese,
+                'percentage' => $totalChildren > 0 ? round(($overweightObese / $totalChildren) * 100, 2) : 0
+            ],
+        ];
+
+        $stats['total_children'] = $totalChildren;
+        
+        return $stats;
+    }
+
+    /**
+     * Helper function to check if child has malnutrition (SDD)
+     * SDD bao gồm: nhẹ cân, thấp còi, gầy còm, phối hợp
+     * KHÔNG SDD: bình thường + thừa cân + béo phì
+     */
+    private function hasMalnutrition($child)
+    {
+        $status = $child->nutrition_status ?? '';
+        
+        if (empty($status)) {
+            return false;
+        }
+        
+        // SDD: chứa các từ khóa suy dinh dưỡng
+        $malnutritionKeywords = ['suy dinh dưỡng', 'nhẹ cân', 'thấp còi', 'gầy còm', 'phối hợp'];
+        
+        foreach ($malnutritionKeywords as $keyword) {
+            if (stripos($status, $keyword) !== false) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function exportMeanStatisticsCSV(Request $request)
