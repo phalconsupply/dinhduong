@@ -292,6 +292,9 @@ class DashboardController extends Controller
         // 4. Bảng chỉ số trung bình và độ lệch chuẩn
         $meanStats = $this->getMeanStatistics($records);
 
+        // 5. Bảng tổng hợp WHO (Sexes combined)
+        $whoCombinedStats = $this->getWHOCombinedStatistics($records);
+
         // Get filter data
         $provinces = Province::byUserRole($user)->select('name','code')->get();
         $districts = [];
@@ -309,6 +312,7 @@ class DashboardController extends Controller
             'heightForAgeStats',
             'weightForHeightStats',
             'meanStats',
+            'whoCombinedStats',
             'provinces',
             'districts',
             'wards',
@@ -697,4 +701,189 @@ class DashboardController extends Controller
         fclose($handle);
         exit;
     }
+
+    private function getWHOCombinedStatistics($records)
+    {
+        // Định nghĩa các nhóm tuổi WHO
+        $ageGroups = [
+            '0-5' => ['min' => 0, 'max' => 5, 'label' => '0-5'],
+            '6-11' => ['min' => 6, 'max' => 11, 'label' => '6-11'],
+            '12-23' => ['min' => 12, 'max' => 23, 'label' => '12-23'],
+            '24-35' => ['min' => 24, 'max' => 35, 'label' => '24-35'],
+            '36-47' => ['min' => 36, 'max' => 47, 'label' => '36-47'],
+            '48-60' => ['min' => 48, 'max' => 60, 'label' => '48-60'],
+        ];
+
+        $stats = [];
+        $totalData = ['n' => 0, 'wa' => [], 'ha' => [], 'wh' => []];
+
+        foreach ($ageGroups as $key => $group) {
+            // Lọc records theo nhóm tuổi
+            $groupRecords = $records->filter(function($record) use ($group) {
+                return $record->age >= $group['min'] && $record->age <= $group['max'];
+            });
+
+            $n = $groupRecords->count();
+            
+            // Tính toán Weight-for-Age
+            $waData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'weights' => []];
+            // Tính toán Height-for-Age  
+            $haData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'heights' => []];
+            // Tính toán Weight-for-Height
+            $whData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'gt_1sd' => 0, 'gt_2sd' => 0, 'gt_3sd' => 0, 'wh_zscores' => []];
+
+            foreach ($groupRecords as $record) {
+                // Weight-for-Age
+                $waResult = $record->check_weight_for_age();
+                $waRow = $record->WeightForAge();
+                if ($waRow) {
+                    if ($record->weight < $waRow['-3SD']) $waData['lt_3sd']++;
+                    if ($record->weight < $waRow['-2SD']) $waData['lt_2sd']++;
+                    // Tính Z-score W/A (simplified)
+                    if ($waRow['SD'] > 0) {
+                        $zscore = ($record->weight - $waRow['Median']) / $waRow['SD'];
+                        $waData['weights'][] = $zscore;
+                        $totalData['wa'][] = $zscore;
+                    }
+                }
+
+                // Height-for-Age
+                $haRow = $record->HeightForAge();
+                if ($haRow) {
+                    if ($record->height < $haRow['-3SD']) $haData['lt_3sd']++;
+                    if ($record->height < $haRow['-2SD']) $haData['lt_2sd']++;
+                    // Tính Z-score H/A
+                    if ($haRow['SD'] > 0) {
+                        $zscore = ($record->height - $haRow['Median']) / $haRow['SD'];
+                        $haData['heights'][] = $zscore;
+                        $totalData['ha'][] = $zscore;
+                    }
+                }
+
+                // Weight-for-Height
+                $whRow = $record->WeightForHeight();
+                if ($whRow) {
+                    if ($record->weight < $whRow['-3SD']) $whData['lt_3sd']++;
+                    if ($record->weight < $whRow['-2SD']) $whData['lt_2sd']++;
+                    if ($record->weight > $whRow['1SD']) $whData['gt_1sd']++;
+                    if ($record->weight > $whRow['2SD']) $whData['gt_2sd']++;
+                    if ($record->weight > $whRow['3SD']) $whData['gt_3sd']++;
+                    // Tính Z-score W/H
+                    if ($whRow['SD'] > 0) {
+                        $zscore = ($record->weight - $whRow['Median']) / $whRow['SD'];
+                        $whData['wh_zscores'][] = $zscore;
+                        $totalData['wh'][] = $zscore;
+                    }
+                }
+            }
+
+            $stats[$key] = [
+                'label' => $group['label'],
+                'n' => $n,
+                'wa' => [
+                    'lt_3sd_pct' => $n > 0 ? round(($waData['lt_3sd'] / $n) * 100, 1) : 0,
+                    'lt_2sd_pct' => $n > 0 ? round(($waData['lt_2sd'] / $n) * 100, 1) : 0,
+                    'mean' => count($waData['weights']) > 0 ? round(array_sum($waData['weights']) / count($waData['weights']), 2) : 0,
+                    'sd' => count($waData['weights']) > 1 ? round($this->calculateSD($waData['weights']), 2) : 0,
+                ],
+                'ha' => [
+                    'lt_3sd_pct' => $n > 0 ? round(($haData['lt_3sd'] / $n) * 100, 1) : 0,
+                    'lt_2sd_pct' => $n > 0 ? round(($haData['lt_2sd'] / $n) * 100, 1) : 0,
+                    'mean' => count($haData['heights']) > 0 ? round(array_sum($haData['heights']) / count($haData['heights']), 2) : 0,
+                    'sd' => count($haData['heights']) > 1 ? round($this->calculateSD($haData['heights']), 2) : 0,
+                ],
+                'wh' => [
+                    'lt_3sd_pct' => $n > 0 ? round(($whData['lt_3sd'] / $n) * 100, 1) : 0,
+                    'lt_2sd_pct' => $n > 0 ? round(($whData['lt_2sd'] / $n) * 100, 1) : 0,
+                    'gt_1sd_pct' => $n > 0 ? round(($whData['gt_1sd'] / $n) * 100, 1) : 0,
+                    'gt_2sd_pct' => $n > 0 ? round(($whData['gt_2sd'] / $n) * 100, 1) : 0,
+                    'gt_3sd_pct' => $n > 0 ? round(($whData['gt_3sd'] / $n) * 100, 1) : 0,
+                    'mean' => count($whData['wh_zscores']) > 0 ? round(array_sum($whData['wh_zscores']) / count($whData['wh_zscores']), 2) : 0,
+                    'sd' => count($whData['wh_zscores']) > 1 ? round($this->calculateSD($whData['wh_zscores']), 2) : 0,
+                ],
+            ];
+
+            $totalData['n'] += $n;
+        }
+
+        // Tính tổng (Total 0-60)
+        $totalN = $totalData['n'];
+        $stats['total'] = [
+            'label' => 'Total (0-60)',
+            'n' => $totalN,
+            'wa' => [
+                'lt_3sd_pct' => 0,
+                'lt_2sd_pct' => 0,
+                'mean' => count($totalData['wa']) > 0 ? round(array_sum($totalData['wa']) / count($totalData['wa']), 2) : 0,
+                'sd' => count($totalData['wa']) > 1 ? round($this->calculateSD($totalData['wa']), 2) : 0,
+            ],
+            'ha' => [
+                'lt_3sd_pct' => 0,
+                'lt_2sd_pct' => 0,
+                'mean' => count($totalData['ha']) > 0 ? round(array_sum($totalData['ha']) / count($totalData['ha']), 2) : 0,
+                'sd' => count($totalData['ha']) > 1 ? round($this->calculateSD($totalData['ha']), 2) : 0,
+            ],
+            'wh' => [
+                'lt_3sd_pct' => 0,
+                'lt_2sd_pct' => 0,
+                'gt_1sd_pct' => 0,
+                'gt_2sd_pct' => 0,
+                'gt_3sd_pct' => 0,
+                'mean' => count($totalData['wh']) > 0 ? round(array_sum($totalData['wh']) / count($totalData['wh']), 2) : 0,
+                'sd' => count($totalData['wh']) > 1 ? round($this->calculateSD($totalData['wh']), 2) : 0,
+            ],
+        ];
+
+        // Tính lại % cho total
+        foreach ($records as $record) {
+            $waRow = $record->WeightForAge();
+            if ($waRow) {
+                if ($record->weight < $waRow['-3SD']) $stats['total']['wa']['lt_3sd_pct']++;
+                if ($record->weight < $waRow['-2SD']) $stats['total']['wa']['lt_2sd_pct']++;
+            }
+            
+            $haRow = $record->HeightForAge();
+            if ($haRow) {
+                if ($record->height < $haRow['-3SD']) $stats['total']['ha']['lt_3sd_pct']++;
+                if ($record->height < $haRow['-2SD']) $stats['total']['ha']['lt_2sd_pct']++;
+            }
+            
+            $whRow = $record->WeightForHeight();
+            if ($whRow) {
+                if ($record->weight < $whRow['-3SD']) $stats['total']['wh']['lt_3sd_pct']++;
+                if ($record->weight < $whRow['-2SD']) $stats['total']['wh']['lt_2sd_pct']++;
+                if ($record->weight > $whRow['1SD']) $stats['total']['wh']['gt_1sd_pct']++;
+                if ($record->weight > $whRow['2SD']) $stats['total']['wh']['gt_2sd_pct']++;
+                if ($record->weight > $whRow['3SD']) $stats['total']['wh']['gt_3sd_pct']++;
+            }
+        }
+
+        if ($totalN > 0) {
+            $stats['total']['wa']['lt_3sd_pct'] = round(($stats['total']['wa']['lt_3sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wa']['lt_2sd_pct'] = round(($stats['total']['wa']['lt_2sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['ha']['lt_3sd_pct'] = round(($stats['total']['ha']['lt_3sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['ha']['lt_2sd_pct'] = round(($stats['total']['ha']['lt_2sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wh']['lt_3sd_pct'] = round(($stats['total']['wh']['lt_3sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wh']['lt_2sd_pct'] = round(($stats['total']['wh']['lt_2sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wh']['gt_1sd_pct'] = round(($stats['total']['wh']['gt_1sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wh']['gt_2sd_pct'] = round(($stats['total']['wh']['gt_2sd_pct'] / $totalN) * 100, 1);
+            $stats['total']['wh']['gt_3sd_pct'] = round(($stats['total']['wh']['gt_3sd_pct'] / $totalN) * 100, 1);
+        }
+
+        return $stats;
+    }
+
+    private function calculateSD($values)
+    {
+        $count = count($values);
+        if ($count < 2) return 0;
+        
+        $mean = array_sum($values) / $count;
+        $variance = array_sum(array_map(function($val) use ($mean) {
+            return pow($val - $mean, 2);
+        }, $values)) / ($count - 1);
+        
+        return sqrt($variance);
+    }
 }
+
