@@ -590,6 +590,226 @@
     </div>
 </div>
 
+<!-- TABLE 6: WHO Male Statistics -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">6. Bảng tổng hợp WHO - Set 2: Male</h4>
+                <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-male', 'WHO_Male_Statistics')">
+                    <i class="uil uil-export"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm" id="table-who-male" style="font-size: 12px;">
+                        <thead class="table-light">
+                            <tr>
+                                <th rowspan="2" class="align-middle">Age groups</th>
+                                <th rowspan="2" class="align-middle text-center">N</th>
+                                <th colspan="4" class="text-center bg-info bg-opacity-10">Weight-for-age %</th>
+                                <th colspan="4" class="text-center bg-warning bg-opacity-10">Length/height-for-age %</th>
+                                <th colspan="7" class="text-center bg-success bg-opacity-10">Weight-for-length/height %</th>
+                            </tr>
+                            <tr>
+                                <!-- Weight-for-age -->
+                                <th class="text-center bg-info bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-info bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-info bg-opacity-10">Mean</th>
+                                <th class="text-center bg-info bg-opacity-10">SD</th>
+                                <!-- Length/height-for-age -->
+                                <th class="text-center bg-warning bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-warning bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-warning bg-opacity-10">Mean</th>
+                                <th class="text-center bg-warning bg-opacity-10">SD</th>
+                                <!-- Weight-for-length/height -->
+                                <th class="text-center bg-success bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +1SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +2SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +3SD</th>
+                                <th class="text-center bg-success bg-opacity-10">Mean</th>
+                                <th class="text-center bg-success bg-opacity-10">SD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(isset($whoMaleStats['total']))
+                            <tr class="fw-bold table-primary">
+                                <td>{{ $whoMaleStats['total']['label'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['n'] }}</td>
+                                <!-- Weight-for-age -->
+                                <td class="text-center">{{ $whoMaleStats['total']['wa']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wa']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wa']['mean'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wa']['sd'] }}</td>
+                                <!-- Height-for-age -->
+                                <td class="text-center">{{ $whoMaleStats['total']['ha']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['ha']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['ha']['mean'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['ha']['sd'] }}</td>
+                                <!-- Weight-for-height -->
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_1sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['mean'] }}</td>
+                                <td class="text-center">{{ $whoMaleStats['total']['wh']['sd'] }}</td>
+                            </tr>
+                            @endif
+
+                            @foreach(['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'] as $ageGroup)
+                                @if(isset($whoMaleStats[$ageGroup]))
+                                <tr>
+                                    <td>({{ $whoMaleStats[$ageGroup]['label'] }})</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['n'] }}</td>
+                                    <!-- Weight-for-age -->
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['sd'] }}</td>
+                                    <!-- Height-for-age -->
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['sd'] }}</td>
+                                    <!-- Weight-for-height -->
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_1sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['sd'] }}</td>
+                                </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong><i class="uil uil-info-circle"></i> Giải thích:</strong>
+                    <ul class="mb-0 mt-2" style="font-size: 13px;">
+                        <li><strong>Set 2: Male</strong> - Bảng tổng hợp chỉ dành cho bé trai theo chuẩn WHO</li>
+                        <li>Các chỉ số thống kê tương tự như bảng Set 1 nhưng chỉ tính cho trẻ nam</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABLE 7: WHO Female Statistics -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">7. Bảng tổng hợp WHO - Set 3: Females</h4>
+                <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-female', 'WHO_Female_Statistics')">
+                    <i class="uil uil-export"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm" id="table-who-female" style="font-size: 12px;">
+                        <thead class="table-light">
+                            <tr>
+                                <th rowspan="2" class="align-middle">Age groups</th>
+                                <th rowspan="2" class="align-middle text-center">N</th>
+                                <th colspan="4" class="text-center bg-info bg-opacity-10">Weight-for-age %</th>
+                                <th colspan="4" class="text-center bg-warning bg-opacity-10">Length/height-for-age %</th>
+                                <th colspan="7" class="text-center bg-success bg-opacity-10">Weight-for-length/height %</th>
+                            </tr>
+                            <tr>
+                                <!-- Weight-for-age -->
+                                <th class="text-center bg-info bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-info bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-info bg-opacity-10">Mean</th>
+                                <th class="text-center bg-info bg-opacity-10">SD</th>
+                                <!-- Length/height-for-age -->
+                                <th class="text-center bg-warning bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-warning bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-warning bg-opacity-10">Mean</th>
+                                <th class="text-center bg-warning bg-opacity-10">SD</th>
+                                <!-- Weight-for-length/height -->
+                                <th class="text-center bg-success bg-opacity-10">% < -3SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < -2SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +1SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +2SD</th>
+                                <th class="text-center bg-success bg-opacity-10">% < +3SD</th>
+                                <th class="text-center bg-success bg-opacity-10">Mean</th>
+                                <th class="text-center bg-success bg-opacity-10">SD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(isset($whoFemaleStats['total']))
+                            <tr class="fw-bold table-primary">
+                                <td>{{ $whoFemaleStats['total']['label'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['n'] }}</td>
+                                <!-- Weight-for-age -->
+                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['mean'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['sd'] }}</td>
+                                <!-- Height-for-age -->
+                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['mean'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['sd'] }}</td>
+                                <!-- Weight-for-height -->
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['lt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['lt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_1sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_2sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_3sd_pct'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['mean'] }}</td>
+                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['sd'] }}</td>
+                            </tr>
+                            @endif
+
+                            @foreach(['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'] as $ageGroup)
+                                @if(isset($whoFemaleStats[$ageGroup]))
+                                <tr>
+                                    <td>({{ $whoFemaleStats[$ageGroup]['label'] }})</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['n'] }}</td>
+                                    <!-- Weight-for-age -->
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['sd'] }}</td>
+                                    <!-- Height-for-age -->
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['sd'] }}</td>
+                                    <!-- Weight-for-height -->
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['lt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['lt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_1sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_2sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_3sd_pct'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['mean'] }}</td>
+                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['sd'] }}</td>
+                                </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong><i class="uil uil-info-circle"></i> Giải thích:</strong>
+                    <ul class="mb-0 mt-2" style="font-size: 13px;">
+                        <li><strong>Set 3: Females</strong> - Bảng tổng hợp chỉ dành cho bé gái theo chuẩn WHO</li>
+                        <li>Các chỉ số thống kê tương tự như bảng Set 1 nhưng chỉ tính cho trẻ nữ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>

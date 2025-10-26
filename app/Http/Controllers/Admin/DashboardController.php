@@ -295,6 +295,12 @@ class DashboardController extends Controller
         // 5. Bảng tổng hợp WHO (Sexes combined)
         $whoCombinedStats = $this->getWHOCombinedStatistics($records);
 
+        // 6. Bảng tổng hợp WHO - Male only
+        $whoMaleStats = $this->getWHOCombinedStatistics($records, 1); // gender = 1 (male)
+
+        // 7. Bảng tổng hợp WHO - Female only
+        $whoFemaleStats = $this->getWHOCombinedStatistics($records, 0); // gender = 0 (female)
+
         // Get filter data
         $provinces = Province::byUserRole($user)->select('name','code')->get();
         $districts = [];
@@ -313,6 +319,8 @@ class DashboardController extends Controller
             'weightForHeightStats',
             'meanStats',
             'whoCombinedStats',
+            'whoMaleStats',
+            'whoFemaleStats',
             'provinces',
             'districts',
             'wards',
@@ -702,8 +710,15 @@ class DashboardController extends Controller
         exit;
     }
 
-    private function getWHOCombinedStatistics($records)
+    private function getWHOCombinedStatistics($records, $gender = null)
     {
+        // Lọc theo giới tính nếu có
+        if ($gender !== null) {
+            $records = $records->filter(function($record) use ($gender) {
+                return $record->gender == $gender;
+            });
+        }
+
         // Định nghĩa các nhóm tuổi WHO
         $ageGroups = [
             '0-5' => ['min' => 0, 'max' => 5, 'label' => '0-5'],
