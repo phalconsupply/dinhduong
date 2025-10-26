@@ -178,6 +178,36 @@
             <p><em>( Chuẩn chiều cao theo tuổi: {{$row->HeightForAge()['Median'] ?? 'Chưa có dữ liệu'}} cm )</em></p>
         </div>
         <div class="cf"></div>
+        
+        <!-- Thông tin lúc sinh -->
+        @if($row->birth_weight || $row->gestational_age)
+        <div class="cl" style="margin-top:10px"></div>
+        <div class="col50">
+            <p class="label">Cân nặng lúc sinh:</p>
+            <p class="value">
+                @if($row->birth_weight)
+                    {{number_format($row->birth_weight, 0, ',', '.')}} gram
+                    @if($row->birth_weight_category)
+                        <span style="color: 
+                            @if($row->birth_weight_category == 'Nhẹ cân') #856404
+                            @elseif($row->birth_weight_category == 'Đủ cân') #155724
+                            @elseif($row->birth_weight_category == 'Thừa cân') #721c24
+                            @endif
+                            ; font-weight: bold;">
+                            ({{$row->birth_weight_category}})
+                        </span>
+                    @endif
+                @else
+                    Chưa có dữ liệu
+                @endif
+            </p>
+        </div>
+        <div class="col50">
+            <p class="label">Tuổi thai lúc sinh:</p>
+            <p class="value">{{$row->gestational_age ?? 'Chưa có dữ liệu'}}</p>
+        </div>
+        <div class="cf"></div>
+        @endif
     </div>
 
     <div class="print-info">

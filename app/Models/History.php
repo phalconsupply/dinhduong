@@ -44,7 +44,11 @@ class History extends Model
         'result_weight_age',
         'result_weight_height',
         'thumb',
-        'advice_content'
+        'advice_content',
+        // Thông tin lúc sinh
+        'birth_weight',           // Cân nặng lúc sinh (gram)
+        'gestational_age',        // Tuổi thai lúc sinh (Đủ tháng / Thiếu tháng)
+        'birth_weight_category'   // Phân loại cân nặng lúc sinh
     ];
 
     protected $casts = [

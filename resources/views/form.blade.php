@@ -153,6 +153,34 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Thông tin lúc sinh -->
+                                <div class="pro5-divider"></div>
+                                <div class="clearfix"></div>
+                                <div class="row from-number">
+                                    <div class="col-sm-4">
+                                        <div class="form-group input-group">
+                                            <input id="birth-weight" min="0" type="number" step="1" name="birth_weight" value="{{old('birth_weight', $item->birth_weight)}}" class="form-control" placeholder="Cân nặng lúc sinh" aria-describedby="addon-birth-weight">
+                                            <span class="input-group-addon" id="addon-birth-weight">gram</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <select name="gestational_age" id="gestational-age" class="form-control">
+                                                <option value="">-- Tuổi thai lúc sinh --</option>
+                                                <option value="Đủ tháng" {{old('gestational_age', $item->gestational_age) == 'Đủ tháng' ? 'selected' : ''}}>Đủ tháng</option>
+                                                <option value="Thiếu tháng" {{old('gestational_age', $item->gestational_age) == 'Thiếu tháng' ? 'selected' : ''}}>Thiếu tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <input id="birth-weight-category" type="text" name="birth_weight_category_display" value="{{old('birth_weight_category', $item->birth_weight_category)}}" class="form-control" placeholder="Phân loại cân nặng" readonly style="background-color: #f5f5f5;">
+                                            <input type="hidden" name="birth_weight_category" id="birth-weight-category-hidden" value="{{old('birth_weight_category', $item->birth_weight_category)}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="clearfix"></div>
                                 <div class="row" style="width: 100%;">
                                     <div class="col-sm-12 text-center">
@@ -611,6 +639,56 @@
                     document.getElementById('title-name').style.display = 'none'; // ẩn title
                 }
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Logic phân loại cân nặng lúc sinh
+        document.getElementById('birth-weight').addEventListener('input', function() {
+            classifyBirthWeight();
+        });
+
+        function classifyBirthWeight() {
+            const birthWeight = parseFloat(document.getElementById('birth-weight').value);
+            const categoryDisplay = document.getElementById('birth-weight-category');
+            const categoryHidden = document.getElementById('birth-weight-category-hidden');
+            
+            if (isNaN(birthWeight) || birthWeight <= 0) {
+                categoryDisplay.value = '';
+                categoryHidden.value = '';
+                categoryDisplay.style.backgroundColor = '#f5f5f5';
+                categoryDisplay.style.color = '#333';
+                return;
+            }
+
+            let category = '';
+            let bgColor = '#f5f5f5';
+            let textColor = '#333';
+
+            if (birthWeight < 2500) {
+                category = 'Nhẹ cân';
+                bgColor = '#fff3cd'; // Vàng nhạt
+                textColor = '#856404';
+            } else if (birthWeight >= 2500 && birthWeight <= 4000) {
+                category = 'Đủ cân';
+                bgColor = '#d4edda'; // Xanh nhạt
+                textColor = '#155724';
+            } else if (birthWeight > 4000) {
+                category = 'Thừa cân';
+                bgColor = '#f8d7da'; // Đỏ nhạt
+                textColor = '#721c24';
+            }
+
+            categoryDisplay.value = category;
+            categoryHidden.value = category;
+            categoryDisplay.style.backgroundColor = bgColor;
+            categoryDisplay.style.color = textColor;
+            categoryDisplay.style.fontWeight = 'bold';
+        }
+
+        // Chạy phân loại khi load trang nếu đã có giá trị
+        window.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('birth-weight').value) {
+                classifyBirthWeight();
             }
         });
     </script>
