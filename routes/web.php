@@ -21,11 +21,15 @@ Route::get('/auth/logout', $namespace.'AuthController@logout')->name('auth.logou
 
 //Web
 Route::get('/', [WebController::class, 'index'])->name('index');
+
+// Specific routes MUST come BEFORE wildcard routes
 Route::get('/ketqua', [WebController::class, 'result'])->name('result');
 Route::get('/in', [WebController::class, 'print'])->name('print');
 Route::get('/ajax/tinh-ngay-sinh', [WebController::class, 'ajax_tinh_ngay_sinh']);
+Route::post('/post', [WebController::class, 'form_post'])->name('form.post');
+
+// Wildcard route MUST be at the END
 Route::get('/{slug}', [WebController::class, 'form'])->name('form.index');
-Route::post( '/post', [WebController::class, 'form_post'])->name('form.post');
 //Route::get('/run', $namespace.'WebController@run');
 //Ajax
 Route::get('/web/ajax_get_district_by_province', $namespace.'WebController@ajax_get_district_by_province')->name('web.ajax_get_district_by_province');

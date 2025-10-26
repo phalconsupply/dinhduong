@@ -1,0 +1,12 @@
+Điều chỉnh logic phân loại đối tượng sau nhập liệu:
+
+A. Cân nặng theo tuổi (Weight for Age - W/A): căn cứ kết quả Z-score của trẻ
+function check_weight_for_age()
+thực hiện phân loại như sau:
+| Phân loại                | Z-score                                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| Trẻ thiếu cân Mức độ nặng      | **< -3 SD**                                                                                  |
+| Trẻ thiếu cân mức độ vừa       | **≥ -3 SD đến < -2 SD**                                                                      |
+| Trẻ cân nặng mức bình thường              | **≥ -2 SD đến ≤ +2 SD**                                                                      |
+| Trẻ nặng hơn mức bình thường | **> +2 SD** *(hiếm, thường không dùng để đánh giá thừa cân vì WFA không phản ánh chiều cao)* |
+

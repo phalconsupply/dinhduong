@@ -1,0 +1,7 @@
+Trong bảng nhập liệu khảo sát form.blade.php cần bổ sung thêm các trường nhập liệu khảo sát sau
+1. Cân nặng lúc sinh
+- đơn vị tính : Gram
+- Sau khi nhập cân nặng hệ thống sẽ tự tính toán và phân loại như sau: 2500 gram => Nhẹ cân ; ≥ 2500 gram => Đủ cân ; > 4000 gram => Thừa cân
+2. Tuổi thai lúc sinh
+- Chọn một trong hai tuỳ chọn: Đủ tháng, Thiếu tháng
+Sau khi bổ sung form thì kiểm tra logic, bổ sung thông tin vào trang in kết quả (in.blade) và Migration các trường dữ liệu mới vào db

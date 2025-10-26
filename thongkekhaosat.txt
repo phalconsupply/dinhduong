@@ -1,0 +1,94 @@
+đặc điểm mẫu khảo sát
+Tổng số trẻ khảo sát	Số lượng trẻ 0–59 tháng
+Phân theo giới tính	Nam / Nữ
+Phân theo nhóm tuổi	0–5 tháng, 6–11 tháng, 12–23 tháng, 24–35 tháng, 36–47 tháng, 48–59 tháng
+Địa bàn khảo sát	Tên xã, huyện, tỉnh
+Thời gian khảo sát	Ngày/tháng/năm
+
+1. Bảng phân loại theo cân nặng theo tuổi (W/A)
+Nhóm tuổi	Nam (%)	Nữ (%)	Chung (%)
+Suy dinh dưỡng nặng (< -3SD)			
+Suy dinh dưỡng vừa (-3SD đến < -2SD)			
+Bình thường (-2SD đến +2SD)			
+Thừa cân (> +2SD)			
+
+👉 Chỉ tiêu WHO:
+Suy dinh dưỡng thể nhẹ cân (W/A < -2SD)
+Suy dinh dưỡng nặng (W/A < -3SD)
+
+2. Bảng phân loại theo chiều cao theo tuổi (H/A)
+Nhóm tuổi	Nam (%)	Nữ (%)	Chung (%)
+Thấp còi nặng (< -3SD)			
+Thấp còi vừa (-3SD đến < -2SD)			
+Bình thường (-2SD đến +2SD)			
+
+👉 Chỉ tiêu WHO:
+Suy dinh dưỡng thể thấp còi (H/A < -2SD)
+Thấp còi nặng (H/A < -3SD)
+
+3. Bảng phân loại theo cân nặng theo chiều cao (W/H)
+Nhóm tuổi	Nam (%)	Nữ (%)	Chung (%)
+Gầy còm nặng (< -3SD)			
+Gầy còm vừa (-3SD đến < -2SD)			
+Bình thường (-2SD đến +2SD)			
+Thừa cân (> +2SD đến +3SD)			
+Béo phì (> +3SD)			
+
+👉 Chỉ tiêu WHO:
+Gầy còm: W/H < -2SD
+Thừa cân: W/H > +2SD
+Béo phì: W/H > +3SD
+
+IV. bảng chỉ số trung bình và độ lệch chuẩn (Mean ± SD)
+### NHIỆM VỤ:
+Từ csdl khảo sát trẻ em 0–59 tháng, tạo các bảng thống kê mô tả **Mean ± SD** (trung bình ± độ lệch chuẩn) cho các chỉ số nhân trắc và Z-score theo chuẩn WHO.
+
+### DỮ LIỆU ĐẦU VÀO:
+dữ liệu khảo sát dinh dưỡng đã có trong db
+
+### QUY TRÌNH XỬ LÝ DỮ LIỆU:
+
+1. căn cứ Zscore trong dữ liệu khảo sát
+
+2. **Lọc dữ liệu không hợp lệ và có thông báo cho quản trị viên:**
+   - Loại bỏ Z-score < -6 hoặc > +6
+   - Loại bỏ giá trị không hợp lý (ví dụ: trẻ 36 tháng nặng < 5 kg)
+
+3. **Phân nhóm dữ liệu:**
+   - Theo giới tính: Nam / Nữ
+   - Theo nhóm tuổi: 0–5, 6–11, 12–23, 24–35, 36–47, 48–59 tháng
+   - (Tùy chọn filter) Theo địa phương
+
+4. **Tính toán cho mỗi nhóm:**
+   - Mean và SD cho các chỉ số:
+     - Ccân nặng kg
+     - chiều cao cm
+     - W/A Z-score
+     - H/A Z-score
+     - W/H Z-score
+   - Bao gồm số trẻ trong nhóm
+
+5. **Định dạng đầu ra:**
+   - CSV với các cột:
+     Nhom_tuoi,Gioi_tinh,Dia_ban,Chi_so,Mean,SD,So_tre
+
+6. **Ví dụ kết quả:**
+
+```csv
+Nhom_tuoi,Gioi_tinh,Dia_ban,Chi_so,Mean,SD,So_tre
+0-5_thang,Nam,địa phương,Can_nang_(kg),6.5,0.9,42
+0-5_thang,Nam,địa phương,Chieu_cao_(cm),63.4,2.8,42
+0-5_thang,Nam,địa phương,W/A_Zscore,-0.50,1.00,42
+0-5_thang,Nam,địa phương,H/A_Zscore,-0.80,1.10,42
+0-5_thang,Nam,địa phương,W/H_Zscore,-0.30,0.90,42
+24-35_thang,Nữ,địa phương,H/A_Zscore,-1.40,1.00,52
+24-35_thang,Nữ,địa phương,W/H_Zscore,-0.25,0.80,52
+
+7. Sau khi tạo bảng, tóm tắt ngắn các điểm chính:
+Nhóm tuổi nào có Z-score thấp nhất?
+Khác biệt theo giới tính?
+Nhóm nào có dấu hiệu thấp còi, nhẹ cân hoặc gầy còm (Mean < -2 SD)?
+8. yêu cầu đầu ra 
+Xuất bảng CSV hoặc Markdown table.
+phân tích nhóm tuổi nào có tỷ lệ thấp còi (H/A < -2 SD) cao nhất và tóm tắt kết quả.
+tạo biểu đồ trực quan

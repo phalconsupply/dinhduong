@@ -1,0 +1,43 @@
+xuất bảng thống kê tổng hợp tình trạng dinh dưỡng theo định dạng mẫu sau (bảng "Set 1: Sexes combined").
+Yêu cầu chi tiết:
+Phân nhóm tuổi:
+(0–5), (6–11), (12–23), (24–35), (36–47), (48–60) tháng.
+Hàng đầu tiên là tổng hợp tất cả (Total 0–60).
+Các chỉ số cần tính:
+Weight-for-age %
+% < -3SD
+% < -2SD
+Mean
+SD
+Length/height-for-age %
+% < -3SD
+% < -2SD
+Mean
+SD
+Weight-for-length/height %
+% < -3SD
+% < -2SD
+% < +1SD
+% < +2SD
+% < +3SD
+Mean
+SD
+
+Yêu cầu xuất bảng:
+Hiển thị các cột và nhóm chỉ số
+Đơn vị hiển thị: %.
+Làm tròn số ở mức 1 chữ số thập phân.
+Có thể xuất ra định dạng bảng (Markdown hoặc CSV).
+
+Mục tiêu:
+Tạo được bảng tổng hợp hoàn chỉnh, có cấu trúc giống ảnh mẫu với các nhóm tuổi và thông số thống kê rõ ràng.
+Cho phép người dùng chọn lọc theo giới tính hoặc toàn bộ (Sexes combined).
+👉 Kết quả đầu ra mong muốn:
+Một bảng thống kê có định dạng và nội dung tương tự như:
+Set 1: Sexes combined
+| Age groups | N | Weight-for-age % |  |  | Length/height-for-age % |  |  | Weight-for-length/height % |  |  |
+|-------------|---|------------------|--|--|--------------------------|--|--|-----------------------------|--|--|
+|             |   | %<-3SD | %<-2SD | Mean | SD | %<-3SD | %<-2SD | Mean | SD | %<-3SD | %<-2SD | %<+1SD | %<+2SD | %<+3SD | Mean | SD |
+| Total (0–60) | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+| (0–5) | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+Cho phép người dùng chọn định dạng xuất: CSV / Excel / HTML table.
