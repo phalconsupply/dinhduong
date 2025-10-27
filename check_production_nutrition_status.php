@@ -4,14 +4,54 @@
  * Run this on cPanel to check if nutrition_status needs to be populated
  */
 
-require __DIR__.'/vendor/autoload.php';
+// Tự động tìm đường dẫn đúng cho autoload.php
+$autoloadPaths = [
+    __DIR__.'/vendor/autoload.php',           // Nếu script ở root
+    __DIR__.'/../vendor/autoload.php',        // Nếu script ở public
+    __DIR__.'/../../vendor/autoload.php',     // Nếu script ở public/subfolder
+];
 
-$app = require_once __DIR__.'/bootstrap/app.php';
+$autoloadFound = false;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require $path;
+        $autoloadFound = true;
+        break;
+    }
+}
+
+if (!$autoloadFound) {
+    die("ERROR: Không tìm thấy vendor/autoload.php\nVui lòng chạy script từ thư mục root của project (cùng cấp với folder vendor)\n");
+}
+
+// Tự động tìm đường dẫn cho bootstrap/app.php
+$bootstrapPaths = [
+    __DIR__.'/bootstrap/app.php',
+    __DIR__.'/../bootstrap/app.php',
+];
+
+$bootstrapFound = false;
+foreach ($bootstrapPaths as $path) {
+    if (file_exists($path)) {
+        $app = require_once $path;
+        $bootstrapFound = true;
+        break;
+    }
+}
+
+if (!$bootstrapFound) {
+    die("ERROR: Không tìm thấy bootstrap/app.php\n");
+}
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 use App\Models\History;
 use Illuminate\Support\Facades\DB;
+
+// Set headers nếu chạy qua web
+if (php_sapi_name() !== 'cli') {
+    header('Content-Type: text/plain; charset=utf-8');
+}
 
 echo "=== Kiểm tra dữ liệu nutrition_status trên server ===\n\n";
 
