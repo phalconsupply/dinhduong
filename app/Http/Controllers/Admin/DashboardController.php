@@ -304,6 +304,12 @@ class DashboardController extends Controller
         // 8. Bảng đặc điểm dân số của trẻ (Population Characteristics)
         $table8Stats = $this->getPopulationCharacteristics($records);
 
+        // 9. Bảng tình trạng dinh dưỡng trẻ dưới 2 tuổi (< 24 tháng)
+        $table9Stats = $this->getNutritionStatsUnder24Months($records);
+
+        // 10. Bảng tình trạng dinh dưỡng trẻ dưới 5 tuổi (< 60 tháng)
+        $table10Stats = $this->getNutritionStatsUnder60Months($records);
+
         // Get filter data
         $provinces = Province::byUserRole($user)->select('name','code')->get();
         $districts = [];
@@ -325,6 +331,8 @@ class DashboardController extends Controller
             'whoMaleStats',
             'whoFemaleStats',
             'table8Stats',
+            'table9Stats',
+            'table10Stats',
             'provinces',
             'districts',
             'wards',
@@ -1112,6 +1120,384 @@ class DashboardController extends Controller
         }, $values)) / ($count - 1);
         
         return sqrt($variance);
+    }
+
+    /**
+     * Bảng 9: Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)
+     */
+    private function getNutritionStatsUnder24Months($records)
+    {
+        // Lọc trẻ < 24 tháng
+        $children = $records->filter(function($record) {
+            return $record->age < 24;
+        });
+
+        $totalChildren = $children->count();
+
+        if ($totalChildren == 0) {
+            return $this->getEmptyNutritionStats();
+        }
+
+        $stats = [];
+
+        // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
+        $waUnderweight = 0; // < -2SD
+        $waNormal = 0;      // -2SD to +2SD
+        $waOverweight = 0;  // > +2SD
+
+        foreach ($children as $child) {
+            $waRow = $child->WeightForAge();
+            if ($waRow && isset($waRow['Median']) && isset($waRow['-2SD']) && isset($waRow['2SD'])) {
+                $weight = $child->weight;
+                
+                if ($weight < $waRow['-2SD']) {
+                    $waUnderweight++;
+                } elseif ($weight >= $waRow['-2SD'] && $weight <= $waRow['2SD']) {
+                    $waNormal++;
+                } elseif ($weight > $waRow['2SD']) {
+                    $waOverweight++;
+                }
+            }
+        }
+
+        $stats['weight_for_age'] = [
+            'underweight' => [
+                'count' => $waUnderweight,
+                'percentage' => $totalChildren > 0 ? round(($waUnderweight / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $waNormal,
+                'percentage' => $totalChildren > 0 ? round(($waNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $waOverweight,
+                'percentage' => $totalChildren > 0 ? round(($waOverweight / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 2. Suy dinh dưỡng thể thấp còi (CC/T - Height-for-Age)
+        $haStunted = 0;  // < -2SD
+        $haNormal = 0;   // -2SD to +2SD
+        $haTall = 0;     // > +2SD
+
+        foreach ($children as $child) {
+            $haRow = $child->HeightForAge();
+            if ($haRow && isset($haRow['Median']) && isset($haRow['-2SD']) && isset($haRow['2SD'])) {
+                $height = $child->height;
+                
+                if ($height < $haRow['-2SD']) {
+                    $haStunted++;
+                } elseif ($height >= $haRow['-2SD'] && $height <= $haRow['2SD']) {
+                    $haNormal++;
+                } elseif ($height > $haRow['2SD']) {
+                    $haTall++;
+                }
+            }
+        }
+
+        $stats['height_for_age'] = [
+            'stunted' => [
+                'count' => $haStunted,
+                'percentage' => $totalChildren > 0 ? round(($haStunted / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $haNormal,
+                'percentage' => $totalChildren > 0 ? round(($haNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'tall' => [
+                'count' => $haTall,
+                'percentage' => $totalChildren > 0 ? round(($haTall / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 3. Suy dinh dưỡng thể gầy còm (CN/CC - Weight-for-Height)
+        $whWasted = 0;      // < -2SD
+        $whNormal = 0;      // -2SD to +2SD
+        $whOverweight = 0;  // > +2SD and <= +3SD
+        $whObese = 0;       // > +3SD
+        $combinedMalnutrition = 0; // CN/CC < -2SD AND CC/T < -2SD
+
+        foreach ($children as $child) {
+            $whRow = $child->WeightForHeight();
+            $haRow = $child->HeightForAge();
+            
+            if ($whRow && isset($whRow['Median']) && isset($whRow['-2SD']) && isset($whRow['2SD']) && isset($whRow['3SD'])) {
+                $weight = $child->weight;
+                
+                if ($weight < $whRow['-2SD']) {
+                    $whWasted++;
+                    // Kiểm tra SDD phối hợp
+                    if ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']) {
+                        $combinedMalnutrition++;
+                    }
+                } elseif ($weight >= $whRow['-2SD'] && $weight <= $whRow['2SD']) {
+                    $whNormal++;
+                } elseif ($weight > $whRow['2SD'] && $weight <= $whRow['3SD']) {
+                    $whOverweight++;
+                } elseif ($weight > $whRow['3SD']) {
+                    $whObese++;
+                }
+            }
+        }
+
+        $stats['weight_for_height'] = [
+            'wasted' => [
+                'count' => $whWasted,
+                'percentage' => $totalChildren > 0 ? round(($whWasted / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $whNormal,
+                'percentage' => $totalChildren > 0 ? round(($whNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $whOverweight,
+                'percentage' => $totalChildren > 0 ? round(($whOverweight / $totalChildren) * 100, 2) : 0,
+            ],
+            'obese' => [
+                'count' => $whObese,
+                'percentage' => $totalChildren > 0 ? round(($whObese / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['combined'] = [
+            'combined_malnutrition' => [
+                'count' => $combinedMalnutrition,
+                'percentage' => $totalChildren > 0 ? round(($combinedMalnutrition / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
+        $anyMalnutrition = 0;
+        foreach ($children as $child) {
+            $waRow = $child->WeightForAge();
+            $haRow = $child->HeightForAge();
+            $whRow = $child->WeightForHeight();
+
+            $hasWaMalnutrition = ($waRow && isset($waRow['-2SD']) && $child->weight < $waRow['-2SD']);
+            $hasHaMalnutrition = ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']);
+            $hasWhMalnutrition = ($whRow && isset($whRow['-2SD']) && $child->weight < $whRow['-2SD']);
+
+            // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
+            if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                $anyMalnutrition++;
+            }
+        }
+
+        $stats['summary'] = [
+            'any_malnutrition' => [
+                'count' => $anyMalnutrition,
+                'percentage' => $totalChildren > 0 ? round(($anyMalnutrition / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['total_children'] = $totalChildren;
+
+        return $stats;
+    }
+
+    /**
+     * Bảng 10: Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)
+     */
+    private function getNutritionStatsUnder60Months($records)
+    {
+        // Lọc trẻ < 60 tháng (5 tuổi)
+        $children = $records->filter(function($record) {
+            return $record->age < 60;
+        });
+
+        $totalChildren = $children->count();
+
+        if ($totalChildren == 0) {
+            return $this->getEmptyNutritionStats();
+        }
+
+        $stats = [];
+
+        // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
+        $waUnderweight = 0; // < -2SD
+        $waNormal = 0;      // -2SD to +2SD
+        $waOverweight = 0;  // > +2SD
+
+        foreach ($children as $child) {
+            $waRow = $child->WeightForAge();
+            if ($waRow && isset($waRow['Median']) && isset($waRow['-2SD']) && isset($waRow['2SD'])) {
+                $weight = $child->weight;
+                
+                if ($weight < $waRow['-2SD']) {
+                    $waUnderweight++;
+                } elseif ($weight >= $waRow['-2SD'] && $weight <= $waRow['2SD']) {
+                    $waNormal++;
+                } elseif ($weight > $waRow['2SD']) {
+                    $waOverweight++;
+                }
+            }
+        }
+
+        $stats['weight_for_age'] = [
+            'underweight' => [
+                'count' => $waUnderweight,
+                'percentage' => $totalChildren > 0 ? round(($waUnderweight / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $waNormal,
+                'percentage' => $totalChildren > 0 ? round(($waNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $waOverweight,
+                'percentage' => $totalChildren > 0 ? round(($waOverweight / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 2. Suy dinh dưỡng thể thấp còi (CC/T - Height-for-Age)
+        $haStunted = 0;  // < -2SD
+        $haNormal = 0;   // -2SD to +2SD
+        $haTall = 0;     // > +2SD
+
+        foreach ($children as $child) {
+            $haRow = $child->HeightForAge();
+            if ($haRow && isset($haRow['Median']) && isset($haRow['-2SD']) && isset($haRow['2SD'])) {
+                $height = $child->height;
+                
+                if ($height < $haRow['-2SD']) {
+                    $haStunted++;
+                } elseif ($height >= $haRow['-2SD'] && $height <= $haRow['2SD']) {
+                    $haNormal++;
+                } elseif ($height > $haRow['2SD']) {
+                    $haTall++;
+                }
+            }
+        }
+
+        $stats['height_for_age'] = [
+            'stunted' => [
+                'count' => $haStunted,
+                'percentage' => $totalChildren > 0 ? round(($haStunted / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $haNormal,
+                'percentage' => $totalChildren > 0 ? round(($haNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'tall' => [
+                'count' => $haTall,
+                'percentage' => $totalChildren > 0 ? round(($haTall / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 3. Suy dinh dưỡng thể gầy còm (CN/CC - Weight-for-Height)
+        $whWasted = 0;      // < -2SD
+        $whNormal = 0;      // -2SD to +2SD
+        $whOverweight = 0;  // > +2SD and <= +3SD
+        $whObese = 0;       // > +3SD
+        $combinedMalnutrition = 0; // CN/CC < -2SD AND CC/T < -2SD
+
+        foreach ($children as $child) {
+            $whRow = $child->WeightForHeight();
+            $haRow = $child->HeightForAge();
+            
+            if ($whRow && isset($whRow['Median']) && isset($whRow['-2SD']) && isset($whRow['2SD']) && isset($whRow['3SD'])) {
+                $weight = $child->weight;
+                
+                if ($weight < $whRow['-2SD']) {
+                    $whWasted++;
+                    // Kiểm tra SDD phối hợp
+                    if ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']) {
+                        $combinedMalnutrition++;
+                    }
+                } elseif ($weight >= $whRow['-2SD'] && $weight <= $whRow['2SD']) {
+                    $whNormal++;
+                } elseif ($weight > $whRow['2SD'] && $weight <= $whRow['3SD']) {
+                    $whOverweight++;
+                } elseif ($weight > $whRow['3SD']) {
+                    $whObese++;
+                }
+            }
+        }
+
+        $stats['weight_for_height'] = [
+            'wasted' => [
+                'count' => $whWasted,
+                'percentage' => $totalChildren > 0 ? round(($whWasted / $totalChildren) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $whNormal,
+                'percentage' => $totalChildren > 0 ? round(($whNormal / $totalChildren) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $whOverweight,
+                'percentage' => $totalChildren > 0 ? round(($whOverweight / $totalChildren) * 100, 2) : 0,
+            ],
+            'obese' => [
+                'count' => $whObese,
+                'percentage' => $totalChildren > 0 ? round(($whObese / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['combined'] = [
+            'combined_malnutrition' => [
+                'count' => $combinedMalnutrition,
+                'percentage' => $totalChildren > 0 ? round(($combinedMalnutrition / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
+        $anyMalnutrition = 0;
+        foreach ($children as $child) {
+            $waRow = $child->WeightForAge();
+            $haRow = $child->HeightForAge();
+            $whRow = $child->WeightForHeight();
+
+            $hasWaMalnutrition = ($waRow && isset($waRow['-2SD']) && $child->weight < $waRow['-2SD']);
+            $hasHaMalnutrition = ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']);
+            $hasWhMalnutrition = ($whRow && isset($whRow['-2SD']) && $child->weight < $whRow['-2SD']);
+
+            // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
+            if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                $anyMalnutrition++;
+            }
+        }
+
+        $stats['summary'] = [
+            'any_malnutrition' => [
+                'count' => $anyMalnutrition,
+                'percentage' => $totalChildren > 0 ? round(($anyMalnutrition / $totalChildren) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['total_children'] = $totalChildren;
+
+        return $stats;
+    }
+
+    /**
+     * Trả về cấu trúc dữ liệu rỗng cho nutrition stats
+     */
+    private function getEmptyNutritionStats()
+    {
+        return [
+            'total_children' => 0,
+            'weight_for_age' => [
+                'underweight' => ['count' => 0, 'percentage' => 0],
+                'normal' => ['count' => 0, 'percentage' => 0],
+                'overweight' => ['count' => 0, 'percentage' => 0],
+            ],
+            'height_for_age' => [
+                'stunted' => ['count' => 0, 'percentage' => 0],
+                'normal' => ['count' => 0, 'percentage' => 0],
+                'tall' => ['count' => 0, 'percentage' => 0],
+            ],
+            'weight_for_height' => [
+                'wasted' => ['count' => 0, 'percentage' => 0],
+                'normal' => ['count' => 0, 'percentage' => 0],
+                'overweight' => ['count' => 0, 'percentage' => 0],
+                'obese' => ['count' => 0, 'percentage' => 0],
+            ],
+            'combined' => [
+                'combined_malnutrition' => ['count' => 0, 'percentage' => 0],
+            ],
+            'summary' => [
+                'any_malnutrition' => ['count' => 0, 'percentage' => 0],
+            ],
+        ];
     }
 }
 

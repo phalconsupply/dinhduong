@@ -487,7 +487,7 @@
 
         .info-item label {
             display: block;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 600;
             color: #667eea;
             margin-bottom: 8px;
@@ -498,7 +498,7 @@
         }
 
         .info-item .info-value {
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 500;
             color: #1f2937;
             margin: 0;
@@ -534,7 +534,7 @@
             padding: 15px;
             text-align: center;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .table-modern tbody tr.result-row {
@@ -550,6 +550,8 @@
             padding: 15px;
             border-bottom: 1px solid #e5e7eb;
             vertical-align: middle;
+            font-size: 16px;
+            color: #000000;
         }
 
         .table-modern tbody td i {
@@ -569,6 +571,11 @@
             display: block;
             margin-top: 4px;
             color: #6b7280;
+        }
+
+        .table-modern tbody td em {
+            color: #000000;
+            font-style: italic;
         }
 
         /* Nutrition Status Badge */
@@ -592,6 +599,7 @@
             background: #f0f9ff;
             border-left: 4px solid #667eea;
             border-radius: 6px;
+            font-size: 15px;
         }
 
         .advice-item i {

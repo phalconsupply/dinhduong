@@ -828,135 +828,154 @@
                                 <th class="fw-bold">Đặc điểm</th>
                                 <th class="text-center fw-bold">Tần số (n)</th>
                                 <th class="text-center fw-bold">Tỉ lệ (%)</th>
+                                <th class="text-center fw-bold">Độ tin cậy (P)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <!-- 1. Tháng tuổi -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">1. Tháng tuổi</td>
+                                <td colspan="4" class="fw-bold">1. Tháng tuổi</td>
                             </tr>
                             <tr>
                                 <td class="ps-4 fst-italic">Trẻ < 24 tháng tuổi (n={{ $table8Stats['age_groups']['under_24_total'] }})</td>
-                                <td colspan="2" class="text-muted"></td>
+                                <td colspan="3" class="text-muted"></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Có SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Không SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4 fst-italic">Trẻ 0-60 tháng tuổi (n={{ $table8Stats['age_groups']['age_0_60_total'] }})</td>
-                                <td colspan="2" class="text-muted"></td>
+                                <td colspan="3" class="text-muted"></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Có SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Không SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- 2. Giới tính -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">2. Giới tính</td>
+                                <td colspan="4" class="fw-bold">2. Giới tính</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Nam</td>
                                 <td class="text-center">{{ $table8Stats['gender']['male']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['gender']['male']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gender']['male']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Nữ</td>
                                 <td class="text-center">{{ $table8Stats['gender']['female']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['gender']['female']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gender']['female']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- 3. Dân tộc -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">3. Dân tộc</td>
+                                <td colspan="4" class="fw-bold">3. Dân tộc</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Kinh</td>
                                 <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Khác</td>
                                 <td class="text-center">{{ $table8Stats['ethnicity']['other']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['ethnicity']['other']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- 4. Cân nặng lúc sinh -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">4. Cân nặng lúc sinh</td>
+                                <td colspan="4" class="fw-bold">4. Cân nặng lúc sinh</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Nhẹ cân (< 2500g)</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['low']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['low']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Đủ cân (2500-4000g)</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['normal']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thừa cân (> 4000g)</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['high']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['birth_weight']['high']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- 5. Tuổi thai lúc sinh -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">5. Tuổi thai lúc sinh</td>
+                                <td colspan="4" class="fw-bold">5. Tuổi thai lúc sinh</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Đủ tháng</td>
                                 <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thiếu tháng</td>
                                 <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- 6. Kết quả tình trạng dinh dưỡng -->
                             <tr class="table-secondary">
-                                <td colspan="3" class="fw-bold">6. Kết quả tình trạng dinh dưỡng</td>
+                                <td colspan="4" class="fw-bold">6. Kết quả tình trạng dinh dưỡng</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD nhẹ cân</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD thấp còi</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD gầy còm</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Bình thường</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['p_value'] ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thừa cân/Béo phì</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['percentage'] }}</td>
+                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['p_value'] ?? '-' }}</td>
                             </tr>
 
                             <!-- Tổng cộng -->
@@ -964,6 +983,7 @@
                                 <td>Tổng số trẻ 0-60 tháng</td>
                                 <td class="text-center">{{ $table8Stats['total_children'] }}</td>
                                 <td class="text-center">100.00</td>
+                                <td class="text-center">-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -977,6 +997,284 @@
                         <li><strong>Tỉ lệ %:</strong> Được tính dựa trên tổng số trẻ 0-60 tháng tuổi trong mẫu khảo sát</li>
                         <li><strong>Cân nặng lúc sinh:</strong> Nhẹ cân (<2500g), Đủ cân (2500-4000g), Thừa cân (>4000g)</li>
                         <li><strong>Tuổi thai:</strong> Đủ tháng (≥37 tuần), Thiếu tháng (<37 tuần)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABLE 9: Nutrition Status of Children Under 2 Years -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">9. Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)</h4>
+                <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-2', 'Tinh_trang_DD_duoi_2_tuoi')">
+                    <i class="uil uil-export"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="table-nutrition-under-2">
+                        <thead class="table-primary">
+                            <tr>
+                                <th class="fw-bold">Tình trạng dinh dưỡng</th>
+                                <th class="text-center fw-bold">Tần số (n)</th>
+                                <th class="text-center fw-bold">Tỷ lệ (%)</th>
+                                <th class="text-center fw-bold">Độ tin cậy (P)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 1. Suy dinh dưỡng thể nhẹ cân (CN/T) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">1. Suy dinh dưỡng thể nhẹ cân (CN/T)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể nhẹ cân (< -2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Thừa cân (> +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 2. Suy dinh dưỡng thể thấp còi (CC/T) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">2. Suy dinh dưỡng thể thấp còi (CC/T)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể thấp còi (< -2SD)</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Trẻ cao vượt trội (> +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 3. Suy dinh dưỡng thể gầy còm (CN/CC) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">3. Suy dinh dưỡng thể gầy còm (CN/CC)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể gầy còm (< -2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)</td>
+                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Thừa cân (> +2SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Béo phì (> +3SD)</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 4. < 24 tháng SDD -->
+                            <tr class="table-warning fw-bold">
+                                <td>4. < 24 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
+                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- Tổng cộng -->
+                            <tr class="table-info fw-bold">
+                                <td>Tổng số trẻ < 24 tháng</td>
+                                <td class="text-center">{{ $table9Stats['total_children'] ?? 0 }}</td>
+                                <td class="text-center">100.00</td>
+                                <td class="text-center">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong><i class="uil uil-info-circle"></i> Giải thích:</strong>
+                    <ul class="mb-0 mt-2" style="font-size: 13px;">
+                        <li><strong>Đối tượng:</strong> Trẻ dưới 2 tuổi (< 24 tháng tuổi)</li>
+                        <li><strong>CN/T:</strong> Cân nặng theo tuổi (Weight-for-Age)</li>
+                        <li><strong>CC/T:</strong> Chiều cao theo tuổi (Height-for-Age)</li>
+                        <li><strong>CN/CC:</strong> Cân nặng theo chiều cao (Weight-for-Height)</li>
+                        <li><strong>SDD thể phối hợp:</strong> Trẻ có cả CN/CC < -2SD VÀ CC/T < -2SD</li>
+                        <li><strong>< 24 tháng SDD:</strong> Trẻ có ít nhất 1 trong 3 chỉ số (CN/T, CC/T, CN/CC) bị suy dinh dưỡng</li>
+                        <li><strong>Độ tin cậy (P):</strong> Giá trị p-value của kiểm định thống kê (p < 0.05 có ý nghĩa thống kê)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABLE 10: Nutrition Status of Children Under 5 Years -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">10. Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)</h4>
+                <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-5', 'Tinh_trang_DD_duoi_5_tuoi')">
+                    <i class="uil uil-export"></i> Xuất Excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="table-nutrition-under-5">
+                        <thead class="table-primary">
+                            <tr>
+                                <th class="fw-bold">Tình trạng dinh dưỡng</th>
+                                <th class="text-center fw-bold">Tần số (n)</th>
+                                <th class="text-center fw-bold">Tỷ lệ (%)</th>
+                                <th class="text-center fw-bold">Độ tin cậy (P)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 1. Suy dinh dưỡng thể nhẹ cân (CN/T) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">1. Suy dinh dưỡng thể nhẹ cân (CN/T)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể nhẹ cân (< -2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Thừa cân (> +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 2. Suy dinh dưỡng thể thấp còi (CC/T) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">2. Suy dinh dưỡng thể thấp còi (CC/T)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể thấp còi (< -2SD)</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Trẻ cao vượt trội (> +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 3. Suy dinh dưỡng thể gầy còm (CN/CC) -->
+                            <tr class="table-secondary">
+                                <td colspan="4" class="fw-bold">3. Suy dinh dưỡng thể gầy còm (CN/CC)</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể gầy còm (< -2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)</td>
+                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Thừa cân (> +2SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4">– Béo phì (> +3SD)</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- 4. < 60 tháng SDD -->
+                            <tr class="table-warning fw-bold">
+                                <td>4. < 60 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
+                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['count'] ?? 0 }}</td>
+                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                            </tr>
+
+                            <!-- Tổng cộng -->
+                            <tr class="table-info fw-bold">
+                                <td>Tổng số trẻ < 60 tháng</td>
+                                <td class="text-center">{{ $table10Stats['total_children'] ?? 0 }}</td>
+                                <td class="text-center">100.00</td>
+                                <td class="text-center">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <strong><i class="uil uil-info-circle"></i> Giải thích:</strong>
+                    <ul class="mb-0 mt-2" style="font-size: 13px;">
+                        <li><strong>Đối tượng:</strong> Trẻ dưới 5 tuổi (< 60 tháng tuổi)</li>
+                        <li><strong>CN/T:</strong> Cân nặng theo tuổi (Weight-for-Age)</li>
+                        <li><strong>CC/T:</strong> Chiều cao theo tuổi (Height-for-Age)</li>
+                        <li><strong>CN/CC:</strong> Cân nặng theo chiều cao (Weight-for-Height)</li>
+                        <li><strong>SDD thể phối hợp:</strong> Trẻ có cả CN/CC < -2SD VÀ CC/T < -2SD</li>
+                        <li><strong>< 60 tháng SDD:</strong> Trẻ có ít nhất 1 trong 3 chỉ số (CN/T, CC/T, CN/CC) bị suy dinh dưỡng</li>
+                        <li><strong>Độ tin cậy (P):</strong> Giá trị p-value của kiểm định thống kê (p < 0.05 có ý nghĩa thống kê)</li>
                     </ul>
                 </div>
             </div>
