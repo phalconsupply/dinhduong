@@ -18,7 +18,7 @@
             <th class="border-bottom p-2" >Chỉ số</th>
             <th class="border-bottom p-2" >Ngày cân<br />Ngày sinh</th>
             <th class="border-bottom p-2" >Kết quả</th>
-            <th class="border-bottom p-2" >Nguy cơ</th>
+            <th class="border-bottom p-2" >Trạng thái</th>
             <th class="border-bottom p-2" >Giới tính<br />Tuổi<br />Dân tộc</th>
             <th class="border-bottom p-2" >Địa chỉ</th>
             <th class="border-bottom p-2" >Người lập<br />Đơn vị<br />Ngày lập</th>
@@ -56,10 +56,22 @@
                     <span class="small" style="background-color: {{$row->check_weight_for_height()['color']}}">Cân nặng theo chiều cao:{{$row->check_weight_for_height()['text']}}</span>
                 </td>
                 <td>
-                    @if($row->is_risk === 1)
-                        <span class="badge bg-warning">Nguy cơ</span><br>
+                    @php
+                        $nutritionStatus = $row->nutrition_status ?? '';
+                        $isEmpty = in_array($nutritionStatus, ['', null, 'Chưa xác định', 'Chưa có đủ dữ liệu']);
+                        
+                        // Kiểm tra nếu có chứa "gầy còm" (case-insensitive)
+                        $isWasted = !$isEmpty && stripos($nutritionStatus, 'gầy còm') !== false;
+                    @endphp
+
+                    @if($isEmpty)
+                        <span class="badge bg-secondary">Chưa xác định</span>
+                    @elseif($isWasted)
+                        {{-- Bôi đỏ các trường hợp gầy còm --}}
+                        <span class="badge bg-danger">{{ $nutritionStatus }}</span>
                     @else
-                        <span class="badge bg-success">Bình thường</span><br>
+                        {{-- Hiển thị bình thường cho các trường hợp khác --}}
+                        <span class="small">{{ $nutritionStatus }}</span>
                     @endif
                 </td>
                 <td>

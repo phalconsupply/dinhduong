@@ -104,33 +104,46 @@
                                 <!-- Đánh giá chi tiết từng chỉ số -->
                                 <table style="width: 100%; margin-top: 15px;">
                                     <thead>
-                                    <th colspan="2" style="text-align: center; background: #2daab8; color: white">Đánh giá chung</th>
+                                    <tr>
+                                        <th style="text-align: center; background: #2daab8; color: white; width: 30%;">Tên chỉ số</th>
+                                        <th style="text-align: center; background: #2daab8; color: white; width: 30%;">Kết quả</th>
+                                        <th style="text-align: center; background: #2daab8; color: white; width: 40%;">Kết luận</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                    @if($all_normal)
-                                        <!-- Nếu cả 4 chỉ số đều bình thường, gộp thành 1 dòng -->
-                                        <tr style="background-color: green">
-                                            <td colspan="2" style="text-align: center; font-weight: bold;">Trẻ bình thường</td>
-                                        </tr>
-                                    @else
-                                        <!-- Hiển thị chi tiết từng chỉ số nếu có bất thường -->
+                                        <!-- Hiển thị đầy đủ 4 chỉ số -->
                                         <tr style="background-color: {{$weight_for_age['color']}}">
-                                            <td>Cân nặng theo tuổi</td>
-                                            <td>{{$weight_for_age['text']}}</td>
+                                            <td style="vertical-align: middle;">Cân nặng theo tuổi</td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                {{$row->weight}} kg<br>
+                                                <small><em>({{$weight_for_age['zscore_category']}})</em></small>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">{{$weight_for_age['text']}}</td>
                                         </tr>
                                         <tr style="background-color: {{$height_for_age['color']}}">
-                                            <td>Chiều cao theo tuổi</td>
-                                            <td>{{$height_for_age['text']}}</td>
+                                            <td style="vertical-align: middle;">Chiều cao theo tuổi</td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                {{$row->height}} cm<br>
+                                                <small><em>({{$height_for_age['zscore_category']}})</em></small>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">{{$height_for_age['text']}}</td>
                                         </tr>
                                         <tr style="background-color: {{$weight_for_height['color']}}">
-                                            <td>Cân nặng theo chiều cao</td>
-                                            <td>{{$weight_for_height['text']}}</td>
+                                            <td style="vertical-align: middle;">Cân nặng theo chiều cao</td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                {{$row->weight}} kg / {{$row->height}} cm<br>
+                                                <small><em>({{$weight_for_height['zscore_category']}})</em></small>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">{{$weight_for_height['text']}}</td>
                                         </tr>
                                         <tr style="background-color: {{$bmi_for_age['color']}}">
-                                            <td>BMI theo tuổi</td>
-                                            <td>{{$bmi_for_age['text']}}</td>
+                                            <td style="vertical-align: middle;">BMI theo tuổi</td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                {{ number_format($row->weight / (($row->height / 100) * ($row->height / 100)), 2) }}<br>
+                                                <small><em>({{$bmi_for_age['zscore_category']}})</em></small>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">{{$bmi_for_age['text']}}</td>
                                         </tr>
-                                    @endif
                                     </tbody>
                                 </table>
                             @else

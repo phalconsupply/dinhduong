@@ -164,34 +164,51 @@ class History extends Model
         $text = 'Chưa có dữ liệu';
         $color = 'gray';
         $result = 'unknown';
+        $zscore_category = 'N/A';
         if ($row) {
             if ($row['-2SD'] <= $bmi && $bmi <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = 'green';
+                
+                // Xác định chính xác trong khoảng nào
+                if ($bmi >= $row['Median'] && $bmi <= $row['1SD']) {
+                    $zscore_category = 'Median đến +1SD';
+                } else if ($bmi > $row['1SD'] && $bmi <= $row['2SD']) {
+                    $zscore_category = '+1SD đến +2SD';
+                } else if ($bmi >= $row['-1SD'] && $bmi < $row['Median']) {
+                    $zscore_category = '-1SD đến Median';
+                } else if ($bmi >= $row['-2SD'] && $bmi < $row['-1SD']) {
+                    $zscore_category = '-2SD đến -1SD';
+                }
             } else if ($bmi < $row['-3SD']) {
                 $result = 'wasted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
                 $color = 'red';
+                $zscore_category = '< -3SD';
             } else if ($bmi < $row['-2SD']) {
                 $result = 'wasted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
                 $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
             } else if ($bmi > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
                 $color = 'red';
+                $zscore_category = '> +3SD';
             } else if ($bmi >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
                 $color = 'orange';
+                $zscore_category = '+2SD đến +3SD';
             }
         }
 
         return [
             'result' => $result,
             'text'   => $text,
-            'color'  => $color
+            'color'  => $color,
+            'zscore_category' => $zscore_category
         ];
 
     }
@@ -202,31 +219,47 @@ class History extends Model
         $text = 'Chưa có dữ liệu';
         $color = 'gray';
         $result = 'unknown';
+        $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = 'green';
+                
+                // Xác định chính xác trong khoảng nào
+                if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
+                    $zscore_category = 'Median đến +1SD';
+                } else if ($weight > $row['1SD'] && $weight <= $row['2SD']) {
+                    $zscore_category = '+1SD đến +2SD';
+                } else if ($weight >= $row['-1SD'] && $weight < $row['Median']) {
+                    $zscore_category = '-1SD đến Median';
+                } else if ($weight >= $row['-2SD'] && $weight < $row['-1SD']) {
+                    $zscore_category = '-2SD đến -1SD';
+                }
             } else if ($weight < $row['-3SD']) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
                 $color = 'red';
+                $zscore_category = '< -3SD';
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
                 $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
             } else if ($weight > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
                 $color = 'red';
+                $zscore_category = '> +3SD';
             } else if ($weight >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
                 $color = 'orange';
+                $zscore_category = '+2SD đến +3SD';
             }
         }
 
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result];
+        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
     }
 
     public function check_height_for_age(){
@@ -235,30 +268,46 @@ class History extends Model
         $text = 'Chưa có dữ liệu';
         $color = 'gray';
         $result = 'unknown';
+        $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $height && $height <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = 'green';
+                
+                // Xác định chính xác trong khoảng nào
+                if ($height >= $row['Median'] && $height <= $row['1SD']) {
+                    $zscore_category = 'Median đến +1SD';
+                } else if ($height > $row['1SD'] && $height <= $row['2SD']) {
+                    $zscore_category = '+1SD đến +2SD';
+                } else if ($height >= $row['-1SD'] && $height < $row['Median']) {
+                    $zscore_category = '-1SD đến Median';
+                } else if ($height >= $row['-2SD'] && $height < $row['-1SD']) {
+                    $zscore_category = '-2SD đến -1SD';
+                }
             } else if ($height < $row['-3SD']) {
                 $result = 'stunted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể còi, mức độ nặng';
                 $color = 'red';
+                $zscore_category = '< -3SD';
             } else if ($height < $row['-2SD']) {
                 $result = 'stunted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
                 $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
             } else if ($height >= $row['3SD']) {
                 $result = 'above_3sd';
                 $text = 'Trẻ cao bất thường';
                 $color = 'blue';
+                $zscore_category = '≥ +3SD';
             } else if ($height > $row['2SD']) {
                 $result = 'above_2sd';
                 $text = 'Trẻ cao hơn bình thường';
                 $color = 'cyan';
+                $zscore_category = '+2SD đến +3SD';
             }
         }
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result];
+        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
     }
     public function check_weight_for_height(){
         $weight = $this->weight;
@@ -266,30 +315,46 @@ class History extends Model
         $text = 'Chưa có dữ liệu';
         $color = 'gray';
         $result = 'unknown';
+        $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = 'green';
+                
+                // Xác định chính xác trong khoảng nào
+                if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
+                    $zscore_category = 'Median đến +1SD';
+                } else if ($weight > $row['1SD'] && $weight <= $row['2SD']) {
+                    $zscore_category = '+1SD đến +2SD';
+                } else if ($weight >= $row['-1SD'] && $weight < $row['Median']) {
+                    $zscore_category = '-1SD đến Median';
+                } else if ($weight >= $row['-2SD'] && $weight < $row['-1SD']) {
+                    $zscore_category = '-2SD đến -1SD';
+                }
             } else if ($weight < $row['-3SD']) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
                 $color = 'red';
+                $zscore_category = '< -3SD';
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
                 $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
             } else if ($weight >= $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
                 $color = 'red';
+                $zscore_category = '≥ +3SD';
             } else if ($weight > $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
                 $color = 'orange';
+                $zscore_category = '+2SD đến +3SD';
             }
         }
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result];
+        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
     }
 
     /**
