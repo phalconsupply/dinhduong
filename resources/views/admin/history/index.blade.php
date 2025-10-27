@@ -152,7 +152,7 @@
                                                     // Các trạng thái cao bất thường (over-level)
                                                     $isOverLevel = false;
                                                     if (!empty($nutritionStatus)) {
-                                                        $upperKeywords = ['Thừa cân', 'Béo phì', 'Vượt mức', 'cao bất thường'];
+                                                        $upperKeywords = ['Thừa cân', 'Béo phì', 'Vượt mức', 'vượt tiêu chuẩn'];
                                                         foreach ($upperKeywords as $kw) {
                                                             if (stripos($nutritionStatus, $kw) !== false) {
                                                                 $isOverLevel = true;

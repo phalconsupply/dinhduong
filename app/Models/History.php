@@ -370,11 +370,31 @@ class History extends Model
             $color = 'orange';
             $code = 'overweight';
         }
-        // 7. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
+        // 7. CHIỀU CAO VƯỢT CHUẨN (H/A > +2SD hoặc +3SD)
+        elseif (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) {
+            $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
+            $color = 'cyan';
+            $code = 'over_standard';
+        }
+        // 8. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
         elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
             $text = 'Bình thường';
             $color = 'green';
             $code = 'normal';
+        }
+        // 9. CÓ CHỈ SỐ VƯỢT TIÊU CHUẨN KHÁC (fallback cho các trường hợp còn lại có chỉ số cao)
+        else {
+            // Kiểm tra nếu có bất kỳ chỉ số nào vượt chuẩn
+            $hasHighIndicator = false;
+            if (in_array($wfa['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            if (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            if (in_array($wfh['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            
+            if ($hasHighIndicator) {
+                $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
+                $color = 'cyan';
+                $code = 'over_standard';
+            }
         }
         
         return ['text' => $text, 'color' => $color, 'code' => $code];

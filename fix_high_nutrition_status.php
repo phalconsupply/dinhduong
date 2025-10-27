@@ -60,27 +60,32 @@ $toFix = [];
 foreach ($records as $r) {
     // Use existing check helpers
     $wfa = $r->check_weight_for_age();
+    $hfa = $r->check_height_for_age();
     $wfh = $r->check_weight_for_height();
 
-    // Consider over-level if WFA or WFH indicate overweight/obese
+    // Consider over-level if any indicator shows high values
     $over = false;
-    $overKeywords = ['overweight', 'obese', 'overweight', 'obese'];
+    
+    // Check for overweight/obese in weight indicators
     if (isset($wfa['result']) && in_array($wfa['result'], ['overweight','obese'])) $over = true;
     if (isset($wfh['result']) && in_array($wfh['result'], ['overweight','obese'])) $over = true;
+    
+    // Check for above standard in height
+    if (isset($hfa['result']) && in_array($hfa['result'], ['above_2sd','above_3sd'])) $over = true;
 
     if ($over) {
         $toFix[] = $r;
     }
 }
 
-echo "Candidates to mark as high (would be set to 'Trẻ bình thường nhưng có chỉ số cao bất thường'): " . count($toFix) . "\n\n";
+echo "Candidates to mark as high (would be set to 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn'): " . count($toFix) . "\n\n";
 
 if (count($toFix) > 0 && !$isDryRun) {
     DB::beginTransaction();
     $updated = 0;
     try {
         foreach ($toFix as $r) {
-            $r->nutrition_status = 'Trẻ bình thường nhưng có chỉ số cao bất thường';
+            $r->nutrition_status = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
             $r->save();
             $updated++;
         }
