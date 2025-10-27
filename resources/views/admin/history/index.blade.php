@@ -149,11 +149,26 @@
                                                     $nutritionStatus = $row->nutrition_status ?? '';
                                                     $isNormal = $nutritionStatus === 'Bình thường';
                                                     $isUnknown = in_array($nutritionStatus, ['Chưa xác định', 'Chưa có đủ dữ liệu', '']);
+                                                    // Các trạng thái cao bất thường (over-level)
+                                                    $isOverLevel = false;
+                                                    if (!empty($nutritionStatus)) {
+                                                        $upperKeywords = ['Thừa cân', 'Béo phì', 'Vượt mức', 'cao bất thường'];
+                                                        foreach ($upperKeywords as $kw) {
+                                                            if (stripos($nutritionStatus, $kw) !== false) {
+                                                                $isOverLevel = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
                                                 @endphp
+
                                                 @if($isNormal)
                                                     <span class="badge bg-success">Bình thường</span>
                                                 @elseif($isUnknown)
                                                     <span class="badge bg-secondary">Chưa xác định</span>
+                                                @elseif($isOverLevel)
+                                                    <span class="badge bg-warning">Vượt mức</span>
+                                                    <br><span class="small text-muted">{{ $nutritionStatus }}</span>
                                                 @else
                                                     <span class="badge bg-warning">Nguy cơ</span>
                                                     <br><span class="small text-muted">{{ $nutritionStatus }}</span>
