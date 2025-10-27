@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('content')
-    <section id="nuti-medical">
+    <section id="nuti-medical" style="padding-top: 20px;">
         <div class="container">
             <div class="row">
-                @include('layouts.siderbar')
-                <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8">
+                {{-- Removed sidebar, now full width --}}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     @include('sections.form-heading')
                     
                     <!-- Progress Steps -->
