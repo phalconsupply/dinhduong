@@ -633,11 +633,14 @@ class DashboardController extends Controller
         $stats = [];
 
         // 1. Tháng tuổi (Age groups)
-        $under24Malnutrition = $children->where('age', '<', 24)->filter(function($child) {
+        $under24Children = $children->where('age', '<', 24);
+        $under24Total = $under24Children->count();
+        
+        $under24Malnutrition = $under24Children->filter(function($child) {
             return $this->hasMalnutrition($child);
         })->count();
         
-        $under24Normal = $children->where('age', '<', 24)->filter(function($child) {
+        $under24Normal = $under24Children->filter(function($child) {
             return !$this->hasMalnutrition($child);
         })->count();
         
@@ -650,14 +653,16 @@ class DashboardController extends Controller
         })->count();
 
         $stats['age_groups'] = [
+            'under_24_total' => $under24Total,
             'under_24_malnutrition' => [
                 'count' => $under24Malnutrition,
-                'percentage' => $totalChildren > 0 ? round(($under24Malnutrition / $totalChildren) * 100, 2) : 0
+                'percentage' => $under24Total > 0 ? round(($under24Malnutrition / $under24Total) * 100, 2) : 0
             ],
             'under_24_normal' => [
                 'count' => $under24Normal,
-                'percentage' => $totalChildren > 0 ? round(($under24Normal / $totalChildren) * 100, 2) : 0
+                'percentage' => $under24Total > 0 ? round(($under24Normal / $under24Total) * 100, 2) : 0
             ],
+            'age_0_60_total' => $totalChildren,
             'age_0_60_malnutrition' => [
                 'count' => $age0to60Malnutrition,
                 'percentage' => $totalChildren > 0 ? round(($age0to60Malnutrition / $totalChildren) * 100, 2) : 0

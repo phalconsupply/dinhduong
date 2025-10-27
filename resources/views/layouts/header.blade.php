@@ -18,6 +18,10 @@
     <!-- CSS Styles -->
     <link rel="stylesheet" href="{{asset('/web/css/a585b32.css')}}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome for Modern Form Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Modern Form Design CSS -->
+    <link rel="stylesheet" href="{{asset('/web/css/form-modern.css')}}" />
     <style>
         .chosen-container-multi .chosen-choices {
             border-radius: 5px;

@@ -836,22 +836,30 @@
                                 <td colspan="3" class="fw-bold">1. Tháng tuổi</td>
                             </tr>
                             <tr>
-                                <td class="ps-4">< 24 tháng tuổi có SDD</td>
+                                <td class="ps-4 fst-italic">Trẻ < 24 tháng tuổi (n={{ $table8Stats['age_groups']['under_24_total'] }})</td>
+                                <td colspan="2" class="text-muted"></td>
+                            </tr>
+                            <tr>
+                                <td class="ps-5">Có SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['percentage'] }}</td>
                             </tr>
                             <tr>
-                                <td class="ps-4">< 24 tháng tuổi không SDD</td>
+                                <td class="ps-5">Không SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['percentage'] }}</td>
                             </tr>
                             <tr>
-                                <td class="ps-4">0-60 tháng tuổi có SDD</td>
+                                <td class="ps-4 fst-italic">Trẻ 0-60 tháng tuổi (n={{ $table8Stats['age_groups']['age_0_60_total'] }})</td>
+                                <td colspan="2" class="text-muted"></td>
+                            </tr>
+                            <tr>
+                                <td class="ps-5">Có SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['percentage'] }}</td>
                             </tr>
                             <tr>
-                                <td class="ps-4">0-60 tháng tuổi không SDD</td>
+                                <td class="ps-5">Không SDD</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['count'] }}</td>
                                 <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['percentage'] }}</td>
                             </tr>
