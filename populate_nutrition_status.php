@@ -2,6 +2,10 @@
 /**
  * Populate nutrition_status field for all history records
  * Based on WHO assessment results (BMI, weight, height, weight-for-height)
+ * 
+ * USAGE:
+ *   php populate_nutrition_status.php         - Chế độ dry-run (không thay đổi DB)
+ *   php populate_nutrition_status.php --apply - Thực sự cập nhật DB
  */
 
 require __DIR__.'/vendor/autoload.php';
@@ -13,24 +17,37 @@ $kernel->bootstrap();
 use App\Models\History;
 use Illuminate\Support\Facades\DB;
 
-echo "=== Cập nhật nutrition_status cho tất cả record ===\n\n";
+// Kiểm tra tham số
+$isDryRun = !in_array('--apply', $argv);
 
-// Lấy tất cả records
-$records = History::whereNull('nutrition_status')
-    ->orWhere('nutrition_status', '')
-    ->get();
+echo "=== Cập nhật nutrition_status cho tất cả record ===\n";
+echo "Chế độ: " . ($isDryRun ? "DRY-RUN (không thay đổi DB)" : "APPLY (sẽ cập nhật DB)") . "\n\n";
+
+if ($isDryRun) {
+    echo "⚠️  Đây là chế độ DRY-RUN - không có thay đổi nào được lưu vào DB.\n";
+    echo "Để thực sự cập nhật, chạy: php populate_nutrition_status.php --apply\n\n";
+}
+
+// Lấy tất cả records cần cập nhật
+$records = History::where(function($query) {
+    $query->whereNull('nutrition_status')
+          ->orWhere('nutrition_status', '');
+})->get();
 
 echo "Tổng số record cần cập nhật: " . $records->count() . "\n\n";
 
 if ($records->count() == 0) {
-    echo "Không có record nào cần cập nhật!\n";
+    echo "✅ Không có record nào cần cập nhật!\n";
     exit;
 }
 
 $updated = 0;
 $errors = 0;
+$statusCounts = [];
 
-DB::beginTransaction();
+if (!$isDryRun) {
+    DB::beginTransaction();
+}
 
 try {
     foreach ($records as $record) {
@@ -38,40 +55,76 @@ try {
         $nutritionStatusResult = $record->get_nutrition_status();
         
         if (!empty($nutritionStatusResult['text'])) {
-            $record->nutrition_status = $nutritionStatusResult['text'];
-            $record->save();
+            $statusText = $nutritionStatusResult['text'];
+            
+            // Đếm theo loại
+            if (!isset($statusCounts[$statusText])) {
+                $statusCounts[$statusText] = 0;
+            }
+            $statusCounts[$statusText]++;
+            
+            if (!$isDryRun) {
+                $record->nutrition_status = $statusText;
+                $record->save();
+            }
+            
             $updated++;
             
             if ($updated % 50 == 0) {
-                echo "Đã cập nhật: $updated records...\n";
+                echo "Đã xử lý: $updated records...\n";
             }
         } else {
             $errors++;
         }
     }
     
-    DB::commit();
+    if (!$isDryRun) {
+        DB::commit();
+    }
     
     echo "\n=== KẾT QUẢ ===\n";
-    echo "Đã cập nhật thành công: $updated records\n";
-    echo "Lỗi/không xác định được: $errors records\n";
+    if ($isDryRun) {
+        echo "Sẽ cập nhật: $updated records\n";
+    } else {
+        echo "Đã cập nhật thành công: $updated records\n";
+    }
+    echo "Lỗi/không xác định được: $errors records\n\n";
     
-    // Thống kê sau khi cập nhật
-    echo "\n=== THỐNG KÊ SAU CẬP NHẬT ===\n";
-    $statusGroups = History::whereNotNull('nutrition_status')
-        ->where('nutrition_status', '!=', '')
-        ->select('nutrition_status', DB::raw('count(*) as count'))
-        ->groupBy('nutrition_status')
-        ->get();
+    // Thống kê chi tiết
+    echo "=== PHÂN BỐ NUTRITION_STATUS " . ($isDryRun ? "(DỰ KIẾN)" : "(ĐÃ CẬP NHẬT)") . " ===\n";
+    arsort($statusCounts);
+    foreach ($statusCounts as $status => $count) {
+        echo "$status: $count records\n";
+    }
     
-    foreach ($statusGroups as $group) {
-        echo "{$group->nutrition_status}: {$group->count} records\n";
+    if (!$isDryRun) {
+        echo "\n=== THỐNG KÊ SAU CẬP NHẬT (TOÀN BỘ DB) ===\n";
+        $allStatusGroups = History::whereNotNull('nutrition_status')
+            ->where('nutrition_status', '!=', '')
+            ->select('nutrition_status', DB::raw('count(*) as count'))
+            ->groupBy('nutrition_status')
+            ->orderBy('count', 'desc')
+            ->get();
+        
+        foreach ($allStatusGroups as $group) {
+            echo "{$group->nutrition_status}: {$group->count} records\n";
+        }
     }
     
 } catch (\Exception $e) {
-    DB::rollBack();
+    if (!$isDryRun) {
+        DB::rollBack();
+    }
     echo "\n!!! LỖI: " . $e->getMessage() . "\n";
-    echo "Đã rollback tất cả thay đổi.\n";
+    if (!$isDryRun) {
+        echo "Đã rollback tất cả thay đổi.\n";
+    }
+    exit(1);
 }
 
 echo "\n=== HOÀN TẤT ===\n";
+if ($isDryRun) {
+    echo "\nĐể thực hiện cập nhật, chạy lại với tham số --apply:\n";
+    echo "  php populate_nutrition_status.php --apply\n";
+}
+
