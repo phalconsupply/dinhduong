@@ -156,6 +156,6 @@
         }]
     };
 
-    new Chart(document.getElementById('chartHeightForAge'), config);
+    window.chartHeightForAge = new Chart(document.getElementById('chartHeightForAge'), config);
 })();
 </script>

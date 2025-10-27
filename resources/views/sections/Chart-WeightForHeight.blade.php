@@ -153,6 +153,6 @@
             }]
         };
 
-        new Chart(document.getElementById('chartWeightForHeight'), config);
+        window.chartWeightForHeight = new Chart(document.getElementById('chartWeightForHeight'), config);
     })();
 </script>

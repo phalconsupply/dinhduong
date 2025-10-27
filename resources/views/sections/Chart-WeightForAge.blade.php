@@ -156,6 +156,6 @@
             }]
         };
 
-        new Chart(document.getElementById('chartWeightForAge'), config);
+        window.chartWeightForAge = new Chart(document.getElementById('chartWeightForAge'), config);
     })();
 </script>

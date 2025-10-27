@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá Dinh dưỡng Trẻ 0-5 tuổi</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải thư viện Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Thiết lập font Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc; /* Nền nhẹ nhàng */
+        }
+        .primary-color {
+            color: #3b82f6; /* Blue 500 */
+        }
+        .bg-primary {
+            background-color: #3b82f6;
+        }
+        /* Custom styles cho step indicator */
+        .step-item.active .step-dot {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        .step-item.completed .step-dot {
+            background-color: #10b981; /* Green for completed */
+            border-color: #10b981;
+            color: white;
+        }
+        .step-item.completed .step-line {
+            background-color: #10b981;
+        }
+        /* Input/Select styling */
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            outline: none;
+        }
+        .floating-label-group {
+            position: relative;
+        }
+        .floating-label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            font-size: 1rem;
+            color: #9ca3af;
+            transition: all 0.2s ease-out;
+            pointer-events: none;
+            background: white;
+            padding: 0 4px;
+            margin-left: -4px;
+        }
+        .form-input:focus + .floating-label,
+        .form-input:not(:placeholder-shown) + .floating-label {
+            top: -0.5rem;
+            font-size: 0.75rem;
+            color: #3b82f6;
+        }
+
+        /* Responsive grid adjustments */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .input-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 1024px) {
+            .input-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 lg:p-12">
+
+    <!-- Container chính -->
+    <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl p-6 sm:p-10">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-extrabold primary-color mb-2">ĐÁNH GIÁ DINH DƯỠNG TRẺ 0-5 TUỔI</h1>
+            <p class="text-gray-600 text-sm sm:text-base">Hệ thống hỗ trợ nhập liệu và đánh giá tình trạng dinh dưỡng của trẻ.</p>
+        </header>
+
+        <!-- Form Wizard: Progress Bar -->
+        <div class="mb-10 flex justify-between items-center relative">
+            <!-- Line connector -->
+            <div class="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-200 -z-10 mx-10">
+                <div id="progress-line" class="absolute h-full bg-primary transition-all duration-500" style="width: 0%;"></div>
+            </div>
+
+            <!-- Step 1: Thông tin cơ bản -->
+            <div id="step-1-indicator" class="step-item active text-center flex-1 z-10">
+                <div class="step-dot w-10 h-10 mx-auto rounded-full border-2 border-primary bg-white flex items-center justify-center font-bold transition-all duration-300">
+                    <span class="text-xl">1</span>
+                </div>
+                <p class="text-xs sm:text-sm mt-2 font-medium text-gray-700">Thông tin cơ bản</p>
+            </div>
+
+            <!-- Step 2: Chỉ số sức khỏe -->
+            <div id="step-2-indicator" class="step-item text-center flex-1 z-10">
+                <div class="step-dot w-10 h-10 mx-auto rounded-full border-2 border-gray-400 bg-white flex items-center justify-center font-bold transition-all duration-300 text-gray-400">
+                    <span class="text-xl">2</span>
+                </div>
+                <p class="text-xs sm:text-sm mt-2 font-medium text-gray-500">Chỉ số sức khỏe</p>
+            </div>
+
+            <!-- Step 3: Kết quả -->
+            <div id="step-3-indicator" class="step-item text-center flex-1 z-10">
+                <div class="step-dot w-10 h-10 mx-auto rounded-full border-2 border-gray-400 bg-white flex items-center justify-center font-bold transition-all duration-300 text-gray-400">
+                    <span class="text-xl">3</span>
+                </div>
+                <p class="text-xs sm:text-sm mt-2 font-medium text-gray-500">Xem kết quả</p>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form id="nutrition-form">
+            <!-- Step 1 Content: Thông tin cơ bản & Địa chỉ -->
+            <div id="step-1-content" class="step-content">
+
+                <!-- Card: Thông tin cá nhân -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-t-4 border-blue-400">
+                    <div class="flex items-center mb-6 border-b pb-3">
+                        <i data-lucide="user-round" class="primary-color w-6 h-6 mr-3"></i>
+                        <h2 class="text-xl font-semibold primary-color">1. THÔNG TIN CÁ NHÂN</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="floating-label-group">
+                            <input type="text" id="ho_ten" name="ho_ten" class="form-input" placeholder=" " required>
+                            <label for="ho_ten" class="floating-label">Họ và tên trẻ</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-input" placeholder=" " required>
+                            <label for="ngay_sinh" class="floating-label">Ngày sinh</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <select id="gioi_tinh" name="gioi_tinh" class="form-input appearance-none" required>
+                                <option value="" disabled selected>Chọn giới tính</option>
+                                <option value="nam">Nam</option>
+                                <option value="nu">Nữ</option>
+                            </select>
+                            <label for="gioi_tinh" class="floating-label">Giới tính</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="text" id="dan_toc" name="dan_toc" class="form-input" placeholder=" ">
+                            <label for="dan_toc" class="floating-label">Dân tộc (Không bắt buộc)</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="text" id="sdt_nguoi_cham_soc" name="sdt_nguoi_cham_soc" class="form-input" placeholder=" ">
+                            <label for="sdt_nguoi_cham_soc" class="floating-label">SĐT người chăm sóc</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="text" id="ma_dinh_danh" name="ma_dinh_danh" class="form-input" placeholder=" ">
+                            <label for="ma_dinh_danh" class="floating-label">Mã định danh/CCCD (Nếu có)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Địa chỉ -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-t-4 border-blue-400">
+                    <div class="flex items-center mb-6 border-b pb-3">
+                        <i data-lucide="map-pin" class="primary-color w-6 h-6 mr-3"></i>
+                        <h2 class="text-xl font-semibold primary-color">2. ĐỊA CHỈ</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="floating-label-group">
+                            <select id="tinh_tp" name="tinh_tp" class="form-input appearance-none" required>
+                                <option value="" disabled selected>Chọn Tỉnh/Thành phố</option>
+                                <option value="hcm">TP. Hồ Chí Minh</option>
+                                <option value="hanoi">Hà Nội</option>
+                                <!-- Thêm các tùy chọn khác -->
+                            </select>
+                            <label for="tinh_tp" class="floating-label">Tỉnh/Thành phố</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <select id="quan_huyen" name="quan_huyen" class="form-input appearance-none" required>
+                                <option value="" disabled selected>Chọn Quận/Huyện</option>
+                                <!-- Tùy chọn sẽ được load động -->
+                            </select>
+                            <label for="quan_huyen" class="floating-label">Quận/Huyện</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <select id="phuong_xa" name="phuong_xa" class="form-input appearance-none" required>
+                                <option value="" disabled selected>Chọn Phường/Xã</option>
+                                <!-- Tùy chọn sẽ được load động -->
+                            </select>
+                            <label for="phuong_xa" class="floating-label">Phường/Xã</label>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3 floating-label-group">
+                            <input type="text" id="dia_chi_cu_the" name="dia_chi_cu_the" class="form-input" placeholder=" ">
+                            <label for="dia_chi_cu_the" class="floating-label">Địa chỉ cụ thể (Số nhà, đường...)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex justify-end mt-8">
+                    <button type="button" onclick="nextStep(1)" class="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center">
+                        Tiếp tục
+                        <i data-lucide="chevron-right" class="w-5 h-5 ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2 Content: Chỉ số sức khỏe & Thông tin lúc sinh -->
+            <div id="step-2-content" class="step-content hidden">
+
+                <!-- Card: Chỉ số sức khỏe -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-t-4 border-blue-400">
+                    <div class="flex items-center mb-6 border-b pb-3">
+                        <i data-lucide="heart-pulse" class="primary-color w-6 h-6 mr-3"></i>
+                        <h2 class="text-xl font-semibold primary-color">3. CHỈ SỐ SỨC KHỎE HIỆN TẠI</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="floating-label-group">
+                            <input type="number" step="0.01" min="0" id="can_nang" name="can_nang" class="form-input" placeholder=" " required>
+                            <label for="can_nang" class="floating-label">Cân nặng (kg)</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="number" step="0.01" min="0" id="chieu_cao" name="chieu_cao" class="form-input" placeholder=" " required>
+                            <label for="chieu_cao" class="floating-label">Chiều cao (cm)</label>
+                        </div>
+                        <div class="floating-label-group relative">
+                            <input type="text" id="tuoi_tinh" name="tuoi_tinh" class="form-input bg-gray-100 cursor-not-allowed" placeholder=" " readonly>
+                            <label for="tuoi_tinh" class="floating-label bg-gray-100">Tuổi (Tự động tính)</label>
+                            <span class="absolute right-3 top-3 text-sm text-gray-500">tháng</span>
+                        </div>
+                        <div class="floating-label-group relative">
+                            <input type="text" id="bmi_result" name="bmi_result" class="form-input bg-gray-100 cursor-not-allowed" placeholder=" " readonly>
+                            <label for="bmi_result" class="floating-label bg-gray-100">BMI (Tự động tính)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Thông tin lúc sinh -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 border-t-4 border-blue-400">
+                    <div class="flex items-center mb-6 border-b pb-3">
+                        <i data-lucide="baby" class="primary-color w-6 h-6 mr-3"></i>
+                        <h2 class="text-xl font-semibold primary-color">4. THÔNG TIN LÚC SINH</h2>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="floating-label-group">
+                            <input type="number" step="1" min="100" id="can_nang_luc_sinh" name="can_nang_luc_sinh" class="form-input" placeholder=" " required>
+                            <label for="can_nang_luc_sinh" class="floating-label">Cân nặng lúc sinh (gram)</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <select id="tuoi_thai_luc_sinh" name="tuoi_thai_luc_sinh" class="form-input appearance-none" required>
+                                <option value="" disabled selected>Chọn tuần tuổi thai</option>
+                                <option value="28">28 tuần</option>
+                                <option value="37">37 tuần</option>
+                                <option value="40">40 tuần (Đủ tháng)</option>
+                                <!-- Thêm các tùy chọn khác (28-42) -->
+                            </select>
+                            <label for="tuoi_thai_luc_sinh" class="floating-label">Tuổi thai lúc sinh</label>
+                        </div>
+                        <div class="floating-label-group">
+                            <input type="text" id="phan_loai_can_nang" name="phan_loai_can_nang" class="form-input bg-gray-100 cursor-not-allowed" placeholder=" " readonly>
+                            <label for="phan_loai_can_nang" class="floating-label bg-gray-100">Phân loại cân nặng (Tự động tính)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="prevStep(2)" class="text-gray-600 hover:text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-300 flex items-center">
+                        <i data-lucide="chevron-left" class="w-5 h-5 mr-2"></i>
+                        Quay lại
+                    </button>
+                    <button type="button" onclick="nextStep(2)" class="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center">
+                        Xem kết quả
+                        <i data-lucide="file-text" class="w-5 h-5 ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3 Content: Kết quả -->
+            <div id="step-3-content" class="step-content hidden text-center">
+                <div class="bg-white p-8 rounded-lg shadow-xl border-t-4 border-green-500 max-w-lg mx-auto">
+                    <i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-3">HOÀN TẤT NHẬP LIỆU!</h2>
+                    <p class="text-gray-600 mb-6">Bạn đã hoàn thành việc nhập thông tin cho trẻ. Vui lòng nhấn nút dưới đây để xem kết quả đánh giá dinh dưỡng.</p>
+
+                    <div class="space-y-3 p-4 bg-gray-50 rounded-lg text-left text-sm">
+                        <p><strong>Trẻ:</strong> <span id="review_name" class="font-medium"></span> (<span id="review_age"></span> tháng)</p>
+                        <p><strong>Cân nặng:</strong> <span id="review_weight" class="font-medium"></span> kg</p>
+                        <p><strong>Chiều cao:</strong> <span id="review_height" class="font-medium"></span> cm</p>
+                        <p><strong>BMI:</strong> <span id="review_bmi" class="font-medium"></span></p>
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300">
+                        XEM ĐÁNH GIÁ CHI TIẾT
+                    </button>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex justify-start mt-8">
+                    <button type="button" onclick="prevStep(3)" class="text-gray-600 hover:text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-300 flex items-center">
+                        <i data-lucide="chevron-left" class="w-5 h-5 mr-2"></i>
+                        Quay lại chỉnh sửa
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Toast/Message Box for errors -->
+        <div id="message-box" class="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-xl hidden transition-opacity duration-300 z-50">
+            Vui lòng điền đầy đủ các trường bắt buộc.
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        // Khởi tạo icons Lucide
+        lucide.createIcons();
+
+        // --- Hàm Utility ---
+
+        /**
+         * Tính tuổi của trẻ theo tháng
+         * @param {string} dateString - Ngày sinh dưới dạng YYYY-MM-DD
+         * @returns {number} Tuổi theo tháng, làm tròn xuống
+         */
+        function calculateAgeInMonths(dateString) {
+            if (!dateString) return 0;
+            const today = new Date();
+            const birthDate = new Date(dateString);
+            
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            
+            // Xử lý trường hợp tháng hiện tại nhỏ hơn tháng sinh
+            if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+                years--;
+                months = 12 + months;
+            }
+            
+            // Tính tổng tháng
+            const totalMonths = years * 12 + months;
+            return totalMonths > 0 ? totalMonths : 0;
+        }
+
+        /**
+         * Tính chỉ số BMI
+         * @param {number} weight - Cân nặng (kg)
+         * @param {number} height - Chiều cao (cm)
+         * @returns {number} BMI, làm tròn 2 chữ số thập phân
+         */
+        function calculateBMI(weight, height) {
+            if (!weight || !height || height === 0) return 0;
+            // Chiều cao phải chuyển từ cm sang mét
+            const heightInMeters = height / 100;
+            const bmi = weight / (heightInMeters * heightInMeters);
+            return parseFloat(bmi.toFixed(2));
+        }
+
+        /**
+         * Hiển thị thông báo lỗi
+         * @param {string} message - Nội dung thông báo
+         */
+        function showMessage(message) {
+            const msgBox = document.getElementById('message-box');
+            msgBox.textContent = message;
+            msgBox.classList.remove('hidden', 'bg-red-500', 'bg-green-500');
+            msgBox.classList.add('bg-red-500', 'opacity-100');
+            
+            // Ẩn sau 3 giây
+            setTimeout(() => {
+                msgBox.classList.remove('opacity-100');
+                msgBox.classList.add('opacity-0');
+                setTimeout(() => msgBox.classList.add('hidden'), 300);
+            }, 3000);
+        }
+
+        // --- Hàm Xử lý Form Wizard ---
+
+        /**
+         * Cập nhật giao diện thanh tiến trình và nội dung
+         */
+        function updateStepUI() {
+            // Cập nhật Progress Bar
+            const progressLine = document.getElementById('progress-line');
+            const progress = (currentStep - 1) / (totalSteps - 1) * 100;
+            progressLine.style.width = `${progress}%`;
+
+            // Ẩn/Hiện nội dung các bước
+            for (let i = 1; i <= totalSteps; i++) {
+                const content = document.getElementById(`step-${i}-content`);
+                const indicator = document.getElementById(`step-${i}-indicator`);
+                
+                if (i === currentStep) {
+                    content.classList.remove('hidden');
+                    indicator.classList.add('active');
+                    indicator.querySelector('.step-dot').classList.remove('text-gray-400');
+                    indicator.querySelector('.step-dot').classList.add('primary-color');
+                } else {
+                    content.classList.add('hidden');
+                }
+
+                // Cập nhật trạng thái Completed
+                if (i < currentStep) {
+                    indicator.classList.add('completed');
+                    indicator.querySelector('.step-dot').classList.remove('primary-color', 'text-gray-400');
+                    indicator.querySelector('.step-dot').classList.add('bg-green-500', 'border-green-500');
+                } else if (i > currentStep) {
+                    indicator.classList.remove('active', 'completed');
+                    indicator.querySelector('.step-dot').classList.remove('bg-green-500', 'border-green-500', 'primary-color');
+                    indicator.querySelector('.step-dot').classList.add('text-gray-400', 'border-gray-400', 'bg-white');
+                }
+            }
+            
+            // Fix lại icon cho bước hiện tại (đảm bảo dot không bị màu xanh lá)
+            const currentIndicator = document.getElementById(`step-${currentStep}-indicator`);
+            if (currentIndicator) {
+                 currentIndicator.querySelector('.step-dot').classList.remove('bg-green-500', 'border-green-500');
+                 currentIndicator.querySelector('.step-dot').classList.add('bg-primary', 'border-primary', 'text-white');
+            }
+        }
+
+        /**
+         * Xử lý chuyển bước tiếp theo
+         * @param {number} step - Bước hiện tại
+         */
+        function nextStep(step) {
+            const currentContent = document.getElementById(`step-${step}-content`);
+            const requiredInputs = currentContent.querySelectorAll('[required]');
+            let allValid = true;
+
+            // Kiểm tra validation
+            requiredInputs.forEach(input => {
+                // Kiểm tra bằng browser validation
+                if (!input.checkValidity() || input.value.trim() === '') {
+                    allValid = false;
+                    // Tạm thời highlight border đỏ cho dễ nhìn
+                    input.style.borderColor = '#ef4444'; // red-500
+                    setTimeout(() => input.style.borderColor = '#d1d5db', 1500); // revert
+                }
+            });
+
+            if (!allValid) {
+                showMessage('Vui lòng điền đầy đủ các trường có đánh dấu (*).');
+                return;
+            }
+
+            if (step === 2) {
+                // Cập nhật dữ liệu cho bước Review (Step 3)
+                updateReviewData();
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepUI();
+            }
+        }
+
+        /**
+         * Xử lý quay lại bước trước
+         * @param {number} step - Bước hiện tại
+         */
+        function prevStep(step) {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
+            }
+        }
+
+        /**
+         * Cập nhật giá trị Tuổi và BMI khi có thay đổi
+         */
+        function updateCalculatedFields() {
+            const ngaySinh = document.getElementById('ngay_sinh').value;
+            const canNang = parseFloat(document.getElementById('can_nang').value);
+            const chieuCao = parseFloat(document.getElementById('chieu_cao').value);
+
+            // 1. Tính Tuổi theo tháng
+            const tuoiThang = calculateAgeInMonths(ngaySinh);
+            document.getElementById('tuoi_tinh').value = tuoiThang > 0 ? tuoiThang : '';
+            
+            // 2. Tính BMI
+            const bmi = calculateBMI(canNang, chieuCao);
+            document.getElementById('bmi_result').value = bmi > 0 ? bmi : '';
+
+            // Tự động tính Phân loại cân nặng lúc sinh
+            const cnLucSinh = parseInt(document.getElementById('can_nang_luc_sinh').value);
+            let phanLoai = '';
+            if (cnLucSinh) {
+                if (cnLucSinh < 2500) {
+                    phanLoai = 'Cân nặng sơ sinh thấp (<2500g)';
+                } else if (cnLucSinh >= 2500 && cnLucSinh <= 4000) {
+                    phanLoai = 'Cân nặng sơ sinh bình thường (2500-4000g)';
+                } else {
+                    phanLoai = 'Cân nặng sơ sinh lớn (>4000g)';
+                }
+            }
+            document.getElementById('phan_loai_can_nang').value = phanLoai;
+        }
+
+        /**
+         * Chuẩn bị dữ liệu cho màn hình review (Step 3)
+         */
+        function updateReviewData() {
+            // Lấy dữ liệu
+            const hoTen = document.getElementById('ho_ten').value;
+            const ngaySinh = document.getElementById('ngay_sinh').value;
+            const canNang = document.getElementById('can_nang').value;
+            const chieuCao = document.getElementById('chieu_cao').value;
+            const tuoiThang = document.getElementById('tuoi_tinh').value;
+            const bmi = document.getElementById('bmi_result').value;
+
+            // Hiển thị
+            document.getElementById('review_name').textContent = hoTen || 'Chưa nhập';
+            document.getElementById('review_age').textContent = tuoiThang || '0';
+            document.getElementById('review_weight').textContent = canNang || '0.0';
+            document.getElementById('review_height').textContent = chieuCao || '0.0';
+            document.getElementById('review_bmi').textContent = bmi || '0.0';
+        }
+
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lắng nghe sự kiện thay đổi trên các trường cần tính toán
+            const calculatedFields = ['ngay_sinh', 'can_nang', 'chieu_cao', 'can_nang_luc_sinh'];
+            calculatedFields.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', updateCalculatedFields);
+                }
+            });
+
+            // Lắng nghe sự kiện submit form (mô phỏng gửi dữ liệu)
+            document.getElementById('nutrition-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Tại đây, bạn sẽ gửi dữ liệu lên Laravel backend (sử dụng fetch/axios hoặc submit form thông thường)
+                showMessage('Đang gửi dữ liệu đánh giá dinh dưỡng...', 'success');
+                console.log('Form Submitted!', new FormData(e.target));
+            });
+
+            updateStepUI(); // Khởi tạo UI
+        });
+    </script>
+</body>
+</html>

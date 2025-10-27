@@ -1,59 +1,69 @@
 @extends('layouts.app')
 @section('content')
-    <section id="nuti-medical" style="padding-top: 20px;">
-        <div class="container">
-            <div class="row">
-                {{-- Removed sidebar, now full width --}}
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    @include('sections.form-heading')
-                    
-                    <!-- Progress Steps -->
-                    <div class="form-progress-wrapper">
-                        <div class="form-steps">
-                            <div class="step active" data-step="1">
-                                <div class="step-icon">
-                                    <i class="fas fa-user"></i>
+    <!-- Main Content Wrapper with Modern Style -->
+    <div class="main-content-wrapper">
+        <div class="content-body">
+            <section id="nuti-medical">
+                <div class="container-fluid">
+                    <div class="row">
+                        {{-- Removed sidebar, now full width --}}
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            @include('sections.form-heading')
+                            
+                            <!-- Progress Steps -->
+                            <div class="form-progress-wrapper">
+                                <div class="form-steps">
+                                    <div class="step active" data-step="1">
+                                        <div class="step-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="step-label">Thông tin cá nhân</div>
+                                        <div class="step-connector"></div>
+                                    </div>
+                                    <div class="step" data-step="2">
+                                        <div class="step-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div class="step-label">Địa chỉ</div>
+                                        <div class="step-connector"></div>
+                                    </div>
+                                    <div class="step" data-step="3">
+                                        <div class="step-icon">
+                                            <i class="fas fa-weight"></i>
+                                        </div>
+                                        <div class="step-label">Chỉ số sức khỏe</div>
+                                    </div>
                                 </div>
-                                <div class="step-label">Thông tin cá nhân</div>
-                                <div class="step-connector"></div>
                             </div>
-                            <div class="step" data-step="2">
-                                <div class="step-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="step-label">Địa chỉ</div>
-                                <div class="step-connector"></div>
-                            </div>
-                            <div class="step" data-step="3">
-                                <div class="step-icon">
-                                    <i class="fas fa-weight"></i>
-                                </div>
-                                <div class="step-label">Chỉ số sức khỏe</div>
-                            </div>
-                        </div>
-                    </div>
                     
                     <div class="">
                         <div id="tab-2" class="profile-detail-menu-content" style="">
                             @include('layouts.alert')
                             <form class="pro5-form" action="{{ route('form.post', ['slug' => $slug]) }}" method="POST" enctype="multipart/form-data">
-                                @include('sections.form-avatar')
                                 
-                                <!-- SECTION 1: Personal Information -->
-                                <div class="form-section-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-user-circle"></i>
-                                        </div>
-                                        <h3 class="card-title">Thông tin cá nhân</h3>
+                                <!-- BLOCK 1: Avatar (1/3) + Personal Information (2/3) -->
+                                <div class="row">
+                                    <!-- Avatar Section - 1/3 width -->
+                                    <div class="col-xs-12 col-md-4">
+                                        @include('sections.form-avatar')
                                     </div>
-                                    <div class="card-body">
-                                        <div class="pro5-input">
+                                    
+                                    <!-- Personal Information Section - 2/3 width -->
+                                    <div class="col-xs-12 col-md-8">
+                                        <div class="form-section-card">
+                                            <div class="card-header">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-user-circle"></i>
+                                                </div>
+                                                <h3 class="card-title">Thông tin cá nhân</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="pro5-input">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group">
-                                                    <input type="text" name="fullname" value="{{old('fullname', $item->fullname)}}" class="form-control" id="last-name" placeholder=" " required>
                                                     <label for="last-name">Họ và tên <span class="required">*</span></label>
+                                                    <input type="text" name="fullname" value="{{old('fullname', $item->fullname)}}" class="form-control" id="last-name" placeholder="Nhập họ và tên" required>
                                                     <div class="input-icon">
                                                         <i class="fas fa-user"></i>
                                                     </div>
@@ -61,8 +71,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group">
-                                                    <input type="text" name="id_number" value="{{old('id_number', $item->id_number)}}" class="form-control" id="id_number" placeholder=" ">
                                                     <label for="id_number">Mã định danh (CCCD)</label>
+                                                    <input type="text" name="id_number" value="{{old('id_number', $item->id_number)}}" class="form-control" id="id_number" placeholder="Nhập số CCCD">
                                                     <div class="input-icon">
                                                         <i class="fas fa-id-card"></i>
                                                     </div>
@@ -70,8 +80,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group">
-                                                    <input type="number" minlength="10" maxlength="11" name="phone" value="{{old('phone', $item->phone)}}" class="form-control" id="phone" placeholder=" ">
                                                     <label for="phone">Số điện thoại</label>
+                                                    <input type="number" minlength="10" maxlength="11" name="phone" value="{{old('phone', $item->phone)}}" class="form-control" id="phone" placeholder="Nhập số điện thoại">
                                                     <div class="input-icon">
                                                         <i class="fas fa-phone"></i>
                                                     </div>
@@ -83,11 +93,11 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group">
-                                                    <select name="gender" class="form-control" data-placeholder="Giới tính" style="width: 100%;">
+                                                    <label for="gender">Giới tính <span class="required">*</span></label>
+                                                    <select name="gender" id="gender" class="form-control" style="width: 100%;">
                                                         <option value="1" @if($item->gender == old('gender', 1)) selected @endif>Nam</option>
                                                         <option value="0" @if($item->gender == old('gender', 2)) selected @endif>Nữ</option>
                                                     </select>
-                                                    <label for="gender">Giới tính <span class="required">*</span></label>
                                                     <div class="input-icon">
                                                         <i class="fas fa-venus-mars"></i>
                                                     </div>
@@ -95,12 +105,12 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group">
-                                                    <select name="ethnic_id" id="ethnic_id" class="form-control" aria-label="Default select example" required="">
+                                                    <label for="ethnic_id">Dân tộc <span class="required">*</span></label>
+                                                    <select name="ethnic_id" id="ethnic_id" class="form-control" required="">
                                                         @foreach($ethnics as $ethnic)
                                                             <option value="{{ $ethnic->id }}" @if(old('ethnic_id') && old('ethnic_id', $item->ethnic_id) == $ethnic->id) selected @endif>{{ $ethnic->name }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <label for="ethnic_id">Dân tộc <span class="required">*</span></label>
                                                     <div class="input-icon">
                                                         <i class="fas fa-globe-asia"></i>
                                                     </div>
@@ -112,33 +122,34 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-4">
                                                 <div class="form-floating-group calendar-group-modern">
-                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/YYYY'))}}" class="form-control" id="cal-date" placeholder=" " required>
                                                     <label for="cal-date">Ngày cân đo <span class="required">*</span></label>
+                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/YYYY'))}}" class="form-control" id="cal-date" placeholder="Chọn ngày cân đo" required>
                                                     <div class="input-icon">
                                                         <i class="fas fa-calendar-day"></i>
                                                     </div>
-                                                    <i class="fas fa-calendar-alt calendar-icon"></i>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-4">
                                                 @if($category != 3)
                                                 <div class="form-floating-group calendar-group-modern">
-                                                    <input type="text" name="birthday" value="{{old('birthday', $item?->birthday?->format('d/m/YYYY'))}}" class="form-control" id="calendar-birth" placeholder=" " required>
                                                     <label for="calendar-birth">Ngày sinh <span class="required">*</span></label>
+                                                    <input type="text" name="birthday" value="{{old('birthday', $item?->birthday?->format('d/m/YYYY'))}}" class="form-control" id="calendar-birth" placeholder="Chọn ngày sinh" required>
                                                     <div class="input-icon">
                                                         <i class="fas fa-birthday-cake"></i>
                                                     </div>
                                                     <input id="over19" type="hidden" name="over19" value="{{old('over19', $item->over19)}}" />
-                                                    <i class="fas fa-calendar-alt calendar-icon"></i>
                                                 </div>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                <!-- End BLOCK 1 -->
                                 
-                                <!-- SECTION 2: Address Information -->
+                                <!-- BLOCK 2: Address (Full Width) -->
                                 <div class="form-section-card">
                                     <div class="card-header">
                                         <div class="card-icon">
@@ -148,160 +159,175 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="pro5-input">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-floating-group">
-                                                    <input type="text" name="address" value="{{old('address', $item->address)}}" class="form-control" id="address" placeholder=" " required>
-                                                    <label for="address">Địa chỉ <span class="required">*</span></label>
-                                                    <div class="input-icon">
-                                                        <i class="fas fa-home"></i>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-floating-group">
+                                                        <label for="address">Địa chỉ <span class="required">*</span></label>
+                                                        <input type="text" name="address" value="{{old('address', $item->address)}}" class="form-control" id="address" placeholder="Nhập địa chỉ" required>
+                                                        <div class="input-icon">
+                                                            <i class="fas fa-home"></i>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-4">
-                                                <div class="form-floating-group">
-                                                    <select name="province_code" id="province_code" class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%;" required>
-                                                        <option value="">Tỉnh/thành phố</option>
-                                                        @foreach($provinces as $province)
-                                                            <option value="{{ $province->code }}" @if(old('province_code', $item->province_code) == $province->code) selected @endif>{{ $province->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label for="province_code">Tỉnh/Thành phố <span class="required">*</span></label>
-                                                    <div class="input-icon">
-                                                        <i class="fas fa-map"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-4">
-                                                <div class="form-floating-group">
-                                                    <select name="district_code" id="district_code" class="form-control" aria-label="Default select example" required="">
-                                                        <option value="">Quận/huyện</option>
-                                                        @foreach(session('districts', []) as $district)
-                                                            <option value="{{ $district->code }}" @if(old('district_code', $item->district_code) == $district->code) selected @endif>{{ $district->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label for="district_code">Quận / Huyện <span class="required">*</span></label>
-                                                    <div class="input-icon">
-                                                        <i class="fas fa-building"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="clearfix visible-xs-block"></div>
-                                            <div class="col-xs-12 col-sm-4">
-                                                <div class="form-floating-group">
-                                                    <select name="ward_code" id="ward_code" class="form-control" aria-label="Default select example" required="">
-                                                        <option value="">Phường/Xã</option>
-                                                        @foreach(session('wards', []) as $ward)
-                                                            <option value="{{ $ward->code }}" @if(old('ward_code', $item->ward_code) == $ward->code) selected @endif>{{ $ward->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label for="ward_code">Phường / Xã <span class="required">*</span></label>
-                                                    <div class="input-icon">
-                                                        <i class="fas fa-map-pin"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                                
-                                <!-- SECTION 3: Health Measurements -->
-                                <div class="form-section-card">
-                                    <div class="card-header">
-                                        <div class="card-icon">
-                                            <i class="fas fa-heartbeat"></i>
-                                        </div>
-                                        <h3 class="card-title">Chỉ số sức khỏe</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- Measurement Cards Grid -->
-                                        <div class="measurement-grid">
-                                        <div class="measurement-grid">
-                                            <!-- Weight Card -->
-                                            <div class="measurement-card weight">
-                                                <div class="measurement-icon">⚖️</div>
-                                                <div class="measurement-value">
-                                                    <input id="weight-user-profile" min="0" type="number" step="0.1" required name="weight" value="{{old('weight', $item->weight)}}" placeholder="0.0">
-                                                    <span class="unit">kg</span>
-                                                </div>
-                                                <div class="measurement-label">Cân nặng</div>
                                             </div>
                                             
-                                            <!-- Height Card -->
-                                            <div class="measurement-card height">
-                                                <div class="measurement-icon">📏</div>
-                                                <div class="measurement-value">
-                                                    <input id="length-user-profile" type="number" step="0.1" min="0" required name="height" value="{{old('height', $item->height)}}" placeholder="0.0">
-                                                    <span class="unit">cm</span>
+                                            <div class="clearfix"></div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <div class="form-floating-group">
+                                                        <label for="province_code">Tỉnh/Thành phố <span class="required">*</span></label>
+                                                        <select name="province_code" id="province_code" class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%;" required>
+                                                            <option value="">Chọn Tỉnh/thành phố</option>
+                                                            @foreach($provinces as $province)
+                                                                <option value="{{ $province->code }}" @if(old('province_code', $item->province_code) == $province->code) selected @endif>{{ $province->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-icon">
+                                                            <i class="fas fa-map"></i>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="measurement-label">Chiều cao</div>
-                                            </div>
-                                            
-                                            <!-- Age Card -->
-                                            <div class="measurement-card age">
-                                                <div class="measurement-icon">🎂</div>
-                                                <div class="measurement-value">
-                                                    <input name="age_show" value="{{old('age_show', $item->age_show)}}" id="age_show" type="text" readonly placeholder="--">
-                                                    <span class="unit">tuổi</span>
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <div class="form-floating-group">
+                                                        <label for="district_code">Quận / Huyện <span class="required">*</span></label>
+                                                        <select name="district_code" id="district_code" class="form-control" aria-label="Default select example" required="">
+                                                            <option value="">Chọn Quận/huyện</option>
+                                                            @foreach(session('districts', []) as $district)
+                                                                <option value="{{ $district->code }}" @if(old('district_code', $item->district_code) == $district->code) selected @endif>{{ $district->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-icon">
+                                                            <i class="fas fa-building"></i>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="measurement-label">Tuổi</div>
-                                                <input name="age" value="{{old('age',  $item->age)}}" id="age" type="hidden" readonly>
-                                                <input type="hidden" name="realAge" id="real-age" value="0">
-                                            </div>
-                                            
-                                            <!-- BMI Card -->
-                                            <div class="measurement-card bmi" id="bmi-card">
-                                                <div class="measurement-icon">📊</div>
-                                                <div class="measurement-value">
-                                                    <input id="bmi-user-profile" type="text" name="bmi" value="{{old('bmi', $item->bmi)}}" readonly="" placeholder="--">
-                                                    <span class="unit">BMI</span>
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <div class="form-floating-group">
+                                                        <label for="ward_code">Phường / Xã <span class="required">*</span></label>
+                                                        <select name="ward_code" id="ward_code" class="form-control" aria-label="Default select example" required="">
+                                                            <option value="">Chọn Phường/Xã</option>
+                                                            @foreach(session('wards', []) as $ward)
+                                                                <option value="{{ $ward->code }}" @if(old('ward_code', $item->ward_code) == $ward->code) selected @endif>{{ $ward->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-icon">
+                                                            <i class="fas fa-map-pin"></i>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="measurement-label">Chỉ số BMI</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
-<<<<<<< Updated upstream
-                                <!-- Thông tin lúc sinh -->
-                                <div class="pro5-divider"></div>
-                                <div class="clearfix"></div>
-                                <div class="row from-number">
-                                    <div class="col-sm-4">
-                                        <div class="form-group input-group">
-                                            <input id="birth-weight" min="0" type="number" step="1" name="birth_weight" value="{{old('birth_weight', $item->birth_weight)}}" class="form-control" placeholder="Cân nặng lúc sinh" aria-describedby="addon-birth-weight">
-                                            <span class="input-group-addon" id="addon-birth-weight">gram</span>
+                                <!-- End BLOCK 2 -->
+                                    
+                                <!-- BLOCK 3: Birth Information (left) + Health Measurements (right) - Equal Width -->
+                                <div class="row">
+                                    <!-- Birth Information Section (LEFT 50%) -->
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-section-card">
+                                            <div class="card-header">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-baby"></i>
+                                                </div>
+                                                <h3 class="card-title">Thông tin lúc sinh</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-floating-group">
+                                                    <label for="birth-weight">Cân nặng lúc sinh</label>
+                                                    <input id="birth-weight" min="0" type="number" step="1" name="birth_weight" value="{{old('birth_weight', $item->birth_weight)}}" class="form-control" placeholder="Nhập cân nặng (gram)">
+                                                    <div class="input-icon">
+                                                        <i class="fas fa-weight"></i>
+                                                    </div>
+                                                    <small class="text-muted" style="display: block; margin-top: 5px;">Đơn vị: gram</small>
+                                                </div>
+                                                
+                                                <div class="form-floating-group">
+                                                    <label for="gestational-age">Tuổi thai lúc sinh</label>
+                                                    <select name="gestational_age" id="gestational-age" class="form-control">
+                                                        <option value="">Chọn tuổi thai</option>
+                                                        <option value="Đủ tháng" {{old('gestational_age', $item->gestational_age) == 'Đủ tháng' ? 'selected' : ''}}>Đủ tháng</option>
+                                                        <option value="Thiếu tháng" {{old('gestational_age', $item->gestational_age) == 'Thiếu tháng' ? 'selected' : ''}}>Thiếu tháng</option>
+                                                    </select>
+                                                    <div class="input-icon">
+                                                        <i class="fas fa-calendar-check"></i>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-floating-group">
+                                                    <label for="birth-weight-category">Phân loại cân nặng</label>
+                                                    <input id="birth-weight-category" type="text" name="birth_weight_category_display" value="{{old('birth_weight_category', $item->birth_weight_category)}}" class="form-control" placeholder="Tự động tính" readonly style="background-color: #f8f9fa; font-weight: 600;">
+                                                    <input type="hidden" name="birth_weight_category" id="birth-weight-category-hidden" value="{{old('birth_weight_category', $item->birth_weight_category)}}">
+                                                    <div class="input-icon">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <select name="gestational_age" id="gestational-age" class="form-control">
-                                                <option value="">-- Tuổi thai lúc sinh --</option>
-                                                <option value="Đủ tháng" {{old('gestational_age', $item->gestational_age) == 'Đủ tháng' ? 'selected' : ''}}>Đủ tháng</option>
-                                                <option value="Thiếu tháng" {{old('gestational_age', $item->gestational_age) == 'Thiếu tháng' ? 'selected' : ''}}>Thiếu tháng</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <input id="birth-weight-category" type="text" name="birth_weight_category_display" value="{{old('birth_weight_category', $item->birth_weight_category)}}" class="form-control" placeholder="Phân loại cân nặng" readonly style="background-color: #f5f5f5;">
-                                            <input type="hidden" name="birth_weight_category" id="birth-weight-category-hidden" value="{{old('birth_weight_category', $item->birth_weight_category)}}">
+                                    
+                                    <!-- Health Measurements Section (RIGHT 50%) -->
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-section-card">
+                                            <div class="card-header">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-heartbeat"></i>
+                                                </div>
+                                                <h3 class="card-title">Chỉ số sức khỏe</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- Measurement Cards Grid -->
+                                                <div class="measurement-grid">
+                                                    <!-- Weight Card -->
+                                                    <div class="measurement-card weight">
+                                                        <div class="measurement-icon">⚖️</div>
+                                                        <div class="measurement-value">
+                                                            <input id="weight-user-profile" min="0" type="number" step="0.1" required name="weight" value="{{old('weight', $item->weight)}}" placeholder="0.0">
+                                                            <span class="unit">kg</span>
+                                                        </div>
+                                                        <div class="measurement-label">Cân nặng</div>
+                                                    </div>
+                                                    
+                                                    <!-- Height Card -->
+                                                    <div class="measurement-card height">
+                                                        <div class="measurement-icon">📏</div>
+                                                        <div class="measurement-value">
+                                                            <input id="length-user-profile" type="number" step="0.1" min="0" required name="height" value="{{old('height', $item->height)}}" placeholder="0.0">
+                                                            <span class="unit">cm</span>
+                                                        </div>
+                                                        <div class="measurement-label">Chiều cao</div>
+                                                    </div>
+                                                    
+                                                    <!-- Age Card -->
+                                                    <div class="measurement-card age">
+                                                        <div class="measurement-icon">🎂</div>
+                                                        <div class="measurement-value">
+                                                            <input name="age_show" value="{{old('age_show', $item->age_show)}}" id="age_show" type="text" readonly placeholder="--">
+                                                            <span class="unit">tuổi</span>
+                                                        </div>
+                                                        <div class="measurement-label">Tuổi</div>
+                                                        <input name="age" value="{{old('age',  $item->age)}}" id="age" type="hidden" readonly>
+                                                        <input type="hidden" name="realAge" id="real-age" value="0">
+                                                    </div>
+                                                    
+                                                    <!-- BMI Card -->
+                                                    <div class="measurement-card bmi" id="bmi-card">
+                                                        <div class="measurement-icon">📊</div>
+                                                        <div class="measurement-value">
+                                                            <input id="bmi-user-profile" type="text" name="bmi" value="{{old('bmi', $item->bmi)}}" readonly="" placeholder="--">
+                                                            <span class="unit">BMI</span>
+                                                        </div>
+                                                        <div class="measurement-label">Chỉ số BMI</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- End BLOCK 3 -->
                                 
-                                <div class="clearfix"></div>
-                                <div class="row" style="width: 100%;">
-                                    <div class="col-sm-12 text-center">
-=======
                                 <!-- Submit Button -->
-                                <div class="submit-button-wrapper">
-                                <div class="submit-button-wrapper">
->>>>>>> Stashed changes
+                                <div class="submit-button-wrapper" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
                                         @csrf
                                         <input id="category-user-profile" type="hidden" name="category" value="{{$category}}">
                                         <input name="slug" value="{{$slug}}" type="hidden">
@@ -309,7 +335,7 @@
                                             <input name="id" value="{{$item->id}}" type="hidden">
                                             <input name="uid" value="{{$item->uid}}" type="hidden">
                                         @endif
-                                        <button class="btn-submit-modern" type="submit">
+                                        <button class="btn-submit-form" type="submit">
                                             <i class="fas fa-search"></i> Xem kết quả
                                         </button>
                                     </div>
@@ -339,7 +365,11 @@
             </div>
         </div>
         <!-- Validate end -->
-    </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
 @endsection
 
 @push('foot')
@@ -760,7 +790,6 @@
                 reader.readAsDataURL(file);
             }
         });
-<<<<<<< Updated upstream
 
         // Logic phân loại cân nặng lúc sinh
         document.getElementById('birth-weight').addEventListener('input', function() {
@@ -811,131 +840,6 @@
                 classifyBirthWeight();
             }
         });
-=======
-        
-        // ========== MODERN FORM ENHANCEMENTS ==========
-        
-        // Auto-calculate BMI with visual feedback and color coding
-        function calculateBMIModern() {
-            const weight = parseFloat($('#weight-user-profile').val());
-            const height = parseFloat($('#length-user-profile').val()) / 100; // Convert cm to m
-            
-            if (weight && height && height > 0) {
-                const bmi = (weight / (height * height)).toFixed(1);
-                $('#bmi-user-profile').val(bmi);
-                
-                // Update BMI card color based on value
-                const bmiCard = $('#bmi-card');
-                bmiCard.removeClass('underweight normal overweight obese');
-                
-                if (bmi < 18.5) {
-                    bmiCard.addClass('underweight');
-                } else if (bmi >= 18.5 && bmi < 25) {
-                    bmiCard.addClass('normal');
-                } else if (bmi >= 25 && bmi < 30) {
-                    bmiCard.addClass('overweight');
-                } else {
-                    bmiCard.addClass('obese');
-                }
-                
-                // Add animation
-                bmiCard.addClass('bmi-updated');
-                setTimeout(() => bmiCard.removeClass('bmi-updated'), 500);
-            }
-        }
-        
-        // Trigger BMI calculation on weight/height change
-        $('#weight-user-profile, #length-user-profile').on('input change', function() {
-            calculateBMIModern();
-        });
-        
-        // Initial BMI calculation if values exist
-        $(document).ready(function() {
-            calculateBMIModern();
-        });
-        
-        // Step progress update (simple version - can be enhanced based on scroll or form completion)
-        function updateStepProgress(stepNumber) {
-            $('.step').each(function(index) {
-                const step = $(this);
-                const currentStep = index + 1;
-                
-                if (currentStep < stepNumber) {
-                    step.addClass('completed').removeClass('active');
-                } else if (currentStep === stepNumber) {
-                    step.addClass('active').removeClass('completed');
-                } else {
-                    step.removeClass('active completed');
-                }
-            });
-        }
-        
-        // Auto-advance steps based on form section visibility or focus
-        $(document).ready(function() {
-            // Monitor which section is being filled
-            $('.form-section-card').each(function(index) {
-                $(this).find('input, select').on('focus', function() {
-                    updateStepProgress(index + 1);
-                });
-            });
-        });
-        
-        // Input floating label animation enhancement
-        $('.form-floating-group input, .form-floating-group select').on('focus', function() {
-            $(this).closest('.form-floating-group').addClass('focused');
-        }).on('blur', function() {
-            $(this).closest('.form-floating-group').removeClass('focused');
-        });
-        
-        // Form validation visual feedback
-        $('form').on('submit', function(e) {
-            let isValid = true;
-            
-            // Check required fields
-            $(this).find('input[required], select[required]').each(function() {
-                const field = $(this);
-                const group = field.closest('.form-floating-group, .form-group');
-                
-                if (!field.val() || field.val().trim() === '') {
-                    group.addClass('error').removeClass('success');
-                    isValid = false;
-                } else {
-                    group.removeClass('error').addClass('success');
-                }
-            });
-            
-            if (!isValid) {
-                // Scroll to first error
-                const firstError = $('.form-floating-group.error, .form-group.error').first();
-                if (firstError.length) {
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 100
-                    }, 500);
-                }
-            }
-        });
-        
-        // Remove error state on input
-        $('.form-floating-group input, .form-floating-group select').on('input change', function() {
-            const group = $(this).closest('.form-floating-group');
-            if ($(this).val() && $(this).val().trim() !== '') {
-                group.removeClass('error');
-            }
-        });
-        
-        // Add CSS animation for BMI update
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes bmiPulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-            .measurement-card.bmi-updated {
-                animation: bmiPulse 0.5s ease;
-            }
-        `;
-        document.head.appendChild(style);
->>>>>>> Stashed changes
     </script>
 @endpush
 

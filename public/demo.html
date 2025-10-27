@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Thiết Kế Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .demo-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
+        }
+        .btn-demo {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 200px;
+        }
+        .btn-purple {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-purple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn-blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">
+                🎨 Demo Thiết Kế Form Dinh Dưỡng
+            </h1>
+            <p class="text-white text-lg opacity-90">
+                So sánh giữa thiết kế cũ và thiết kế mới với Tailwind CSS Wizard
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Thiết Kế Cũ (WHO Purple Theme) -->
+            <div class="demo-card">
+                <div class="text-center mb-6">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4">
+                        <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Thiết Kế Hiện Tại</h2>
+                    <p class="text-gray-600">WHO Statistics Purple Theme</p>
+                </div>
+
+                <ul class="feature-list mb-6 text-gray-700">
+                    <li>Progress steps với icon</li>
+                    <li>Form sections với card design</li>
+                    <li>Purple gradient header & footer</li>
+                    <li>Floating labels (form-clean.css)</li>
+                    <li>2-column layout (Địa chỉ + Sức khỏe)</li>
+                    <li>FontAwesome icons</li>
+                    <li>Bootstrap grid system</li>
+                    <li>Auto-calculate fields (BMI, Age)</li>
+                </ul>
+
+                <div class="text-center">
+                    <a href="/tu-0-5-tuoi" class="btn-demo btn-purple">
+                        Xem Thiết Kế Hiện Tại
+                    </a>
+                </div>
+            </div>
+
+            <!-- Thiết Kế Mới (Tailwind Wizard) -->
+            <div class="demo-card">
+                <div class="text-center mb-6">
+                    <div class="inline-block p-4 bg-blue-100 rounded-full mb-4">
+                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Thiết Kế Mới</h2>
+                    <p class="text-gray-600">Tailwind CSS Wizard Form</p>
+                </div>
+
+                <ul class="feature-list mb-6 text-gray-700">
+                    <li>3-step wizard với animated progress</li>
+                    <li>Floating labels với Tailwind</li>
+                    <li>Lucide icons (modern)</li>
+                    <li>Responsive grid (mobile-first)</li>
+                    <li>Step navigation (Next/Previous)</li>
+                    <li>Review screen trước khi submit</li>
+                    <li>Real-time validation feedback</li>
+                    <li>Toast notifications</li>
+                    <li>Clean & minimal design</li>
+                </ul>
+
+                <div class="text-center">
+                    <a href="/wizard" class="btn-demo btn-blue">
+                        Xem Thiết Kế Mới (Wizard)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="demo-card mt-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 So Sánh Chi Tiết</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 text-left">Tính Năng</th>
+                            <th class="p-3 text-center">Thiết Kế Hiện Tại</th>
+                            <th class="p-3 text-center">Thiết Kế Mới</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        <tr class="border-b">
+                            <td class="p-3">CSS Framework</td>
+                            <td class="p-3 text-center">Bootstrap + Custom CSS</td>
+                            <td class="p-3 text-center">Tailwind CSS</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Form Navigation</td>
+                            <td class="p-3 text-center">Single page, scroll</td>
+                            <td class="p-3 text-center">Multi-step wizard</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">User Experience</td>
+                            <td class="p-3 text-center">All fields visible</td>
+                            <td class="p-3 text-center">Progressive disclosure</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Validation</td>
+                            <td class="p-3 text-center">On submit</td>
+                            <td class="p-3 text-center">Real-time per step</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Mobile Responsive</td>
+                            <td class="p-3 text-center">✓ Bootstrap grid</td>
+                            <td class="p-3 text-center">✓ Mobile-first design</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Icons</td>
+                            <td class="p-3 text-center">FontAwesome</td>
+                            <td class="p-3 text-center">Lucide (lighter)</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Progress Indicator</td>
+                            <td class="p-3 text-center">Static steps</td>
+                            <td class="p-3 text-center">Animated progress bar</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">Review Screen</td>
+                            <td class="p-3 text-center">❌ Không có</td>
+                            <td class="p-3 text-center">✓ Step 3</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3">File Size</td>
+                            <td class="p-3 text-center">Larger (multiple CSS)</td>
+                            <td class="p-3 text-center">Optimized (Tailwind CDN)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold">Best For</td>
+                            <td class="p-3 text-center">Traditional forms</td>
+                            <td class="p-3 text-center">Modern UX, complex forms</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="demo-card">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">💡 Khuyến Nghị</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h4 class="font-bold text-purple-800 mb-2">Giữ Thiết Kế Hiện Tại Nếu:</h4>
+                    <ul class="text-gray-700 space-y-1">
+                        <li>• Người dùng đã quen thuộc</li>
+                        <li>• Cần xem tất cả fields cùng lúc</li>
+                        <li>• Form ngắn, ít phức tạp</li>
+                        <li>• Không muốn thay đổi lớn</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-bold text-blue-800 mb-2">Chuyển Sang Wizard Nếu:</h4>
+                    <ul class="text-gray-700 space-y-1">
+                        <li>• Muốn UX hiện đại hơn</li>
+                        <li>• Giảm cognitive load cho user</li>
+                        <li>• Form dài, nhiều sections</li>
+                        <li>• Cần validation từng bước</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-8">
+            <a href="/" class="inline-block px-8 py-3 bg-white text-purple-600 font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                ← Về Trang Chủ
+            </a>
+        </div>
+    </div>
+</body>
+</html>

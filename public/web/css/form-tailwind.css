@@ -1,0 +1,378 @@
+/* ========================================
+   TAILWIND WIZARD FORM STYLES
+   Custom styles for multi-step form wizard
+   ======================================== */
+
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+/* Primary Colors */
+.primary-color {
+    color: #3b82f6; /* Blue 500 */
+}
+
+.bg-primary {
+    background-color: #3b82f6;
+}
+
+/* ========================================
+   STEP INDICATOR STYLES
+   ======================================== */
+
+/* Active Step */
+.step-item.active .step-dot {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+/* Completed Step */
+.step-item.completed .step-dot {
+    background-color: #10b981; /* Green for completed */
+    border-color: #10b981;
+    color: white;
+}
+
+.step-item.completed .step-line {
+    background-color: #10b981;
+}
+
+/* Step Transition */
+.step-dot {
+    transition: all 0.3s ease;
+}
+
+/* ========================================
+   FLOATING LABEL STYLES
+   ======================================== */
+
+.floating-label-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.floating-label {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    font-size: 1rem;
+    color: #9ca3af;
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+    background: white;
+    padding: 0 4px;
+    margin-left: -4px;
+    z-index: 1;
+}
+
+/* When input is focused or has value */
+.form-input:focus + .floating-label,
+.form-input:not(:placeholder-shown) + .floating-label {
+    top: -0.5rem;
+    font-size: 0.75rem;
+    color: #3b82f6;
+}
+
+/* For select elements - always show label on top if value exists */
+.form-input:valid + .floating-label {
+    top: -0.5rem;
+    font-size: 0.75rem;
+    color: #3b82f6;
+}
+
+/* ========================================
+   FORM INPUT STYLES
+   ======================================== */
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    font-size: 1rem;
+    background-color: white;
+}
+
+.form-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+/* Readonly inputs (auto-calculated fields) */
+.form-input:read-only {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    color: #6b7280;
+}
+
+/* Select dropdown */
+.form-input.appearance-none {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* ========================================
+   RESPONSIVE GRID LAYOUT
+   ======================================== */
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .input-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .input-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Full width fields */
+.input-grid .col-span-full {
+    grid-column: 1 / -1;
+}
+
+/* ========================================
+   CARD STYLES
+   ======================================== */
+
+.wizard-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+    border-top: 4px solid #3b82f6;
+}
+
+.wizard-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.wizard-card-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #3b82f6;
+    margin-right: 0.75rem;
+}
+
+.wizard-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #3b82f6;
+    margin: 0;
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+.btn-wizard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.5rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-wizard-primary {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-wizard-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-wizard-success {
+    background-color: #10b981;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-wizard-success:hover {
+    background-color: #059669;
+}
+
+.btn-wizard-secondary {
+    background-color: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.btn-wizard-secondary:hover {
+    color: #374151;
+    background-color: #f9fafb;
+}
+
+/* ========================================
+   MESSAGE/TOAST STYLES
+   ======================================== */
+
+.wizard-message {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+    max-width: 400px;
+}
+
+.wizard-message.error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.wizard-message.success {
+    background-color: #10b981;
+    color: white;
+}
+
+.wizard-message.hidden {
+    display: none;
+}
+
+/* ========================================
+   REVIEW SECTION STYLES
+   ======================================== */
+
+.review-summary {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.review-value {
+    color: #6b7280;
+}
+
+/* ========================================
+   STEP CONTENT VISIBILITY
+   ======================================== */
+
+.step-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.step-content.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   VALIDATION ERROR STYLES
+   ======================================== */
+
+.form-input.error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2;
+}
+
+.form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+
+.text-primary {
+    color: #3b82f6;
+}
+
+.text-success {
+    color: #10b981;
+}
+
+.text-error {
+    color: #ef4444;
+}
+
+.bg-light {
+    background-color: #f7f9fc;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+    .wizard-card {
+        padding: 1rem;
+    }
+
+    .wizard-card-title {
+        font-size: 1.125rem;
+    }
+
+    .btn-wizard {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .input-grid {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wizard-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .wizard-card-icon {
+        margin-right: 0;
+    }
+}

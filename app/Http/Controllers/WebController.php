@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ethnic;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -20,6 +21,29 @@ class WebController extends Controller
 
     public function index(){
         return redirect()->route('form.index',['slug'=>'tu-0-5-tuoi']);
+    }
+
+    public function formWizard(Request $request){
+        $provinces = Province::select('name','code')->get();
+        $ethnics = Ethnic::where('active',1)->get();
+        $item = new History();
+        $slug = 'tu-0-5-tuoi';
+        $category = 1;
+        
+        if($request->get('edit')){
+            $item = History::where('uid', $request->get('edit'))->first();
+            if($item){
+                $districts = District::select('name','code')->where('province_code', $item->province_code)->get();
+                $wards = Ward::select('name','code')->where('district_code', $item->district_code)->get();
+                session(['districts' => $districts]);
+                session(['wards' => $wards]);
+                return view('form-wizard', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
+            }
+            abort(404);
+        }
+        session(['districts' => []]);
+        session(['wards' => []]);
+        return view('form-wizard', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
     }
 
     public function form($slug = '', Request $request){
@@ -218,7 +242,9 @@ class WebController extends Controller
         $row = History::where('uid',$uid)->first();
         if($row){
             $slug = $row->slug;
-            return view('ketqua', compact('row', 'slug'));
+            // Load settings for advice
+            $setting = Setting::pluck('value', 'key')->toArray();
+            return view('ketqua', compact('row', 'slug', 'setting'));
         }
         abort(404);
     }

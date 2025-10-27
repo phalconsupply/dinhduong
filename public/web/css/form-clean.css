@@ -1,0 +1,756 @@
+/* ========================================
+   CLEAN FORM STYLES - Modern & Simple
+   Based on WHO Statistics Design
+   Works with flexbox-grid.css
+   ======================================== */
+
+/* Reset and Base */
+* {
+    box-sizing: border-box;
+}
+
+/* Form Container */
+.pro5-form {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%;
+    position: relative;
+}
+
+/* ========================================
+   FORM SECTION CARDS
+   ======================================== */
+.form-section-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid #e8edf5;
+    transition: all 0.3s ease;
+    position: relative; /* NOT absolute */
+    width: 100%;
+    float: none; /* NO float */
+    display: block; /* Normal flow */
+}
+
+.form-section-card:hover {
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.12);
+}
+
+/* Card Header */
+.form-section-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px 30px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-section-card .card-header .card-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.form-section-card .card-header .card-icon i {
+    font-size: 24px;
+    color: #ffffff;
+}
+
+.form-section-card .card-header .card-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.form-section-card .card-body {
+    padding: 35px 30px;
+}
+
+/* ========================================
+   FORM GROUPS - SIMPLE APPROACH
+   ======================================== */
+.form-floating-group {
+    margin-bottom: 20px;
+}
+
+/* Label - Always visible on top */
+.form-floating-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    padding: 0;
+}
+
+.form-floating-group label .required {
+    color: #ef4444;
+    margin-left: 2px;
+    font-weight: 600;
+}
+
+/* All Form Controls - Unified styling */
+.form-floating-group .form-control,
+.form-floating-group input.form-control,
+.form-floating-group select.form-control,
+.form-floating-group textarea.form-control {
+    display: block;
+    width: 100%;
+    height: 50px;
+    padding: 13px 50px 13px 16px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #1e293b;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-floating-group .form-control:focus {
+    color: #1e293b;
+    background-color: #ffffff;
+    border-color: #667eea;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-floating-group .form-control::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+}
+
+/* Textarea specific */
+.form-floating-group textarea.form-control {
+    height: auto;
+    min-height: 100px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    resize: vertical;
+}
+
+/* Select specific */
+.form-floating-group select.form-control {
+    cursor: pointer;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23334155' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-floating-group select.form-control:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Icon positioning - Centered vertically with input field */
+.form-floating-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-floating-group .input-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: #94a3b8;
+    transition: color 0.15s ease-in-out;
+    z-index: 5;
+    margin-top: 12px; /* Offset for label height */
+}
+
+.form-floating-group .input-icon i {
+    font-size: 16px;
+}
+
+.form-floating-group .form-control:focus ~ .input-icon {
+    color: #667eea;
+}
+
+/* Hide icon for select (has its own arrow) */
+.form-floating-group select.form-control ~ .input-icon {
+    display: none;
+}
+
+/* Date inputs - Make calendar clickable */
+.form-floating-group input[type="date"],
+.form-floating-group input[type="datetime-local"] {
+    padding-right: 16px;
+}
+
+.form-floating-group input[type="date"]::-webkit-calendar-picker-indicator,
+.form-floating-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    width: 50px;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+
+/* Show icon for date fields */
+.form-floating-group input[type="date"] ~ .input-icon,
+.form-floating-group input[type="datetime-local"] ~ .input-icon {
+    display: flex;
+    pointer-events: none;
+}
+
+/* ========================================
+   PROGRESS STEPS
+   ======================================== */
+.form-progress-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25);
+}
+
+.form-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.step-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon i {
+    font-size: 26px;
+    color: #ffffff;
+}
+
+.step.active .step-icon {
+    background: #ffffff;
+    border-color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.step.active .step-icon i {
+    color: #667eea;
+}
+
+.step-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.step-connector {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+.step:last-child .step-connector {
+    display: none;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+/* Submit button wrapper */
+.submit-button-wrapper {
+    clear: both;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px !important;
+    margin-bottom: 30px !important;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.btn-submit-form {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #ffffff;
+    padding: 16px 50px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: auto;
+    min-width: 220px;
+}
+
+.btn-submit-form i {
+    font-size: 18px;
+}
+
+.btn-submit-form:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.45);
+    background: linear-gradient(135deg, #5568d3 0%, #653a8a 100%);
+}
+
+.btn-submit-form:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ========================================
+   GRID & SPACING - Works with Flexbox Grid
+   ======================================== */
+
+/* Clearfix utility */
+.clearfix::after,
+.clearfix::before {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.clearfix {
+    clear: both !important;
+    display: block !important;
+    width: 100% !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+/* Row enhancements */
+.pro5-form .row {
+    margin-bottom: 30px;
+}
+
+/* Equal Height for BLOCK 1: Avatar (1/3) + Personal Info (2/3) */
+.pro5-form .row > .col-md-4,
+.pro5-form .row > .col-md-8 {
+    display: flex;
+    flex-direction: column;
+}
+
+.pro5-form .row > .col-md-4 .pro5-avatar,
+.pro5-form .row > .col-md-8 .form-section-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pro5-form .row > .col-md-4 .pro5-avatar > div {
+    flex: 1;
+    height: 100%;
+}
+
+.pro5-form .row > .col-md-8 .form-section-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Equal Height for BLOCK 3: Health (1/2) + Birth Info (1/2) */
+.pro5-form .row > .col-md-6 {
+    display: flex;
+    flex-direction: column;
+}
+
+.pro5-form .row > .col-md-6 .form-section-card,
+.pro5-form .row > .col-md-6 .pro5-avatar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pro5-form .row > .col-md-6 .pro5-avatar > div {
+    flex: 1;
+    height: 100%;
+}
+
+.pro5-form .row > .col-md-6 .form-section-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Prevent overflow */
+.pro5-form {
+    width: 100%;
+    overflow: hidden;
+}
+
+.pro5-input {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+/* ========================================
+   VALIDATION STATES
+   ======================================== */
+.form-floating-group .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+.form-floating-group .form-control.is-valid {
+    border-color: #10b981;
+}
+
+.invalid-feedback {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #ef4444;
+}
+
+.valid-feedback {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #10b981;
+}
+
+/* ========================================
+   MEASUREMENT CARDS (Health Section)
+   ======================================== */
+.measurement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    position: relative; /* NOT absolute */
+    float: none; /* NO float */
+}
+
+.measurement-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    position: relative; /* NOT absolute */
+    float: none; /* NO float */
+}
+
+.measurement-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.measurement-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.measurement-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.measurement-value input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    width: 80px;
+    padding: 0;
+    outline: none;
+}
+
+.measurement-value input:read-only {
+    background: transparent;
+    color: #64748b;
+}
+
+.measurement-value .unit {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.measurement-label {
+    font-size: 13px;
+    color: #475569;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Weight card specific */
+.measurement-card.weight {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.measurement-card.weight:hover {
+    border-color: #059669;
+}
+
+/* Height card specific */
+.measurement-card.height {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.measurement-card.height:hover {
+    border-color: #2563eb;
+}
+
+/* Age card specific */
+.measurement-card.age {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.measurement-card.age:hover {
+    border-color: #d97706;
+}
+
+/* BMI card specific */
+.measurement-card.bmi {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+.measurement-card.bmi:hover {
+    border-color: #7c3aed;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    .form-section-card .card-body {
+        padding: 25px 20px;
+    }
+    
+    .form-section-card .card-header {
+        padding: 18px 20px;
+    }
+    
+    .form-section-card .card-header .card-title {
+        font-size: 18px;
+    }
+    
+    .form-steps {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .step {
+        width: 100%;
+    }
+    
+    .step-connector {
+        display: none;
+    }
+    
+    .form-floating-group .form-control {
+        height: 48px;
+        font-size: 14px;
+    }
+    
+    .btn-submit-form {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 30px;
+    }
+    
+    /* Measurement grid to single column on mobile */
+    .measurement-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .measurement-card {
+        min-height: 120px;
+    }
+    
+    /* Two column layout stacks on mobile */
+    .pro5-form .row > .col-md-6 {
+        margin-bottom: 20px;
+    }
+    
+    /* Remove flex height constraints on mobile */
+    .pro5-form .row > .col-md-6 .form-section-card,
+    .pro5-form .row > .col-md-6 .pro5-avatar {
+        height: auto;
+    }
+    
+    .pro5-form .row > .col-md-6 .pro5-avatar > div {
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section-card .card-body {
+        padding: 20px 15px;
+    }
+    
+    .form-section-card .card-header {
+        padding: 15px;
+    }
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+
+/* Ensure blocks stack vertically and don't overlap */
+.pro5-form > .row,
+.pro5-form > .form-section-card,
+.pro5-form > .submit-button-wrapper {
+    display: block;
+    width: 100%;
+    clear: both !important;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+/* Force each block to take full width and not overlap */
+.pro5-form > * {
+    width: 100%;
+    position: relative !important; /* NOT absolute */
+    float: none !important; /* NO float */
+}
+
+.text-muted {
+    color: #64748b !important;
+    font-size: 13px;
+    display: block;
+    margin-top: 6px;
+    font-weight: 400;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+/* Chosen plugin compatibility */
+.chosen-container {
+    width: 100% !important;
+}
+
+.chosen-container-single .chosen-single {
+    height: 50px;
+    line-height: 48px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: none;
+    padding: 0 16px;
+}
+
+.chosen-container-active.chosen-with-drop .chosen-single {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chosen-container .chosen-drop {
+    border: 2px solid #667eea;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   AVATAR UPLOAD (if needed)
+   ======================================== */
+.avatar-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.avatar-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

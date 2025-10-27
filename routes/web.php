@@ -22,6 +22,9 @@ Route::get('/auth/logout', $namespace.'AuthController@logout')->name('auth.logou
 //Web
 Route::get('/', [WebController::class, 'index'])->name('index');
 
+// Wizard form route (NEW DESIGN)
+Route::get('/wizard', [WebController::class, 'formWizard'])->name('form.wizard');
+
 // Specific routes MUST come BEFORE wildcard routes
 Route::get('/ketqua', [WebController::class, 'result'])->name('result');
 Route::get('/in', [WebController::class, 'print'])->name('print');

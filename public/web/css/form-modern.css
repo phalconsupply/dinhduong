@@ -1,0 +1,516 @@
+/* ========================================
+   MODERN FORM STYLES - WHO Statistics Theme
+   ======================================== */
+
+/* Form Section Cards */
+.form-section-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.form-section-card:hover {
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Card Header with Icon */
+.form-section-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 20px 25px;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-section-card .card-header .card-icon {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.form-section-card .card-header .card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.form-section-card .card-body {
+    padding: 30px 25px;
+}
+
+/* Form Floating Groups - COMPLETELY REVISED */
+.form-floating-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+/* Label - Always on top (static position) */
+.form-floating-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.form-floating-group .required {
+    color: #e43f52;
+    margin-left: 2px;
+}
+
+/* Input wrapper for icon */
+.form-floating-group {
+    position: relative;
+}
+
+/* Input field styling */
+.form-floating-group .form-control {
+    width: 100%;
+    height: 48px;
+    padding: 12px 45px 12px 15px;
+    font-size: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: #fff;
+    color: #2d3748;
+    line-height: 24px;
+}
+
+.form-floating-group .form-control:hover {
+    border-color: #cbd5e0;
+}
+
+.form-floating-group .form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-floating-group .form-control::placeholder {
+    color: #a0aec0;
+    opacity: 0.6;
+}
+
+/* Icon positioning - Fixed at bottom right */
+.form-floating-group .input-icon {
+    position: absolute;
+    right: 15px;
+    bottom: 14px;
+    color: #a0aec0;
+    font-size: 16px;
+    transition: all 0.3s;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.form-floating-group .form-control:focus ~ .input-icon {
+    color: #667eea;
+}
+
+/* Select Styling - Clean dropdown */
+.form-floating-group select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0aec0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    padding-right: 45px;
+    cursor: pointer;
+}
+
+.form-floating-group select.form-control:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+/* Hide FontAwesome icon for select */
+.form-floating-group select.form-control ~ .input-icon {
+    display: none;
+}
+
+/* Date & DateTime inputs - Make calendar clickable */
+.form-floating-group input[type="date"],
+.form-floating-group input[type="datetime-local"],
+.form-floating-group input[type="time"] {
+    position: relative;
+    padding-right: 45px;
+}
+
+/* Style the native calendar icon */
+.form-floating-group input[type="date"]::-webkit-calendar-picker-indicator,
+.form-floating-group input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.form-floating-group input[type="time"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 45px;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 10;
+}
+
+/* Show custom calendar icon - Make it look clickable */
+.form-floating-group input[type="date"] ~ .input-icon,
+.form-floating-group input[type="datetime-local"] ~ .input-icon,
+.form-floating-group input[type="time"] ~ .input-icon {
+    pointer-events: none;
+    z-index: 1;
+    cursor: pointer;
+}
+
+/* Firefox date input */
+.form-floating-group input[type="date"]::-moz-calendar-picker-indicator,
+.form-floating-group input[type="datetime-local"]::-moz-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+/* Form Progress Steps */
+.form-progress-wrapper {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+}
+
+.form-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+}
+
+.step-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 12px;
+    transition: all 0.4s;
+    z-index: 2;
+}
+
+.step.active .step-icon {
+    background: #fff;
+    color: #667eea;
+    border-color: #fff;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+.step-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    text-align: center;
+    max-width: 120px;
+}
+
+.step.active .step-label {
+    color: #fff;
+    font-weight: 600;
+}
+
+.step-connector {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+}
+
+.step:last-child .step-connector {
+    display: none;
+}
+
+.step.active .step-connector {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Avatar Upload Section */
+.avatar-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.avatar-upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Submit Button */
+.btn-submit-form {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 15px 50px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.btn-submit-form:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-steps {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .step {
+        width: 100%;
+    }
+    
+    .step-connector {
+        display: none;
+    }
+    
+    .form-section-card .card-header {
+        padding: 15px 20px;
+    }
+    
+    .form-section-card .card-header .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .form-section-card .card-header .card-title {
+        font-size: 16px;
+    }
+    
+    .form-section-card .card-body {
+        padding: 20px 15px;
+    }
+    
+    .form-floating-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-floating-group .form-control {
+        height: 46px;
+        font-size: 14px;
+    }
+    
+    .form-floating-group label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section-card .card-body {
+        padding: 15px 10px;
+    }
+    
+    .btn-submit-form {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Additional Utilities */
+.pro5-form .row {
+    margin-bottom: 0;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.pro5-form .row > [class*="col-"] {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.pro5-form .clearfix {
+    clear: both;
+    margin-bottom: 5px;
+}
+
+/* Ensure consistent field heights */
+.pro5-input {
+    margin-bottom: 15px;
+}
+
+/* Fix for Bootstrap select with chosen plugin */
+.chosen-container {
+    width: 100% !important;
+}
+
+.chosen-container .chosen-single {
+    height: 48px;
+    line-height: 46px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: none;
+}
+
+.chosen-container .chosen-single:focus,
+.chosen-container-active .chosen-single {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+/* File Input Custom */
+.form-floating-group input[type="file"] {
+    padding: 10px;
+}
+
+/* Textarea - Proper sizing */
+.form-floating-group textarea.form-control {
+    min-height: 120px;
+    height: auto;
+    resize: vertical;
+    padding: 12px 15px;
+    line-height: 1.6;
+}
+
+.form-floating-group textarea.form-control ~ .input-icon {
+    bottom: auto;
+    top: 12px;
+}
+
+/* Radio & Checkbox */
+.form-floating-group .form-check {
+    padding-left: 30px;
+}
+
+.form-floating-group .form-check-input {
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+}
+
+.form-floating-group .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-floating-group .form-check-label {
+    position: static;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Validation States */
+.form-floating-group .form-control.is-invalid {
+    border-color: #e43f52;
+}
+
+.form-floating-group .form-control.is-valid {
+    border-color: #2eca8b;
+}
+
+.invalid-feedback,
+.valid-feedback {
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Loading State */
+.btn-submit-form.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-submit-form.loading::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
