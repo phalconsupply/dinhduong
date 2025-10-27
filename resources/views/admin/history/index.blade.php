@@ -145,10 +145,18 @@
                                                 <span class="small" style="background-color: {{$row->check_weight_for_height()['color']}}">Cân nặng theo chiều cao:{{$row->check_weight_for_height()['text']}}</span>
                                             </td>
                                             <td>
-                                                @if($row->is_risk === 1)
-                                                    <span class="badge bg-warning">Nguy cơ</span><br>
+                                                @php
+                                                    $nutritionStatus = $row->nutrition_status ?? '';
+                                                    $isNormal = $nutritionStatus === 'Bình thường';
+                                                    $isUnknown = in_array($nutritionStatus, ['Chưa xác định', 'Chưa có đủ dữ liệu', '']);
+                                                @endphp
+                                                @if($isNormal)
+                                                    <span class="badge bg-success">Bình thường</span>
+                                                @elseif($isUnknown)
+                                                    <span class="badge bg-secondary">Chưa xác định</span>
                                                 @else
-                                                    <span class="badge bg-success">Bình thường</span><br>
+                                                    <span class="badge bg-warning">Nguy cơ</span>
+                                                    <br><span class="small text-muted">{{ $nutritionStatus }}</span>
                                                 @endif
                                             </td>
                                             <td>
