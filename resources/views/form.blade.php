@@ -95,8 +95,8 @@
                                                 <div class="form-floating-group">
                                                     <label for="gender">Giới tính <span class="required">*</span></label>
                                                     <select name="gender" id="gender" class="form-control" style="width: 100%;">
-                                                        <option value="1" @if($item->gender == old('gender', 1)) selected @endif>Nam</option>
-                                                        <option value="0" @if($item->gender == old('gender', 2)) selected @endif>Nữ</option>
+                                                        <option value="1" @if(old('gender', $item->gender) == 1) selected @endif>Nam</option>
+                                                        <option value="0" @if(old('gender', $item->gender) == 0) selected @endif>Nữ</option>
                                                     </select>
                                                     <div class="input-icon">
                                                         <i class="fas fa-venus-mars"></i>
