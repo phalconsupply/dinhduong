@@ -74,6 +74,23 @@ class WebController extends Controller
 
     public function form_post(Request $request)
     {
+        // Debug: Log thumb file information
+        if ($request->hasFile('thumb')) {
+            $file = $request->file('thumb');
+            \Log::info('Thumb Upload Debug', [
+                'hasFile' => $request->hasFile('thumb'),
+                'originalName' => $file->getClientOriginalName(),
+                'mimeType' => $file->getMimeType(),
+                'clientExtension' => $file->getClientOriginalExtension(),
+                'size' => $file->getSize(),
+                'isValid' => $file->isValid(),
+                'error' => $file->getError(),
+                'errorMessage' => $file->getErrorMessage(),
+            ]);
+        } else {
+            \Log::info('Thumb Upload Debug: No file uploaded or hasFile() returned false');
+        }
+
         // Validation rules
         $rules = [
             'slug' => 'required|in:tu-0-5-tuoi,tu-5-19-tuoi,tu-19-tuoi',
@@ -104,6 +121,12 @@ class WebController extends Controller
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
+            // Log validation errors for debugging
+            \Log::error('Form Validation Failed', [
+                'errors' => $validator->errors()->toArray(),
+                'thumb_errors' => $validator->errors()->get('thumb'),
+            ]);
+            
             // Handle validation errors
             $districts = [];
             $wards = [];
