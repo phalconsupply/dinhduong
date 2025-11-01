@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload Thumb - Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .error-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+        }
+        input[type="file"]:hover {
+            border-color: #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #preview {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #fileInfo {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .check {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .cross {
+            color: #f44336;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Upload Avatar (Thumb) - Debug Tool</h1>
+        
+        <div class="info-box">
+            <strong>📋 Mục đích:</strong> Kiểm tra file ảnh trước khi upload để xem MIME type và các thuộc tính.
+        </div>
+
+        <div class="warning-box">
+            <strong>⚠️ Lưu ý:</strong> Tool này chỉ kiểm tra ở client-side (trình duyệt). 
+            Server Laravel có thể kiểm tra khác biệt. Để xem log server, check file <code>storage/logs/laravel.log</code>
+        </div>
+
+        <form id="testForm">
+            <div class="form-group">
+                <label for="fileInput">Chọn file ảnh JPG (626x626, 18.5KB):</label>
+                <input type="file" id="fileInput" name="thumb" accept="image/*">
+            </div>
+            <button type="button" onclick="analyzeFile()">🔬 Phân tích file</button>
+        </form>
+
+        <div id="fileInfo"></div>
+        <img id="preview" style="display: none;">
+
+        <div class="success-box" style="margin-top: 30px;">
+            <strong>✅ Validation rules Laravel:</strong><br>
+            <code>'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'</code>
+            <ul>
+                <li><strong>image:</strong> Phải là ảnh thực sự (kiểm tra bằng getimagesize())</li>
+                <li><strong>mimes:</strong> MIME type phải là jpeg, png, jpg, gif, hoặc svg</li>
+                <li><strong>max:2048:</strong> Tối đa 2MB (2048 KB)</li>
+            </ul>
+        </div>
+
+        <div class="error-box">
+            <strong>🐛 Lỗi bạn đang gặp:</strong><br>
+            "Trường thumb phải là định dạng hình ảnh."<br>
+            "Trường thumb phải là một tập tin có định dạng: jpeg, png, jpg, gif, svg."
+        </div>
+    </div>
+
+    <script>
+        function analyzeFile() {
+            const fileInput = document.getElementById('fileInput');
+            const fileInfoDiv = document.getElementById('fileInfo');
+            const preview = document.getElementById('preview');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                fileInfoDiv.innerHTML = '<div class="error-box">❌ Vui lòng chọn file!</div>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            // Analyze file info
+            let info = '<h3>📊 Thông tin file (Client-side):</h3>';
+            info += '<table style="width: 100%; border-collapse: collapse;">';
+            
+            // File name
+            info += `<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>Tên file:</strong></td><td style="padding: 8px;">${file.name}</td></tr>`;
+            
+            // File size
+            const sizeKB = (file.size / 1024).toFixed(2);
+            const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+            const sizeCheck = file.size <= (2048 * 1024) ? '<span class="check">✓ OK (≤ 2MB)</span>' : '<span class="cross">✗ Quá lớn (> 2MB)</span>';
+            info += `<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>Kích thước:</strong></td><td style="padding: 8px;">${file.size} bytes (${sizeKB} KB / ${sizeMB} MB) ${sizeCheck}</td></tr>`;
+            
+            // MIME type - THIS IS CRITICAL
+            const mimeType = file.type;
+            const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml'];
+            const mimeCheck = allowedMimes.includes(mimeType) ? '<span class="check">✓ Hợp lệ</span>' : '<span class="cross">✗ Không hợp lệ</span>';
+            info += `<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>MIME Type:</strong></td><td style="padding: 8px;"><code>${mimeType || 'undefined'}</code> ${mimeCheck}</td></tr>`;
+            
+            // Extension
+            const extension = file.name.split('.').pop().toLowerCase();
+            const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+            const extCheck = allowedExts.includes(extension) ? '<span class="check">✓ Hợp lệ</span>' : '<span class="cross">✗ Không hợp lệ</span>';
+            info += `<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>Extension:</strong></td><td style="padding: 8px;">.${extension} ${extCheck}</td></tr>`;
+            
+            // Last modified
+            info += `<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>Sửa đổi lần cuối:</strong></td><td style="padding: 8px;">${new Date(file.lastModified).toLocaleString('vi-VN')}</td></tr>`;
+            
+            info += '</table>';
+            
+            // Analysis
+            info += '<h3>🔍 Phân tích:</h3>';
+            
+            if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+                info += '<div class="success-box"><strong>✅ MIME Type chính xác!</strong><br>File của bạn có MIME type là <code>' + mimeType + '</code> - đúng định dạng JPG/JPEG.</div>';
+            } else if (mimeType === '') {
+                info += '<div class="error-box"><strong>⚠️ MIME Type rỗng!</strong><br>Trình duyệt không xác định được MIME type. File có thể bị lỗi hoặc không đúng định dạng.</div>';
+            } else if (mimeType === 'application/octet-stream') {
+                info += '<div class="error-box"><strong>❌ MIME Type generic!</strong><br>File có MIME type là <code>application/octet-stream</code> - đây là loại "binary generic". Nguyên nhân:<ul><li>File bị corrupt</li><li>File được rename từ định dạng khác</li><li>File không phải ảnh thực sự</li></ul><strong>Giải pháp:</strong> Mở ảnh trong Photoshop/GIMP và Save As lại thành JPG.</div>';
+            } else if (!allowedMimes.includes(mimeType)) {
+                info += '<div class="error-box"><strong>❌ MIME Type không được hỗ trợ!</strong><br>File có MIME type là <code>' + mimeType + '</code><br><strong>Laravel chỉ chấp nhận:</strong> image/jpeg, image/jpg, image/png, image/gif, image/svg+xml</div>';
+            } else {
+                info += '<div class="success-box"><strong>✅ MIME Type hợp lệ!</strong><br>File có MIME type là <code>' + mimeType + '</code></div>';
+            }
+            
+            // Size check
+            if (file.size > 2048 * 1024) {
+                info += '<div class="error-box"><strong>❌ File quá lớn!</strong><br>Kích thước: ' + sizeMB + ' MB (> 2 MB)<br><strong>Giải pháp:</strong> Nén ảnh xuống dưới 2MB.</div>';
+            } else {
+                info += '<div class="success-box"><strong>✅ Kích thước OK!</strong><br>File: ' + sizeKB + ' KB (' + sizeMB + ' MB) - nhỏ hơn giới hạn 2MB.</div>';
+            }
+            
+            fileInfoDiv.innerHTML = info;
+            
+            // Preview image
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                
+                // Try to get image dimensions
+                const img = new Image();
+                img.onload = function() {
+                    fileInfoDiv.innerHTML += `<h3>🖼️ Kích thước ảnh:</h3>`;
+                    fileInfoDiv.innerHTML += `<p><strong>Width:</strong> ${this.width}px, <strong>Height:</strong> ${this.height}px</p>`;
+                    
+                    if (this.width === 626 && this.height === 626) {
+                        fileInfoDiv.innerHTML += '<div class="success-box">✅ Đúng kích thước 626x626!</div>';
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Auto analyze when file selected
+        document.getElementById('fileInput').addEventListener('change', analyzeFile);
+    </script>
+</body>
+</html>
