@@ -25,6 +25,11 @@ Route::get('/', [WebController::class, 'index'])->name('index');
 // Wizard form route (NEW DESIGN)
 Route::get('/wizard', [WebController::class, 'formWizard'])->name('form.wizard');
 
+// Laravel FileManager routes (must be before wildcard routes)
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
+
 // Specific routes MUST come BEFORE wildcard routes
 Route::get('/ketqua', [WebController::class, 'result'])->name('result');
 Route::get('/in', [WebController::class, 'print'])->name('print');
