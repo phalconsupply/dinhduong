@@ -360,70 +360,176 @@ body {
    RESPONSIVE DESIGN
    ======================================== */
 @media (max-width: 768px) {
+    /* Header Top - Compact mobile layout */
+    .header-top {
+        padding: 8px 0;
+    }
+    
     .header-info {
         flex-direction: column;
-        gap: 15px;
+        gap: 8px;
         text-align: center;
     }
     
+    /* Logo Section - Horizontal compact layout */
     .logo-section {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
+        text-align: left;
+        gap: 10px;
     }
     
+    .logo-section img {
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+    }
+    
+    .logo-text h1 {
+        font-size: 14px;
+        line-height: 1.2;
+    }
+    
+    .logo-text p {
+        font-size: 11px;
+        line-height: 1.2;
+    }
+    
+    /* Login Form - Compact */
     .login-form {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
         width: 100%;
+        gap: 5px;
     }
     
     .login-form input[type="text"],
     .login-form input[type="password"] {
+        width: calc(50% - 3px);
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .login-form input[type="submit"] {
         width: 100%;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    /* User Info - Compact */
+    .user-info {
+        padding: 5px 12px;
+        gap: 8px;
+    }
+    
+    .user-info img {
+        width: 35px;
+        height: 35px;
+        border-width: 2px;
+    }
+    
+    .user-name {
+        font-size: 13px;
+    }
+    
+    .user-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 5px;
+    }
+    
+    .user-actions a {
+        text-align: center;
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1;
+        min-width: calc(50% - 3px);
+    }
+    
+    /* Horizontal Menu - Compact scrollable */
+    .horizontal-menu {
+        padding: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .nav-menu {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 0;
+        flex-wrap: nowrap;
+        min-width: min-content;
+    }
+    
+    .nav-menu li {
+        flex-shrink: 0;
     }
     
     .nav-menu li a {
-        padding: 15px 20px;
+        padding: 12px 15px;
+        font-size: 13px;
+        white-space: nowrap;
+        border-bottom-width: 2px;
     }
     
+    .nav-menu li a i {
+        margin-right: 5px;
+        font-size: 12px;
+    }
+    
+    /* Content wrapper */
     .main-content-wrapper {
-        margin: 15px;
-        border-radius: 15px;
+        margin: 10px;
+        border-radius: 12px;
     }
     
     .content-body {
-        padding: 20px;
+        padding: 15px;
     }
     
     .footer-content {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    
-    .user-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .user-actions a {
-        text-align: center;
-    }
 }
 
 @media (max-width: 480px) {
-    .logo-text h1 {
-        font-size: 16px;
+    /* Extra compact for very small screens */
+    .logo-section img {
+        width: 35px;
+        height: 35px;
     }
     
-    .logo-text p {
+    .logo-text h1 {
         font-size: 12px;
     }
     
-    .logo-section img {
-        width: 50px;
-        height: 50px;
+    .logo-text p {
+        font-size: 10px;
+    }
+    
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .login-form input[type="submit"] {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .nav-menu li a {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .user-name {
+        font-size: 12px;
+    }
+    
+    .user-actions a {
+        font-size: 11px;
+        padding: 6px 10px;
     }
 }

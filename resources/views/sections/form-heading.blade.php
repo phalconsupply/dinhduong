@@ -6,7 +6,7 @@
         cân đo hàng tháng trên cùng một cái cân, cùng một thước đo, vào cùng một thời điểm trong
         ngày.</p>
     <p>- Tốt nhất nên đo vào lúc chưa ăn sáng hoặc sau khi đi vệ sinh.</p>
-    <p>- Bạn có thể vào mục <a href="#" class="text-green"><strong>Kỹ thuật cân đo</strong></a> để xem cách
+    <p>- Bạn có thể vào mục <a href="/kythuatcando.php" class="text-green" target="_blank"><strong>Kỹ thuật cân đo</strong></a> để xem cách
         cân đo chính xác cho bé.</p>
     <br />
 @elseif($slug == 'tu-5-19-tuoi')

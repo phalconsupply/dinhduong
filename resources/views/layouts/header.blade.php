@@ -114,6 +114,16 @@
                         <i class="fas fa-user"></i> Trên 19 tuổi
                     </a>
                 </li>
+                <li class="@if($slug == 'who-statistics') current @endif">
+                    <a href="/who-statistics.php">
+                        <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại
+                    </a>
+                </li>
+                <li class="@if($slug == 'kythuatcando') current @endif">
+                    <a href="/kythuatcando.php">
+                        <i class="fas fa-ruler-combined"></i> Kỹ thuật cân đo
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
