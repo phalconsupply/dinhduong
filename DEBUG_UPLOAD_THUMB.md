@@ -174,14 +174,16 @@ Kết quả đã check:
 ## Validation Rules hiện tại
 
 ```php
-'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,avif,webp|max:2048'
 ```
 
 **Giải thích:**
 - `nullable`: Có thể không upload (optional)
 - `image`: Phải là ảnh thực sự (dùng `getimagesize()`)
-- `mimes:jpeg,png,jpg,gif,svg`: MIME type phải match
+- `mimes:jpeg,png,jpg,gif,svg,avif,webp`: MIME type phải match (đã thêm AVIF và WebP)
 - `max:2048`: Tối đa 2MB (2048 KB)
+
+**⚠️ QUAN TRỌNG:** File `boy.jpg` có MIME type thực tế là `image/avif`, không phải `image/jpeg`. Đã thêm `avif` và `webp` vào validation rules để support định dạng ảnh hiện đại.
 
 ## Các file liên quan
 

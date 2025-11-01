@@ -105,7 +105,7 @@ class WebController extends Controller
             'weight' => 'nullable|numeric|max:500',
             'height' => 'nullable|numeric|max:200',
             'realAge' => 'required|nullable|numeric|max:150',
-            'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,avif,webp|max:2048',
         ];
 
         if($request->slug == 'tu-0-5-tuoi' || $request->slug == 'tu-5-19-tuoi'){

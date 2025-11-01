@@ -1937,7 +1937,7 @@ INSERT INTO `settings` (`key`, `value`, `created_at`, `updated_at`) VALUES
 ('youtube', NULL, NULL, NULL),
 ('logo-dark', '/uploads/images/logo-2023/order%20(6).png', NULL, '2023-12-20 04:22:44'),
 ('site-title', 'Trung Tâm Y Tế Đức Trọng', NULL, '2024-10-06 03:53:29'),
-('site-domain', 'hangthaichinhhang.com', NULL, NULL),
+('site-domain', 'yteductrong.vn', NULL, NULL),
 ('rate', '720', NULL, '2023-11-23 08:22:12'),
 ('bank_number', '0888222227', NULL, '2023-12-20 02:51:12'),
 ('bank_account', 'Đoàn Tuấn Vũ', NULL, '2023-12-20 02:51:12'),
