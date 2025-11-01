@@ -15,7 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind Intervention Image Manager for Laravel FileManager
+        $this->app->bind(
+            \Intervention\Image\Interfaces\ImageManagerInterface::class,
+            function ($app) {
+                return new \Intervention\Image\ImageManager(
+                    new \Intervention\Image\Drivers\Gd\Driver()
+                );
+            }
+        );
     }
 
     /**
