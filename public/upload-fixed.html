@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Upload Fixed - Test Now</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #4CAF50;
+            border-bottom: 4px solid #4CAF50;
+            padding-bottom: 15px;
+            margin-top: 0;
+            font-size: 32px;
+        }
+        .success-banner {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .code-box {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .check {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .btn-secondary {
+            background: #2196F3;
+        }
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+        .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #eee;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">✅</span>Upload Avatar đã được fix!</h1>
+        
+        <div class="success-banner">
+            🎉 Lỗi MIME type đã được giải quyết! AVIF và WebP đã được thêm vào validation.
+        </div>
+
+        <div class="info-box">
+            <strong>🔍 Root Cause:</strong><br>
+            File <code>boy.jpg</code> có MIME type thực tế là <strong>image/avif</strong>, không phải <code>image/jpeg</code>.<br>
+            <br>
+            <strong>Client-side test:</strong> Hiển thị <code>image/jpeg</code> (dựa vào extension)<br>
+            <strong>Server-side PHP:</strong> Detect <code>image/avif</code> (dựa vào nội dung file thực)<br>
+            <br>
+            → Validation reject vì <code>avif</code> không có trong whitelist.
+        </div>
+
+        <h2>📊 Thông tin file boy.jpg</h2>
+        <table>
+            <tr>
+                <th>Thuộc tính</th>
+                <th>Giá trị</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>File name</td>
+                <td>boy.jpg</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+                <td>MIME type (server)</td>
+                <td><strong>image/avif</strong></td>
+                <td><span class="check">✓ Giờ được chấp nhận</span></td>
+            </tr>
+            <tr>
+                <td>Extension</td>
+                <td>.jpg</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+                <td>File size</td>
+                <td>15,870 bytes (15.5 KB)</td>
+                <td><span class="check">✓ < 2MB</span></td>
+            </tr>
+            <tr>
+                <td>Dimensions</td>
+                <td>626 x 626 pixels</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+        </table>
+
+        <h2>🛠️ Solution Applied</h2>
+        <p><strong>File:</strong> <code>app/Http/Controllers/WebController.php</code> (line 108)</p>
+        
+        <div class="code-box">
+// Before (❌ rejected AVIF):<br>
+'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',<br>
+<br>
+// After (✅ accepts AVIF & WebP):<br>
+'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,<strong style="color: #ffeb3b;">avif,webp</strong>|max:2048',
+        </div>
+
+        <h2>🎨 Supported Image Formats</h2>
+        <table>
+            <tr>
+                <th>Format</th>
+                <th>MIME Type</th>
+                <th>Use Case</th>
+                <th>Support</th>
+            </tr>
+            <tr>
+                <td>JPEG/JPG</td>
+                <td>image/jpeg</td>
+                <td>Photos, general images</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+                <td>PNG</td>
+                <td>image/png</td>
+                <td>Transparency, logos</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+                <td>GIF</td>
+                <td>image/gif</td>
+                <td>Animations</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+                <td>SVG</td>
+                <td>image/svg+xml</td>
+                <td>Vector graphics</td>
+                <td><span class="check">✓</span></td>
+            </tr>
+            <tr style="background: #e8f5e9;">
+                <td><strong>AVIF</strong></td>
+                <td><strong>image/avif</strong></td>
+                <td>High compression, modern</td>
+                <td><span class="check">✓ NEW</span></td>
+            </tr>
+            <tr style="background: #e8f5e9;">
+                <td><strong>WebP</strong></td>
+                <td><strong>image/webp</strong></td>
+                <td>Google format, balanced</td>
+                <td><span class="check">✓ NEW</span></td>
+            </tr>
+        </table>
+
+        <div class="warning-box">
+            <strong>💡 Why AVIF?</strong><br>
+            <ul>
+                <li><strong>Compression:</strong> 30-50% nhỏ hơn JPEG cùng chất lượng</li>
+                <li><strong>Quality:</strong> Chất lượng cao hơn ở cùng file size</li>
+                <li><strong>Modern:</strong> Chuẩn mới của web (AV1 Image Format)</li>
+                <li><strong>Transparency:</strong> Support như PNG</li>
+                <li><strong>HDR:</strong> Support High Dynamic Range</li>
+            </ul>
+            <strong>Browser support:</strong> Chrome 85+, Firefox 93+, Safari 16+, Edge 85+
+        </div>
+
+        <hr>
+
+        <h2>🧪 Test Upload Now</h2>
+        <p>Bây giờ bạn có thể upload file <code>boy.jpg</code> (AVIF format) mà không gặp lỗi!</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="/dinhduong/tu-0-5-tuoi" class="btn">
+                <span class="emoji">👶</span> Test Upload: 0-5 tuổi
+            </a>
+            <a href="/dinhduong/tu-5-19-tuoi" class="btn">
+                <span class="emoji">🧒</span> Test Upload: 5-19 tuổi
+            </a>
+            <a href="/dinhduong/tu-19-tuoi" class="btn">
+                <span class="emoji">👨</span> Test Upload: Trên 19 tuổi
+            </a>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="/dinhduong/test-upload-thumb.html" class="btn btn-secondary">
+                <span class="emoji">🔍</span> Client-Side Test Tool
+            </a>
+        </div>
+
+        <hr>
+
+        <h2>📦 Deployment</h2>
+        <div class="code-box">
+# Trên cPanel: /home/ebdsspyn/zappvn.com<br>
+cd /home/ebdsspyn/zappvn.com<br>
+git pull origin main<br>
+<br>
+# Commit: d355164<br>
+# "Fix: Add AVIF and WebP support to thumb validation"
+        </div>
+
+        <div class="success-banner" style="margin-top: 30px;">
+            ✅ Fix deployed to GitHub - Ready to pull on production!
+        </div>
+
+        <hr>
+
+        <div style="text-align: center; color: #666; margin-top: 40px;">
+            <p><strong>Debug session completed:</strong> November 2, 2025</p>
+            <p><strong>Root cause:</strong> MIME type mismatch (AVIF detected as JPEG)</p>
+            <p><strong>Solution:</strong> Extended validation to support modern image formats</p>
+            <p><strong>Commits:</strong> f4de70d → c820c62 → 39916f4 → d355164</p>
+        </div>
+    </div>
+</body>
+</html>
