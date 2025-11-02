@@ -2641,8 +2641,13 @@ $(document).ready(function() {
     // Clickable Cell Feature - Show Details Modal
     // ============================================
     
+    console.log('Clickable cell script loaded');
+    console.log('Number of clickable cells found:', $('.clickable-cell').length);
+    
     // Add click handler for all clickable cells
     $(document).on('click', '.clickable-cell', function() {
+        console.log('Cell clicked!', $(this).data());
+        
         const $cell = $(this);
         const tableId = $cell.data('table');
         const category = $cell.data('category');
