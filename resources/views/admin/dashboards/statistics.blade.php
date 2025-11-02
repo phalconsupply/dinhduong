@@ -1095,20 +1095,62 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể nhẹ cân (< -2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="underweight"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể nhẹ cân (< -2SD)">
+                                    {{ $table9Stats['weight_for_age']['underweight']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="underweight"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể nhẹ cân (< -2SD)">
+                                    {{ $table9Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="normal_wa"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CN/T (-2SD đến +2SD)">
+                                    {{ $table9Stats['weight_for_age']['normal']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="normal_wa"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CN/T (-2SD đến +2SD)">
+                                    {{ $table9Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="overweight_wa"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Thừa cân CN/T (> +2SD)">
+                                    {{ $table9Stats['weight_for_age']['overweight']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_age" 
+                                    data-classification="overweight_wa"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Thừa cân CN/T (> +2SD)">
+                                    {{ $table9Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A' }}</td>
                             </tr>
 
@@ -1118,20 +1160,62 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể thấp còi (< -2SD)</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="stunted"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể thấp còi (< -2SD)">
+                                    {{ $table9Stats['height_for_age']['stunted']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="stunted"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể thấp còi (< -2SD)">
+                                    {{ $table9Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="normal_ha"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CC/T (-2SD đến +2SD)">
+                                    {{ $table9Stats['height_for_age']['normal']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="normal_ha"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CC/T (-2SD đến +2SD)">
+                                    {{ $table9Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['height_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Trẻ cao vượt trội (> +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="tall"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Trẻ cao vượt trội (> +2SD)">
+                                    {{ $table9Stats['height_for_age']['tall']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="height_for_age" 
+                                    data-classification="tall"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Trẻ cao vượt trối (> +2SD)">
+                                    {{ $table9Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['height_for_age']['tall']['p_value'] ?? 'N/A' }}</td>
                             </tr>
 
@@ -1141,39 +1225,116 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể gầy còm (< -2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="wasted"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể gầy còm (< -2SD)">
+                                    {{ $table9Stats['weight_for_height']['wasted']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="wasted"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể gầy còm (< -2SD)">
+                                    {{ $table9Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)</td>
-                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="combined_malnutrition"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)">
+                                    {{ $table9Stats['combined']['combined_malnutrition']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="combined_malnutrition"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)">
+                                    {{ $table9Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="normal_wh"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CN/CC (-2SD đến +2SD)">
+                                    {{ $table9Stats['weight_for_height']['normal']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="normal_wh"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Bình thường CN/CC (-2SD đến +2SD)">
+                                    {{ $table9Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="overweight_wh"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Thừa cân CN/CC (> +2SD)">
+                                    {{ $table9Stats['weight_for_height']['overweight']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="overweight_wh"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Thừa cân CN/CC (> +2SD)">
+                                    {{ $table9Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Béo phì (> +3SD)</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="obese"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Béo phì (> +3SD)">
+                                    {{ $table9Stats['weight_for_height']['obese']['count'] ?? 0 }}
+                                </td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="obese"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: Béo phì (> +3SD)">
+                                    {{ $table9Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['p_value'] ?? 'N/A' }}</td>
                             </tr>
 
                             <!-- 4. < 24 tháng SDD -->
                             <tr class="table-warning fw-bold">
                                 <td>4. < 24 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
-                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['count'] ?? 0 }}</td>
+                                <td class="text-center clickable-cell" 
+                                    data-table="table9" 
+                                    data-category="weight_for_height" 
+                                    data-classification="any_malnutrition"
+                                    data-age-filter="under_24"
+                                    data-title="Table 9: SDD - Ít nhất 1 trong 3 chỉ số">
+                                    {{ $table9Stats['summary']['any_malnutrition']['count'] ?? 0 }}
+                                </td>
                                 <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
                                 <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A' }}</td>
                             </tr>
@@ -2401,8 +2562,193 @@ $(document).ready(function() {
             order: [[0, 'asc']]
         });
     }
+    
+    // ============================================
+    // Clickable Cell Feature - Show Details Modal
+    // ============================================
+    
+    // Add click handler for all clickable cells
+    $(document).on('click', '.clickable-cell', function() {
+        const $cell = $(this);
+        const tableId = $cell.data('table');
+        const category = $cell.data('category');
+        const classification = $cell.data('classification');
+        const cellTitle = $cell.data('title');
+        const gender = $cell.data('gender') || '';
+        const ageFilter = $cell.data('age-filter') || '';
+        
+        // Get current filter values from the page
+        const fromDate = $('input[name="from_date"]').val() || '';
+        const toDate = $('input[name="to_date"]').val() || '';
+        const provinceCode = $('select[name="province_code"]').val() || '';
+        const districtCode = $('select[name="district_code"]').val() || '';
+        const wardCode = $('select[name="ward_code"]').val() || '';
+        const unitId = $('select[name="unit_id"]').val() || '';
+        
+        // Show loading state
+        $('#cellDetailsModal').modal('show');
+        $('#cellDetailsModalLabel').html('<i class="uil uil-spinner-alt rotating"></i> Đang tải dữ liệu...');
+        $('#cellDetailsTableBody').html('<tr><td colspan="10" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></td></tr>');
+        
+        // Make AJAX request
+        $.ajax({
+            url: '{{ route("admin.dashboard.get_cell_details") }}',
+            method: 'GET',
+            data: {
+                table_id: tableId,
+                category: category,
+                classification: classification,
+                gender: gender,
+                age_filter: ageFilter,
+                from_date: fromDate,
+                to_date: toDate,
+                province_code: provinceCode,
+                district_code: districtCode,
+                ward_code: wardCode,
+                unit_id: unitId
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    // Update modal title
+                    $('#cellDetailsModalLabel').html('<i class="uil uil-list-ul"></i> ' + cellTitle + ' - <span class="badge bg-primary">' + response.total + ' trẻ</span>');
+                    
+                    // Clear and populate table
+                    $('#cellDetailsTableBody').empty();
+                    
+                    if (response.data.length > 0) {
+                        response.data.forEach(function(child) {
+                            const genderBadge = child.gender === 'Nam' 
+                                ? '<span class="badge bg-primary">Nam</span>' 
+                                : '<span class="badge bg-danger">Nữ</span>';
+                            
+                            const row = `
+                                <tr>
+                                    <td>${child.id}</td>
+                                    <td><strong>${child.fullname}</strong></td>
+                                    <td class="text-center">${child.age}</td>
+                                    <td class="text-center">${genderBadge}</td>
+                                    <td class="text-end">${parseFloat(child.weight).toFixed(1)}</td>
+                                    <td class="text-end">${parseFloat(child.height).toFixed(1)}</td>
+                                    <td class="text-center">${child.cal_date}</td>
+                                    <td class="text-center">
+                                        <span class="badge ${child.zscore < -2 ? 'bg-danger' : (child.zscore > 2 ? 'bg-warning' : 'bg-success')}">
+                                            ${child.zscore}
+                                        </span>
+                                    </td>
+                                    <td class="text-center"><small class="text-muted">${child.zscore_type}</small></td>
+                                    <td class="text-center">
+                                        <a href="{{ route('result') }}?uid=${child.uid}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    </td>
+                                </tr>
+                            `;
+                            $('#cellDetailsTableBody').append(row);
+                        });
+                        
+                        // Initialize or reinitialize DataTables
+                        if ($.fn.DataTable.isDataTable('#cellDetailsTable')) {
+                            $('#cellDetailsTable').DataTable().destroy();
+                        }
+                        $('#cellDetailsTable').DataTable({
+                            pageLength: 10,
+                            language: {
+                                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+                            },
+                            order: [[0, 'asc']]
+                        });
+                    } else {
+                        $('#cellDetailsTableBody').html('<tr><td colspan="10" class="text-center text-muted">Không có dữ liệu</td></tr>');
+                    }
+                } else {
+                    $('#cellDetailsModalLabel').text('Lỗi');
+                    $('#cellDetailsTableBody').html('<tr><td colspan="10" class="text-center text-danger">Không thể tải dữ liệu</td></tr>');
+                }
+            },
+            error: function() {
+                $('#cellDetailsModalLabel').text('Lỗi');
+                $('#cellDetailsTableBody').html('<tr><td colspan="10" class="text-center text-danger">Đã xảy ra lỗi khi tải dữ liệu</td></tr>');
+            }
+        });
+    });
 });
 </script>
+
+<!-- Dynamic Cell Details Modal -->
+<div class="modal fade" id="cellDetailsModal" tabindex="-1" aria-labelledby="cellDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="cellDetailsModalLabel">
+                    <i class="uil uil-list-ul"></i> Chi tiết
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Đây là danh sách các trẻ được thống kê trong ô dữ liệu bạn vừa click. Chỉ bao gồm các bản ghi có Z-score hợp lệ (trong khoảng -6 đến +6).
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="cellDetailsTable">
+                        <thead class="table-info">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th>Z-score</th>
+                                <th>Loại</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cellDetailsTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS for clickable cells -->
+<style>
+.clickable-cell {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clickable-cell:hover {
+    background-color: #e3f2fd !important;
+    font-weight: bold;
+    transform: scale(1.02);
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
 
 @endpush
 @endsection

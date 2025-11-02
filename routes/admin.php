@@ -21,6 +21,7 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
     Route::get('/', 'DashboardController@index')->name('admin.dashboard.index');
     Route::get('/statistics', 'DashboardController@statistics')->name('admin.dashboard.statistics');
     Route::get('/statistics/export-csv', 'DashboardController@exportMeanStatisticsCSV')->name('admin.dashboard.export_mean_csv');
+    Route::get('/statistics/get-cell-details', 'DashboardController@getCellDetails')->name('admin.dashboard.get_cell_details');
     //Media
     Route::get('/media', 'MediaController@index')->name('admin.media.index');
 

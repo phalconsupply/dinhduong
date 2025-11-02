@@ -1688,5 +1688,204 @@ class DashboardController extends Controller
             ],
         ];
     }
+
+    /**
+     * API endpoint: Get detailed list of children for a specific cell in statistics table
+     * Called when user clicks on any data cell to see which children are included
+     */
+    public function getCellDetails(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Get filter parameters (same as statistics page)
+        $query = History::query()->byUserRole($user);
+        
+        if ($request->filled('from_date')) {
+            $query->whereDate('cal_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->whereDate('cal_date', '<=', $request->to_date);
+        }
+        if ($request->filled('province_code')) {
+            $query->where('province_code', $request->province_code);
+        }
+        if ($request->filled('district_code')) {
+            $query->where('district_code', $request->district_code);
+        }
+        if ($request->filled('ward_code')) {
+            $query->where('ward_code', $request->ward_code);
+        }
+        if ($request->filled('unit_id')) {
+            $query->where('unit_id', $request->unit_id);
+        }
+        
+        // Get cell parameters
+        $tableId = $request->input('table_id'); // e.g., 'table4', 'table9'
+        $category = $request->input('category'); // e.g., 'weight_for_age', 'height_for_age'
+        $classification = $request->input('classification'); // e.g., 'underweight', 'normal', 'stunted'
+        $gender = $request->input('gender'); // 1 = male, 2 = female, null = combined
+        $ageFilter = $request->input('age_filter'); // e.g., 'under_24', 'under_60', 'all'
+        
+        // Apply age filter based on table
+        if ($ageFilter === 'under_24') {
+            $query->where('age', '<', 24);
+        } elseif ($ageFilter === 'under_60') {
+            $query->where('age', '<=', 60);
+        }
+        
+        // Apply gender filter
+        if ($gender !== null && $gender !== '') {
+            $query->where('gender', $gender);
+        }
+        
+        $records = $query->get();
+        
+        // Filter and collect matching children based on category and classification
+        $children = [];
+        
+        foreach ($records as $child) {
+            $include = false;
+            $zscore = null;
+            $zscoreType = '';
+            
+            // Determine which Z-score to calculate based on category
+            switch ($category) {
+                case 'weight_for_age':
+                    $zscore = $child->getWeightForAgeZScore();
+                    $zscoreType = 'W/A';
+                    break;
+                case 'height_for_age':
+                    $zscore = $child->getHeightForAgeZScore();
+                    $zscoreType = 'H/A';
+                    break;
+                case 'weight_for_height':
+                    $zscore = $child->getWeightForHeightZScore();
+                    $zscoreType = 'W/H';
+                    break;
+                case 'bmi_for_age':
+                    $zscore = $child->getBMIForAgeZScore();
+                    $zscoreType = 'BMI/A';
+                    break;
+            }
+            
+            // Check if Z-score is valid
+            if ($zscore === null || $zscore < -6 || $zscore > 6) {
+                continue; // Skip invalid records
+            }
+            
+            // Check if child matches the classification
+            switch ($classification) {
+                // Weight-for-Age classifications
+                case 'underweight':
+                    $include = ($zscore < -2);
+                    break;
+                case 'normal_wa':
+                    $include = ($zscore >= -2 && $zscore <= 2);
+                    break;
+                case 'overweight_wa':
+                    $include = ($zscore > 2);
+                    break;
+                
+                // Height-for-Age classifications
+                case 'stunted':
+                    $include = ($zscore < -2);
+                    break;
+                case 'normal_ha':
+                    $include = ($zscore >= -2 && $zscore <= 2);
+                    break;
+                case 'tall':
+                    $include = ($zscore > 2);
+                    break;
+                
+                // Weight-for-Height classifications
+                case 'wasted':
+                    $include = ($zscore < -2);
+                    break;
+                case 'normal_wh':
+                    $include = ($zscore >= -2 && $zscore <= 2);
+                    break;
+                case 'overweight_wh':
+                    $include = ($zscore > 2 && $zscore <= 3);
+                    break;
+                case 'obese':
+                    $include = ($zscore > 3);
+                    break;
+                
+                // BMI-for-Age classifications
+                case 'severely_wasted':
+                    $include = ($zscore < -3);
+                    break;
+                case 'wasted_bmi':
+                    $include = ($zscore >= -3 && $zscore < -2);
+                    break;
+                case 'normal_bmi':
+                    $include = ($zscore >= -2 && $zscore <= 1);
+                    break;
+                case 'overweight_bmi':
+                    $include = ($zscore > 1 && $zscore <= 2);
+                    break;
+                case 'obese_bmi':
+                    $include = ($zscore > 2);
+                    break;
+                
+                // Combined malnutrition
+                case 'combined_malnutrition':
+                    $whZscore = $child->getWeightForHeightZScore();
+                    $haZscore = $child->getHeightForAgeZScore();
+                    $include = (
+                        $whZscore !== null && $whZscore >= -6 && $whZscore <= 6 && $whZscore < -2 &&
+                        $haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore < -2
+                    );
+                    if ($include) {
+                        $zscore = $whZscore;
+                        $zscoreType = 'W/H & H/A';
+                    }
+                    break;
+                
+                // Any malnutrition (at least one indicator < -2SD)
+                case 'any_malnutrition':
+                    $waZscore = $child->getWeightForAgeZScore();
+                    $haZscore = $child->getHeightForAgeZScore();
+                    $whZscore = $child->getWeightForHeightZScore();
+                    
+                    $waValid = ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6 && $waZscore < -2);
+                    $haValid = ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore < -2);
+                    $whValid = ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6 && $whZscore < -2);
+                    
+                    $include = ($waValid || $haValid || $whValid);
+                    if ($include) {
+                        $zscoreType = 'Any';
+                        // Use the worst Z-score
+                        $zscore = min(
+                            $waValid ? $waZscore : 0,
+                            $haValid ? $haZscore : 0,
+                            $whValid ? $whZscore : 0
+                        );
+                    }
+                    break;
+            }
+            
+            if ($include) {
+                $children[] = [
+                    'id' => $child->id,
+                    'uid' => $child->uid,
+                    'fullname' => $child->fullname,
+                    'age' => $child->age,
+                    'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $child->weight,
+                    'height' => $child->height,
+                    'cal_date' => $child->cal_date,
+                    'zscore' => $zscore !== null ? round($zscore, 2) : null,
+                    'zscore_type' => $zscoreType,
+                ];
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $children,
+            'total' => count($children),
+        ]);
+    }
 }
 
