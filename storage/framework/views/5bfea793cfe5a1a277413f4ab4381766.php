@@ -1,17 +1,16 @@
-@extends('admin.layouts.app-full')
-@section('title') Thống kê chi tiết khảo sát @endsection
-@section('body_class', 'statistics')
-@section('content')
+<?php $__env->startSection('title'); ?> Thống kê chi tiết khảo sát <?php $__env->stopSection(); ?>
+<?php $__env->startSection('body_class', 'statistics'); ?>
+<?php $__env->startSection('content'); ?>
 <div class="container-fluid">
     <div class="layout-specing">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0">Thống kê chi tiết khảo sát</h5>
-            <a href="{{ route('admin.dashboard.index') }}" class="btn btn-sm btn-outline-primary">
+            <a href="<?php echo e(route('admin.dashboard.index')); ?>" class="btn btn-sm btn-outline-primary">
                 <i class="uil uil-arrow-left"></i> Quay lại Dashboard
             </a>
         </div>
 
-        {{-- Filter Form --}}
+        
         <form action="" method="GET" class="mb-4">
             <div class="card">
                 <div class="card-body">
@@ -19,54 +18,54 @@
                     <div class="row g-3">
                         <div class="col-md-2">
                             <label class="form-label small">Từ ngày:</label>
-                            <input name="from_date" class="form-control" value="{{request()->get('from_date','')}}" type="date">
+                            <input name="from_date" class="form-control" value="<?php echo e(request()->get('from_date','')); ?>" type="date">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Đến ngày:</label>
-                            <input name="to_date" class="form-control" value="{{request()->get('to_date','')}}" type="date">
+                            <input name="to_date" class="form-control" value="<?php echo e(request()->get('to_date','')); ?>" type="date">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Tỉnh/TP:</label>
                             <select name="province_code" id="province_code" class="form-select">
                                 <option value="">Tất cả</option>
-                                @foreach($provinces as $province)
-                                    <option value="{{ $province->code }}" @if(request()->get('province_code') == $province->code) selected @endif>{{ $province->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $provinces; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $province): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($province->code); ?>" <?php if(request()->get('province_code') == $province->code): ?> selected <?php endif; ?>><?php echo e($province->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Quận/Huyện:</label>
                             <select name="district_code" id="district_code" class="form-select">
                                 <option value="">Tất cả</option>
-                                @foreach($districts as $district)
-                                    <option value="{{ $district->code }}" @if($district->code == request()->get('district_code')) selected @endif>{{ $district->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $districts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $district): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($district->code); ?>" <?php if($district->code == request()->get('district_code')): ?> selected <?php endif; ?>><?php echo e($district->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Phường/Xã:</label>
                             <select name="ward_code" id="ward_code" class="form-select">
                                 <option value="">Tất cả</option>
-                                @foreach($wards as $ward)
-                                    <option value="{{ $ward->code }}" @if($ward->code == request()->get('ward_code')) selected @endif>{{ $ward->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $wards; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ward): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($ward->code); ?>" <?php if($ward->code == request()->get('ward_code')): ?> selected <?php endif; ?>><?php echo e($ward->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Dân tộc:</label>
                             <select name="ethnic_id" id="ethnic_id" class="form-select">
-                                <option value="all" @if(request()->get('ethnic_id') == 'all') selected @endif>Tất cả</option>
-                                <option value="ethnic_minority" @if(request()->get('ethnic_id') == 'ethnic_minority') selected @endif>Dân tộc thiểu số</option>
-                                @foreach($ethnics as $ethnic)
-                                    <option value="{{ $ethnic->id }}" @if($ethnic->id == request()->get('ethnic_id')) selected @endif>{{ $ethnic->name }}</option>
-                                @endforeach
+                                <option value="all" <?php if(request()->get('ethnic_id') == 'all'): ?> selected <?php endif; ?>>Tất cả</option>
+                                <option value="ethnic_minority" <?php if(request()->get('ethnic_id') == 'ethnic_minority'): ?> selected <?php endif; ?>>Dân tộc thiểu số</option>
+                                <?php $__currentLoopData = $ethnics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ethnic): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($ethnic->id); ?>" <?php if($ethnic->id == request()->get('ethnic_id')): ?> selected <?php endif; ?>><?php echo e($ethnic->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">
                                 <i class="uil uil-filter"></i> Lọc dữ liệu
                             </button>
-                            <a href="{{ route('admin.dashboard.statistics') }}" class="btn btn-outline-secondary">
+                            <a href="<?php echo e(route('admin.dashboard.statistics')); ?>" class="btn btn-outline-secondary">
                                 <i class="uil uil-redo"></i> Đặt lại
                             </a>
                         </div>
@@ -75,7 +74,7 @@
             </div>
         </form>
 
-        {{-- Table 1: Weight-For-Age --}}
+        
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">1. Phân loại theo Cân nặng/Tuổi (W/A)</h6>
@@ -100,54 +99,54 @@
                         <tbody>
                             <tr>
                                 <td>Suy dinh dưỡng nặng (< -3SD)</td>
-                                <td>{{ $weightForAgeStats['male']['severe'] }}</td>
-                                <td>{{ $weightForAgeStats['male']['severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['female']['severe'] }}</td>
-                                <td>{{ $weightForAgeStats['female']['severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['total']['severe'] }}</td>
-                                <td>{{ $weightForAgeStats['total']['severe_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForAgeStats['male']['severe']); ?></td>
+                                <td><?php echo e($weightForAgeStats['male']['severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['female']['severe']); ?></td>
+                                <td><?php echo e($weightForAgeStats['female']['severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['total']['severe']); ?></td>
+                                <td><?php echo e($weightForAgeStats['total']['severe_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Suy dinh dưỡng vừa (-3SD đến < -2SD)</td>
-                                <td>{{ $weightForAgeStats['male']['moderate'] }}</td>
-                                <td>{{ $weightForAgeStats['male']['moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['female']['moderate'] }}</td>
-                                <td>{{ $weightForAgeStats['female']['moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['total']['moderate'] }}</td>
-                                <td>{{ $weightForAgeStats['total']['moderate_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForAgeStats['male']['moderate']); ?></td>
+                                <td><?php echo e($weightForAgeStats['male']['moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['female']['moderate']); ?></td>
+                                <td><?php echo e($weightForAgeStats['female']['moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['total']['moderate']); ?></td>
+                                <td><?php echo e($weightForAgeStats['total']['moderate_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Bình thường (-2SD đến +2SD)</td>
-                                <td>{{ $weightForAgeStats['male']['normal'] }}</td>
-                                <td>{{ $weightForAgeStats['male']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['female']['normal'] }}</td>
-                                <td>{{ $weightForAgeStats['female']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['total']['normal'] }}</td>
-                                <td>{{ $weightForAgeStats['total']['normal_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForAgeStats['male']['normal']); ?></td>
+                                <td><?php echo e($weightForAgeStats['male']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['female']['normal']); ?></td>
+                                <td><?php echo e($weightForAgeStats['female']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['total']['normal']); ?></td>
+                                <td><?php echo e($weightForAgeStats['total']['normal_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Thừa cân (> +2SD)</td>
-                                <td>{{ $weightForAgeStats['male']['overweight'] }}</td>
-                                <td>{{ $weightForAgeStats['male']['overweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['female']['overweight'] }}</td>
-                                <td>{{ $weightForAgeStats['female']['overweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['total']['overweight'] }}</td>
-                                <td>{{ $weightForAgeStats['total']['overweight_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForAgeStats['male']['overweight']); ?></td>
+                                <td><?php echo e($weightForAgeStats['male']['overweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['female']['overweight']); ?></td>
+                                <td><?php echo e($weightForAgeStats['female']['overweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['total']['overweight']); ?></td>
+                                <td><?php echo e($weightForAgeStats['total']['overweight_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-warning fw-bold">
                                 <td>Tổng SDD thể nhẹ cân (< -2SD)</td>
-                                <td>{{ $weightForAgeStats['male']['underweight_total'] ?? 0 }}</td>
-                                <td>{{ $weightForAgeStats['male']['underweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['female']['underweight_total'] ?? 0 }}</td>
-                                <td>{{ $weightForAgeStats['female']['underweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForAgeStats['total']['underweight_total'] ?? 0 }}</td>
-                                <td>{{ $weightForAgeStats['total']['underweight_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForAgeStats['male']['underweight_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForAgeStats['male']['underweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['female']['underweight_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForAgeStats['female']['underweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForAgeStats['total']['underweight_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForAgeStats['total']['underweight_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ</td>
-                                <td colspan="2">{{ $weightForAgeStats['male']['total'] }}</td>
-                                <td colspan="2">{{ $weightForAgeStats['female']['total'] }}</td>
-                                <td colspan="2">{{ $weightForAgeStats['total']['total'] }}</td>
+                                <td colspan="2"><?php echo e($weightForAgeStats['male']['total']); ?></td>
+                                <td colspan="2"><?php echo e($weightForAgeStats['female']['total']); ?></td>
+                                <td colspan="2"><?php echo e($weightForAgeStats['total']['total']); ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -158,7 +157,7 @@
             </div>
         </div>
 
-        {{-- Table 2: Height-For-Age --}}
+        
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">2. Phân loại theo Chiều cao/Tuổi (H/A)</h6>
@@ -183,45 +182,45 @@
                         <tbody>
                             <tr>
                                 <td>Thấp còi nặng (< -3SD)</td>
-                                <td>{{ $heightForAgeStats['male']['severe'] }}</td>
-                                <td>{{ $heightForAgeStats['male']['severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['female']['severe'] }}</td>
-                                <td>{{ $heightForAgeStats['female']['severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['total']['severe'] }}</td>
-                                <td>{{ $heightForAgeStats['total']['severe_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($heightForAgeStats['male']['severe']); ?></td>
+                                <td><?php echo e($heightForAgeStats['male']['severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['female']['severe']); ?></td>
+                                <td><?php echo e($heightForAgeStats['female']['severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['total']['severe']); ?></td>
+                                <td><?php echo e($heightForAgeStats['total']['severe_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Thấp còi vừa (-3SD đến < -2SD)</td>
-                                <td>{{ $heightForAgeStats['male']['moderate'] }}</td>
-                                <td>{{ $heightForAgeStats['male']['moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['female']['moderate'] }}</td>
-                                <td>{{ $heightForAgeStats['female']['moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['total']['moderate'] }}</td>
-                                <td>{{ $heightForAgeStats['total']['moderate_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($heightForAgeStats['male']['moderate']); ?></td>
+                                <td><?php echo e($heightForAgeStats['male']['moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['female']['moderate']); ?></td>
+                                <td><?php echo e($heightForAgeStats['female']['moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['total']['moderate']); ?></td>
+                                <td><?php echo e($heightForAgeStats['total']['moderate_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Bình thường (-2SD đến +2SD)</td>
-                                <td>{{ $heightForAgeStats['male']['normal'] }}</td>
-                                <td>{{ $heightForAgeStats['male']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['female']['normal'] }}</td>
-                                <td>{{ $heightForAgeStats['female']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['total']['normal'] }}</td>
-                                <td>{{ $heightForAgeStats['total']['normal_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($heightForAgeStats['male']['normal']); ?></td>
+                                <td><?php echo e($heightForAgeStats['male']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['female']['normal']); ?></td>
+                                <td><?php echo e($heightForAgeStats['female']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['total']['normal']); ?></td>
+                                <td><?php echo e($heightForAgeStats['total']['normal_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-warning fw-bold">
                                 <td>Tổng SDD thể thấp còi (< -2SD)</td>
-                                <td>{{ $heightForAgeStats['male']['stunted_total'] ?? 0 }}</td>
-                                <td>{{ $heightForAgeStats['male']['stunted_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['female']['stunted_total'] ?? 0 }}</td>
-                                <td>{{ $heightForAgeStats['female']['stunted_pct'] ?? 0 }}%</td>
-                                <td>{{ $heightForAgeStats['total']['stunted_total'] ?? 0 }}</td>
-                                <td>{{ $heightForAgeStats['total']['stunted_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($heightForAgeStats['male']['stunted_total'] ?? 0); ?></td>
+                                <td><?php echo e($heightForAgeStats['male']['stunted_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['female']['stunted_total'] ?? 0); ?></td>
+                                <td><?php echo e($heightForAgeStats['female']['stunted_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($heightForAgeStats['total']['stunted_total'] ?? 0); ?></td>
+                                <td><?php echo e($heightForAgeStats['total']['stunted_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ</td>
-                                <td colspan="2">{{ $heightForAgeStats['male']['total'] }}</td>
-                                <td colspan="2">{{ $heightForAgeStats['female']['total'] }}</td>
-                                <td colspan="2">{{ $heightForAgeStats['total']['total'] }}</td>
+                                <td colspan="2"><?php echo e($heightForAgeStats['male']['total']); ?></td>
+                                <td colspan="2"><?php echo e($heightForAgeStats['female']['total']); ?></td>
+                                <td colspan="2"><?php echo e($heightForAgeStats['total']['total']); ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -232,7 +231,7 @@
             </div>
         </div>
 
-        {{-- Table 3: Weight-For-Height --}}
+        
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">3. Phân loại theo Cân nặng/Chiều cao (W/H)</h6>
@@ -257,63 +256,63 @@
                         <tbody>
                             <tr>
                                 <td>Gầy còm nặng (< -3SD)</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_severe'] }}</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_severe'] }}</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_severe_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_severe'] }}</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_severe_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_severe']); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_severe']); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_severe_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_severe']); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_severe_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Gầy còm vừa (-3SD đến < -2SD)</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_moderate'] }}</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_moderate'] }}</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_moderate_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_moderate'] }}</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_moderate_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_moderate']); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_moderate']); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_moderate_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_moderate']); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_moderate_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Bình thường (-2SD đến +2SD)</td>
-                                <td>{{ $weightForHeightStats['male']['normal'] }}</td>
-                                <td>{{ $weightForHeightStats['male']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['normal'] }}</td>
-                                <td>{{ $weightForHeightStats['female']['normal_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['normal'] }}</td>
-                                <td>{{ $weightForHeightStats['total']['normal_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['normal']); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['normal']); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['normal_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['normal']); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['normal_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Thừa cân (> +2SD đến +3SD)</td>
-                                <td>{{ $weightForHeightStats['male']['overweight'] }}</td>
-                                <td>{{ $weightForHeightStats['male']['overweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['overweight'] }}</td>
-                                <td>{{ $weightForHeightStats['female']['overweight_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['overweight'] }}</td>
-                                <td>{{ $weightForHeightStats['total']['overweight_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['overweight']); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['overweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['overweight']); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['overweight_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['overweight']); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['overweight_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr>
                                 <td>Béo phì (> +3SD)</td>
-                                <td>{{ $weightForHeightStats['male']['obese'] }}</td>
-                                <td>{{ $weightForHeightStats['male']['obese_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['obese'] }}</td>
-                                <td>{{ $weightForHeightStats['female']['obese_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['obese'] }}</td>
-                                <td>{{ $weightForHeightStats['total']['obese_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['obese']); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['obese_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['obese']); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['obese_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['obese']); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['obese_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-warning fw-bold">
                                 <td>Tổng SDD thể gầy còm (< -2SD)</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_total'] ?? 0 }}</td>
-                                <td>{{ $weightForHeightStats['male']['wasted_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_total'] ?? 0 }}</td>
-                                <td>{{ $weightForHeightStats['female']['wasted_pct'] ?? 0 }}%</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_total'] ?? 0 }}</td>
-                                <td>{{ $weightForHeightStats['total']['wasted_pct'] ?? 0 }}%</td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForHeightStats['male']['wasted_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForHeightStats['female']['wasted_pct'] ?? 0); ?>%</td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_total'] ?? 0); ?></td>
+                                <td><?php echo e($weightForHeightStats['total']['wasted_pct'] ?? 0); ?>%</td>
                             </tr>
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ</td>
-                                <td colspan="2">{{ $weightForHeightStats['male']['total'] }}</td>
-                                <td colspan="2">{{ $weightForHeightStats['female']['total'] }}</td>
-                                <td colspan="2">{{ $weightForHeightStats['total']['total'] }}</td>
+                                <td colspan="2"><?php echo e($weightForHeightStats['male']['total']); ?></td>
+                                <td colspan="2"><?php echo e($weightForHeightStats['female']['total']); ?></td>
+                                <td colspan="2"><?php echo e($weightForHeightStats['total']['total']); ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -324,12 +323,12 @@
             </div>
         </div>
 
-        {{-- Table 4: Mean Statistics by Age Group --}}
+        
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">4. Chỉ số trung bình và Độ lệch chuẩn theo nhóm tuổi (Mean ± SD)</h6>
                 <div>
-                    <a href="{{ route('admin.dashboard.export_mean_csv', request()->all()) }}" class="btn btn-sm btn-success me-2">
+                    <a href="<?php echo e(route('admin.dashboard.export_mean_csv', request()->all())); ?>" class="btn btn-sm btn-success me-2">
                         <i class="uil uil-download-alt"></i> Tải CSV
                     </a>
                     <button onclick="exportTable('table-mean', 'Chi_so_trung_binh')" class="btn btn-sm btn-success">
@@ -338,16 +337,16 @@
                 </div>
             </div>
             <div class="card-body">
-                @if(isset($meanStats['_meta']['invalid_records']) && $meanStats['_meta']['invalid_records'] > 0)
+                <?php if(isset($meanStats['_meta']['invalid_records']) && $meanStats['_meta']['invalid_records'] > 0): ?>
                     <div class="alert alert-warning">
                         <i class="uil uil-exclamation-triangle"></i> 
-                        <strong>Cảnh báo:</strong> Đã loại bỏ {{ $meanStats['_meta']['invalid_records'] }} bản ghi không hợp lệ 
+                        <strong>Cảnh báo:</strong> Đã loại bỏ <?php echo e($meanStats['_meta']['invalid_records']); ?> bản ghi không hợp lệ 
                         (Z-score < -6 hoặc > +6, hoặc giá trị không hợp lý)
                         <button type="button" class="btn btn-sm btn-warning float-end" data-bs-toggle="modal" data-bs-target="#invalidRecordsModal">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="table-mean">
@@ -372,7 +371,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
+                            <?php
                                 $indicators = [
                                     'weight' => 'Cân nặng (kg)',
                                     'height' => 'Chiều cao (cm)',
@@ -381,12 +380,12 @@
                                     'wh_zscore' => 'W/H Z-score',
                                 ];
                                 $problematicGroups = [];
-                            @endphp
+                            ?>
                             
-                            @foreach($meanStats as $ageGroup => $data)
-                                @if($ageGroup === '_meta') @continue @endif
-                                @foreach($indicators as $key => $label)
-                                    @php
+                            <?php $__currentLoopData = $meanStats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if($ageGroup === '_meta'): ?> <?php continue; ?> <?php endif; ?>
+                                <?php $__currentLoopData = $indicators; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
                                         // Check for problematic z-scores
                                         if (in_array($key, ['wa_zscore', 'ha_zscore', 'wh_zscore'])) {
                                             $totalMean = $data['total'][$key]['mean'] ?? 0;
@@ -409,42 +408,42 @@
                                                 $rowClass = 'table-warning';
                                             }
                                         }
-                                    @endphp
-                                    <tr class="{{ $rowClass }}">
-                                        @if($loop->first)
-                                            <td rowspan="5" class="align-middle fw-bold">{{ $data['label'] }}</td>
-                                        @endif
-                                        <td>{{ $label }}</td>
-                                        <td>{{ $data['male'][$key]['mean'] ?? 0 }}</td>
-                                        <td>{{ $data['male'][$key]['sd'] ?? 0 }}</td>
-                                        <td>{{ $data['male'][$key]['count'] ?? 0 }}</td>
-                                        <td>{{ $data['female'][$key]['mean'] ?? 0 }}</td>
-                                        <td>{{ $data['female'][$key]['sd'] ?? 0 }}</td>
-                                        <td>{{ $data['female'][$key]['count'] ?? 0 }}</td>
-                                        <td>{{ $data['total'][$key]['mean'] ?? 0 }}</td>
-                                        <td>{{ $data['total'][$key]['sd'] ?? 0 }}</td>
-                                        <td>{{ $data['total'][$key]['count'] ?? 0 }}</td>
+                                    ?>
+                                    <tr class="<?php echo e($rowClass); ?>">
+                                        <?php if($loop->first): ?>
+                                            <td rowspan="5" class="align-middle fw-bold"><?php echo e($data['label']); ?></td>
+                                        <?php endif; ?>
+                                        <td><?php echo e($label); ?></td>
+                                        <td><?php echo e($data['male'][$key]['mean'] ?? 0); ?></td>
+                                        <td><?php echo e($data['male'][$key]['sd'] ?? 0); ?></td>
+                                        <td><?php echo e($data['male'][$key]['count'] ?? 0); ?></td>
+                                        <td><?php echo e($data['female'][$key]['mean'] ?? 0); ?></td>
+                                        <td><?php echo e($data['female'][$key]['sd'] ?? 0); ?></td>
+                                        <td><?php echo e($data['female'][$key]['count'] ?? 0); ?></td>
+                                        <td><?php echo e($data['total'][$key]['mean'] ?? 0); ?></td>
+                                        <td><?php echo e($data['total'][$key]['sd'] ?? 0); ?></td>
+                                        <td><?php echo e($data['total'][$key]['count'] ?? 0); ?></td>
                                     </tr>
-                                @endforeach
-                            @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
 
-                {{-- Analysis Section --}}
-                @if(count($problematicGroups) > 0)
+                
+                <?php if(count($problematicGroups) > 0): ?>
                     <div class="alert alert-danger mt-3">
                         <h6 class="alert-heading">⚠️ CẢNH BÁO: Nhóm có vấn đề dinh dưỡng nghiêm trọng (Mean < -2 SD)</h6>
                         <ul class="mb-0">
-                            @foreach($problematicGroups as $group)
+                            <?php $__currentLoopData = $problematicGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <li>
-                                    <strong>{{ $group['age'] }}</strong> - {{ $group['indicator'] }}: 
-                                    <span class="badge bg-danger">{{ $group['mean'] }}</span>
+                                    <strong><?php echo e($group['age']); ?></strong> - <?php echo e($group['indicator']); ?>: 
+                                    <span class="badge bg-danger"><?php echo e($group['mean']); ?></span>
                                 </li>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="alert alert-info mt-3">
                     <h6 class="alert-heading">📊 Hướng dẫn đọc bảng:</h6>
@@ -458,7 +457,7 @@
                     </ul>
                 </div>
 
-                {{-- Charts by Age Group --}}
+                
                 <div class="row mt-4">
                     <div class="col-md-6 mb-3">
                         <canvas id="chart-mean-weight" style="max-height: 350px;"></canvas>
@@ -479,24 +478,24 @@
             </div>
         </div>
 
-        {{-- Table 5: WHO Combined Statistics (Sexes combined) --}}
+        
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">
                     5. Bảng tổng hợp WHO - Set 1: Sexes combined
-                    @if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0): ?>
                         <span class="badge bg-warning text-dark ms-2">
-                            {{ $whoCombinedStats['_meta']['invalid_records'] }} records bị loại bỏ
+                            <?php echo e($whoCombinedStats['_meta']['invalid_records']); ?> records bị loại bỏ
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </h6>
                 <div>
-                    @if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0): ?>
                         <button type="button" class="btn btn-sm btn-warning me-2" 
                                 data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable5">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
-                    @endif
+                    <?php endif; ?>
                     <button onclick="exportTable('table-who-combined', 'WHO_Combined_Statistics')" class="btn btn-sm btn-success">
                         <i class="uil uil-download-alt"></i> Tải xuống Excel
                     </button>
@@ -535,57 +534,57 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if(isset($whoCombinedStats['total']))
+                            <?php if(isset($whoCombinedStats['total'])): ?>
                             <tr class="fw-bold table-primary">
-                                <td>{{ $whoCombinedStats['total']['label'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['n'] }}</td>
+                                <td><?php echo e($whoCombinedStats['total']['label']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['n']); ?></td>
                                 <!-- Weight-for-age -->
-                                <td class="text-center">{{ $whoCombinedStats['total']['wa']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wa']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wa']['mean'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wa']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wa']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wa']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wa']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wa']['sd']); ?></td>
                                 <!-- Height-for-age -->
-                                <td class="text-center">{{ $whoCombinedStats['total']['ha']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['ha']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['ha']['mean'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['ha']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['ha']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['ha']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['ha']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['ha']['sd']); ?></td>
                                 <!-- Weight-for-height -->
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['gt_1sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['gt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['gt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['mean'] }}</td>
-                                <td class="text-center">{{ $whoCombinedStats['total']['wh']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['gt_1sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['gt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['gt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoCombinedStats['total']['wh']['sd']); ?></td>
                             </tr>
-                            @endif
+                            <?php endif; ?>
 
-                            @foreach(['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'] as $ageGroup)
-                                @if(isset($whoCombinedStats[$ageGroup]))
+                            <?php $__currentLoopData = ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(isset($whoCombinedStats[$ageGroup])): ?>
                                 <tr>
-                                    <td>({{ $whoCombinedStats[$ageGroup]['label'] }})</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['n'] }}</td>
+                                    <td>(<?php echo e($whoCombinedStats[$ageGroup]['label']); ?>)</td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['n']); ?></td>
                                     <!-- Weight-for-age -->
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wa']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wa']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wa']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wa']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wa']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wa']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wa']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wa']['sd']); ?></td>
                                     <!-- Height-for-age -->
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['ha']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['ha']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['ha']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['ha']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['ha']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['ha']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['ha']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['ha']['sd']); ?></td>
                                     <!-- Weight-for-height -->
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['gt_1sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['gt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['gt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoCombinedStats[$ageGroup]['wh']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['gt_1sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['gt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['gt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoCombinedStats[$ageGroup]['wh']['sd']); ?></td>
                                 </tr>
-                                @endif
-                            @endforeach
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -615,19 +614,19 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
                     6. Bảng tổng hợp WHO - Set 2: Male
-                    @if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0): ?>
                         <span class="badge bg-warning text-dark ms-2">
-                            {{ $whoMaleStats['_meta']['invalid_records'] }} records bị loại bỏ
+                            <?php echo e($whoMaleStats['_meta']['invalid_records']); ?> records bị loại bỏ
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </h4>
                 <div>
-                    @if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0): ?>
                         <button type="button" class="btn btn-sm btn-warning me-2" 
                                 data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable6">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
-                    @endif
+                    <?php endif; ?>
                     <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-male', 'WHO_Male_Statistics')">
                         <i class="uil uil-export"></i> Xuất Excel
                     </button>
@@ -666,57 +665,57 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if(isset($whoMaleStats['total']))
+                            <?php if(isset($whoMaleStats['total'])): ?>
                             <tr class="fw-bold table-primary">
-                                <td>{{ $whoMaleStats['total']['label'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['n'] }}</td>
+                                <td><?php echo e($whoMaleStats['total']['label']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['n']); ?></td>
                                 <!-- Weight-for-age -->
-                                <td class="text-center">{{ $whoMaleStats['total']['wa']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wa']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wa']['mean'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wa']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wa']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wa']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wa']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wa']['sd']); ?></td>
                                 <!-- Height-for-age -->
-                                <td class="text-center">{{ $whoMaleStats['total']['ha']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['ha']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['ha']['mean'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['ha']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['ha']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['ha']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['ha']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['ha']['sd']); ?></td>
                                 <!-- Weight-for-height -->
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_1sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['gt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['mean'] }}</td>
-                                <td class="text-center">{{ $whoMaleStats['total']['wh']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['gt_1sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['gt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['gt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoMaleStats['total']['wh']['sd']); ?></td>
                             </tr>
-                            @endif
+                            <?php endif; ?>
 
-                            @foreach(['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'] as $ageGroup)
-                                @if(isset($whoMaleStats[$ageGroup]))
+                            <?php $__currentLoopData = ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(isset($whoMaleStats[$ageGroup])): ?>
                                 <tr>
-                                    <td>({{ $whoMaleStats[$ageGroup]['label'] }})</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['n'] }}</td>
+                                    <td>(<?php echo e($whoMaleStats[$ageGroup]['label']); ?>)</td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['n']); ?></td>
                                     <!-- Weight-for-age -->
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wa']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wa']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wa']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wa']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wa']['sd']); ?></td>
                                     <!-- Height-for-age -->
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['ha']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['ha']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['ha']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['ha']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['ha']['sd']); ?></td>
                                     <!-- Weight-for-height -->
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_1sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['gt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoMaleStats[$ageGroup]['wh']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['gt_1sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['gt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['gt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoMaleStats[$ageGroup]['wh']['sd']); ?></td>
                                 </tr>
-                                @endif
-                            @endforeach
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -740,19 +739,19 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
                     7. Bảng tổng hợp WHO - Set 3: Females
-                    @if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0): ?>
                         <span class="badge bg-warning text-dark ms-2">
-                            {{ $whoFemaleStats['_meta']['invalid_records'] }} records bị loại bỏ
+                            <?php echo e($whoFemaleStats['_meta']['invalid_records']); ?> records bị loại bỏ
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </h4>
                 <div>
-                    @if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0): ?>
                         <button type="button" class="btn btn-sm btn-warning me-2" 
                                 data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable7">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
-                    @endif
+                    <?php endif; ?>
                     <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-female', 'WHO_Female_Statistics')">
                         <i class="uil uil-export"></i> Xuất Excel
                     </button>
@@ -791,57 +790,57 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if(isset($whoFemaleStats['total']))
+                            <?php if(isset($whoFemaleStats['total'])): ?>
                             <tr class="fw-bold table-primary">
-                                <td>{{ $whoFemaleStats['total']['label'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['n'] }}</td>
+                                <td><?php echo e($whoFemaleStats['total']['label']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['n']); ?></td>
                                 <!-- Weight-for-age -->
-                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['mean'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wa']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wa']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wa']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wa']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wa']['sd']); ?></td>
                                 <!-- Height-for-age -->
-                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['mean'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['ha']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['ha']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['ha']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['ha']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['ha']['sd']); ?></td>
                                 <!-- Weight-for-height -->
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['lt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['lt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_1sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_2sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['gt_3sd_pct'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['mean'] }}</td>
-                                <td class="text-center">{{ $whoFemaleStats['total']['wh']['sd'] }}</td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['lt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['lt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['gt_1sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['gt_2sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['gt_3sd_pct']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['mean']); ?></td>
+                                <td class="text-center"><?php echo e($whoFemaleStats['total']['wh']['sd']); ?></td>
                             </tr>
-                            @endif
+                            <?php endif; ?>
 
-                            @foreach(['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'] as $ageGroup)
-                                @if(isset($whoFemaleStats[$ageGroup]))
+                            <?php $__currentLoopData = ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(isset($whoFemaleStats[$ageGroup])): ?>
                                 <tr>
-                                    <td>({{ $whoFemaleStats[$ageGroup]['label'] }})</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['n'] }}</td>
+                                    <td>(<?php echo e($whoFemaleStats[$ageGroup]['label']); ?>)</td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['n']); ?></td>
                                     <!-- Weight-for-age -->
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wa']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wa']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wa']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wa']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wa']['sd']); ?></td>
                                     <!-- Height-for-age -->
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['ha']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['ha']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['ha']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['ha']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['ha']['sd']); ?></td>
                                     <!-- Weight-for-height -->
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['lt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['lt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_1sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_2sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['gt_3sd_pct'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['mean'] }}</td>
-                                    <td class="text-center">{{ $whoFemaleStats[$ageGroup]['wh']['sd'] }}</td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['lt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['lt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['gt_1sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['gt_2sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['gt_3sd_pct']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['mean']); ?></td>
+                                    <td class="text-center"><?php echo e($whoFemaleStats[$ageGroup]['wh']['sd']); ?></td>
                                 </tr>
-                                @endif
-                            @endforeach
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -885,36 +884,36 @@
                                 <td colspan="4" class="fw-bold">1. Tháng tuổi</td>
                             </tr>
                             <tr>
-                                <td class="ps-4 fst-italic">Trẻ < 24 tháng tuổi (n={{ $table8Stats['age_groups']['under_24_total'] }})</td>
+                                <td class="ps-4 fst-italic">Trẻ < 24 tháng tuổi (n=<?php echo e($table8Stats['age_groups']['under_24_total']); ?>)</td>
                                 <td colspan="3" class="text-muted"></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Có SDD</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_malnutrition']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_malnutrition']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_malnutrition']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_malnutrition']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Không SDD</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['under_24_normal']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_normal']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_normal']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['under_24_normal']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
-                                <td class="ps-4 fst-italic">Trẻ 0-60 tháng tuổi (n={{ $table8Stats['age_groups']['age_0_60_total'] }})</td>
+                                <td class="ps-4 fst-italic">Trẻ 0-60 tháng tuổi (n=<?php echo e($table8Stats['age_groups']['age_0_60_total']); ?>)</td>
                                 <td colspan="3" class="text-muted"></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Có SDD</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_malnutrition']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_malnutrition']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_malnutrition']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_malnutrition']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-5">Không SDD</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['age_groups']['age_0_60_normal']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_normal']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_normal']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['age_groups']['age_0_60_normal']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- 2. Giới tính -->
@@ -923,15 +922,15 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">Nam</td>
-                                <td class="text-center">{{ $table8Stats['gender']['male']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gender']['male']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gender']['male']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['male']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['male']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['male']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Nữ</td>
-                                <td class="text-center">{{ $table8Stats['gender']['female']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gender']['female']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gender']['female']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['female']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['female']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gender']['female']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- 3. Dân tộc -->
@@ -940,15 +939,15 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">Kinh</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['kinh']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['kinh']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['kinh']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['kinh']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Khác</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['ethnicity']['other']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['other']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['other']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['ethnicity']['other']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- 4. Cân nặng lúc sinh -->
@@ -957,21 +956,21 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">Nhẹ cân (< 2500g)</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['low']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['low']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['low']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['low']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Đủ cân (2500-4000g)</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['normal']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['normal']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['normal']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['normal']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thừa cân (> 4000g)</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['birth_weight']['high']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['high']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['high']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['birth_weight']['high']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- 5. Tuổi thai lúc sinh -->
@@ -980,15 +979,15 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">Đủ tháng</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['full_term']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['full_term']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['full_term']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['full_term']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thiếu tháng</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['gestational_age']['preterm']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['preterm']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['preterm']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['gestational_age']['preterm']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- 6. Kết quả tình trạng dinh dưỡng -->
@@ -997,39 +996,39 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD nhẹ cân</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['underweight']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['underweight']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['underweight']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['underweight']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD thấp còi</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['stunted']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['stunted']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['stunted']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['stunted']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">SDD gầy còm</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['wasted']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['wasted']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['wasted']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['wasted']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Bình thường</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['normal']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['normal']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['normal']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['normal']['p_value'] ?? '-'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">Thừa cân/Béo phì</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['count'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['percentage'] }}</td>
-                                <td class="text-center">{{ $table8Stats['nutrition_status']['overweight_obese']['p_value'] ?? '-' }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['overweight_obese']['count']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['overweight_obese']['percentage']); ?></td>
+                                <td class="text-center"><?php echo e($table8Stats['nutrition_status']['overweight_obese']['p_value'] ?? '-'); ?></td>
                             </tr>
 
                             <!-- Tổng cộng -->
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ 0-60 tháng</td>
-                                <td class="text-center">{{ $table8Stats['total_children'] }}</td>
+                                <td class="text-center"><?php echo e($table8Stats['total_children']); ?></td>
                                 <td class="text-center">100.00</td>
                                 <td class="text-center">-</td>
                             </tr>
@@ -1059,19 +1058,19 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
                     9. Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)
-                    @if(isset($table9Stats['_meta']['skipped_records']) && $table9Stats['_meta']['skipped_records'] > 0)
+                    <?php if(isset($table9Stats['_meta']['skipped_records']) && $table9Stats['_meta']['skipped_records'] > 0): ?>
                         <span class="badge bg-warning text-dark ms-2">
-                            {{ $table9Stats['_meta']['skipped_records'] }} records thiếu dữ liệu WHO
+                            <?php echo e($table9Stats['_meta']['skipped_records']); ?> records thiếu dữ liệu WHO
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </h4>
                 <div>
-                    @if(isset($table9Stats['_meta']['invalid_records']) && $table9Stats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($table9Stats['_meta']['invalid_records']) && $table9Stats['_meta']['invalid_records'] > 0): ?>
                         <button type="button" class="btn btn-sm btn-warning me-2" 
                                 data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable9">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
-                    @endif
+                    <?php endif; ?>
                     <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-2', 'Tinh_trang_DD_duoi_2_tuoi')">
                         <i class="uil uil-export"></i> Xuất Excel
                     </button>
@@ -1101,7 +1100,8 @@
                                     data-classification="underweight"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể nhẹ cân (< -2SD)">
-                                    {{ $table9Stats['weight_for_age']['underweight']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_age']['underweight']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1109,9 +1109,10 @@
                                     data-classification="underweight"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể nhẹ cân (< -2SD)">
-                                    {{ $table9Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_age']['underweight']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
@@ -1121,7 +1122,8 @@
                                     data-classification="normal_wa"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CN/T (-2SD đến +2SD)">
-                                    {{ $table9Stats['weight_for_age']['normal']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_age']['normal']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1129,9 +1131,10 @@
                                     data-classification="normal_wa"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CN/T (-2SD đến +2SD)">
-                                    {{ $table9Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_age']['normal']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_age']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
@@ -1141,7 +1144,8 @@
                                     data-classification="overweight_wa"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Thừa cân CN/T (> +2SD)">
-                                    {{ $table9Stats['weight_for_age']['overweight']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_age']['overweight']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1149,9 +1153,10 @@
                                     data-classification="overweight_wa"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Thừa cân CN/T (> +2SD)">
-                                    {{ $table9Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_age']['overweight']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 2. Suy dinh dưỡng thể thấp còi (CC/T) -->
@@ -1166,7 +1171,8 @@
                                     data-classification="stunted"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể thấp còi (< -2SD)">
-                                    {{ $table9Stats['height_for_age']['stunted']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['height_for_age']['stunted']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1174,9 +1180,10 @@
                                     data-classification="stunted"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể thấp còi (< -2SD)">
-                                    {{ $table9Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['height_for_age']['stunted']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['stunted']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['height_for_age']['stunted']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
@@ -1186,7 +1193,8 @@
                                     data-classification="normal_ha"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CC/T (-2SD đến +2SD)">
-                                    {{ $table9Stats['height_for_age']['normal']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['height_for_age']['normal']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1194,9 +1202,10 @@
                                     data-classification="normal_ha"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CC/T (-2SD đến +2SD)">
-                                    {{ $table9Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['height_for_age']['normal']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['height_for_age']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Trẻ cao vượt trội (> +2SD)</td>
@@ -1206,7 +1215,8 @@
                                     data-classification="tall"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Trẻ cao vượt trội (> +2SD)">
-                                    {{ $table9Stats['height_for_age']['tall']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['height_for_age']['tall']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1214,9 +1224,10 @@
                                     data-classification="tall"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Trẻ cao vượt trối (> +2SD)">
-                                    {{ $table9Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['height_for_age']['tall']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['height_for_age']['tall']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['height_for_age']['tall']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 3. Suy dinh dưỡng thể gầy còm (CN/CC) -->
@@ -1231,7 +1242,8 @@
                                     data-classification="wasted"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể gầy còm (< -2SD)">
-                                    {{ $table9Stats['weight_for_height']['wasted']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_height']['wasted']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1239,9 +1251,10 @@
                                     data-classification="wasted"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể gầy còm (< -2SD)">
-                                    {{ $table9Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_height']['wasted']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)</td>
@@ -1251,7 +1264,8 @@
                                     data-classification="combined_malnutrition"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)">
-                                    {{ $table9Stats['combined']['combined_malnutrition']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['combined']['combined_malnutrition']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1259,9 +1273,10 @@
                                     data-classification="combined_malnutrition"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)">
-                                    {{ $table9Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
@@ -1271,7 +1286,8 @@
                                     data-classification="normal_wh"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CN/CC (-2SD đến +2SD)">
-                                    {{ $table9Stats['weight_for_height']['normal']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_height']['normal']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1279,9 +1295,10 @@
                                     data-classification="normal_wh"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Bình thường CN/CC (-2SD đến +2SD)">
-                                    {{ $table9Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_height']['normal']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_height']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
@@ -1291,7 +1308,8 @@
                                     data-classification="overweight_wh"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Thừa cân CN/CC (> +2SD)">
-                                    {{ $table9Stats['weight_for_height']['overweight']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_height']['overweight']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1299,9 +1317,10 @@
                                     data-classification="overweight_wh"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Thừa cân CN/CC (> +2SD)">
-                                    {{ $table9Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_height']['overweight']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Béo phì (> +3SD)</td>
@@ -1311,7 +1330,8 @@
                                     data-classification="obese"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Béo phì (> +3SD)">
-                                    {{ $table9Stats['weight_for_height']['obese']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['weight_for_height']['obese']['count'] ?? 0); ?>
+
                                 </td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
@@ -1319,9 +1339,10 @@
                                     data-classification="obese"
                                     data-age-filter="under_24"
                                     data-title="Table 9: Béo phì (> +3SD)">
-                                    {{ $table9Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}
+                                    <?php echo e($table9Stats['weight_for_height']['obese']['percentage'] ?? '0.00'); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['weight_for_height']['obese']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['weight_for_height']['obese']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 4. < 24 tháng SDD -->
@@ -1333,16 +1354,17 @@
                                     data-classification="any_malnutrition"
                                     data-age-filter="under_24"
                                     data-title="Table 9: SDD - Ít nhất 1 trong 3 chỉ số">
-                                    {{ $table9Stats['summary']['any_malnutrition']['count'] ?? 0 }}
+                                    <?php echo e($table9Stats['summary']['any_malnutrition']['count'] ?? 0); ?>
+
                                 </td>
-                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['summary']['any_malnutrition']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table9Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- Tổng cộng -->
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ < 24 tháng</td>
-                                <td class="text-center">{{ $table9Stats['total_children'] ?? 0 }}</td>
+                                <td class="text-center"><?php echo e($table9Stats['total_children'] ?? 0); ?></td>
                                 <td class="text-center">100.00</td>
                                 <td class="text-center">-</td>
                             </tr>
@@ -1374,19 +1396,19 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
                     10. Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)
-                    @if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0): ?>
                         <span class="badge bg-warning text-dark ms-2">
-                            {{ $table10Stats['_meta']['invalid_records'] }} records bị loại bỏ
+                            <?php echo e($table10Stats['_meta']['invalid_records']); ?> records bị loại bỏ
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </h4>
                 <div>
-                    @if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0)
+                    <?php if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0): ?>
                         <button type="button" class="btn btn-sm btn-warning me-2" 
                                 data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable10">
                             <i class="uil uil-eye"></i> Xem chi tiết
                         </button>
-                    @endif
+                    <?php endif; ?>
                     <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-5', 'Tinh_trang_DD_duoi_5_tuoi')">
                         <i class="uil uil-export"></i> Xuất Excel
                     </button>
@@ -1410,21 +1432,21 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể nhẹ cân (< -2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['underweight']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['underweight']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['underweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['normal']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['normal']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['overweight']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['overweight']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_age']['overweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 2. Suy dinh dưỡng thể thấp còi (CC/T) -->
@@ -1433,21 +1455,21 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể thấp còi (< -2SD)</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['stunted']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['stunted']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['stunted']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['stunted']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['normal']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['normal']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Trẻ cao vượt trội (> +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['height_for_age']['tall']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['tall']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['tall']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['height_for_age']['tall']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 3. Suy dinh dưỡng thể gầy còm (CN/CC) -->
@@ -1456,47 +1478,47 @@
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể gầy còm (< -2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['wasted']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['wasted']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['wasted']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– SDD thể phối hợp (CN/CC < -2SD và CC/T < -2SD)</td>
-                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['combined']['combined_malnutrition']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['combined']['combined_malnutrition']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['combined']['combined_malnutrition']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Bình thường (-2SD đến +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['normal']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['normal']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['normal']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['normal']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Thừa cân (> +2SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['overweight']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['overweight']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['overweight']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
                             <tr>
                                 <td class="ps-4">– Béo phì (> +3SD)</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['weight_for_height']['obese']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['obese']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['obese']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['weight_for_height']['obese']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- 4. < 60 tháng SDD -->
                             <tr class="table-warning fw-bold">
                                 <td>4. < 60 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
-                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['count'] ?? 0 }}</td>
-                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
-                                <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A' }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['summary']['any_malnutrition']['count'] ?? 0); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['summary']['any_malnutrition']['percentage'] ?? '0.00'); ?></td>
+                                <td class="text-center"><?php echo e($table10Stats['summary']['any_malnutrition']['p_value'] ?? 'N/A'); ?></td>
                             </tr>
 
                             <!-- Tổng cộng -->
                             <tr class="table-info fw-bold">
                                 <td>Tổng số trẻ < 60 tháng</td>
-                                <td class="text-center">{{ $table10Stats['total_children'] ?? 0 }}</td>
+                                <td class="text-center"><?php echo e($table10Stats['total_children'] ?? 0); ?></td>
                                 <td class="text-center">100.00</td>
                                 <td class="text-center">-</td>
                             </tr>
@@ -1522,14 +1544,14 @@
 </div>
 
 <!-- Modal hiển thị chi tiết records bị loại bỏ -->
-@if(isset($meanStats['_meta']['invalid_records_details']) && count($meanStats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($meanStats['_meta']['invalid_records_details']) && count($meanStats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModal" tabindex="-1" aria-labelledby="invalidRecordsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalLabel">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Chi tiết {{ count($meanStats['_meta']['invalid_records_details']) }} bản ghi bị loại bỏ
+                    Chi tiết <?php echo e(count($meanStats['_meta']['invalid_records_details'])); ?> bản ghi bị loại bỏ
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1554,44 +1576,44 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($meanStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <?php $__currentLoopData = $meanStats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invalidRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td><?php echo e($invalidRecord['id']); ?></td>
                                 <td>
-                                    <strong>{{ $invalidRecord['fullname'] }}</strong>
+                                    <strong><?php echo e($invalidRecord['fullname']); ?></strong>
                                 </td>
-                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center"><?php echo e($invalidRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($invalidRecord['gender'] == 'Nam')
+                                    <?php if($invalidRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($invalidRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($invalidRecord['reasons'] as $reason)
-                                            <li><small class="text-danger">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $invalidRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-danger"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($invalidRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                    <?php if(!empty($invalidRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($invalidRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -1602,17 +1624,17 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Modal Table 5: WHO Combined Invalid Records -->
-@if(isset($whoCombinedStats['_meta']['invalid_records_details']) && count($whoCombinedStats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($whoCombinedStats['_meta']['invalid_records_details']) && count($whoCombinedStats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModalTable5" tabindex="-1" aria-labelledby="invalidRecordsModalTable5Label" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalTable5Label">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Bảng 5: Chi tiết {{ count($whoCombinedStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Combined)
+                    Bảng 5: Chi tiết <?php echo e(count($whoCombinedStats['_meta']['invalid_records_details'])); ?> records bị loại bỏ (WHO Combined)
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1637,42 +1659,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($whoCombinedStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <?php $__currentLoopData = $whoCombinedStats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invalidRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $invalidRecord['id'] }}</td>
-                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
-                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td><?php echo e($invalidRecord['id']); ?></td>
+                                <td><strong><?php echo e($invalidRecord['fullname']); ?></strong></td>
+                                <td class="text-center"><?php echo e($invalidRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($invalidRecord['gender'] == 'Nam')
+                                    <?php if($invalidRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($invalidRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($invalidRecord['reasons'] as $reason)
-                                            <li><small class="text-danger">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $invalidRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-danger"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($invalidRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                    <?php if(!empty($invalidRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($invalidRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -1683,17 +1705,17 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Modal Table 6: WHO Male Invalid Records -->
-@if(isset($whoMaleStats['_meta']['invalid_records_details']) && count($whoMaleStats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($whoMaleStats['_meta']['invalid_records_details']) && count($whoMaleStats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModalTable6" tabindex="-1" aria-labelledby="invalidRecordsModalTable6Label" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalTable6Label">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Bảng 6: Chi tiết {{ count($whoMaleStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Male)
+                    Bảng 6: Chi tiết <?php echo e(count($whoMaleStats['_meta']['invalid_records_details'])); ?> records bị loại bỏ (WHO Male)
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1718,42 +1740,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($whoMaleStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <?php $__currentLoopData = $whoMaleStats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invalidRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $invalidRecord['id'] }}</td>
-                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
-                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td><?php echo e($invalidRecord['id']); ?></td>
+                                <td><strong><?php echo e($invalidRecord['fullname']); ?></strong></td>
+                                <td class="text-center"><?php echo e($invalidRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($invalidRecord['gender'] == 'Nam')
+                                    <?php if($invalidRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($invalidRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($invalidRecord['reasons'] as $reason)
-                                            <li><small class="text-danger">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $invalidRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-danger"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($invalidRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                    <?php if(!empty($invalidRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($invalidRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -1764,17 +1786,17 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Modal Table 7: WHO Female Invalid Records -->
-@if(isset($whoFemaleStats['_meta']['invalid_records_details']) && count($whoFemaleStats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($whoFemaleStats['_meta']['invalid_records_details']) && count($whoFemaleStats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModalTable7" tabindex="-1" aria-labelledby="invalidRecordsModalTable7Label" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalTable7Label">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Bảng 7: Chi tiết {{ count($whoFemaleStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Female)
+                    Bảng 7: Chi tiết <?php echo e(count($whoFemaleStats['_meta']['invalid_records_details'])); ?> records bị loại bỏ (WHO Female)
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1799,42 +1821,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($whoFemaleStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <?php $__currentLoopData = $whoFemaleStats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invalidRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $invalidRecord['id'] }}</td>
-                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
-                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td><?php echo e($invalidRecord['id']); ?></td>
+                                <td><strong><?php echo e($invalidRecord['fullname']); ?></strong></td>
+                                <td class="text-center"><?php echo e($invalidRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($invalidRecord['gender'] == 'Nam')
+                                    <?php if($invalidRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($invalidRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($invalidRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($invalidRecord['reasons'] as $reason)
-                                            <li><small class="text-danger">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $invalidRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-danger"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($invalidRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                    <?php if(!empty($invalidRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($invalidRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -1845,17 +1867,17 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Modal Table 9: Under 24 Months Invalid Records -->
-@if(isset($table9Stats['_meta']['invalid_records_details']) && count($table9Stats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($table9Stats['_meta']['invalid_records_details']) && count($table9Stats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModalTable9" tabindex="-1" aria-labelledby="invalidRecordsModalTable9Label" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalTable9Label">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Bảng 9: Chi tiết {{ count($table9Stats['_meta']['invalid_records_details']) }} records bị loại bỏ
+                    Bảng 9: Chi tiết <?php echo e(count($table9Stats['_meta']['invalid_records_details'])); ?> records bị loại bỏ
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1880,42 +1902,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($table9Stats['_meta']['invalid_records_details'] as $skippedRecord)
+                            <?php $__currentLoopData = $table9Stats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skippedRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $skippedRecord['id'] }}</td>
-                                <td><strong>{{ $skippedRecord['fullname'] }}</strong></td>
-                                <td class="text-center">{{ $skippedRecord['age'] }}</td>
+                                <td><?php echo e($skippedRecord['id']); ?></td>
+                                <td><strong><?php echo e($skippedRecord['fullname']); ?></strong></td>
+                                <td class="text-center"><?php echo e($skippedRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($skippedRecord['gender'] == 'Nam')
+                                    <?php if($skippedRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($skippedRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($skippedRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $skippedRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($skippedRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($skippedRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($skippedRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($skippedRecord['reasons'] as $reason)
-                                            <li><small class="text-warning">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $skippedRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-warning"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($skippedRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $skippedRecord['uid'] }}" 
+                                    <?php if(!empty($skippedRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($skippedRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -1926,17 +1948,17 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Modal Table 10: Under 60 Months Invalid Records -->
-@if(isset($table10Stats['_meta']['invalid_records_details']) && count($table10Stats['_meta']['invalid_records_details']) > 0)
+<?php if(isset($table10Stats['_meta']['invalid_records_details']) && count($table10Stats['_meta']['invalid_records_details']) > 0): ?>
 <div class="modal fade" id="invalidRecordsModalTable10" tabindex="-1" aria-labelledby="invalidRecordsModalTable10Label" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="invalidRecordsModalTable10Label">
                     <i class="uil uil-exclamation-triangle"></i> 
-                    Bảng 10: Chi tiết {{ count($table10Stats['_meta']['invalid_records_details']) }} records bị loại bỏ
+                    Bảng 10: Chi tiết <?php echo e(count($table10Stats['_meta']['invalid_records_details'])); ?> records bị loại bỏ
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1961,42 +1983,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($table10Stats['_meta']['invalid_records_details'] as $skippedRecord)
+                            <?php $__currentLoopData = $table10Stats['_meta']['invalid_records_details']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skippedRecord): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{ $skippedRecord['id'] }}</td>
-                                <td><strong>{{ $skippedRecord['fullname'] }}</strong></td>
-                                <td class="text-center">{{ $skippedRecord['age'] }}</td>
+                                <td><?php echo e($skippedRecord['id']); ?></td>
+                                <td><strong><?php echo e($skippedRecord['fullname']); ?></strong></td>
+                                <td class="text-center"><?php echo e($skippedRecord['age']); ?></td>
                                 <td class="text-center">
-                                    @if($skippedRecord['gender'] == 'Nam')
+                                    <?php if($skippedRecord['gender'] == 'Nam'): ?>
                                         <span class="badge bg-primary">Nam</span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="badge bg-danger">Nữ</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-end">{{ number_format($skippedRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($skippedRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $skippedRecord['cal_date'] }}</td>
+                                <td class="text-end"><?php echo e(number_format($skippedRecord['weight'], 1)); ?></td>
+                                <td class="text-end"><?php echo e(number_format($skippedRecord['height'], 1)); ?></td>
+                                <td class="text-center"><?php echo e($skippedRecord['cal_date']); ?></td>
                                 <td>
                                     <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($skippedRecord['reasons'] as $reason)
-                                            <li><small class="text-warning">{{ $reason }}</small></li>
-                                        @endforeach
+                                        <?php $__currentLoopData = $skippedRecord['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li><small class="text-warning"><?php echo e($reason); ?></small></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    @if(!empty($skippedRecord['uid']))
-                                        <a href="{{ route('result') }}?uid={{ $skippedRecord['uid'] }}" 
+                                    <?php if(!empty($skippedRecord['uid'])): ?>
+                                        <a href="<?php echo e(route('result')); ?>?uid=<?php echo e($skippedRecord['uid']); ?>" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem kết quả và chỉnh sửa"
                                            target="_blank">
                                             <i class="uil uil-edit"></i> Sửa
                                         </a>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-muted">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -2007,7 +2029,7 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
 <!-- Dynamic Cell Details Modal -->
 <div class="modal fade" id="cellDetailsModal" tabindex="-1" aria-labelledby="cellDetailsModalLabel" aria-hidden="true">
@@ -2059,7 +2081,7 @@
     </div>
 </div>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -2103,20 +2125,22 @@ new Chart(document.getElementById('chart-wa'), {
             {
                 label: 'Nam (%)',
                 data: [
-                    {{ $weightForAgeStats['male']['severe_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['male']['moderate_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['male']['normal_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['male']['overweight_pct'] ?? 0 }}
+                    <?php echo e($weightForAgeStats['male']['severe_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['male']['moderate_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['male']['normal_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['male']['overweight_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ (%)',
                 data: [
-                    {{ $weightForAgeStats['female']['severe_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['female']['moderate_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['female']['normal_pct'] ?? 0 }},
-                    {{ $weightForAgeStats['female']['overweight_pct'] ?? 0 }}
+                    <?php echo e($weightForAgeStats['female']['severe_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['female']['moderate_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['female']['normal_pct'] ?? 0); ?>,
+                    <?php echo e($weightForAgeStats['female']['overweight_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.female
             }
@@ -2156,18 +2180,20 @@ new Chart(document.getElementById('chart-ha'), {
             {
                 label: 'Nam (%)',
                 data: [
-                    {{ $heightForAgeStats['male']['severe_pct'] ?? 0 }},
-                    {{ $heightForAgeStats['male']['moderate_pct'] ?? 0 }},
-                    {{ $heightForAgeStats['male']['normal_pct'] ?? 0 }}
+                    <?php echo e($heightForAgeStats['male']['severe_pct'] ?? 0); ?>,
+                    <?php echo e($heightForAgeStats['male']['moderate_pct'] ?? 0); ?>,
+                    <?php echo e($heightForAgeStats['male']['normal_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ (%)',
                 data: [
-                    {{ $heightForAgeStats['female']['severe_pct'] ?? 0 }},
-                    {{ $heightForAgeStats['female']['moderate_pct'] ?? 0 }},
-                    {{ $heightForAgeStats['female']['normal_pct'] ?? 0 }}
+                    <?php echo e($heightForAgeStats['female']['severe_pct'] ?? 0); ?>,
+                    <?php echo e($heightForAgeStats['female']['moderate_pct'] ?? 0); ?>,
+                    <?php echo e($heightForAgeStats['female']['normal_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.female
             }
@@ -2207,22 +2233,24 @@ new Chart(document.getElementById('chart-wh'), {
             {
                 label: 'Nam (%)',
                 data: [
-                    {{ $weightForHeightStats['male']['wasted_severe_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['male']['wasted_moderate_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['male']['normal_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['male']['overweight_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['male']['obese_pct'] ?? 0 }}
+                    <?php echo e($weightForHeightStats['male']['wasted_severe_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['male']['wasted_moderate_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['male']['normal_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['male']['overweight_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['male']['obese_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ (%)',
                 data: [
-                    {{ $weightForHeightStats['female']['wasted_severe_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['female']['wasted_moderate_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['female']['normal_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['female']['overweight_pct'] ?? 0 }},
-                    {{ $weightForHeightStats['female']['obese_pct'] ?? 0 }}
+                    <?php echo e($weightForHeightStats['female']['wasted_severe_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['female']['wasted_moderate_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['female']['normal_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['female']['overweight_pct'] ?? 0); ?>,
+                    <?php echo e($weightForHeightStats['female']['obese_pct'] ?? 0); ?>
+
                 ],
                 backgroundColor: chartColors.female
             }
@@ -2254,7 +2282,7 @@ new Chart(document.getElementById('chart-wh'), {
 });
 
 // Mean Statistics Charts by Age Group
-@php
+<?php
     $ageLabels = [];
     $maleWeight = [];
     $femaleWeight = [];
@@ -2281,24 +2309,24 @@ new Chart(document.getElementById('chart-wh'), {
         $maleWH[] = $data['male']['wh_zscore']['mean'] ?? 0;
         $femaleWH[] = $data['female']['wh_zscore']['mean'] ?? 0;
     }
-@endphp
+?>
 
 // Weight by Age Group
 new Chart(document.getElementById('chart-mean-weight'), {
     type: 'line',
     data: {
-        labels: @json($ageLabels),
+        labels: <?php echo json_encode($ageLabels, 15, 512) ?>,
         datasets: [
             {
                 label: 'Nam (kg)',
-                data: @json($maleWeight),
+                data: <?php echo json_encode($maleWeight, 15, 512) ?>,
                 borderColor: chartColors.male,
                 backgroundColor: chartColors.male + '33',
                 tension: 0.3
             },
             {
                 label: 'Nữ (kg)',
-                data: @json($femaleWeight),
+                data: <?php echo json_encode($femaleWeight, 15, 512) ?>,
                 borderColor: chartColors.female,
                 backgroundColor: chartColors.female + '33',
                 tension: 0.3
@@ -2333,18 +2361,18 @@ new Chart(document.getElementById('chart-mean-weight'), {
 new Chart(document.getElementById('chart-mean-height'), {
     type: 'line',
     data: {
-        labels: @json($ageLabels),
+        labels: <?php echo json_encode($ageLabels, 15, 512) ?>,
         datasets: [
             {
                 label: 'Nam (cm)',
-                data: @json($maleHeight),
+                data: <?php echo json_encode($maleHeight, 15, 512) ?>,
                 borderColor: chartColors.male,
                 backgroundColor: chartColors.male + '33',
                 tension: 0.3
             },
             {
                 label: 'Nữ (cm)',
-                data: @json($femaleHeight),
+                data: <?php echo json_encode($femaleHeight, 15, 512) ?>,
                 borderColor: chartColors.female,
                 backgroundColor: chartColors.female + '33',
                 tension: 0.3
@@ -2379,16 +2407,16 @@ new Chart(document.getElementById('chart-mean-height'), {
 new Chart(document.getElementById('chart-mean-wa'), {
     type: 'bar',
     data: {
-        labels: @json($ageLabels),
+        labels: <?php echo json_encode($ageLabels, 15, 512) ?>,
         datasets: [
             {
                 label: 'Nam',
-                data: @json($maleWA),
+                data: <?php echo json_encode($maleWA, 15, 512) ?>,
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ',
-                data: @json($femaleWA),
+                data: <?php echo json_encode($femaleWA, 15, 512) ?>,
                 backgroundColor: chartColors.female
             }
         ]
@@ -2428,16 +2456,16 @@ new Chart(document.getElementById('chart-mean-wa'), {
 new Chart(document.getElementById('chart-mean-ha'), {
     type: 'bar',
     data: {
-        labels: @json($ageLabels),
+        labels: <?php echo json_encode($ageLabels, 15, 512) ?>,
         datasets: [
             {
                 label: 'Nam',
-                data: @json($maleHA),
+                data: <?php echo json_encode($maleHA, 15, 512) ?>,
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ',
-                data: @json($femaleHA),
+                data: <?php echo json_encode($femaleHA, 15, 512) ?>,
                 backgroundColor: chartColors.female
             }
         ]
@@ -2477,16 +2505,16 @@ new Chart(document.getElementById('chart-mean-ha'), {
 new Chart(document.getElementById('chart-mean-wh'), {
     type: 'bar',
     data: {
-        labels: @json($ageLabels),
+        labels: <?php echo json_encode($ageLabels, 15, 512) ?>,
         datasets: [
             {
                 label: 'Nam',
-                data: @json($maleWH),
+                data: <?php echo json_encode($maleWH, 15, 512) ?>,
                 backgroundColor: chartColors.male
             },
             {
                 label: 'Nữ',
-                data: @json($femaleWH),
+                data: <?php echo json_encode($femaleWH, 15, 512) ?>,
                 backgroundColor: chartColors.female
             }
         ]
@@ -2535,7 +2563,7 @@ $(document).ready(function() {
         var province_code = $(this).val();
         if (province_code) {
             $.ajax({
-                url: "{{ route('admin.ajax_get_district_by_province') }}",
+                url: "<?php echo e(route('admin.ajax_get_district_by_province')); ?>",
                 type: 'GET',
                 data: {province_code: province_code},
                 success: function(data) {
@@ -2553,7 +2581,7 @@ $(document).ready(function() {
         var district_code = $(this).val();
         if (district_code) {
             $.ajax({
-                url: "{{ route('admin.ajax_get_ward_by_district') }}",
+                url: "<?php echo e(route('admin.ajax_get_ward_by_district')); ?>",
                 type: 'GET',
                 data: {district_code: district_code},
                 success: function(data) {
@@ -2689,7 +2717,7 @@ $(document).ready(function() {
         
         // Make AJAX request
         $.ajax({
-            url: '{{ route("admin.dashboard.get_cell_details") }}',
+            url: '<?php echo e(route("admin.dashboard.get_cell_details")); ?>',
             method: 'GET',
             data: {
                 table_id: tableId,
@@ -2734,7 +2762,7 @@ $(document).ready(function() {
                                     </td>
                                     <td class="text-center"><small class="text-muted">${child.zscore_type}</small></td>
                                     <td class="text-center">
-                                        <a href="{{ route('result') }}?uid=${child.uid}" 
+                                        <a href="<?php echo e(route('result')); ?>?uid=${child.uid}" 
                                            class="btn btn-sm btn-info" 
                                            title="Xem và chỉnh sửa"
                                            target="_blank">
@@ -2774,5 +2802,7 @@ $(document).ready(function() {
 });
 </script>
 
-@endpush
-@endsection
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layouts.app-full', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\dinhduong\resources\views/admin/dashboards/statistics.blade.php ENDPATH**/ ?>
