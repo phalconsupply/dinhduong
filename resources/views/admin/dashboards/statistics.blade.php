@@ -2223,6 +2223,23 @@
 <!-- Clickable Cells - Vanilla JS Implementation -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Helper function: Format date to dd/mm/yyyy
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        
+        // Parse date (assuming format: yyyy-mm-dd or similar)
+        const date = new Date(dateString);
+        
+        // Check if valid date
+        if (isNaN(date.getTime())) return dateString;
+        
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        
+        return `${day}/${month}/${year}`;
+    }
+    
     // Click handler for all clickable cells
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('clickable-cell') || e.target.closest('.clickable-cell')) {
@@ -2272,7 +2289,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </td>
                                     <td class="text-end">${parseFloat(child.weight).toFixed(1)}</td>
                                     <td class="text-end">${parseFloat(child.height).toFixed(1)}</td>
-                                    <td class="text-center">${child.cal_date}</td>
+                                    <td class="text-center"><strong>${formatDate(child.cal_date)}</strong></td>
                                     <td class="text-center">
                                         <span class="badge bg-${child.zscore < -2 ? 'danger' : (child.zscore > 2 ? 'warning' : 'success')}">
                                             ${child.zscore}
@@ -2313,13 +2330,55 @@ document.addEventListener('DOMContentLoaded', function() {
 <style>
 .clickable-cell {
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 500;
 }
 
 .clickable-cell:hover {
-    background-color: #e3f2fd !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
     font-weight: bold;
-    transform: scale(1.02);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    z-index: 10;
+}
+
+.clickable-cell:hover::before {
+    content: '👆 Click để xem chi tiết';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    margin-bottom: 5px;
+    pointer-events: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.clickable-cell:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+.clickable-cell:active {
+    transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .rotating {
