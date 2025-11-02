@@ -2009,9 +2009,83 @@
 </div>
 @endif
 
+<!-- Dynamic Cell Details Modal -->
+<div class="modal fade" id="cellDetailsModal" tabindex="-1" aria-labelledby="cellDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="cellDetailsModalLabel">
+                    <i class="uil uil-list-ul"></i> Chi tiết
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Đây là danh sách các trẻ được thống kê trong ô dữ liệu bạn vừa click. Chỉ bao gồm các bản ghi có Z-score hợp lệ (trong khoảng -6 đến +6).
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="cellDetailsTable">
+                        <thead class="table-info">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th>Z-score</th>
+                                <th>Loại</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cellDetailsTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- CSS for clickable cells -->
+<style>
+.clickable-cell {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clickable-cell:hover {
+    background-color: #e3f2fd !important;
+    font-weight: bold;
+    transform: scale(1.02);
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+
 <script>
 // Chart.js configurations
 const chartColors = {
@@ -2676,79 +2750,6 @@ $(document).ready(function() {
     });
 });
 </script>
-
-<!-- Dynamic Cell Details Modal -->
-<div class="modal fade" id="cellDetailsModal" tabindex="-1" aria-labelledby="cellDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="cellDetailsModalLabel">
-                    <i class="uil uil-list-ul"></i> Chi tiết
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <strong>Lưu ý:</strong> Đây là danh sách các trẻ được thống kê trong ô dữ liệu bạn vừa click. Chỉ bao gồm các bản ghi có Z-score hợp lệ (trong khoảng -6 đến +6).
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover" id="cellDetailsTable">
-                        <thead class="table-info">
-                            <tr>
-                                <th style="width: 50px;">ID</th>
-                                <th>Họ tên</th>
-                                <th>Tuổi (tháng)</th>
-                                <th>Giới tính</th>
-                                <th>Cân nặng (kg)</th>
-                                <th>Chiều cao (cm)</th>
-                                <th>Ngày cân đo</th>
-                                <th>Z-score</th>
-                                <th>Loại</th>
-                                <th style="width: 100px;">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cellDetailsTableBody">
-                            <tr>
-                                <td colspan="10" class="text-center">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CSS for clickable cells -->
-<style>
-.clickable-cell {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.clickable-cell:hover {
-    background-color: #e3f2fd !important;
-    font-weight: bold;
-    transform: scale(1.02);
-}
-
-.rotating {
-    animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-</style>
 
 @endpush
 @endsection
