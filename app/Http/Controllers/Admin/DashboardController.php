@@ -511,6 +511,7 @@ class DashboardController extends Controller
 
         $stats = [];
         $invalidRecords = 0;
+        $invalidRecordsDetails = []; // Lưu chi tiết các record bị loại bỏ
 
         // Initialize data structure
         foreach ($ageGroups as $groupKey => $group) {
@@ -550,20 +551,41 @@ class DashboardController extends Controller
 
             // Check for invalid z-scores
             $isValid = true;
-            if (($waZscore !== null && ($waZscore < -6 || $waZscore > 6)) ||
-                ($haZscore !== null && ($haZscore < -6 || $haZscore > 6)) ||
-                ($whZscore !== null && ($whZscore < -6 || $whZscore > 6))) {
+            $invalidReasons = [];
+            
+            if ($waZscore !== null && ($waZscore < -6 || $waZscore > 6)) {
                 $isValid = false;
-                $invalidRecords++;
+                $invalidReasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
+            }
+            if ($haZscore !== null && ($haZscore < -6 || $haZscore > 6)) {
+                $isValid = false;
+                $invalidReasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+            }
+            if ($whZscore !== null && ($whZscore < -6 || $whZscore > 6)) {
+                $isValid = false;
+                $invalidReasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
             }
 
             // Additional validation: unreasonable values
             if ($ageInMonths >= 36 && $record->weight < 5) {
                 $isValid = false;
-                $invalidRecords++;
+                $invalidReasons[] = "Cân nặng {$record->weight} kg quá thấp cho trẻ ≥ 36 tháng";
             }
 
-            if (!$isValid) continue;
+            if (!$isValid) {
+                $invalidRecords++;
+                $invalidRecordsDetails[] = [
+                    'id' => $record->id,
+                    'fullname' => $record->fullname,
+                    'age' => $ageInMonths,
+                    'gender' => $record->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $record->weight,
+                    'height' => $record->height,
+                    'cal_date' => $record->cal_date,
+                    'reasons' => $invalidReasons
+                ];
+                continue;
+            }
 
             // Add to statistics
             $stats[$ageGroupKey][$gender]['weight'][] = $record->weight;
@@ -599,6 +621,7 @@ class DashboardController extends Controller
         // Add metadata
         $result['_meta'] = [
             'invalid_records' => $invalidRecords,
+            'invalid_records_details' => $invalidRecordsDetails,
             'age_groups' => $ageGroups,
         ];
 

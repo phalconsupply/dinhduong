@@ -343,6 +343,9 @@
                         <i class="uil uil-exclamation-triangle"></i> 
                         <strong>Cảnh báo:</strong> Đã loại bỏ {{ $meanStats['_meta']['invalid_records'] }} bản ghi không hợp lệ 
                         (Z-score < -6 hoặc > +6, hoặc giá trị không hợp lý)
+                        <button type="button" class="btn btn-sm btn-warning float-end" data-bs-toggle="modal" data-bs-target="#invalidRecordsModal">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
                     </div>
                 @endif
 
@@ -1766,5 +1769,100 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<!-- Modal hiển thị chi tiết records bị loại bỏ -->
+@if(isset($meanStats['_meta']['invalid_records_details']) && count($meanStats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModal" tabindex="-1" aria-labelledby="invalidRecordsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalLabel">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Chi tiết {{ count($meanStats['_meta']['invalid_records_details']) }} bản ghi bị loại bỏ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6) hoặc có giá trị đo lường không hợp lý.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do loại bỏ</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($meanStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <tr>
+                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td>
+                                    <strong>{{ $invalidRecord['fullname'] }}</strong>
+                                </td>
+                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($invalidRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($invalidRecord['reasons'] as $reason)
+                                            <li><small class="text-danger">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ route('admin.history.edit', $invalidRecord['id']) }}" 
+                                       class="btn btn-sm btn-info" 
+                                       title="Sửa dữ liệu"
+                                       target="_blank">
+                                        <i class="uil uil-edit"></i> Sửa
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Initialize DataTable for invalid records
+    if ($('#invalid-records-table').length) {
+        $('#invalid-records-table').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
+});
+</script>
+@endif
+
 @endpush
 @endsection
