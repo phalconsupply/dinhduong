@@ -1299,13 +1299,14 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bảng 10: Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)
+     * Bảng 10: Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (0-60 tháng)
      */
     private function getNutritionStatsUnder60Months($records)
     {
-        // Lọc trẻ < 60 tháng (5 tuổi)
+        // Lọc trẻ 0-60 tháng (bao gồm cả trẻ đúng 60 tháng = 5 tuổi)
+        // WHO reference data có đầy đủ cho 0-60 tháng
         $children = $records->filter(function($record) {
-            return $record->age < 60;
+            return $record->age <= 60;
         });
 
         $totalChildren = $children->count();
