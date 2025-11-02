@@ -561,4 +561,90 @@ class History extends Model
         return $query;
     }
 
+    /**
+     * Tính Z-score theo phương pháp WHO (dựa trên SD bands)
+     * Công thức này chính xác hơn (Value - Median) / SD
+     */
+    public function calculateZScore($value, $refRow)
+    {
+        if (!$refRow || !isset($refRow['Median']) || $value === null) return null;
+        
+        $median = $refRow['Median'];
+        $sd0neg = $refRow['-1SD'] ?? null;
+        $sd1neg = $refRow['-2SD'] ?? null;
+        $sd2neg = $refRow['-3SD'] ?? null;
+        $sd0pos = $refRow['1SD'] ?? null;
+        $sd1pos = $refRow['2SD'] ?? null;
+        $sd2pos = $refRow['3SD'] ?? null;
+        
+        // Kiểm tra dữ liệu đầy đủ
+        if (!$sd0neg || !$sd1neg || !$sd2neg || !$sd0pos || !$sd1pos || !$sd2pos) {
+            return null;
+        }
+        
+        // Trường hợp Value = Median
+        if ($value == $median) return 0;
+        
+        // Trường hợp Value > Median (Z dương)
+        if ($value > $median) {
+            if ($value <= $sd0pos) {
+                // 0 < Z <= 1
+                return ($value - $median) / ($sd0pos - $median);
+            } elseif ($value <= $sd1pos) {
+                // 1 < Z <= 2
+                return 1 + ($value - $sd0pos) / ($sd1pos - $sd0pos);
+            } elseif ($value <= $sd2pos) {
+                // 2 < Z <= 3
+                return 2 + ($value - $sd1pos) / ($sd2pos - $sd1pos);
+            } else {
+                // Z > 3 (extrapolation)
+                return 3 + ($value - $sd2pos) / ($sd2pos - $sd1pos);
+            }
+        }
+        
+        // Trường hợp Value < Median (Z âm)
+        else {
+            if ($value >= $sd0neg) {
+                // -1 <= Z < 0
+                return -($median - $value) / ($median - $sd0neg);
+            } elseif ($value >= $sd1neg) {
+                // -2 <= Z < -1
+                return -1 - ($sd0neg - $value) / ($sd0neg - $sd1neg);
+            } elseif ($value >= $sd2neg) {
+                // -3 <= Z < -2
+                return -2 - ($sd1neg - $value) / ($sd1neg - $sd2neg);
+            } else {
+                // Z < -3 (extrapolation)
+                return -3 - ($sd2neg - $value) / ($sd1neg - $sd2neg);
+            }
+        }
+    }
+
+    /**
+     * Lấy Z-score Weight-for-Age
+     */
+    public function getWeightForAgeZScore()
+    {
+        $waRow = $this->WeightForAge();
+        return $this->calculateZScore($this->weight, $waRow);
+    }
+
+    /**
+     * Lấy Z-score Height-for-Age
+     */
+    public function getHeightForAgeZScore()
+    {
+        $haRow = $this->HeightForAge();
+        return $this->calculateZScore($this->height, $haRow);
+    }
+
+    /**
+     * Lấy Z-score Weight-for-Height
+     */
+    public function getWeightForHeightZScore()
+    {
+        $whRow = $this->WeightForHeight();
+        return $this->calculateZScore($this->weight, $whRow);
+    }
+
 }

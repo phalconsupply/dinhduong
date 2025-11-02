@@ -961,58 +961,40 @@ class DashboardController extends Controller
             $whData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'gt_1sd' => 0, 'gt_2sd' => 0, 'gt_3sd' => 0, 'wh_zscores' => []];
 
             foreach ($groupRecords as $record) {
-                // Weight-for-Age
-                $waRow = $record->WeightForAge();
-                if ($waRow) {
-                    if ($record->weight < $waRow['-3SD']) $waData['lt_3sd']++;
-                    if ($record->weight < $waRow['-2SD']) $waData['lt_2sd']++;
-                    // Tính Z-score W/A: SD = 1SD - Median (hoặc Median - (-1SD))
-                    $sd = isset($waRow['1SD']) && isset($waRow['Median']) ? ($waRow['1SD'] - $waRow['Median']) : 0;
-                    if ($sd > 0 && $waRow['Median'] > 0) {
-                        $zscore = ($record->weight - $waRow['Median']) / $sd;
-                        // Lọc Z-score hợp lệ (WHO: -6 đến +6)
-                        if ($zscore >= -6 && $zscore <= 6) {
-                            $waData['weights'][] = $zscore;
-                            $totalData['wa'][] = $zscore;
-                        }
-                    }
+                // Weight-for-Age - SỬA: Dùng method tính Z-score đúng
+                $waZscore = $record->getWeightForAgeZScore();
+                if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                    $waData['weights'][] = $waZscore;
+                    $totalData['wa'][] = $waZscore;
+                    
+                    // Đếm < -2SD và < -3SD dựa trên Z-score
+                    if ($waZscore < -3) $waData['lt_3sd']++;
+                    if ($waZscore < -2) $waData['lt_2sd']++;
                 }
 
-                // Height-for-Age
-                $haRow = $record->HeightForAge();
-                if ($haRow) {
-                    if ($record->height < $haRow['-3SD']) $haData['lt_3sd']++;
-                    if ($record->height < $haRow['-2SD']) $haData['lt_2sd']++;
-                    // Tính Z-score H/A
-                    $sd = isset($haRow['1SD']) && isset($haRow['Median']) ? ($haRow['1SD'] - $haRow['Median']) : 0;
-                    if ($sd > 0 && $haRow['Median'] > 0) {
-                        $zscore = ($record->height - $haRow['Median']) / $sd;
-                        // Lọc Z-score hợp lệ
-                        if ($zscore >= -6 && $zscore <= 6) {
-                            $haData['heights'][] = $zscore;
-                            $totalData['ha'][] = $zscore;
-                        }
-                    }
+                // Height-for-Age - SỬA: Dùng method tính Z-score đúng
+                $haZscore = $record->getHeightForAgeZScore();
+                if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                    $haData['heights'][] = $haZscore;
+                    $totalData['ha'][] = $haZscore;
+                    
+                    // Đếm < -2SD và < -3SD dựa trên Z-score
+                    if ($haZscore < -3) $haData['lt_3sd']++;
+                    if ($haZscore < -2) $haData['lt_2sd']++;
                 }
 
-                // Weight-for-Height
-                $whRow = $record->WeightForHeight();
-                if ($whRow) {
-                    if ($record->weight < $whRow['-3SD']) $whData['lt_3sd']++;
-                    if ($record->weight < $whRow['-2SD']) $whData['lt_2sd']++;
-                    if ($record->weight > $whRow['1SD']) $whData['gt_1sd']++;
-                    if ($record->weight > $whRow['2SD']) $whData['gt_2sd']++;
-                    if ($record->weight > $whRow['3SD']) $whData['gt_3sd']++;
-                    // Tính Z-score W/H
-                    $sd = isset($whRow['1SD']) && isset($whRow['Median']) ? ($whRow['1SD'] - $whRow['Median']) : 0;
-                    if ($sd > 0 && $whRow['Median'] > 0) {
-                        $zscore = ($record->weight - $whRow['Median']) / $sd;
-                        // Lọc Z-score hợp lệ
-                        if ($zscore >= -6 && $zscore <= 6) {
-                            $whData['wh_zscores'][] = $zscore;
-                            $totalData['wh'][] = $zscore;
-                        }
-                    }
+                // Weight-for-Height - SỬA: Dùng method tính Z-score đúng
+                $whZscore = $record->getWeightForHeightZScore();
+                if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                    $whData['wh_zscores'][] = $whZscore;
+                    $totalData['wh'][] = $whZscore;
+                    
+                    // Đếm theo Z-score thay vì so sánh trực tiếp
+                    if ($whZscore < -3) $whData['lt_3sd']++;
+                    if ($whZscore < -2) $whData['lt_2sd']++;
+                    if ($whZscore > 1) $whData['gt_1sd']++;
+                    if ($whZscore > 2) $whData['gt_2sd']++;
+                    if ($whZscore > 3) $whData['gt_3sd']++;
                 }
             }
 
