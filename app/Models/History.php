@@ -156,6 +156,11 @@ class History extends Model
         $height = $this->height;
         $gender = $this->gender;
         
+        // Kiểm tra nếu height hoặc gender null → return null
+        if ($height === null || $gender === null) {
+            return null;
+        }
+        
         // Theo WHO: KHÔNG làm tròn height, sử dụng linear interpolation
         // Thử tìm exact match trước
         $exact = WeightForHeight::where('gender', $gender)
