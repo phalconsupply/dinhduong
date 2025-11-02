@@ -190,7 +190,8 @@ class History extends Model
         // Linear interpolation: Z(x) = Z(x1) + [(x - x1) / (x2 - x1)] × [Z(x2) - Z(x1)]
         $ratio = ($height - $lower->cm) / ($upper->cm - $lower->cm);
         
-        $interpolated = new \stdClass();
+        // Tạo WeightForHeight model instance để tương thích với code existing
+        $interpolated = new WeightForHeight();
         $interpolated->cm = $height;
         $interpolated->gender = $gender;
         $interpolated->fromAge = $lower->fromAge;
@@ -201,6 +202,9 @@ class History extends Model
         foreach ($fields as $field) {
             $interpolated->{$field} = $lower->{$field} + $ratio * ($upper->{$field} - $lower->{$field});
         }
+        
+        // Set exists = true để model có thể access như array
+        $interpolated->exists = true;
         
         return $interpolated;
     }
