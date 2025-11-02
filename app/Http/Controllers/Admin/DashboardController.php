@@ -1766,6 +1766,9 @@ class DashboardController extends Controller
                     $zscore = $child->getBMIForAgeZScore();
                     $zscoreType = 'BMI/A';
                     break;
+                default:
+                    // If category is null or unknown, skip this record
+                    continue 2; // Skip to next child
             }
             
             // Check if Z-score is valid
