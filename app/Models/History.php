@@ -153,8 +153,12 @@ class History extends Model
          return HeightForAge::where('gender', $this->gender)->where('Months',$this->age)->first();
     }
     public function WeightForHeight(){
+        // Làm tròn height về 0.5 gần nhất để khớp với reference table
+        // Ví dụ: 72.3 → 72.5, 72.7 → 72.5, 73.2 → 73.0
+        $height_rounded = round($this->height * 2) / 2;
+        
         return WeightForHeight::where('gender', $this->gender)
-            ->where('cm',$this->height)
+            ->where('cm', $height_rounded)
             ->first();
     }
 
