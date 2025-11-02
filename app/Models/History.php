@@ -153,13 +153,51 @@ class History extends Model
          return HeightForAge::where('gender', $this->gender)->where('Months',$this->age)->first();
     }
     public function WeightForHeight(){
-        // Làm tròn height về 0.5 gần nhất để khớp với reference table
-        // Ví dụ: 72.3 → 72.5, 72.7 → 72.5, 73.2 → 73.0
-        $height_rounded = round($this->height * 2) / 2;
+        $height = $this->height;
+        $gender = $this->gender;
         
-        return WeightForHeight::where('gender', $this->gender)
-            ->where('cm', $height_rounded)
+        // Theo WHO: KHÔNG làm tròn height, sử dụng linear interpolation
+        // Thử tìm exact match trước
+        $exact = WeightForHeight::where('gender', $gender)
+            ->where('cm', $height)
             ->first();
+        
+        if ($exact) {
+            return $exact;  // Tìm thấy exact match → return luôn
+        }
+        
+        // Không tìm thấy exact → Linear Interpolation theo hướng dẫn WHO
+        // Tìm 2 giá trị gần nhất (lower và upper)
+        $lower = WeightForHeight::where('gender', $gender)
+            ->where('cm', '<=', $height)
+            ->orderBy('cm', 'desc')
+            ->first();
+        
+        $upper = WeightForHeight::where('gender', $gender)
+            ->where('cm', '>=', $height)
+            ->orderBy('cm', 'asc')
+            ->first();
+        
+        if (!$lower || !$upper || $lower->cm == $upper->cm) {
+            return null;  // Không đủ dữ liệu để interpolate
+        }
+        
+        // Linear interpolation: Z(x) = Z(x1) + [(x - x1) / (x2 - x1)] × [Z(x2) - Z(x1)]
+        $ratio = ($height - $lower->cm) / ($upper->cm - $lower->cm);
+        
+        $interpolated = new \stdClass();
+        $interpolated->cm = $height;
+        $interpolated->gender = $gender;
+        $interpolated->fromAge = $lower->fromAge;
+        $interpolated->toAge = $lower->toAge;
+        
+        // Interpolate tất cả các SD thresholds
+        $fields = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
+        foreach ($fields as $field) {
+            $interpolated->{$field} = $lower->{$field} + $ratio * ($upper->{$field} - $lower->{$field});
+        }
+        
+        return $interpolated;
     }
 
     public function check_bmi_for_age(){
