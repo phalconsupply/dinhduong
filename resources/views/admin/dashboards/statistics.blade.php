@@ -1828,12 +1828,24 @@ $(document).ready(function() {
                                     </ul>
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ route('admin.history.edit', $invalidRecord['id']) }}" 
-                                       class="btn btn-sm btn-info" 
-                                       title="Sửa dữ liệu"
-                                       target="_blank">
-                                        <i class="uil uil-edit"></i> Sửa
-                                    </a>
+                                    @php
+                                        // Lấy slug từ database để tạo link edit
+                                        $historyRecord = \App\Models\History::find($invalidRecord['id']);
+                                        $editUrl = $historyRecord && $historyRecord->slug 
+                                            ? route('form.index', $historyRecord->slug) 
+                                            : '#';
+                                    @endphp
+                                    
+                                    @if($editUrl != '#')
+                                        <a href="{{ $editUrl }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Sửa dữ liệu"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
