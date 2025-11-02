@@ -251,14 +251,18 @@ class DashboardController extends Controller
     public function statistics(Request $request)
     {
         $user = Auth::user();
-        $history = History::query()->byUserRole($user);
+        $history = History::query()
+            ->byUserRole($user)
+            ->where('age', '<=', 60)  // Chỉ lấy trẻ 0-5 tuổi (0-60 tháng)
+            ->whereNotNull('age')
+            ->whereNotNull('cal_date');  // Bắt buộc phải có ngày cân đo
 
-        // Apply filters
+        // Apply filters - SỬA: Dùng cal_date (ngày cân đo) thay vì created_at (ngày tạo báo cáo)
         if ($request->filled('from_date')) {
-            $history->whereDate('created_at', '>=', $request->from_date);
+            $history->whereDate('cal_date', '>=', $request->from_date);
         }
         if ($request->filled('to_date')) {
-            $history->whereDate('created_at', '<=', $request->to_date);
+            $history->whereDate('cal_date', '<=', $request->to_date);
         }
         if ($request->filled('province_code')) {
             $history->where('province_code', $request->province_code);
@@ -829,20 +833,19 @@ class DashboardController extends Controller
     public function exportMeanStatisticsCSV(Request $request)
     {
         // Apply same filters as statistics method
-        $query = History::query();
-        
-        $role = Auth::user()->role;
-        if ($role == 'manager') {
-            $query->where('province_code', Auth::user()->province_code);
-        } elseif ($role == 'employee') {
-            $query->where('unit_id', Auth::user()->unit_id);
-        }
+        $user = Auth::user();
+        $query = History::query()
+            ->byUserRole($user)
+            ->where('age', '<=', 60)  // Chỉ lấy trẻ 0-5 tuổi (0-60 tháng)
+            ->whereNotNull('age')
+            ->whereNotNull('cal_date');  // Bắt buộc phải có ngày cân đo
 
+        // SỬA: Dùng cal_date (ngày cân đo) thay vì 'date' (không tồn tại)
         if ($request->filled('from_date')) {
-            $query->whereDate('date', '>=', $request->from_date);
+            $query->whereDate('cal_date', '>=', $request->from_date);
         }
         if ($request->filled('to_date')) {
-            $query->whereDate('date', '<=', $request->to_date);
+            $query->whereDate('cal_date', '<=', $request->to_date);
         }
         if ($request->filled('province_code')) {
             $query->where('province_code', $request->province_code);
