@@ -482,10 +482,25 @@
         {{-- Table 5: WHO Combined Statistics (Sexes combined) --}}
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">5. Bảng tổng hợp WHO - Set 1: Sexes combined</h6>
-                <button onclick="exportTable('table-who-combined', 'WHO_Combined_Statistics')" class="btn btn-sm btn-success">
-                    <i class="uil uil-download-alt"></i> Tải xuống Excel
-                </button>
+                <h6 class="mb-0">
+                    5. Bảng tổng hợp WHO - Set 1: Sexes combined
+                    @if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0)
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $whoCombinedStats['_meta']['invalid_records'] }} records bị loại bỏ
+                        </span>
+                    @endif
+                </h6>
+                <div>
+                    @if(isset($whoCombinedStats['_meta']['invalid_records']) && $whoCombinedStats['_meta']['invalid_records'] > 0)
+                        <button type="button" class="btn btn-sm btn-warning me-2" 
+                                data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable5">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
+                    @endif
+                    <button onclick="exportTable('table-who-combined', 'WHO_Combined_Statistics')" class="btn btn-sm btn-success">
+                        <i class="uil uil-download-alt"></i> Tải xuống Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -598,10 +613,25 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">6. Bảng tổng hợp WHO - Set 2: Male</h4>
-                <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-male', 'WHO_Male_Statistics')">
-                    <i class="uil uil-export"></i> Xuất Excel
-                </button>
+                <h4 class="mb-0">
+                    6. Bảng tổng hợp WHO - Set 2: Male
+                    @if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0)
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $whoMaleStats['_meta']['invalid_records'] }} records bị loại bỏ
+                        </span>
+                    @endif
+                </h4>
+                <div>
+                    @if(isset($whoMaleStats['_meta']['invalid_records']) && $whoMaleStats['_meta']['invalid_records'] > 0)
+                        <button type="button" class="btn btn-sm btn-warning me-2" 
+                                data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable6">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
+                    @endif
+                    <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-male', 'WHO_Male_Statistics')">
+                        <i class="uil uil-export"></i> Xuất Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -708,10 +738,25 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">7. Bảng tổng hợp WHO - Set 3: Females</h4>
-                <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-female', 'WHO_Female_Statistics')">
-                    <i class="uil uil-export"></i> Xuất Excel
-                </button>
+                <h4 class="mb-0">
+                    7. Bảng tổng hợp WHO - Set 3: Females
+                    @if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0)
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $whoFemaleStats['_meta']['invalid_records'] }} records bị loại bỏ
+                        </span>
+                    @endif
+                </h4>
+                <div>
+                    @if(isset($whoFemaleStats['_meta']['invalid_records']) && $whoFemaleStats['_meta']['invalid_records'] > 0)
+                        <button type="button" class="btn btn-sm btn-warning me-2" 
+                                data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable7">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
+                    @endif
+                    <button class="btn btn-success btn-sm" onclick="exportTableToExcel('table-who-female', 'WHO_Female_Statistics')">
+                        <i class="uil uil-export"></i> Xuất Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -1012,10 +1057,25 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">9. Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)</h4>
-                <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-2', 'Tinh_trang_DD_duoi_2_tuoi')">
-                    <i class="uil uil-export"></i> Xuất Excel
-                </button>
+                <h4 class="mb-0">
+                    9. Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)
+                    @if(isset($table9Stats['_meta']['skipped_records']) && $table9Stats['_meta']['skipped_records'] > 0)
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $table9Stats['_meta']['skipped_records'] }} records thiếu dữ liệu WHO
+                        </span>
+                    @endif
+                </h4>
+                <div>
+                    @if(isset($table9Stats['_meta']['invalid_records']) && $table9Stats['_meta']['invalid_records'] > 0)
+                        <button type="button" class="btn btn-sm btn-warning me-2" 
+                                data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable9">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
+                    @endif
+                    <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-2', 'Tinh_trang_DD_duoi_2_tuoi')">
+                        <i class="uil uil-export"></i> Xuất Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -1151,10 +1211,25 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">10. Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)</h4>
-                <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-5', 'Tinh_trang_DD_duoi_5_tuoi')">
-                    <i class="uil uil-export"></i> Xuất Excel
-                </button>
+                <h4 class="mb-0">
+                    10. Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)
+                    @if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0)
+                        <span class="badge bg-warning text-dark ms-2">
+                            {{ $table10Stats['_meta']['invalid_records'] }} records bị loại bỏ
+                        </span>
+                    @endif
+                </h4>
+                <div>
+                    @if(isset($table10Stats['_meta']['invalid_records']) && $table10Stats['_meta']['invalid_records'] > 0)
+                        <button type="button" class="btn btn-sm btn-warning me-2" 
+                                data-bs-toggle="modal" data-bs-target="#invalidRecordsModalTable10">
+                            <i class="uil uil-eye"></i> Xem chi tiết
+                        </button>
+                    @endif
+                    <button class="btn btn-success btn-sm" onclick="exportTable('table-nutrition-under-5', 'Tinh_trang_DD_duoi_5_tuoi')">
+                        <i class="uil uil-export"></i> Xuất Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -1284,6 +1359,494 @@
         </div>
     </div>
 </div>
+
+<!-- Modal hiển thị chi tiết records bị loại bỏ -->
+@if(isset($meanStats['_meta']['invalid_records_details']) && count($meanStats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModal" tabindex="-1" aria-labelledby="invalidRecordsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalLabel">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Chi tiết {{ count($meanStats['_meta']['invalid_records_details']) }} bản ghi bị loại bỏ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6) hoặc có giá trị đo lường không hợp lý.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do loại bỏ</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($meanStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <tr>
+                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td>
+                                    <strong>{{ $invalidRecord['fullname'] }}</strong>
+                                </td>
+                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($invalidRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($invalidRecord['reasons'] as $reason)
+                                            <li><small class="text-danger">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($invalidRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Table 5: WHO Combined Invalid Records -->
+@if(isset($whoCombinedStats['_meta']['invalid_records_details']) && count($whoCombinedStats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModalTable5" tabindex="-1" aria-labelledby="invalidRecordsModalTable5Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalTable5Label">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Bảng 5: Chi tiết {{ count($whoCombinedStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Combined)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6).
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table-5">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do loại bỏ</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($whoCombinedStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <tr>
+                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
+                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($invalidRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($invalidRecord['reasons'] as $reason)
+                                            <li><small class="text-danger">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($invalidRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Table 6: WHO Male Invalid Records -->
+@if(isset($whoMaleStats['_meta']['invalid_records_details']) && count($whoMaleStats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModalTable6" tabindex="-1" aria-labelledby="invalidRecordsModalTable6Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalTable6Label">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Bảng 6: Chi tiết {{ count($whoMaleStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Male)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6).
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table-6">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do loại bỏ</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($whoMaleStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <tr>
+                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
+                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($invalidRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($invalidRecord['reasons'] as $reason)
+                                            <li><small class="text-danger">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($invalidRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Table 7: WHO Female Invalid Records -->
+@if(isset($whoFemaleStats['_meta']['invalid_records_details']) && count($whoFemaleStats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModalTable7" tabindex="-1" aria-labelledby="invalidRecordsModalTable7Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalTable7Label">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Bảng 7: Chi tiết {{ count($whoFemaleStats['_meta']['invalid_records_details']) }} records bị loại bỏ (WHO Female)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6).
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table-7">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do loại bỏ</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($whoFemaleStats['_meta']['invalid_records_details'] as $invalidRecord)
+                            <tr>
+                                <td>{{ $invalidRecord['id'] }}</td>
+                                <td><strong>{{ $invalidRecord['fullname'] }}</strong></td>
+                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($invalidRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($invalidRecord['reasons'] as $reason)
+                                            <li><small class="text-danger">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($invalidRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $invalidRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Table 9: Under 24 Months Invalid Records -->
+@if(isset($table9Stats['_meta']['invalid_records_details']) && count($table9Stats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModalTable9" tabindex="-1" aria-labelledby="invalidRecordsModalTable9Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalTable9Label">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Bảng 9: Chi tiết {{ count($table9Stats['_meta']['invalid_records_details']) }} records bị loại bỏ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì Z-score ngoài khoảng chuẩn của WHO (-6 đến +6) hoặc không có dữ liệu WHO tương ứng.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table-9">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do bị loại</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($table9Stats['_meta']['invalid_records_details'] as $skippedRecord)
+                            <tr>
+                                <td>{{ $skippedRecord['id'] }}</td>
+                                <td><strong>{{ $skippedRecord['fullname'] }}</strong></td>
+                                <td class="text-center">{{ $skippedRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($skippedRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($skippedRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($skippedRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $skippedRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($skippedRecord['reasons'] as $reason)
+                                            <li><small class="text-warning">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($skippedRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $skippedRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Modal Table 10: Under 60 Months Invalid Records -->
+@if(isset($table10Stats['_meta']['invalid_records_details']) && count($table10Stats['_meta']['invalid_records_details']) > 0)
+<div class="modal fade" id="invalidRecordsModalTable10" tabindex="-1" aria-labelledby="invalidRecordsModalTable10Label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="invalidRecordsModalTable10Label">
+                    <i class="uil uil-exclamation-triangle"></i> 
+                    Bảng 10: Chi tiết {{ count($table10Stats['_meta']['invalid_records_details']) }} records bị loại bỏ
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì Z-score ngoài khoảng chuẩn của WHO (-6 đến +6) hoặc không có dữ liệu WHO tương ứng.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table-10">
+                        <thead class="table-warning">
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Họ tên</th>
+                                <th>Tuổi (tháng)</th>
+                                <th>Giới tính</th>
+                                <th>Cân nặng (kg)</th>
+                                <th>Chiều cao (cm)</th>
+                                <th>Ngày cân đo</th>
+                                <th style="width: 300px;">Lý do bị loại</th>
+                                <th style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($table10Stats['_meta']['invalid_records_details'] as $skippedRecord)
+                            <tr>
+                                <td>{{ $skippedRecord['id'] }}</td>
+                                <td><strong>{{ $skippedRecord['fullname'] }}</strong></td>
+                                <td class="text-center">{{ $skippedRecord['age'] }}</td>
+                                <td class="text-center">
+                                    @if($skippedRecord['gender'] == 'Nam')
+                                        <span class="badge bg-primary">Nam</span>
+                                    @else
+                                        <span class="badge bg-danger">Nữ</span>
+                                    @endif
+                                </td>
+                                <td class="text-end">{{ number_format($skippedRecord['weight'], 1) }}</td>
+                                <td class="text-end">{{ number_format($skippedRecord['height'], 1) }}</td>
+                                <td class="text-center">{{ $skippedRecord['cal_date'] }}</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 20px;">
+                                        @foreach($skippedRecord['reasons'] as $reason)
+                                            <li><small class="text-warning">{{ $reason }}</small></li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    @if(!empty($skippedRecord['uid']))
+                                        <a href="{{ route('result') }}?uid={{ $skippedRecord['uid'] }}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Xem kết quả và chỉnh sửa"
+                                           target="_blank">
+                                            <i class="uil uil-edit"></i> Sửa
+                                        </a>
+                                    @else
+                                        <span class="text-muted">N/A</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1770,99 +2333,10 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- Modal hiển thị chi tiết records bị loại bỏ -->
-@if(isset($meanStats['_meta']['invalid_records_details']) && count($meanStats['_meta']['invalid_records_details']) > 0)
-<div class="modal fade" id="invalidRecordsModal" tabindex="-1" aria-labelledby="invalidRecordsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="invalidRecordsModalLabel">
-                    <i class="uil uil-exclamation-triangle"></i> 
-                    Chi tiết {{ count($meanStats['_meta']['invalid_records_details']) }} bản ghi bị loại bỏ
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <strong>Lưu ý:</strong> Các bản ghi này bị loại bỏ khỏi thống kê vì có giá trị Z-score nằm ngoài khoảng cho phép của WHO (-6 đến +6) hoặc có giá trị đo lường không hợp lý.
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover" id="invalid-records-table">
-                        <thead class="table-warning">
-                            <tr>
-                                <th style="width: 50px;">ID</th>
-                                <th>Họ tên</th>
-                                <th>Tuổi (tháng)</th>
-                                <th>Giới tính</th>
-                                <th>Cân nặng (kg)</th>
-                                <th>Chiều cao (cm)</th>
-                                <th>Ngày cân đo</th>
-                                <th style="width: 300px;">Lý do loại bỏ</th>
-                                <th style="width: 100px;">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($meanStats['_meta']['invalid_records_details'] as $invalidRecord)
-                            <tr>
-                                <td>{{ $invalidRecord['id'] }}</td>
-                                <td>
-                                    <strong>{{ $invalidRecord['fullname'] }}</strong>
-                                </td>
-                                <td class="text-center">{{ $invalidRecord['age'] }}</td>
-                                <td class="text-center">
-                                    @if($invalidRecord['gender'] == 'Nam')
-                                        <span class="badge bg-primary">Nam</span>
-                                    @else
-                                        <span class="badge bg-danger">Nữ</span>
-                                    @endif
-                                </td>
-                                <td class="text-end">{{ number_format($invalidRecord['weight'], 1) }}</td>
-                                <td class="text-end">{{ number_format($invalidRecord['height'], 1) }}</td>
-                                <td class="text-center">{{ $invalidRecord['cal_date'] }}</td>
-                                <td>
-                                    <ul class="mb-0" style="padding-left: 20px;">
-                                        @foreach($invalidRecord['reasons'] as $reason)
-                                            <li><small class="text-danger">{{ $reason }}</small></li>
-                                        @endforeach
-                                    </ul>
-                                </td>
-                                <td class="text-center">
-                                    @php
-                                        // Lấy slug từ database để tạo link edit
-                                        $historyRecord = \App\Models\History::find($invalidRecord['id']);
-                                        $editUrl = $historyRecord && $historyRecord->slug 
-                                            ? route('form.index', $historyRecord->slug) 
-                                            : '#';
-                                    @endphp
-                                    
-                                    @if($editUrl != '#')
-                                        <a href="{{ $editUrl }}" 
-                                           class="btn btn-sm btn-info" 
-                                           title="Sửa dữ liệu"
-                                           target="_blank">
-                                            <i class="uil uil-edit"></i> Sửa
-                                        </a>
-                                    @else
-                                        <span class="text-muted">N/A</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
+// Initialize DataTable for all invalid/skipped records modals
 $(document).ready(function() {
-    // Initialize DataTable for invalid records
+    // Table 4: Mean Stats Invalid Records
     if ($('#invalid-records-table').length) {
         $('#invalid-records-table').DataTable({
             pageLength: 10,
@@ -1872,9 +2346,63 @@ $(document).ready(function() {
             order: [[0, 'asc']]
         });
     }
+    
+    // Table 5: WHO Combined Invalid Records
+    if ($('#invalid-records-table-5').length) {
+        $('#invalid-records-table-5').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
+    
+    // Table 6: WHO Male Invalid Records
+    if ($('#invalid-records-table-6').length) {
+        $('#invalid-records-table-6').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
+    
+    // Table 7: WHO Female Invalid Records
+    if ($('#invalid-records-table-7').length) {
+        $('#invalid-records-table-7').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
+    
+    // Table 9: Under 24 Months Invalid Records
+    if ($('#invalid-records-table-9').length) {
+        $('#invalid-records-table-9').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
+    
+    // Table 10: Under 60 Months Invalid Records
+    if ($('#invalid-records-table-10').length) {
+        $('#invalid-records-table-10').DataTable({
+            pageLength: 10,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
+            },
+            order: [[0, 'asc']]
+        });
+    }
 });
 </script>
-@endif
 
 @endpush
 @endsection

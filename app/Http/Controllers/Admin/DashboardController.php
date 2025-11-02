@@ -576,6 +576,7 @@ class DashboardController extends Controller
                 $invalidRecords++;
                 $invalidRecordsDetails[] = [
                     'id' => $record->id,
+                    'uid' => $record->uid,
                     'fullname' => $record->fullname,
                     'age' => $ageInMonths,
                     'gender' => $record->gender == 1 ? 'Nam' : 'Nữ',
@@ -967,6 +968,9 @@ class DashboardController extends Controller
 
         $stats = [];
         $totalData = ['n' => 0, 'wa' => [], 'ha' => [], 'wh' => []];
+        
+        // Track invalid records (Z-score outside -6 to +6)
+        $invalidRecordsDetails = [];
 
         foreach ($ageGroups as $key => $group) {
             // Lọc records theo nhóm tuổi
@@ -984,8 +988,46 @@ class DashboardController extends Controller
             $whData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'gt_1sd' => 0, 'gt_2sd' => 0, 'gt_3sd' => 0, 'wh_zscores' => []];
 
             foreach ($groupRecords as $record) {
-                // Weight-for-Age - SỬA: Dùng method tính Z-score đúng
+                // Calculate all Z-scores
                 $waZscore = $record->getWeightForAgeZScore();
+                $haZscore = $record->getHeightForAgeZScore();
+                $whZscore = $record->getWeightForHeightZScore();
+                
+                // Check if any Z-score is invalid (outside -6 to +6 or null)
+                $invalidReasons = [];
+                $isValid = true;
+                
+                if ($waZscore !== null && ($waZscore < -6 || $waZscore > 6)) {
+                    $isValid = false;
+                    $invalidReasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                if ($haZscore !== null && ($haZscore < -6 || $haZscore > 6)) {
+                    $isValid = false;
+                    $invalidReasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                if ($whZscore !== null && ($whZscore < -6 || $whZscore > 6)) {
+                    $isValid = false;
+                    $invalidReasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                // Track invalid records
+                if (!$isValid) {
+                    $invalidRecordsDetails[] = [
+                        'id' => $record->id,
+                        'uid' => $record->uid,
+                        'fullname' => $record->fullname,
+                        'age' => $record->age,
+                        'gender' => $record->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $record->weight,
+                        'height' => $record->height,
+                        'cal_date' => $record->cal_date,
+                        'reasons' => $invalidReasons
+                    ];
+                }
+                
+                // Weight-for-Age - Only process valid Z-scores
                 if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
                     $waData['weights'][] = $waZscore;
                     $totalData['wa'][] = $waZscore;
@@ -995,8 +1037,7 @@ class DashboardController extends Controller
                     if ($waZscore < -2) $waData['lt_2sd']++;
                 }
 
-                // Height-for-Age - SỬA: Dùng method tính Z-score đúng
-                $haZscore = $record->getHeightForAgeZScore();
+                // Height-for-Age - Only process valid Z-scores
                 if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
                     $haData['heights'][] = $haZscore;
                     $totalData['ha'][] = $haZscore;
@@ -1006,8 +1047,7 @@ class DashboardController extends Controller
                     if ($haZscore < -2) $haData['lt_2sd']++;
                 }
 
-                // Weight-for-Height - SỬA: Dùng method tính Z-score đúng
-                $whZscore = $record->getWeightForHeightZScore();
+                // Weight-for-Height - Only process valid Z-scores
                 if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
                     $whData['wh_zscores'][] = $whZscore;
                     $totalData['wh'][] = $whZscore;
@@ -1114,6 +1154,14 @@ class DashboardController extends Controller
             $stats['total']['wh']['gt_3sd_pct'] = round(($stats['total']['wh']['gt_3sd_pct'] / $totalN) * 100, 1);
         }
 
+        // Add metadata with invalid records details
+        $stats['_meta'] = [
+            'total_records' => $records->count(),
+            'valid_records' => $totalN,
+            'invalid_records' => count($invalidRecordsDetails),
+            'invalid_records_details' => $invalidRecordsDetails
+        ];
+
         return $stats;
     }
 
@@ -1147,6 +1195,10 @@ class DashboardController extends Controller
         }
 
         $stats = [];
+        
+        // Track records with invalid Z-scores (outside -6 to +6 or null)
+        $invalidRecordsDetails = [];
+        $validRecordsCount = 0;
 
         // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
         $waUnderweight = 0; // < -2SD
@@ -1154,32 +1206,55 @@ class DashboardController extends Controller
         $waOverweight = 0;  // > +2SD
 
         foreach ($children as $child) {
-            $waRow = $child->WeightForAge();
-            if ($waRow && isset($waRow['Median']) && isset($waRow['-2SD']) && isset($waRow['2SD'])) {
-                $weight = $child->weight;
+            $waZscore = $child->getWeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $validRecordsCount++;
                 
-                if ($weight < $waRow['-2SD']) {
+                // Classify by Z-score
+                if ($waZscore < -2) {
                     $waUnderweight++;
-                } elseif ($weight >= $waRow['-2SD'] && $weight <= $waRow['2SD']) {
+                } elseif ($waZscore >= -2 && $waZscore <= 2) {
                     $waNormal++;
-                } elseif ($weight > $waRow['2SD']) {
+                } elseif ($waZscore > 2) {
                     $waOverweight++;
                 }
+            } else {
+                // Track invalid record
+                $reasons = [];
+                if ($waZscore === null) {
+                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng)";
+                } else {
+                    $reasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                $invalidRecordsDetails[] = [
+                    'id' => $child->id,
+                    'uid' => $child->uid,
+                    'fullname' => $child->fullname,
+                    'age' => $child->age,
+                    'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $child->weight,
+                    'height' => $child->height,
+                    'cal_date' => $child->cal_date,
+                    'reasons' => $reasons
+                ];
             }
         }
 
         $stats['weight_for_age'] = [
             'underweight' => [
                 'count' => $waUnderweight,
-                'percentage' => $totalChildren > 0 ? round(($waUnderweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waUnderweight / $validRecordsCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $waNormal,
-                'percentage' => $totalChildren > 0 ? round(($waNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waNormal / $validRecordsCount) * 100, 2) : 0,
             ],
             'overweight' => [
                 'count' => $waOverweight,
-                'percentage' => $totalChildren > 0 ? round(($waOverweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waOverweight / $validRecordsCount) * 100, 2) : 0,
             ],
         ];
 
@@ -1187,17 +1262,21 @@ class DashboardController extends Controller
         $haStunted = 0;  // < -2SD
         $haNormal = 0;   // -2SD to +2SD
         $haTall = 0;     // > +2SD
+        $haValidCount = 0;
 
         foreach ($children as $child) {
-            $haRow = $child->HeightForAge();
-            if ($haRow && isset($haRow['Median']) && isset($haRow['-2SD']) && isset($haRow['2SD'])) {
-                $height = $child->height;
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $haValidCount++;
                 
-                if ($height < $haRow['-2SD']) {
+                // Classify by Z-score
+                if ($haZscore < -2) {
                     $haStunted++;
-                } elseif ($height >= $haRow['-2SD'] && $height <= $haRow['2SD']) {
+                } elseif ($haZscore >= -2 && $haZscore <= 2) {
                     $haNormal++;
-                } elseif ($height > $haRow['2SD']) {
+                } elseif ($haZscore > 2) {
                     $haTall++;
                 }
             }
@@ -1206,15 +1285,15 @@ class DashboardController extends Controller
         $stats['height_for_age'] = [
             'stunted' => [
                 'count' => $haStunted,
-                'percentage' => $totalChildren > 0 ? round(($haStunted / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haStunted / $haValidCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $haNormal,
-                'percentage' => $totalChildren > 0 ? round(($haNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haNormal / $haValidCount) * 100, 2) : 0,
             ],
             'tall' => [
                 'count' => $haTall,
-                'percentage' => $totalChildren > 0 ? round(($haTall / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haTall / $haValidCount) * 100, 2) : 0,
             ],
         ];
 
@@ -1224,25 +1303,28 @@ class DashboardController extends Controller
         $whOverweight = 0;  // > +2SD and <= +3SD
         $whObese = 0;       // > +3SD
         $combinedMalnutrition = 0; // CN/CC < -2SD AND CC/T < -2SD
+        $whValidCount = 0;
 
         foreach ($children as $child) {
-            $whRow = $child->WeightForHeight();
-            $haRow = $child->HeightForAge();
+            $whZscore = $child->getWeightForHeightZScore();
+            $haZscore = $child->getHeightForAgeZScore();
             
-            if ($whRow && isset($whRow['Median']) && isset($whRow['-2SD']) && isset($whRow['2SD']) && isset($whRow['3SD'])) {
-                $weight = $child->weight;
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $whValidCount++;
                 
-                if ($weight < $whRow['-2SD']) {
+                // Classify by Z-score
+                if ($whZscore < -2) {
                     $whWasted++;
-                    // Kiểm tra SDD phối hợp
-                    if ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']) {
+                    // Kiểm tra SDD phối hợp - both must be valid and < -2
+                    if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore < -2) {
                         $combinedMalnutrition++;
                     }
-                } elseif ($weight >= $whRow['-2SD'] && $weight <= $whRow['2SD']) {
+                } elseif ($whZscore >= -2 && $whZscore <= 2) {
                     $whNormal++;
-                } elseif ($weight > $whRow['2SD'] && $weight <= $whRow['3SD']) {
+                } elseif ($whZscore > 2 && $whZscore <= 3) {
                     $whOverweight++;
-                } elseif ($weight > $whRow['3SD']) {
+                } elseif ($whZscore > 3) {
                     $whObese++;
                 }
             }
@@ -1251,54 +1333,86 @@ class DashboardController extends Controller
         $stats['weight_for_height'] = [
             'wasted' => [
                 'count' => $whWasted,
-                'percentage' => $totalChildren > 0 ? round(($whWasted / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whWasted / $whValidCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $whNormal,
-                'percentage' => $totalChildren > 0 ? round(($whNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whNormal / $whValidCount) * 100, 2) : 0,
             ],
             'overweight' => [
                 'count' => $whOverweight,
-                'percentage' => $totalChildren > 0 ? round(($whOverweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whOverweight / $whValidCount) * 100, 2) : 0,
             ],
             'obese' => [
                 'count' => $whObese,
-                'percentage' => $totalChildren > 0 ? round(($whObese / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whObese / $whValidCount) * 100, 2) : 0,
             ],
         ];
 
         $stats['combined'] = [
             'combined_malnutrition' => [
                 'count' => $combinedMalnutrition,
-                'percentage' => $totalChildren > 0 ? round(($combinedMalnutrition / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($combinedMalnutrition / $whValidCount) * 100, 2) : 0,
             ],
         ];
 
         // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
         $anyMalnutrition = 0;
+        $summaryValidCount = 0;
+        
         foreach ($children as $child) {
-            $waRow = $child->WeightForAge();
-            $haRow = $child->HeightForAge();
-            $whRow = $child->WeightForHeight();
-
-            $hasWaMalnutrition = ($waRow && isset($waRow['-2SD']) && $child->weight < $waRow['-2SD']);
-            $hasHaMalnutrition = ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']);
-            $hasWhMalnutrition = ($whRow && isset($whRow['-2SD']) && $child->weight < $whRow['-2SD']);
-
-            // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
-            if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
-                $anyMalnutrition++;
+            $waZscore = $child->getWeightForAgeZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            $whZscore = $child->getWeightForHeightZScore();
+            
+            // Check if at least one Z-score is valid
+            $hasValidZscore = false;
+            $hasWaMalnutrition = false;
+            $hasHaMalnutrition = false;
+            $hasWhMalnutrition = false;
+            
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWaMalnutrition = ($waZscore < -2);
+            }
+            
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $hasValidZscore = true;
+                $hasHaMalnutrition = ($haZscore < -2);
+            }
+            
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWhMalnutrition = ($whZscore < -2);
+            }
+            
+            // Only count records with at least one valid Z-score
+            if ($hasValidZscore) {
+                $summaryValidCount++;
+                
+                // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                    $anyMalnutrition++;
+                }
             }
         }
 
         $stats['summary'] = [
             'any_malnutrition' => [
                 'count' => $anyMalnutrition,
-                'percentage' => $totalChildren > 0 ? round(($anyMalnutrition / $totalChildren) * 100, 2) : 0,
+                'percentage' => $summaryValidCount > 0 ? round(($anyMalnutrition / $summaryValidCount) * 100, 2) : 0,
             ],
         ];
 
         $stats['total_children'] = $totalChildren;
+        
+        // Add metadata with invalid records (Z-score outliers)
+        $stats['_meta'] = [
+            'total_records' => $totalChildren,
+            'valid_records' => $validRecordsCount,
+            'invalid_records' => count($invalidRecordsDetails),
+            'invalid_records_details' => $invalidRecordsDetails
+        ];
 
         return $stats;
     }
@@ -1321,39 +1435,66 @@ class DashboardController extends Controller
         }
 
         $stats = [];
+        
+        // Track invalid records (Z-score outliers)
+        $invalidRecordsDetails = [];
 
         // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
         $waUnderweight = 0; // < -2SD
         $waNormal = 0;      // -2SD to +2SD
         $waOverweight = 0;  // > +2SD
+        $validRecordsCount = 0;
 
         foreach ($children as $child) {
-            $waRow = $child->WeightForAge();
-            if ($waRow && isset($waRow['Median']) && isset($waRow['-2SD']) && isset($waRow['2SD'])) {
-                $weight = $child->weight;
+            $waZscore = $child->getWeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $validRecordsCount++;
                 
-                if ($weight < $waRow['-2SD']) {
+                // Classify by Z-score
+                if ($waZscore < -2) {
                     $waUnderweight++;
-                } elseif ($weight >= $waRow['-2SD'] && $weight <= $waRow['2SD']) {
+                } elseif ($waZscore >= -2 && $waZscore <= 2) {
                     $waNormal++;
-                } elseif ($weight > $waRow['2SD']) {
+                } elseif ($waZscore > 2) {
                     $waOverweight++;
                 }
+            } else {
+                // Track invalid records
+                $reasons = [];
+                if ($waZscore === null) {
+                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng, cân nặng {$child->weight}kg)";
+                } elseif ($waZscore < -6 || $waZscore > 6) {
+                    $reasons[] = "Z-score W/A ngoài khoảng chuẩn: " . round($waZscore, 2) . " (phải từ -6 đến +6)";
+                }
+                
+                $invalidRecordsDetails[] = [
+                    'id' => $child->id,
+                    'uid' => $child->uid,
+                    'fullname' => $child->fullname,
+                    'age' => $child->age,
+                    'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $child->weight,
+                    'height' => $child->height,
+                    'cal_date' => $child->cal_date,
+                    'reasons' => $reasons
+                ];
             }
         }
 
         $stats['weight_for_age'] = [
             'underweight' => [
                 'count' => $waUnderweight,
-                'percentage' => $totalChildren > 0 ? round(($waUnderweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waUnderweight / $validRecordsCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $waNormal,
-                'percentage' => $totalChildren > 0 ? round(($waNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waNormal / $validRecordsCount) * 100, 2) : 0,
             ],
             'overweight' => [
                 'count' => $waOverweight,
-                'percentage' => $totalChildren > 0 ? round(($waOverweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $validRecordsCount > 0 ? round(($waOverweight / $validRecordsCount) * 100, 2) : 0,
             ],
         ];
 
@@ -1361,17 +1502,21 @@ class DashboardController extends Controller
         $haStunted = 0;  // < -2SD
         $haNormal = 0;   // -2SD to +2SD
         $haTall = 0;     // > +2SD
+        $haValidCount = 0;
 
         foreach ($children as $child) {
-            $haRow = $child->HeightForAge();
-            if ($haRow && isset($haRow['Median']) && isset($haRow['-2SD']) && isset($haRow['2SD'])) {
-                $height = $child->height;
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $haValidCount++;
                 
-                if ($height < $haRow['-2SD']) {
+                // Classify by Z-score
+                if ($haZscore < -2) {
                     $haStunted++;
-                } elseif ($height >= $haRow['-2SD'] && $height <= $haRow['2SD']) {
+                } elseif ($haZscore >= -2 && $haZscore <= 2) {
                     $haNormal++;
-                } elseif ($height > $haRow['2SD']) {
+                } elseif ($haZscore > 2) {
                     $haTall++;
                 }
             }
@@ -1380,15 +1525,15 @@ class DashboardController extends Controller
         $stats['height_for_age'] = [
             'stunted' => [
                 'count' => $haStunted,
-                'percentage' => $totalChildren > 0 ? round(($haStunted / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haStunted / $haValidCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $haNormal,
-                'percentage' => $totalChildren > 0 ? round(($haNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haNormal / $haValidCount) * 100, 2) : 0,
             ],
             'tall' => [
                 'count' => $haTall,
-                'percentage' => $totalChildren > 0 ? round(($haTall / $totalChildren) * 100, 2) : 0,
+                'percentage' => $haValidCount > 0 ? round(($haTall / $haValidCount) * 100, 2) : 0,
             ],
         ];
 
@@ -1398,25 +1543,28 @@ class DashboardController extends Controller
         $whOverweight = 0;  // > +2SD and <= +3SD
         $whObese = 0;       // > +3SD
         $combinedMalnutrition = 0; // CN/CC < -2SD AND CC/T < -2SD
+        $whValidCount = 0;
 
         foreach ($children as $child) {
-            $whRow = $child->WeightForHeight();
-            $haRow = $child->HeightForAge();
+            $whZscore = $child->getWeightForHeightZScore();
+            $haZscore = $child->getHeightForAgeZScore();
             
-            if ($whRow && isset($whRow['Median']) && isset($whRow['-2SD']) && isset($whRow['2SD']) && isset($whRow['3SD'])) {
-                $weight = $child->weight;
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $whValidCount++;
                 
-                if ($weight < $whRow['-2SD']) {
+                // Classify by Z-score
+                if ($whZscore < -2) {
                     $whWasted++;
-                    // Kiểm tra SDD phối hợp
-                    if ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']) {
+                    // Kiểm tra SDD phối hợp - both must be valid and < -2
+                    if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore < -2) {
                         $combinedMalnutrition++;
                     }
-                } elseif ($weight >= $whRow['-2SD'] && $weight <= $whRow['2SD']) {
+                } elseif ($whZscore >= -2 && $whZscore <= 2) {
                     $whNormal++;
-                } elseif ($weight > $whRow['2SD'] && $weight <= $whRow['3SD']) {
+                } elseif ($whZscore > 2 && $whZscore <= 3) {
                     $whOverweight++;
-                } elseif ($weight > $whRow['3SD']) {
+                } elseif ($whZscore > 3) {
                     $whObese++;
                 }
             }
@@ -1425,54 +1573,86 @@ class DashboardController extends Controller
         $stats['weight_for_height'] = [
             'wasted' => [
                 'count' => $whWasted,
-                'percentage' => $totalChildren > 0 ? round(($whWasted / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whWasted / $whValidCount) * 100, 2) : 0,
             ],
             'normal' => [
                 'count' => $whNormal,
-                'percentage' => $totalChildren > 0 ? round(($whNormal / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whNormal / $whValidCount) * 100, 2) : 0,
             ],
             'overweight' => [
                 'count' => $whOverweight,
-                'percentage' => $totalChildren > 0 ? round(($whOverweight / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whOverweight / $whValidCount) * 100, 2) : 0,
             ],
             'obese' => [
                 'count' => $whObese,
-                'percentage' => $totalChildren > 0 ? round(($whObese / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($whObese / $whValidCount) * 100, 2) : 0,
             ],
         ];
 
         $stats['combined'] = [
             'combined_malnutrition' => [
                 'count' => $combinedMalnutrition,
-                'percentage' => $totalChildren > 0 ? round(($combinedMalnutrition / $totalChildren) * 100, 2) : 0,
+                'percentage' => $whValidCount > 0 ? round(($combinedMalnutrition / $whValidCount) * 100, 2) : 0,
             ],
         ];
 
         // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
         $anyMalnutrition = 0;
+        $summaryValidCount = 0;
+        
         foreach ($children as $child) {
-            $waRow = $child->WeightForAge();
-            $haRow = $child->HeightForAge();
-            $whRow = $child->WeightForHeight();
-
-            $hasWaMalnutrition = ($waRow && isset($waRow['-2SD']) && $child->weight < $waRow['-2SD']);
-            $hasHaMalnutrition = ($haRow && isset($haRow['-2SD']) && $child->height < $haRow['-2SD']);
-            $hasWhMalnutrition = ($whRow && isset($whRow['-2SD']) && $child->weight < $whRow['-2SD']);
-
-            // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
-            if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
-                $anyMalnutrition++;
+            $waZscore = $child->getWeightForAgeZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            $whZscore = $child->getWeightForHeightZScore();
+            
+            // Check if at least one Z-score is valid
+            $hasValidZscore = false;
+            $hasWaMalnutrition = false;
+            $hasHaMalnutrition = false;
+            $hasWhMalnutrition = false;
+            
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWaMalnutrition = ($waZscore < -2);
+            }
+            
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $hasValidZscore = true;
+                $hasHaMalnutrition = ($haZscore < -2);
+            }
+            
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWhMalnutrition = ($whZscore < -2);
+            }
+            
+            // Only count records with at least one valid Z-score
+            if ($hasValidZscore) {
+                $summaryValidCount++;
+                
+                // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                    $anyMalnutrition++;
+                }
             }
         }
 
         $stats['summary'] = [
             'any_malnutrition' => [
                 'count' => $anyMalnutrition,
-                'percentage' => $totalChildren > 0 ? round(($anyMalnutrition / $totalChildren) * 100, 2) : 0,
+                'percentage' => $summaryValidCount > 0 ? round(($anyMalnutrition / $summaryValidCount) * 100, 2) : 0,
             ],
         ];
 
         $stats['total_children'] = $totalChildren;
+        
+        // Add metadata with invalid records (Z-score outliers)
+        $stats['_meta'] = [
+            'total_records' => $totalChildren,
+            'valid_records' => $validRecordsCount,
+            'invalid_records' => count($invalidRecordsDetails),
+            'invalid_records_details' => $invalidRecordsDetails
+        ];
 
         return $stats;
     }
