@@ -310,7 +310,16 @@ class History extends Model
             }
         }
 
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
+        // Thêm Z-score vào kết quả
+        $zscore = $this->getWeightForAgeZScore();
+        
+        return [
+            'text' => $text, 
+            'color' => $color, 
+            'result' => $result, 
+            'zscore_category' => $zscore_category,
+            'zscore' => $zscore
+        ];
     }
 
     public function check_height_for_age(){
@@ -358,8 +367,19 @@ class History extends Model
                 $zscore_category = '+2SD đến +3SD';
             }
         }
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
+        
+        // Thêm Z-score vào kết quả
+        $zscore = $this->getHeightForAgeZScore();
+        
+        return [
+            'text' => $text, 
+            'color' => $color, 
+            'result' => $result, 
+            'zscore_category' => $zscore_category,
+            'zscore' => $zscore
+        ];
     }
+    
     public function check_weight_for_height(){
         $weight = $this->weight;
         $row = $this->WeightForHeight();
@@ -405,7 +425,17 @@ class History extends Model
                 $zscore_category = '+2SD đến +3SD';
             }
         }
-        return ['text'=>$text, 'color'=>$color, 'result'=>$result, 'zscore_category'=>$zscore_category];
+        
+        // Thêm Z-score vào kết quả
+        $zscore = $this->getWeightForHeightZScore();
+        
+        return [
+            'text' => $text, 
+            'color' => $color, 
+            'result' => $result, 
+            'zscore_category' => $zscore_category,
+            'zscore' => $zscore
+        ];
     }
 
     /**
