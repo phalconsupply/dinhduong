@@ -2328,52 +2328,72 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- CSS for clickable cells -->
 <style>
-.clickable-cell {
-    cursor: pointer;
+/* Clickable cells in statistics tables */
+td.clickable-cell {
+    cursor: pointer !important;
     transition: all 0.3s ease;
     position: relative;
     font-weight: 500;
+    background-color: #f8f9fa;
 }
 
-.clickable-cell:hover {
+td.clickable-cell:hover {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     color: white !important;
     font-weight: bold;
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     z-index: 10;
+    border-color: #667eea !important;
 }
 
-.clickable-cell:hover::before {
+td.clickable-cell:hover::before {
     content: '👆 Click để xem chi tiết';
     position: absolute;
     bottom: 100%;
     left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
+    transform: translateX(-50%) translateY(0);
+    background: rgba(0, 0, 0, 0.9);
     color: white;
-    padding: 4px 8px;
+    padding: 6px 10px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: normal;
     white-space: nowrap;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     pointer-events: none;
-    animation: fadeIn 0.3s ease;
+    animation: fadeInTooltip 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-.clickable-cell:hover::after {
+td.clickable-cell:hover::after {
     content: '';
     position: absolute;
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.8);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    margin-bottom: 2px;
     pointer-events: none;
+    z-index: 999;
 }
 
-.clickable-cell:active {
-    transform: scale(0.98);
+td.clickable-cell:active {
+    transform: scale(0.98) !important;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3) !important;
+}
+
+@keyframes fadeInTooltip {
+    from { 
+        opacity: 0; 
+        transform: translateX(-50%) translateY(-5px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 @keyframes fadeIn {
