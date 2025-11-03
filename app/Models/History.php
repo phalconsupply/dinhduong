@@ -677,4 +677,13 @@ class History extends Model
         return $this->calculateZScore($this->weight, $whRow);
     }
 
+    /**
+     * Lấy Z-score BMI-for-Age
+     */
+    public function getBMIForAgeZScore()
+    {
+        $bmiRow = $this->BMIForAge();
+        return $this->calculateZScore($this->bmi, $bmiRow);
+    }
+
 }

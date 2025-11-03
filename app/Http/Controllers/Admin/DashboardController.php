@@ -1356,7 +1356,7 @@ class DashboardController extends Controller
             ],
         ];
 
-        // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
+        // 4. Tổng hợp: Ít nhất 1 trong 4 chỉ số SDD (bổ sung BMI)
         $anyMalnutrition = 0;
         $summaryValidCount = 0;
         
@@ -1364,12 +1364,14 @@ class DashboardController extends Controller
             $waZscore = $child->getWeightForAgeZScore();
             $haZscore = $child->getHeightForAgeZScore();
             $whZscore = $child->getWeightForHeightZScore();
+            $bmiZscore = $child->getBMIForAgeZScore();
             
             // Check if at least one Z-score is valid
             $hasValidZscore = false;
             $hasWaMalnutrition = false;
             $hasHaMalnutrition = false;
             $hasWhMalnutrition = false;
+            $hasBmiMalnutrition = false;
             
             if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
                 $hasValidZscore = true;
@@ -1386,12 +1388,17 @@ class DashboardController extends Controller
                 $hasWhMalnutrition = ($whZscore < -2);
             }
             
+            if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                $hasValidZscore = true;
+                $hasBmiMalnutrition = ($bmiZscore < -2);
+            }
+            
             // Only count records with at least one valid Z-score
             if ($hasValidZscore) {
                 $summaryValidCount++;
                 
-                // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
-                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                // SDD: Ít nhất 1 trong 4 chỉ số < -2SD (W/A, H/A, W/H, BMI/A)
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition || $hasBmiMalnutrition) {
                     $anyMalnutrition++;
                 }
             }
@@ -1596,7 +1603,7 @@ class DashboardController extends Controller
             ],
         ];
 
-        // 4. Tổng hợp: Ít nhất 1 trong 3 chỉ số SDD
+        // 4. Tổng hợp: Ít nhất 1 trong 4 chỉ số SDD (bổ sung BMI)
         $anyMalnutrition = 0;
         $summaryValidCount = 0;
         
@@ -1604,12 +1611,14 @@ class DashboardController extends Controller
             $waZscore = $child->getWeightForAgeZScore();
             $haZscore = $child->getHeightForAgeZScore();
             $whZscore = $child->getWeightForHeightZScore();
+            $bmiZscore = $child->getBMIForAgeZScore();
             
             // Check if at least one Z-score is valid
             $hasValidZscore = false;
             $hasWaMalnutrition = false;
             $hasHaMalnutrition = false;
             $hasWhMalnutrition = false;
+            $hasBmiMalnutrition = false;
             
             if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
                 $hasValidZscore = true;
@@ -1626,12 +1635,17 @@ class DashboardController extends Controller
                 $hasWhMalnutrition = ($whZscore < -2);
             }
             
+            if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                $hasValidZscore = true;
+                $hasBmiMalnutrition = ($bmiZscore < -2);
+            }
+            
             // Only count records with at least one valid Z-score
             if ($hasValidZscore) {
                 $summaryValidCount++;
                 
-                // SDD: Ít nhất 1 trong 3 chỉ số < -2SD
-                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition) {
+                // SDD: Ít nhất 1 trong 4 chỉ số < -2SD (W/A, H/A, W/H, BMI/A)
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition || $hasBmiMalnutrition) {
                     $anyMalnutrition++;
                 }
             }

@@ -340,9 +340,12 @@
         </div>
     </div>
     
-    <div style="margin-top: 8px;">
-        <div style="width: 100%;">
+    <div style="display: flex; margin-top: 8px; gap: 8px;">
+        <div style="width: 50%;">
             @include('sections.Chart-WeightForHeight')
+        </div>
+        <div style="width: 50%;">
+            @include('sections.Chart-BMIForAge')
         </div>
     </div>
 

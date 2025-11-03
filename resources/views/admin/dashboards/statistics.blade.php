@@ -1326,13 +1326,13 @@
 
                             <!-- 4. < 24 tháng SDD -->
                             <tr class="table-warning fw-bold">
-                                <td>4. < 24 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
+                                <td>4. < 24 tháng SDD (ít nhất 1 trong 4 chỉ số SDD: CN/T, CC/T, CN/CC, BMI/T)</td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table9" 
                                     data-category="weight_for_height" 
                                     data-classification="any_malnutrition"
                                     data-age-filter="under_24"
-                                    data-title="Table 9: SDD - Ít nhất 1 trong 3 chỉ số">
+                                    data-title="Table 9: SDD - Ít nhất 1 trong 4 chỉ số">
                                     {{ $table9Stats['summary']['any_malnutrition']['count'] ?? 0 }}
                                 </td>
                                 <td class="text-center">{{ $table9Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
@@ -1641,13 +1641,13 @@
 
                             <!-- 4. < 60 tháng SDD -->
                             <tr class="table-warning fw-bold">
-                                <td>4. < 60 tháng SDD (ít nhất 1 trong 3 chỉ số SDD)</td>
+                                <td>4. < 60 tháng SDD (ít nhất 1 trong 4 chỉ số SDD: CN/T, CC/T, CN/CC, BMI/T)</td>
                                 <td class="text-center clickable-cell" 
                                     data-table="table10" 
                                     data-category="weight_for_height" 
                                     data-classification="any_malnutrition"
                                     data-age-filter="under_60"
-                                    data-title="Table 10: SDD - Ít nhất 1 trong 3 chỉ số">
+                                    data-title="Table 10: SDD - Ít nhất 1 trong 4 chỉ số">
                                     {{ $table10Stats['summary']['any_malnutrition']['count'] ?? 0 }}
                                 </td>
                                 <td class="text-center">{{ $table10Stats['summary']['any_malnutrition']['percentage'] ?? '0.00' }}</td>
