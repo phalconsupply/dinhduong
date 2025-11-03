@@ -1179,13 +1179,13 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bảng 9: Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)
+     * Bảng 9: Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (0-24 tháng, bao gồm cả 24 tháng)
      */
     private function getNutritionStatsUnder24Months($records)
     {
-        // Lọc trẻ < 24 tháng
+        // Lọc trẻ 0-24 tháng (bao gồm cả trẻ đúng 24 tháng = 2 tuổi)
         $children = $records->filter(function($record) {
-            return $record->age < 24;
+            return $record->age <= 24;
         });
 
         $totalChildren = $children->count();
@@ -1279,6 +1279,43 @@ class DashboardController extends Controller
                 } elseif ($haZscore > 2) {
                     $haTall++;
                 }
+            } else {
+                // Track invalid H/A record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($haZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $reasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($haZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
             }
         }
 
@@ -1326,6 +1363,43 @@ class DashboardController extends Controller
                     $whOverweight++;
                 } elseif ($whZscore > 3) {
                     $whObese++;
+                }
+            } else {
+                // Track invalid W/H record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($whZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $reasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($whZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
                 }
             }
         }
@@ -1468,12 +1542,12 @@ class DashboardController extends Controller
                     $waOverweight++;
                 }
             } else {
-                // Track invalid records
+                // Track invalid record
                 $reasons = [];
                 if ($waZscore === null) {
-                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng, cân nặng {$child->weight}kg)";
-                } elseif ($waZscore < -6 || $waZscore > 6) {
-                    $reasons[] = "Z-score W/A ngoài khoảng chuẩn: " . round($waZscore, 2) . " (phải từ -6 đến +6)";
+                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng)";
+                } else {
+                    $reasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
                 }
                 
                 $invalidRecordsDetails[] = [
@@ -1526,6 +1600,43 @@ class DashboardController extends Controller
                 } elseif ($haZscore > 2) {
                     $haTall++;
                 }
+            } else {
+                // Track invalid H/A record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($haZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $reasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($haZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
             }
         }
 
@@ -1573,6 +1684,43 @@ class DashboardController extends Controller
                     $whOverweight++;
                 } elseif ($whZscore > 3) {
                     $whObese++;
+                }
+            } else {
+                // Track invalid W/H record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($whZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $reasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($whZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
                 }
             }
         }
