@@ -311,8 +311,14 @@ class DashboardController extends Controller
         // 9. Bảng tình trạng dinh dưỡng trẻ dưới 2 tuổi (< 24 tháng)
         $table9Stats = $this->getNutritionStatsUnder24Months($records);
 
+        // 9a. Bảng tình trạng dinh dưỡng trẻ dưới và bằng 2 tuổi (<= 24 tháng) - Phương pháp thay thế
+        $table9aStats = $this->getNutritionStatsUnder24MonthsAlt($records);
+
         // 10. Bảng tình trạng dinh dưỡng trẻ dưới 5 tuổi (< 60 tháng)
         $table10Stats = $this->getNutritionStatsUnder60Months($records);
+
+        // 10a. Bảng tình trạng dinh dưỡng trẻ dưới và bằng 5 tuổi (<= 60 tháng) - Phương pháp thay thế
+        $table10aStats = $this->getNutritionStatsUnder60MonthsAlt($records);
 
         // Get filter data
         $provinces = Province::byUserRole($user)->select('name','code')->get();
@@ -336,7 +342,9 @@ class DashboardController extends Controller
             'whoFemaleStats',
             'table8Stats',
             'table9Stats',
+            'table9aStats',
             'table10Stats',
+            'table10aStats',
             'provinces',
             'districts',
             'wards',
@@ -1179,13 +1187,13 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bảng 9: Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (0-24 tháng, bao gồm cả 24 tháng)
+     * Bảng 9: Tình trạng dinh dưỡng của trẻ dưới 2 tuổi (< 24 tháng)
      */
     private function getNutritionStatsUnder24Months($records)
     {
-        // Lọc trẻ 0-24 tháng (bao gồm cả trẻ đúng 24 tháng = 2 tuổi)
+        // Lọc trẻ dưới 24 tháng (< 24 tháng, không bao gồm trẻ đúng 24 tháng)
         $children = $records->filter(function($record) {
-            return $record->age <= 24;
+            return $record->age < 24;
         });
 
         $totalChildren = $children->count();
@@ -1499,14 +1507,14 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bảng 10: Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (0-60 tháng)
+     * Bảng 10: Tình trạng dinh dưỡng của trẻ dưới 5 tuổi (< 60 tháng)
      */
     private function getNutritionStatsUnder60Months($records)
     {
-        // Lọc trẻ 0-60 tháng (bao gồm cả trẻ đúng 60 tháng = 5 tuổi)
+        // Lọc trẻ dưới 60 tháng (< 60 tháng, không bao gồm trẻ đúng 60 tháng)
         // WHO reference data có đầy đủ cho 0-60 tháng
         $children = $records->filter(function($record) {
-            return $record->age <= 60;
+            return $record->age < 60;
         });
 
         $totalChildren = $children->count();
@@ -1793,6 +1801,652 @@ class DashboardController extends Controller
                 $summaryValidCount++;
                 
                 // SDD: Ít nhất 1 trong 4 chỉ số < -2SD (W/A, H/A, W/H, BMI/A)
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition || $hasBmiMalnutrition) {
+                    $anyMalnutrition++;
+                }
+            }
+        }
+
+        $stats['summary'] = [
+            'any_malnutrition' => [
+                'count' => $anyMalnutrition,
+                'percentage' => $summaryValidCount > 0 ? round(($anyMalnutrition / $summaryValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['total_children'] = $totalChildren;
+        
+        // Add metadata with invalid records (Z-score outliers)
+        $stats['_meta'] = [
+            'total_records' => $totalChildren,
+            'valid_records' => $validRecordsCount,
+            'invalid_records' => count($invalidRecordsDetails),
+            'invalid_records_details' => $invalidRecordsDetails
+        ];
+
+        return $stats;
+    }
+
+    /**
+     * Bảng 9a: Tình trạng dinh dưỡng của trẻ dưới và bằng 2 tuổi (<= 24 tháng) - Phương pháp lấy dữ liệu khác
+     * Khác với Bảng 9:
+     * - Đối tượng: <= 24 tháng (bao gồm trẻ đúng 24 tháng)
+     * - Điều kiện: <= -2SD (thay vì < -2SD), >= -2SD và <= +2SD (thay vì >= -2SD và < +2SD)
+     */
+    private function getNutritionStatsUnder24MonthsAlt($records)
+    {
+        // Lọc trẻ <= 24 tháng (bao gồm cả trẻ đúng 24 tháng)
+        $children = $records->filter(function($record) {
+            return $record->age <= 24;
+        });
+
+        $totalChildren = $children->count();
+
+        if ($totalChildren == 0) {
+            return $this->getEmptyNutritionStats();
+        }
+
+        $stats = [];
+        
+        // Track records with invalid Z-scores (outside -6 to +6 or null)
+        $invalidRecordsDetails = [];
+        $validRecordsCount = 0;
+
+        // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
+        $waUnderweight = 0; // <= -2SD
+        $waNormal = 0;      // >= -2SD và <= +2SD
+        $waOverweight = 0;  // > +2SD
+
+        foreach ($children as $child) {
+            $waZscore = $child->getWeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $validRecordsCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($waZscore <= -2) {
+                    $waUnderweight++;
+                } elseif ($waZscore > -2 && $waZscore <= 2) {
+                    $waNormal++;
+                } elseif ($waZscore > 2) {
+                    $waOverweight++;
+                }
+            } else {
+                // Track invalid record
+                $reasons = [];
+                if ($waZscore === null) {
+                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng)";
+                } else {
+                    $reasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                $invalidRecordsDetails[] = [
+                    'id' => $child->id,
+                    'uid' => $child->uid,
+                    'fullname' => $child->fullname,
+                    'age' => $child->age,
+                    'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $child->weight,
+                    'height' => $child->height,
+                    'cal_date' => $child->cal_date,
+                    'reasons' => $reasons
+                ];
+            }
+        }
+
+        $stats['weight_for_age'] = [
+            'underweight' => [
+                'count' => $waUnderweight,
+                'percentage' => $validRecordsCount > 0 ? round(($waUnderweight / $validRecordsCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $waNormal,
+                'percentage' => $validRecordsCount > 0 ? round(($waNormal / $validRecordsCount) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $waOverweight,
+                'percentage' => $validRecordsCount > 0 ? round(($waOverweight / $validRecordsCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 2. Suy dinh dưỡng thể thấp còi (CC/T - Height-for-Age)
+        $haStunted = 0;  // <= -2SD
+        $haNormal = 0;   // >= -2SD và <= +2SD
+        $haTall = 0;     // > +2SD
+        $haValidCount = 0;
+
+        foreach ($children as $child) {
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $haValidCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($haZscore <= -2) {
+                    $haStunted++;
+                } elseif ($haZscore > -2 && $haZscore <= 2) {
+                    $haNormal++;
+                } elseif ($haZscore > 2) {
+                    $haTall++;
+                }
+            } else {
+                // Track invalid H/A record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($haZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $reasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($haZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
+            }
+        }
+
+        $stats['height_for_age'] = [
+            'stunted' => [
+                'count' => $haStunted,
+                'percentage' => $haValidCount > 0 ? round(($haStunted / $haValidCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $haNormal,
+                'percentage' => $haValidCount > 0 ? round(($haNormal / $haValidCount) * 100, 2) : 0,
+            ],
+            'tall' => [
+                'count' => $haTall,
+                'percentage' => $haValidCount > 0 ? round(($haTall / $haValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 3. Suy dinh dưỡng thể gầy còm (CN/CC - Weight-for-Height)
+        $whWasted = 0;      // <= -2SD
+        $whNormal = 0;      // >= -2SD và <= +2SD
+        $whOverweight = 0;  // > +2SD và <= +3SD
+        $whObese = 0;       // > +3SD
+        $combinedMalnutrition = 0; // CN/CC <= -2SD AND CC/T <= -2SD
+        $whValidCount = 0;
+
+        foreach ($children as $child) {
+            $whZscore = $child->getWeightForHeightZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $whValidCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($whZscore <= -2) {
+                    $whWasted++;
+                    // Kiểm tra SDD phối hợp - both must be valid and <= -2
+                    if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore <= -2) {
+                        $combinedMalnutrition++;
+                    }
+                } elseif ($whZscore > -2 && $whZscore <= 2) {
+                    $whNormal++;
+                } elseif ($whZscore > 2 && $whZscore <= 3) {
+                    $whOverweight++;
+                } elseif ($whZscore > 3) {
+                    $whObese++;
+                }
+            } else {
+                // Track invalid W/H record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($whZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $reasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($whZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
+            }
+        }
+
+        $stats['weight_for_height'] = [
+            'wasted' => [
+                'count' => $whWasted,
+                'percentage' => $whValidCount > 0 ? round(($whWasted / $whValidCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $whNormal,
+                'percentage' => $whValidCount > 0 ? round(($whNormal / $whValidCount) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $whOverweight,
+                'percentage' => $whValidCount > 0 ? round(($whOverweight / $whValidCount) * 100, 2) : 0,
+            ],
+            'obese' => [
+                'count' => $whObese,
+                'percentage' => $whValidCount > 0 ? round(($whObese / $whValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['combined'] = [
+            'combined_malnutrition' => [
+                'count' => $combinedMalnutrition,
+                'percentage' => $whValidCount > 0 ? round(($combinedMalnutrition / $whValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 4. Tổng hợp: Ít nhất 1 trong 4 chỉ số SDD (bổ sung BMI)
+        $anyMalnutrition = 0;
+        $summaryValidCount = 0;
+        
+        foreach ($children as $child) {
+            $waZscore = $child->getWeightForAgeZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            $whZscore = $child->getWeightForHeightZScore();
+            $bmiZscore = $child->getBMIForAgeZScore();
+            
+            // Check if at least one Z-score is valid
+            $hasValidZscore = false;
+            $hasWaMalnutrition = false;
+            $hasHaMalnutrition = false;
+            $hasWhMalnutrition = false;
+            $hasBmiMalnutrition = false;
+            
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWaMalnutrition = ($waZscore <= -2);
+            }
+            
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $hasValidZscore = true;
+                $hasHaMalnutrition = ($haZscore <= -2);
+            }
+            
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWhMalnutrition = ($whZscore <= -2);
+            }
+            
+            if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                $hasValidZscore = true;
+                $hasBmiMalnutrition = ($bmiZscore <= -2);
+            }
+            
+            // Only count records with at least one valid Z-score
+            if ($hasValidZscore) {
+                $summaryValidCount++;
+                
+                // SDD: Ít nhất 1 trong 4 chỉ số <= -2SD (W/A, H/A, W/H, BMI/A)
+                if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition || $hasBmiMalnutrition) {
+                    $anyMalnutrition++;
+                }
+            }
+        }
+
+        $stats['summary'] = [
+            'any_malnutrition' => [
+                'count' => $anyMalnutrition,
+                'percentage' => $summaryValidCount > 0 ? round(($anyMalnutrition / $summaryValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['total_children'] = $totalChildren;
+        
+        // Add metadata with invalid records (Z-score outliers)
+        $stats['_meta'] = [
+            'total_records' => $totalChildren,
+            'valid_records' => $validRecordsCount,
+            'invalid_records' => count($invalidRecordsDetails),
+            'invalid_records_details' => $invalidRecordsDetails
+        ];
+
+        return $stats;
+    }
+
+    /**
+     * Bảng 10a: Tình trạng dinh dưỡng của trẻ dưới và bằng 5 tuổi (<= 60 tháng) - Phương pháp lấy dữ liệu khác
+     * Khác với Bảng 10:
+     * - Đối tượng: <= 60 tháng (bao gồm trẻ đúng 60 tháng)
+     * - Điều kiện: <= -2SD (thay vì < -2SD), >= -2SD và <= +2SD (thay vì >= -2SD và < +2SD)
+     */
+    private function getNutritionStatsUnder60MonthsAlt($records)
+    {
+        // Lọc trẻ <= 60 tháng (bao gồm cả trẻ đúng 60 tháng)
+        $children = $records->filter(function($record) {
+            return $record->age <= 60;
+        });
+
+        $totalChildren = $children->count();
+
+        if ($totalChildren == 0) {
+            return $this->getEmptyNutritionStats();
+        }
+
+        $stats = [];
+        
+        // Track invalid records (Z-score outliers)
+        $invalidRecordsDetails = [];
+
+        // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
+        $waUnderweight = 0; // <= -2SD
+        $waNormal = 0;      // >= -2SD và <= +2SD
+        $waOverweight = 0;  // > +2SD
+        $validRecordsCount = 0;
+
+        foreach ($children as $child) {
+            $waZscore = $child->getWeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $validRecordsCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($waZscore <= -2) {
+                    $waUnderweight++;
+                } elseif ($waZscore > -2 && $waZscore <= 2) {
+                    $waNormal++;
+                } elseif ($waZscore > 2) {
+                    $waOverweight++;
+                }
+            } else {
+                // Track invalid record
+                $reasons = [];
+                if ($waZscore === null) {
+                    $reasons[] = "Không có dữ liệu WHO cho W/A (tuổi {$child->age} tháng)";
+                } else {
+                    $reasons[] = "W/A Z-score = " . round($waZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                }
+                
+                $invalidRecordsDetails[] = [
+                    'id' => $child->id,
+                    'uid' => $child->uid,
+                    'fullname' => $child->fullname,
+                    'age' => $child->age,
+                    'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                    'weight' => $child->weight,
+                    'height' => $child->height,
+                    'cal_date' => $child->cal_date,
+                    'reasons' => $reasons
+                ];
+            }
+        }
+
+        $stats['weight_for_age'] = [
+            'underweight' => [
+                'count' => $waUnderweight,
+                'percentage' => $validRecordsCount > 0 ? round(($waUnderweight / $validRecordsCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $waNormal,
+                'percentage' => $validRecordsCount > 0 ? round(($waNormal / $validRecordsCount) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $waOverweight,
+                'percentage' => $validRecordsCount > 0 ? round(($waOverweight / $validRecordsCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 2. Suy dinh dưỡng thể thấp còi (CC/T - Height-for-Age)
+        $haStunted = 0;  // <= -2SD
+        $haNormal = 0;   // >= -2SD và <= +2SD
+        $haTall = 0;     // > +2SD
+        $haValidCount = 0;
+
+        foreach ($children as $child) {
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $haValidCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($haZscore <= -2) {
+                    $haStunted++;
+                } elseif ($haZscore > -2 && $haZscore <= 2) {
+                    $haNormal++;
+                } elseif ($haZscore > 2) {
+                    $haTall++;
+                }
+            } else {
+                // Track invalid H/A record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($haZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $reasons[] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($haZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho H/A (tuổi {$child->age} tháng)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "H/A Z-score = " . round($haZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
+            }
+        }
+
+        $stats['height_for_age'] = [
+            'stunted' => [
+                'count' => $haStunted,
+                'percentage' => $haValidCount > 0 ? round(($haStunted / $haValidCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $haNormal,
+                'percentage' => $haValidCount > 0 ? round(($haNormal / $haValidCount) * 100, 2) : 0,
+            ],
+            'tall' => [
+                'count' => $haTall,
+                'percentage' => $haValidCount > 0 ? round(($haTall / $haValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 3. Suy dinh dưỡng thể gầy còm (CN/CC - Weight-for-Height)
+        $whWasted = 0;      // <= -2SD
+        $whNormal = 0;      // >= -2SD và <= +2SD
+        $whOverweight = 0;  // > +2SD và <= +3SD
+        $whObese = 0;       // > +3SD
+        $combinedMalnutrition = 0; // CN/CC <= -2SD AND CC/T <= -2SD
+        $whValidCount = 0;
+
+        foreach ($children as $child) {
+            $whZscore = $child->getWeightForHeightZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            
+            // Check if Z-score is valid (within -6 to +6 and not null)
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $whValidCount++;
+                
+                // Classify by Z-score (sử dụng <= thay vì <)
+                if ($whZscore <= -2) {
+                    $whWasted++;
+                    // Kiểm tra SDD phối hợp - both must be valid and <= -2
+                    if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6 && $haZscore <= -2) {
+                        $combinedMalnutrition++;
+                    }
+                } elseif ($whZscore > -2 && $whZscore <= 2) {
+                    $whNormal++;
+                } elseif ($whZscore > 2 && $whZscore <= 3) {
+                    $whOverweight++;
+                } elseif ($whZscore > 3) {
+                    $whObese++;
+                }
+            } else {
+                // Track invalid W/H record
+                $existingKey = null;
+                foreach ($invalidRecordsDetails as $key => $record) {
+                    if ($record['id'] === $child->id) {
+                        $existingKey = $key;
+                        break;
+                    }
+                }
+                
+                if ($existingKey === null) {
+                    $reasons = [];
+                    if ($whZscore === null) {
+                        $reasons[] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $reasons[] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                    
+                    $invalidRecordsDetails[] = [
+                        'id' => $child->id,
+                        'uid' => $child->uid,
+                        'fullname' => $child->fullname,
+                        'age' => $child->age,
+                        'gender' => $child->gender == 1 ? 'Nam' : 'Nữ',
+                        'weight' => $child->weight,
+                        'height' => $child->height,
+                        'cal_date' => $child->cal_date,
+                        'reasons' => $reasons
+                    ];
+                } else {
+                    // Add reason to existing record
+                    if ($whZscore === null) {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "Không có dữ liệu WHO cho W/H (chiều cao {$child->height}cm)";
+                    } else {
+                        $invalidRecordsDetails[$existingKey]['reasons'][] = "W/H Z-score = " . round($whZscore, 2) . " (ngoài khoảng -6 đến +6)";
+                    }
+                }
+            }
+        }
+
+        $stats['weight_for_height'] = [
+            'wasted' => [
+                'count' => $whWasted,
+                'percentage' => $whValidCount > 0 ? round(($whWasted / $whValidCount) * 100, 2) : 0,
+            ],
+            'normal' => [
+                'count' => $whNormal,
+                'percentage' => $whValidCount > 0 ? round(($whNormal / $whValidCount) * 100, 2) : 0,
+            ],
+            'overweight' => [
+                'count' => $whOverweight,
+                'percentage' => $whValidCount > 0 ? round(($whOverweight / $whValidCount) * 100, 2) : 0,
+            ],
+            'obese' => [
+                'count' => $whObese,
+                'percentage' => $whValidCount > 0 ? round(($whObese / $whValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        $stats['combined'] = [
+            'combined_malnutrition' => [
+                'count' => $combinedMalnutrition,
+                'percentage' => $whValidCount > 0 ? round(($combinedMalnutrition / $whValidCount) * 100, 2) : 0,
+            ],
+        ];
+
+        // 4. Tổng hợp: Ít nhất 1 trong 4 chỉ số SDD (bổ sung BMI)
+        $anyMalnutrition = 0;
+        $summaryValidCount = 0;
+        
+        foreach ($children as $child) {
+            $waZscore = $child->getWeightForAgeZScore();
+            $haZscore = $child->getHeightForAgeZScore();
+            $whZscore = $child->getWeightForHeightZScore();
+            $bmiZscore = $child->getBMIForAgeZScore();
+            
+            // Check if at least one Z-score is valid
+            $hasValidZscore = false;
+            $hasWaMalnutrition = false;
+            $hasHaMalnutrition = false;
+            $hasWhMalnutrition = false;
+            $hasBmiMalnutrition = false;
+            
+            if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWaMalnutrition = ($waZscore <= -2);
+            }
+            
+            if ($haZscore !== null && $haZscore >= -6 && $haZscore <= 6) {
+                $hasValidZscore = true;
+                $hasHaMalnutrition = ($haZscore <= -2);
+            }
+            
+            if ($whZscore !== null && $whZscore >= -6 && $whZscore <= 6) {
+                $hasValidZscore = true;
+                $hasWhMalnutrition = ($whZscore <= -2);
+            }
+            
+            if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                $hasValidZscore = true;
+                $hasBmiMalnutrition = ($bmiZscore <= -2);
+            }
+            
+            // Only count records with at least one valid Z-score
+            if ($hasValidZscore) {
+                $summaryValidCount++;
+                
+                // SDD: Ít nhất 1 trong 4 chỉ số <= -2SD (W/A, H/A, W/H, BMI/A)
                 if ($hasWaMalnutrition || $hasHaMalnutrition || $hasWhMalnutrition || $hasBmiMalnutrition) {
                     $anyMalnutrition++;
                 }
