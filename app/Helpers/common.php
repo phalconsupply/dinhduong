@@ -298,3 +298,23 @@ function GetWards($request){
     }
     return $wards;
 }
+
+/**
+ * Get Z-score calculation method from settings
+ * @return string 'lms' or 'sd_bands'
+ */
+function getZScoreMethod()
+{
+    $method = getSetting('zscore_method');
+    // Default to LMS if not set
+    return $method ?: 'lms';
+}
+
+/**
+ * Check if using LMS method
+ * @return bool
+ */
+function isUsingLMS()
+{
+    return getZScoreMethod() === 'lms';
+}

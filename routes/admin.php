@@ -61,6 +61,8 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
         Route::get('/setting/advices', 'SettingController@advices')->name('admin.setting.advices');
         Route::post('/setting/advices', 'SettingController@update_advices')->name('admin.setting.update_advices');
         Route::post('/setting', 'SettingController@update')->name('admin.setting.update');
+        Route::get('/setting/zscore-info', 'SettingController@zscoreInfo')->name('admin.setting.zscore_info');
+        Route::get('/setting/compare-methods', 'SettingController@compareMethods')->name('admin.setting.compare_methods');
     });
 });
 

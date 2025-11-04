@@ -15,6 +15,13 @@
                 </a>
             </li>
 
+            <li class="navbar-item account-menu px-0 mt-2 @if($page=='zscore_info') active @endif">
+                <a href="{{route('admin.setting.zscore_info')}}" class="navbar-link d-flex rounded shadow align-items-center py-2 px-4 ">
+                    <span class="h4 mb-0"><i class="ti ti-chart-line"></i></span>
+                    <h6 class="mb-0 ms-2">Z-Score Methods</h6>
+                </a>
+            </li>
+
 
         </ul>
     </div>

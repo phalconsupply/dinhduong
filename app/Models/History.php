@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\WHOZScoreLMS;
+use App\Models\WHOPercentileLMS;
 
 class History extends Model
 {
@@ -684,6 +686,358 @@ class History extends Model
     {
         $bmiRow = $this->BMIForAge();
         return $this->calculateZScore($this->bmi, $bmiRow);
+    }
+
+    // ==================== WHO LMS METHOD (NEW) ====================
+    
+    /**
+     * Tính Z-score theo phương pháp WHO LMS (Lambda-Mu-Sigma)
+     * Công thức: Z = ((X/M)^L - 1) / (L*S)
+     * Nếu L ≈ 0: Z = ln(X/M) / S
+     * 
+     * @param string $indicator 'wfa', 'hfa', 'bmi', 'wfh', 'wfl'
+     * @param float $value Giá trị đo (weight, height, hoặc BMI)
+     * @return float|null Z-score hoặc null nếu không tính được
+     */
+    public function calculateZScoreLMS($indicator, $value)
+    {
+        if ($value === null || $this->gender === null || $this->age === null) {
+            return null;
+        }
+        
+        // Map gender: 0 (Female) -> F, 1 (Male) -> M
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $ageInMonths = $this->age;
+        
+        // Lấy L, M, S parameters
+        $lms = null;
+        
+        if (in_array($indicator, ['wfa', 'hfa', 'bmi'])) {
+            // Age-based indicators
+            $lms = WHOZScoreLMS::getLMSForAge($indicator, $sex, $ageInMonths);
+        } else {
+            // Height-based indicators (wfh, wfl)
+            $lms = WHOZScoreLMS::getLMSForHeight($indicator, $sex, $this->height, $ageInMonths);
+        }
+        
+        if (!$lms) {
+            return null;
+        }
+        
+        // Tính Z-score bằng LMS method
+        return WHOZScoreLMS::calculateZScore($value, $lms['L'], $lms['M'], $lms['S']);
+    }
+    
+    /**
+     * Lấy Z-score Weight-for-Age theo LMS method
+     */
+    public function getWeightForAgeZScoreLMS()
+    {
+        return $this->calculateZScoreLMS('wfa', $this->weight);
+    }
+    
+    /**
+     * Lấy Z-score Height-for-Age theo LMS method
+     */
+    public function getHeightForAgeZScoreLMS()
+    {
+        return $this->calculateZScoreLMS('hfa', $this->height);
+    }
+    
+    /**
+     * Lấy Z-score BMI-for-Age theo LMS method
+     */
+    public function getBMIForAgeZScoreLMS()
+    {
+        return $this->calculateZScoreLMS('bmi', $this->bmi);
+    }
+    
+    /**
+     * Lấy Z-score Weight-for-Height theo LMS method
+     * Tự động chọn WFL (< 24 months) hoặc WFH (>= 24 months)
+     */
+    public function getWeightForHeightZScoreLMS()
+    {
+        if ($this->age === null || $this->height === null || $this->weight === null) {
+            return null;
+        }
+        
+        // WHO: < 24 months dùng WFL (recumbent length), >= 24 months dùng WFH (standing height)
+        $indicator = ($this->age < 24) ? 'wfl' : 'wfh';
+        
+        return $this->calculateZScoreLMS($indicator, $this->weight);
+    }
+    
+    /**
+     * Phân loại dinh dưỡng dựa trên Z-score (WHO standard)
+     * 
+     * @param float|null $zscore
+     * @param string $type 'wfa', 'hfa', 'bmi', 'wfh' - loại chỉ số
+     * @return array ['result' => string, 'text' => string, 'color' => string, 'zscore_category' => string]
+     */
+    public function classifyByZScore($zscore, $type = 'wfa')
+    {
+        $text = 'Chưa có dữ liệu';
+        $color = 'gray';
+        $result = 'unknown';
+        $zscore_category = 'N/A';
+        
+        if ($zscore === null) {
+            return compact('result', 'text', 'color', 'zscore_category');
+        }
+        
+        // Classification rules theo WHO
+        if ($type === 'hfa') {
+            // Height-for-Age: Stunting classification
+            if ($zscore < -3) {
+                $result = 'stunted_severe';
+                $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ nặng';
+                $color = 'red';
+                $zscore_category = '< -3SD';
+            } elseif ($zscore < -2) {
+                $result = 'stunted_moderate';
+                $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
+                $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
+            } elseif ($zscore < -1) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                $zscore_category = '-2SD đến -1SD';
+            } elseif ($zscore <= 2) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                if ($zscore < 0) {
+                    $zscore_category = '-1SD đến Median';
+                } elseif ($zscore <= 1) {
+                    $zscore_category = 'Median đến +1SD';
+                } else {
+                    $zscore_category = '+1SD đến +2SD';
+                }
+            } elseif ($zscore <= 3) {
+                $result = 'above_2sd';
+                $text = 'Trẻ cao hơn bình thường';
+                $color = 'cyan';
+                $zscore_category = '+2SD đến +3SD';
+            } else {
+                $result = 'above_3sd';
+                $text = 'Trẻ cao bất thường';
+                $color = 'blue';
+                $zscore_category = '≥ +3SD';
+            }
+        } elseif ($type === 'wfa') {
+            // Weight-for-Age: Underweight classification
+            if ($zscore < -3) {
+                $result = 'underweight_severe';
+                $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
+                $color = 'red';
+                $zscore_category = '< -3SD';
+            } elseif ($zscore < -2) {
+                $result = 'underweight_moderate';
+                $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
+                $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
+            } elseif ($zscore < -1) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                $zscore_category = '-2SD đến -1SD';
+            } elseif ($zscore <= 2) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                if ($zscore < 0) {
+                    $zscore_category = '-1SD đến Median';
+                } elseif ($zscore <= 1) {
+                    $zscore_category = 'Median đến +1SD';
+                } else {
+                    $zscore_category = '+1SD đến +2SD';
+                }
+            } elseif ($zscore <= 3) {
+                $result = 'overweight';
+                $text = 'Trẻ thừa cân';
+                $color = 'orange';
+                $zscore_category = '+2SD đến +3SD';
+            } else {
+                $result = 'obese';
+                $text = 'Trẻ béo phì';
+                $color = 'red';
+                $zscore_category = '> +3SD';
+            }
+        } elseif (in_array($type, ['wfh', 'bmi'])) {
+            // Weight-for-Height or BMI: Wasting/Overweight classification
+            if ($zscore < -3) {
+                $result = 'wasted_severe';
+                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
+                $color = 'red';
+                $zscore_category = '< -3SD';
+            } elseif ($zscore < -2) {
+                $result = 'wasted_moderate';
+                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
+                $color = 'orange';
+                $zscore_category = '-3SD đến -2SD';
+            } elseif ($zscore < -1) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                $zscore_category = '-2SD đến -1SD';
+            } elseif ($zscore <= 2) {
+                $result = 'normal';
+                $text = 'Trẻ bình thường';
+                $color = 'green';
+                if ($zscore < 0) {
+                    $zscore_category = '-1SD đến Median';
+                } elseif ($zscore <= 1) {
+                    $zscore_category = 'Median đến +1SD';
+                } else {
+                    $zscore_category = '+1SD đến +2SD';
+                }
+            } elseif ($zscore <= 3) {
+                $result = 'overweight';
+                $text = 'Trẻ thừa cân';
+                $color = 'orange';
+                $zscore_category = '+2SD đến +3SD';
+            } else {
+                $result = 'obese';
+                $text = 'Trẻ béo phì';
+                $color = 'red';
+                $zscore_category = '> +3SD';
+            }
+        }
+        
+        return compact('result', 'text', 'color', 'zscore_category');
+    }
+    
+    /**
+     * Check Weight-for-Age sử dụng LMS method
+     */
+    public function check_weight_for_age_lms()
+    {
+        $zscore = $this->getWeightForAgeZScoreLMS();
+        $classification = $this->classifyByZScore($zscore, 'wfa');
+        $classification['zscore'] = $zscore;
+        return $classification;
+    }
+    
+    /**
+     * Check Height-for-Age sử dụng LMS method
+     */
+    public function check_height_for_age_lms()
+    {
+        $zscore = $this->getHeightForAgeZScoreLMS();
+        $classification = $this->classifyByZScore($zscore, 'hfa');
+        $classification['zscore'] = $zscore;
+        return $classification;
+    }
+    
+    /**
+     * Check BMI-for-Age sử dụng LMS method
+     */
+    public function check_bmi_for_age_lms()
+    {
+        $zscore = $this->getBMIForAgeZScoreLMS();
+        $classification = $this->classifyByZScore($zscore, 'bmi');
+        $classification['zscore'] = $zscore;
+        return $classification;
+    }
+    
+    /**
+     * Check Weight-for-Height sử dụng LMS method
+     */
+    public function check_weight_for_height_lms()
+    {
+        $zscore = $this->getWeightForHeightZScoreLMS();
+        // WFH/WFL uses same classification as wfh
+        $classification = $this->classifyByZScore($zscore, 'wfh');
+        $classification['zscore'] = $zscore;
+        return $classification;
+    }
+    
+    /**
+     * So sánh kết quả giữa phương pháp cũ (SD Bands) và mới (LMS)
+     * Dùng để debug và validation
+     */
+    public function compareCalculationMethods()
+    {
+        return [
+            'weight_for_age' => [
+                'old' => $this->check_weight_for_age(),
+                'lms' => $this->check_weight_for_age_lms(),
+            ],
+            'height_for_age' => [
+                'old' => $this->check_height_for_age(),
+                'lms' => $this->check_height_for_age_lms(),
+            ],
+            'bmi_for_age' => [
+                'old' => $this->check_bmi_for_age(),
+                'lms' => $this->check_bmi_for_age_lms(),
+            ],
+            'weight_for_height' => [
+                'old' => $this->check_weight_for_height(),
+                'lms' => $this->check_weight_for_height_lms(),
+            ],
+        ];
+    }
+
+    /**
+     * Auto-select Z-score calculation method based on setting
+     * These methods will automatically use LMS or SD Bands based on admin configuration
+     */
+    public function getWeightForAgeZScoreAuto(): ?float
+    {
+        return isUsingLMS() 
+            ? $this->getWeightForAgeZScoreLMS() 
+            : $this->getWeightForAgeZScore();
+    }
+
+    public function getHeightForAgeZScoreAuto(): ?float
+    {
+        return isUsingLMS() 
+            ? $this->getHeightForAgeZScoreLMS() 
+            : $this->getHeightForAgeZScore();
+    }
+
+    public function getBMIForAgeZScoreAuto(): ?float
+    {
+        return isUsingLMS() 
+            ? $this->getBMIForAgeZScoreLMS() 
+            : $this->getBMIForAgeZScore();
+    }
+
+    public function getWeightForHeightZScoreAuto(): ?float
+    {
+        return isUsingLMS() 
+            ? $this->getWeightForHeightZScoreLMS() 
+            : $this->getWeightForHeightZScore();
+    }
+
+    public function check_weight_for_age_auto(): array
+    {
+        return isUsingLMS() 
+            ? $this->check_weight_for_age_lms() 
+            : $this->check_weight_for_age();
+    }
+
+    public function check_height_for_age_auto(): array
+    {
+        return isUsingLMS() 
+            ? $this->check_height_for_age_lms() 
+            : $this->check_height_for_age();
+    }
+
+    public function check_bmi_for_age_auto(): array
+    {
+        return isUsingLMS() 
+            ? $this->check_bmi_for_age_lms() 
+            : $this->check_bmi_for_age();
+    }
+
+    public function check_weight_for_height_auto(): array
+    {
+        return isUsingLMS() 
+            ? $this->check_weight_for_height_lms() 
+            : $this->check_weight_for_height();
     }
 
 }
