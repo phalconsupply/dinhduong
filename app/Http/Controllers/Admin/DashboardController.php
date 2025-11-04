@@ -1828,14 +1828,17 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bảng 9a: Tình trạng dinh dưỡng của trẻ dưới và bằng 2 tuổi (<= 24 tháng) - Phương pháp lấy dữ liệu khác
+     * Bảng 9a: Tình trạng dinh dưỡng của trẻ dưới và bằng 2 tuổi (<= 24 tháng) - Phương pháp WHO Anthro
      * Khác với Bảng 9:
      * - Đối tượng: <= 24 tháng (bao gồm trẻ đúng 24 tháng)
-     * - Điều kiện: <= -2SD (thay vì < -2SD), >= -2SD và <= +2SD (thay vì >= -2SD và < +2SD)
+     * - Điều kiện phân loại theo WHO Anthro:
+     *   + SDD: < -2SD (không bao gồm -2.0)
+     *   + Normal: >= -2SD và <= +2SD (bao gồm -2.0 và +2.0)
+     *   + Thừa cân/Cao: > +2SD (không bao gồm +2.0)
      */
     private function getNutritionStatsUnder24MonthsAlt($records)
     {
-        // Lọc trẻ <= 24 tháng (bao gồm cả trẻ đúng 24 tháng)
+        // Lọc trẻ <= 24 tháng (bao gồm cả trẻ đúng 24 tháng) - ĐÁNH DẤU BẢNG 9a
         $children = $records->filter(function($record) {
             return $record->age <= 24;
         });
@@ -1853,9 +1856,9 @@ class DashboardController extends Controller
         $validRecordsCount = 0;
 
         // 1. Suy dinh dưỡng thể nhẹ cân (CN/T - Weight-for-Age)
-        $waUnderweight = 0; // <= -2SD
-        $waNormal = 0;      // >= -2SD và <= +2SD
-        $waOverweight = 0;  // > +2SD
+        $waUnderweight = 0; // < -2SD (không bao gồm -2.0)
+        $waNormal = 0;      // >= -2SD và <= +2SD (bao gồm -2.0 và +2.0)
+        $waOverweight = 0;  // > +2SD (không bao gồm +2.0)
 
         foreach ($children as $child) {
             $waZscore = $child->getWeightForAgeZScore();
@@ -1864,10 +1867,12 @@ class DashboardController extends Controller
             if ($waZscore !== null && $waZscore >= -6 && $waZscore <= 6) {
                 $validRecordsCount++;
                 
-                // Classify by Z-score (sử dụng <= thay vì <)
-                if ($waZscore <= -2) {
+                // Classify by Z-score theo WHO Anthro boundary logic
+                // Z < -2.0 là SDD, Z >= -2.0 là Normal (bao gồm -2.0)
+                // Z <= +2.0 là Normal, Z > +2.0 là Thừa cân (bao gồm +2.0 trong Normal)
+                if ($waZscore < -2) {
                     $waUnderweight++;
-                } elseif ($waZscore > -2 && $waZscore <= 2) {
+                } elseif ($waZscore >= -2 && $waZscore <= 2) {
                     $waNormal++;
                 } elseif ($waZscore > 2) {
                     $waOverweight++;

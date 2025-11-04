@@ -1,0 +1,17 @@
+STT,Tình trạng dinh dưỡng,WHO Anthor,,Ứng dụng phần mềm,
+,,Tần số (n),Tỉ lệ (%),Tần số (n),Tỉ lệ (%)
+1,Suy dinh dưỡng thể nhẹ cân (CN/T),,,,
+,SDD thể nhẹ cân (< -2SD),16,"8,08",16,"8,08"
+,Bình thường (-2SD đến +2SD),175,"88,38",180,"90,91"
+,Thừa cân (> +2SD),7,"3,54",2,"1,01"
+2,Suy dinh dưỡng thể thấp còi (CC/T),,,,
+,SDD thể thấp còi (< -2SD),38,"19,19",38,"19,19"
+,Bình thường (-2SD đến +2SD),138,"69,7",139,"70,2"
+,Trẻ cao vượt trội,22,"11,11",21,"10,61"
+3,Suy dinh dưỡng thể gầy còm (CN/CC),,,,
+,SDD thể gầy còm (< -2SD),19,"9,6",17,"8,59"
+,SDD thể phối hợp ,1,"0,51",1,"0,51"
+,(CN/CC < -2SD và CC/T < -2SD),,,,
+,Bình thường (-2SD đến +2SD),171,"86,36",174,"87,88"
+,Thừa cân (> +2SD),6,"3,03",5,"2,53"
+,Béo phì (> +3SD),1,"0,51",1,"0,51"
