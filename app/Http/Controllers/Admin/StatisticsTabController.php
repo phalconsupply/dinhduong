@@ -486,12 +486,12 @@ class StatisticsTabController extends Controller
         // Calculate for all children
         $allStats = $this->calculateWhoStatsForGroup($records, $ageGroups, 'Tất cả');
         
-        // Calculate for male
+        // Calculate for male (gender = 1)
         $maleRecords = $records->where('gender', 1);
         $maleStats = $this->calculateWhoStatsForGroup($maleRecords, $ageGroups, 'Bé trai');
         
-        // Calculate for female
-        $femaleRecords = $records->where('gender', 2);
+        // Calculate for female (gender = 0)
+        $femaleRecords = $records->where('gender', 0);
         $femaleStats = $this->calculateWhoStatsForGroup($femaleRecords, $ageGroups, 'Bé gái');
 
         return [
