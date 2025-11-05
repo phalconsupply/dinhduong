@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
     Route::get('/statistics/get-mean-stats', 'StatisticsTabController@getMeanStats')->name('admin.statistics.mean_stats');
     Route::get('/statistics/get-who-combined', 'StatisticsTabController@getWhoCombined')->name('admin.statistics.who_combined');
     Route::post('/statistics/clear-cache', 'StatisticsTabController@clearCache')->name('admin.statistics.clear_cache');
+    Route::get('/statistics/cell-details', 'StatisticsTabCellDetailController@getCellDetails')->name('admin.statistics.cell_details');
     
     // Helper routes for location cascade
     Route::get('/get-districts/{provinceCode}', 'StatisticsTabController@getDistricts')->name('admin.get_districts');

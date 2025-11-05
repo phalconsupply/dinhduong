@@ -225,6 +225,9 @@
 </div>
 
 
+<?php echo $__env->make('admin.statistics.partials.cell-details-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
+
 <style>
 .nav-pills .nav-link {
     border-radius: 0.5rem;
@@ -414,6 +417,12 @@ function loadTabData(tabName) {
                 } else if (typeof initializeCharts === 'function') {
                     initializeCharts(tabName, data.data);
                 }
+                
+                // Make table cells clickable for Cell-Detail feature
+                if (typeof makeTableCellsClickable === 'function') {
+                    makeTableCellsClickable();
+                    console.log('Cell-Detail feature enabled for tab:', tabName);
+                }
             }, 500);
         } else {
             showError(tabContent, data.message || 'Có lỗi xảy ra khi tải dữ liệu');
@@ -487,7 +496,7 @@ function updateQuickStats(data) {
         // Check for Mean Stats structure
         else if (data['0-5m'] || data['6-11m'] || data['12-23m']) {
             // Mean stats has different structure - calculate from all age groups
-            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-59m'];
+            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-60m'];
             let atRiskCount = 0;
             let normalCountEstimate = 0;
             

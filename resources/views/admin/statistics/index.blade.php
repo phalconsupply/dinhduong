@@ -225,6 +225,9 @@
     </div>
 </div>
 
+{{-- Cell Details Modal --}}
+@include('admin.statistics.partials.cell-details-modal')
+
 {{-- Styles --}}
 <style>
 .nav-pills .nav-link {
@@ -414,6 +417,12 @@ function loadTabData(tabName) {
                     }
                 } else if (typeof initializeCharts === 'function') {
                     initializeCharts(tabName, data.data);
+                }
+                
+                // Make table cells clickable for Cell-Detail feature
+                if (typeof makeTableCellsClickable === 'function') {
+                    makeTableCellsClickable();
+                    console.log('Cell-Detail feature enabled for tab:', tabName);
                 }
             }, 500);
         } else {
