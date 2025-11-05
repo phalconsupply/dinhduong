@@ -488,7 +488,7 @@ function updateQuickStats(data) {
         // Check for Mean Stats structure
         else if (data['0-5m'] || data['6-11m'] || data['12-23m']) {
             // Mean stats has different structure - calculate from all age groups
-            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-59m'];
+            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-60m'];
             let atRiskCount = 0;
             let normalCountEstimate = 0;
             

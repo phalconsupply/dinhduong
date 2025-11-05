@@ -388,7 +388,7 @@ class StatisticsTabController extends Controller
             '12-23m' => ['min' => 12, 'max' => 23, 'label' => '12-23 tháng'],
             '24-35m' => ['min' => 24, 'max' => 35, 'label' => '24-35 tháng'],
             '36-47m' => ['min' => 36, 'max' => 47, 'label' => '36-47 tháng'],
-            '48-59m' => ['min' => 48, 'max' => 59, 'label' => '48-59 tháng'],
+            '48-60m' => ['min' => 48, 'max' => 60, 'label' => '48-60 tháng'], // Include 60 months per WHO standards
         ];
 
         $stats = [];
@@ -414,6 +414,11 @@ class StatisticsTabController extends Controller
 
     /**
      * Calculate mean stats for a gender group using auto methods
+     * 
+     * NOTE: Count is based on Weight-for-Age (WA) valid records as the primary metric.
+     * This follows WHO methodology where WA is the primary indicator for age groups 0-60m.
+     * Records without valid WA Z-score are excluded from count, but HA/WH stats 
+     * are still calculated from their respective valid data.
      */
     private function calculateGenderMeanStatsAuto($records)
     {
@@ -422,41 +427,33 @@ class StatisticsTabController extends Controller
         $whZscores = [];
         $weights = [];
         $heights = [];
-        $totalCount = 0;
-        $hasAnyValidData = false;
+        $validCount = 0;
 
         foreach ($records as $record) {
             $waCheck = $record->check_weight_for_age_auto();
             $haCheck = $record->check_height_for_age_auto();
             $whCheck = $record->check_weight_for_height_auto();
             
-            $recordHasValidData = false;
-            
             // Only include if Z-scores are valid (within -6 to +6)
+            // Primary count based on Weight-for-Age
             if (isset($waCheck['zscore']) && $waCheck['zscore'] !== null && 
                 $waCheck['zscore'] >= -6 && $waCheck['zscore'] <= 6) {
                 $waZscores[] = $waCheck['zscore'];
                 $weights[] = $record->weight;
-                $recordHasValidData = true;
+                $validCount++;
             }
             
+            // Height-for-Age: independent of count
             if (isset($haCheck['zscore']) && $haCheck['zscore'] !== null &&
                 $haCheck['zscore'] >= -6 && $haCheck['zscore'] <= 6) {
                 $haZscores[] = $haCheck['zscore'];
                 $heights[] = $record->height;
-                $recordHasValidData = true;
             }
             
+            // Weight-for-Height: independent of count
             if (isset($whCheck['zscore']) && $whCheck['zscore'] !== null &&
                 $whCheck['zscore'] >= -6 && $whCheck['zscore'] <= 6) {
                 $whZscores[] = $whCheck['zscore'];
-                $recordHasValidData = true;
-            }
-            
-            // Count this record if it has at least one valid Z-score
-            if ($recordHasValidData) {
-                $totalCount++;
-                $hasAnyValidData = true;
             }
         }
 
@@ -466,7 +463,7 @@ class StatisticsTabController extends Controller
             'wa_zscore' => $this->calcMeanSd($waZscores),
             'ha_zscore' => $this->calcMeanSd($haZscores),
             'wh_zscore' => $this->calcMeanSd($whZscores),
-            'count' => $totalCount
+            'count' => $validCount
         ];
     }
 
