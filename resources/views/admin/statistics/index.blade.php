@@ -296,11 +296,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup tab click handlers
     document.querySelectorAll('[data-tab]').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            const tabName = this.getAttribute('data-tab');
-            if (!this.classList.contains('active')) {
-                loadTabData(tabName);
-            }
+        tab.addEventListener('shown.bs.tab', function(event) {
+            const tabName = event.target.getAttribute('data-tab');
+            console.log('Tab shown:', tabName);
+            loadTabData(tabName);
         });
     });
     
