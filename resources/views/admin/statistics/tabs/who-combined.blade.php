@@ -187,16 +187,16 @@ window.initializeWhoCombinedCharts = function(stats) {
     if (!chartsContainer) {
         chartsContainer = document.createElement('div');
         chartsContainer.id = 'who-charts-container';
-        chartsContainer.className = 'row mb-4';
+        chartsContainer.className = 'row mb-4 mt-4';
         
-        // Insert before the tab navigation
-        const whoTabsNav = document.getElementById('who-combined-tabs');
-        console.log('WHO tabs nav:', whoTabsNav);
-        if (whoTabsNav) {
-            whoTabsNav.parentElement.insertBefore(chartsContainer, whoTabsNav);
-            console.log('WHO charts container created and inserted');
+        // Insert after the tab content (bảng thống kê)
+        const whoTabContent = document.getElementById('who-combined-content');
+        console.log('WHO tab content:', whoTabContent);
+        if (whoTabContent) {
+            whoTabContent.parentElement.insertBefore(chartsContainer, whoTabContent.nextSibling);
+            console.log('WHO charts container created and inserted after tables');
         } else {
-            console.error('WHO tabs nav not found');
+            console.error('WHO tab content not found');
         }
     } else {
         console.log('WHO charts container already exists');
