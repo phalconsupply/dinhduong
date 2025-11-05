@@ -8,9 +8,9 @@
 
 // Cấu hình database (thay đổi theo thông tin cPanel của bạn)
 $host = 'localhost'; // Hoặc IP server cPanel
-$username = 'your_cpanel_username'; // Username cPanel database
-$password = 'your_cpanel_password'; // Password cPanel database  
-$database = 'your_database_name';   // Tên database cPanel
+$username = 'ebdsspyn_zappvn'; // Username cPanel database
+$password = '3@uQzEnx6wN@'; // Password cPanel database  
+$database = 'ebdsspyn_zappvn';   // Tên database cPanel
 
 // Kết nối database
 try {

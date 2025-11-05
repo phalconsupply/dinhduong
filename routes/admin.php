@@ -19,7 +19,22 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin'], f
 Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  'middleware' => 'auth.adminpanel'], function () {
     //Dashboard
     Route::get('/', 'DashboardController@index')->name('admin.dashboard.index');
-    Route::get('/statistics', 'DashboardController@statistics')->name('admin.dashboard.statistics');
+    
+    // New Tab-based Statistics System
+    Route::get('/statistics', 'StatisticsTabController@index')->name('admin.dashboard.statistics');
+    Route::get('/statistics/get-weight-for-age', 'StatisticsTabController@getWeightForAge')->name('admin.statistics.weight_for_age');
+    Route::get('/statistics/get-height-for-age', 'StatisticsTabController@getHeightForAge')->name('admin.statistics.height_for_age');
+    Route::get('/statistics/get-weight-for-height', 'StatisticsTabController@getWeightForHeight')->name('admin.statistics.weight_for_height');
+    Route::get('/statistics/get-mean-stats', 'StatisticsTabController@getMeanStats')->name('admin.statistics.mean_stats');
+    Route::get('/statistics/get-who-combined', 'StatisticsTabController@getWhoCombined')->name('admin.statistics.who_combined');
+    Route::post('/statistics/clear-cache', 'StatisticsTabController@clearCache')->name('admin.statistics.clear_cache');
+    
+    // Helper routes for location cascade
+    Route::get('/get-districts/{provinceCode}', 'StatisticsTabController@getDistricts')->name('admin.get_districts');
+    Route::get('/get-wards/{districtCode}', 'StatisticsTabController@getWards')->name('admin.get_wards');
+    
+    // Legacy Statistics Routes (kept for backward compatibility)
+    Route::get('/statistics/legacy', 'DashboardController@statistics')->name('admin.dashboard.statistics_legacy');
     Route::get('/statistics/export-csv', 'DashboardController@exportMeanStatisticsCSV')->name('admin.dashboard.export_mean_csv');
     Route::get('/statistics/get-cell-details', 'DashboardController@getCellDetails')->name('admin.dashboard.get_cell_details');
     //Media
