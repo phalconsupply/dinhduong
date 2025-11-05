@@ -241,14 +241,8 @@
 @endif
 
 <script>
-// Initialize charts for Mean Stats (simplified)
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        initializeMeanStatsCharts(@json($stats));
-    }, 100);
-});
-
-function initializeMeanStatsCharts(stats) {
+// Define function in global scope
+window.initializeMeanStatsCharts = function(stats) {
     if (!stats || typeof stats !== 'object') return;
     
     // Extract age groups and their data
@@ -276,20 +270,34 @@ function initializeMeanStatsCharts(stats) {
     if (ageGroups.length === 0) return;
     
     console.log('Initializing mean stats charts with', ageGroups.length, 'age groups');
+    console.log('Data:', { ageGroups, weightData, heightData, waZscoreData });
     
     // Create charts container if not exists
     let chartsContainer = document.getElementById('mean-stats-charts');
     if (!chartsContainer) {
         const table = document.getElementById('table-mean');
+        console.log('Table element:', table);
         if (table) {
             chartsContainer = document.createElement('div');
             chartsContainer.id = 'mean-stats-charts';
             chartsContainer.className = 'row mt-4';
-            table.parentElement.parentElement.insertBefore(chartsContainer, table.parentElement);
+            // Insert before the table's parent (which is table-responsive)
+            const tableWrapper = table.parentElement;
+            if (tableWrapper && tableWrapper.parentElement) {
+                tableWrapper.parentElement.insertBefore(chartsContainer, tableWrapper);
+                console.log('Charts container created and inserted');
+            }
+        } else {
+            console.error('Table element not found!');
         }
+    } else {
+        console.log('Charts container already exists');
     }
     
-    if (!chartsContainer) return;
+    if (!chartsContainer) {
+        console.error('Failed to create charts container');
+        return;
+    }
     
     // Create Z-score comparison chart
     chartsContainer.innerHTML = `

@@ -356,10 +356,22 @@ function loadTabData(tabName) {
             tabContent.innerHTML = data.html;
             updateQuickStats(data.data);
             
-            // Initialize charts if needed
-            if (typeof initializeCharts === 'function') {
-                setTimeout(() => initializeCharts(tabName, data.data), 100);
-            }
+            // Initialize charts based on tab type
+            setTimeout(() => {
+                if (tabName === 'mean-stats') {
+                    console.log('Initializing Mean Stats charts...');
+                    if (typeof initializeMeanStatsCharts === 'function') {
+                        initializeMeanStatsCharts(data.data);
+                    }
+                } else if (tabName === 'who-combined') {
+                    console.log('Initializing WHO Combined charts...');
+                    if (typeof initializeWhoCombinedCharts === 'function') {
+                        initializeWhoCombinedCharts(data.data);
+                    }
+                } else if (typeof initializeCharts === 'function') {
+                    initializeCharts(tabName, data.data);
+                }
+            }, 200);
         } else {
             showError(tabContent, data.message || 'Có lỗi xảy ra khi tải dữ liệu');
         }
@@ -430,14 +442,18 @@ function updateQuickStats(data) {
                        (data.total.overweight || 0);
         }
         // Check for Mean Stats structure
-        else if (data['0-11'] || data['12-23'] || data['24-35']) {
+        else if (data['0-5m'] || data['6-11m'] || data['12-23m']) {
             // Mean stats has different structure - calculate from all age groups
-            const ageGroups = ['0-11', '12-23', '24-35', '36-47', '48-59'];
+            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-59m'];
             ageGroups.forEach(group => {
                 if (data[group] && data[group].total) {
-                    totalCount += data[group].total.count || 0;
+                    const groupTotal = data[group].total;
+                    const count = groupTotal.weight?.count || groupTotal.height?.count || 0;
+                    totalCount += count;
                 }
             });
+            // Mean stats doesn't have risk/normal classification
+            // Leave those as "-"
         }
         // Check for WHO Combined structure
         else if (data.all && data.all.stats) {

@@ -164,22 +164,24 @@ function setupExportButtons() {
             console.log(`WHO Combined table for ${group} ready for export`);
         }
     });
-    
-    // Initialize WHO Combined charts
-    @if(!empty($stats))
-        initializeWhoCombinedCharts(@json($stats));
-    @endif
 }
 
-function initializeWhoCombinedCharts(stats) {
+// Define function in global scope
+window.initializeWhoCombinedCharts = function(stats) {
+    console.log('WHO Combined charts init called with:', stats);
+    
     if (!stats || !stats.all || !stats.all.stats) {
-        console.log('No WHO Combined data available for charts');
+        console.error('No WHO Combined data available for charts:', stats);
         return;
     }
     
     // Create charts container
     const tabContent = document.querySelector('#who-combined');
-    if (!tabContent) return;
+    if (!tabContent) {
+        console.error('WHO Combined tab content not found');
+        return;
+    }
+    console.log('WHO Combined tab content found');
     
     let chartsContainer = document.getElementById('who-charts-container');
     if (!chartsContainer) {
@@ -189,9 +191,20 @@ function initializeWhoCombinedCharts(stats) {
         
         // Insert before the tab navigation
         const whoTabsNav = document.getElementById('who-combined-tabs');
+        console.log('WHO tabs nav:', whoTabsNav);
         if (whoTabsNav) {
             whoTabsNav.parentElement.insertBefore(chartsContainer, whoTabsNav);
+            console.log('WHO charts container created and inserted');
+        } else {
+            console.error('WHO tabs nav not found');
         }
+    } else {
+        console.log('WHO charts container already exists');
+    }
+    
+    if (!chartsContainer) {
+        console.error('Failed to create WHO charts container');
+        return;
     }
     
     // Prepare data

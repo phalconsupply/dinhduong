@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .chart-container { width: 600px; height: 400px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Statistics Charts</h1>
+    
+    <div class="test-section">
+        <h2>Test Mean Stats API</h2>
+        <button onclick="testMeanStats()">Load Mean Stats Data</button>
+        <pre id="mean-stats-data"></pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test WHO Combined API</h2>
+        <button onclick="testWhoCombined()">Load WHO Combined Data</button>
+        <pre id="who-combined-data"></pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Chart Rendering</h2>
+        <div class="chart-container">
+            <canvas id="test-chart"></canvas>
+        </div>
+        <button onclick="testChart()">Render Test Chart</button>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin + '/dinhduong/public';
+        
+        async function testMeanStats() {
+            try {
+                const response = await fetch(`${baseUrl}/admin/statistics/get-mean-stats`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                document.getElementById('mean-stats-data').textContent = JSON.stringify(data, null, 2);
+                console.log('Mean Stats data:', data);
+                
+                // Test if initializeMeanStatsCharts would work
+                if (data.success && data.data) {
+                    console.log('Data keys:', Object.keys(data.data));
+                    console.log('Has 0-5m?', !!data.data['0-5m']);
+                    console.log('Has 6-11m?', !!data.data['6-11m']);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('mean-stats-data').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testWhoCombined() {
+            try {
+                const response = await fetch(`${baseUrl}/admin/statistics/get-who-combined`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                document.getElementById('who-combined-data').textContent = JSON.stringify(data, null, 2);
+                console.log('WHO Combined data:', data);
+                
+                // Test if initializeWhoCombinedCharts would work
+                if (data.success && data.data) {
+                    console.log('Has all?', !!data.data.all);
+                    console.log('Has all.stats?', !!(data.data.all && data.data.all.stats));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('who-combined-data').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        function testChart() {
+            const ctx = document.getElementById('test-chart');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'],
+                    datasets: [{
+                        label: 'Test Data',
+                        data: [-1.2, -0.8, -0.5, -0.3, -0.1, 0.2],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            console.log('Test chart rendered');
+        }
+    </script>
+</body>
+</html>
