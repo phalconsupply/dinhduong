@@ -422,30 +422,41 @@ class StatisticsTabController extends Controller
         $whZscores = [];
         $weights = [];
         $heights = [];
-        $validCount = 0;
+        $totalCount = 0;
+        $hasAnyValidData = false;
 
         foreach ($records as $record) {
             $waCheck = $record->check_weight_for_age_auto();
             $haCheck = $record->check_height_for_age_auto();
             $whCheck = $record->check_weight_for_height_auto();
             
+            $recordHasValidData = false;
+            
             // Only include if Z-scores are valid (within -6 to +6)
             if (isset($waCheck['zscore']) && $waCheck['zscore'] !== null && 
                 $waCheck['zscore'] >= -6 && $waCheck['zscore'] <= 6) {
                 $waZscores[] = $waCheck['zscore'];
                 $weights[] = $record->weight;
-                $validCount++;
+                $recordHasValidData = true;
             }
             
             if (isset($haCheck['zscore']) && $haCheck['zscore'] !== null &&
                 $haCheck['zscore'] >= -6 && $haCheck['zscore'] <= 6) {
                 $haZscores[] = $haCheck['zscore'];
                 $heights[] = $record->height;
+                $recordHasValidData = true;
             }
             
             if (isset($whCheck['zscore']) && $whCheck['zscore'] !== null &&
                 $whCheck['zscore'] >= -6 && $whCheck['zscore'] <= 6) {
                 $whZscores[] = $whCheck['zscore'];
+                $recordHasValidData = true;
+            }
+            
+            // Count this record if it has at least one valid Z-score
+            if ($recordHasValidData) {
+                $totalCount++;
+                $hasAnyValidData = true;
             }
         }
 
@@ -455,7 +466,7 @@ class StatisticsTabController extends Controller
             'wa_zscore' => $this->calcMeanSd($waZscores),
             'ha_zscore' => $this->calcMeanSd($haZscores),
             'wh_zscore' => $this->calcMeanSd($whZscores),
-            'count' => $validCount
+            'count' => $totalCount
         ];
     }
 
