@@ -63,6 +63,17 @@ if (!isset($_POST['password'])) {
 
 <?php
 } else {
+    // Determine Laravel root (could be one level up from public folder)
+    $laravelRoot = __DIR__;
+    if (basename(__DIR__) === 'public') {
+        $laravelRoot = dirname(__DIR__);
+    }
+    
+    echo "<div class='info'>";
+    echo "📂 Current directory: <code>" . __DIR__ . "</code><br>";
+    echo "🏠 Laravel root: <code>$laravelRoot</code>";
+    echo "</div>";
+    
     echo "<h2>🔍 STEP 1: Kiểm tra files</h2>";
     
     $issues = [];
@@ -83,7 +94,7 @@ if (!isset($_POST['password'])) {
     
     echo "<div class='code'>";
     foreach ($files as $path => $name) {
-        $fullPath = __DIR__ . '/' . $path;
+        $fullPath = $laravelRoot . '/' . $path;
         if (file_exists($fullPath)) {
             echo "✅ $name: EXISTS\n";
         } else {
@@ -109,7 +120,7 @@ if (!isset($_POST['password'])) {
     echo "<div class='code'>";
     
     // 2.1: Delete route cache
-    $routeCache = __DIR__ . '/bootstrap/cache/routes-v7.php';
+    $routeCache = $laravelRoot . '/bootstrap/cache/routes-v7.php';
     if (file_exists($routeCache)) {
         if (unlink($routeCache)) {
             echo "✅ Deleted route cache: routes-v7.php\n";
@@ -120,7 +131,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.2: Delete config cache
-    $configCache = __DIR__ . '/bootstrap/cache/config.php';
+    $configCache = $laravelRoot . '/bootstrap/cache/config.php';
     if (file_exists($configCache)) {
         if (unlink($configCache)) {
             echo "✅ Deleted config cache: config.php\n";
@@ -131,7 +142,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.3: Clear data cache
-    $cacheDataDir = __DIR__ . '/storage/framework/cache/data';
+    $cacheDataDir = $laravelRoot . '/storage/framework/cache/data';
     if (is_dir($cacheDataDir)) {
         $files = glob($cacheDataDir . '/*');
         $deleted = 0;
@@ -146,7 +157,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.4: Clear view cache
-    $viewCacheDir = __DIR__ . '/storage/framework/views';
+    $viewCacheDir = $laravelRoot . '/storage/framework/views';
     if (is_dir($viewCacheDir)) {
         $files = glob($viewCacheDir . '/*');
         $deleted = 0;
@@ -161,7 +172,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.5: Clear sessions
-    $sessionDir = __DIR__ . '/storage/framework/sessions';
+    $sessionDir = $laravelRoot . '/storage/framework/sessions';
     if (is_dir($sessionDir)) {
         $files = glob($sessionDir . '/*');
         $deleted = 0;
@@ -176,7 +187,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.6: Clear compiled class
-    $compiledFile = __DIR__ . '/storage/framework/compiled.php';
+    $compiledFile = $laravelRoot . '/storage/framework/compiled.php';
     if (file_exists($compiledFile)) {
         unlink($compiledFile);
         echo "✅ Deleted compiled.php\n";
@@ -184,7 +195,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.7: Clear services.php
-    $servicesFile = __DIR__ . '/bootstrap/cache/services.php';
+    $servicesFile = $laravelRoot . '/bootstrap/cache/services.php';
     if (file_exists($servicesFile)) {
         unlink($servicesFile);
         echo "✅ Deleted services.php\n";
@@ -192,7 +203,7 @@ if (!isset($_POST['password'])) {
     }
     
     // 2.8: Clear packages.php
-    $packagesFile = __DIR__ . '/bootstrap/cache/packages.php';
+    $packagesFile = $laravelRoot . '/bootstrap/cache/packages.php';
     if (file_exists($packagesFile)) {
         unlink($packagesFile);
         echo "✅ Deleted packages.php\n";
@@ -214,7 +225,7 @@ if (!isset($_POST['password'])) {
     echo "<h2>🛣️  STEP 3: Verify Routes</h2>";
     echo "<div class='code'>";
     
-    $routeFile = __DIR__ . '/routes/admin.php';
+    $routeFile = $laravelRoot . '/routes/admin.php';
     $routeContent = file_get_contents($routeFile);
     
     if (strpos($routeContent, "Route::get('/statistics', 'StatisticsTabController@index')") !== false) {
