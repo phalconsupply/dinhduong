@@ -382,7 +382,7 @@
                                                 
                                                 <!-- Link to Guide -->
                                                 <div class="guide-link-wrapper">
-                                                    <a href="/dinhduong/public/huong-dan-danh-gia-dinh-duong.html" target="_blank" class="guide-link">
+                                                    <a href="/huong-dan-danh-gia-dinh-duong.html" target="_blank" class="guide-link">
                                                         <i class="fas fa-book-open"></i>
                                                         Xem hướng dẫn chi tiết
                                                     </a>
