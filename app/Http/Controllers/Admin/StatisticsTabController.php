@@ -54,18 +54,18 @@ class StatisticsTabController extends Controller
     {
         $cacheKey = 'statistics_weight_for_age_' . md5(json_encode($request->all()) . auth()->id());
         
-        return Cache::remember($cacheKey, 300, function() use ($request) { // Cache 5 minutes
+        $stats = Cache::remember($cacheKey, 300, function() use ($request) { // Cache 5 minutes
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            $stats = $this->calculateWeightForAgeStats($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats,
-                'html' => view('admin.statistics.tabs.weight-for-age', compact('stats'))->render()
-            ]);
+            return $this->calculateWeightForAgeStats($query);
         });
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.weight-for-age', compact('stats'))->render()
+        ]);
     }
 
     /**
@@ -75,18 +75,18 @@ class StatisticsTabController extends Controller
     {
         $cacheKey = 'statistics_height_for_age_' . md5(json_encode($request->all()) . auth()->id());
         
-        return Cache::remember($cacheKey, 300, function() use ($request) {
+        $stats = Cache::remember($cacheKey, 300, function() use ($request) {
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            $stats = $this->calculateHeightForAgeStats($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats,
-                'html' => view('admin.statistics.tabs.height-for-age', compact('stats'))->render()
-            ]);
+            return $this->calculateHeightForAgeStats($query);
         });
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.height-for-age', compact('stats'))->render()
+        ]);
     }
 
     /**
@@ -96,18 +96,18 @@ class StatisticsTabController extends Controller
     {
         $cacheKey = 'statistics_weight_for_height_' . md5(json_encode($request->all()) . auth()->id());
         
-        return Cache::remember($cacheKey, 300, function() use ($request) {
+        $stats = Cache::remember($cacheKey, 300, function() use ($request) {
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            $stats = $this->calculateWeightForHeightStats($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats,
-                'html' => view('admin.statistics.tabs.weight-for-height', compact('stats'))->render()
-            ]);
+            return $this->calculateWeightForHeightStats($query);
         });
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.weight-for-height', compact('stats'))->render()
+        ]);
     }
 
     /**
@@ -117,18 +117,18 @@ class StatisticsTabController extends Controller
     {
         $cacheKey = 'statistics_mean_stats_' . md5(json_encode($request->all()) . auth()->id());
         
-        return Cache::remember($cacheKey, 300, function() use ($request) {
+        $stats = Cache::remember($cacheKey, 300, function() use ($request) {
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            $stats = $this->calculateMeanStats($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats,
-                'html' => view('admin.statistics.tabs.mean-stats', compact('stats'))->render()
-            ]);
+            return $this->calculateMeanStats($query);
         });
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.mean-stats', compact('stats'))->render()
+        ]);
     }
 
     /**
@@ -138,18 +138,18 @@ class StatisticsTabController extends Controller
     {
         $cacheKey = 'statistics_who_combined_' . md5(json_encode($request->all()) . auth()->id());
         
-        return Cache::remember($cacheKey, 300, function() use ($request) {
+        $stats = Cache::remember($cacheKey, 300, function() use ($request) {
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            $stats = $this->calculateWhoCombinedStats($query);
-            
-            return response()->json([
-                'success' => true,
-                'data' => $stats,
-                'html' => view('admin.statistics.tabs.who-combined', compact('stats'))->render()
-            ]);
+            return $this->calculateWhoCombinedStats($query);
         });
+        
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.who-combined', compact('stats'))->render()
+        ]);
     }
 
     /**

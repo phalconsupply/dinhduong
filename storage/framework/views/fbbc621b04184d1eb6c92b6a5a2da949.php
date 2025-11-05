@@ -1,4 +1,3 @@
-
 <?php $__env->startSection('title'); ?> Thống kê chi tiết khảo sát <?php $__env->stopSection(); ?>
 <?php $__env->startSection('body_class', 'statistics'); ?>
 <?php $__env->startSection('content'); ?>
