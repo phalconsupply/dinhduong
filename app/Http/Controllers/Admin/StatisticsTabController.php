@@ -387,7 +387,7 @@ class StatisticsTabController extends Controller
             $stats[$groupKey] = [
                 'label' => $group['label'],
                 'male' => $this->calculateGenderMeanStatsAuto($groupRecords->where('gender', 1)),
-                'female' => $this->calculateGenderMeanStatsAuto($groupRecords->where('gender', 2)),
+                'female' => $this->calculateGenderMeanStatsAuto($groupRecords->where('gender', 0)),
                 'total' => $this->calculateGenderMeanStatsAuto($groupRecords),
             ];
         }
