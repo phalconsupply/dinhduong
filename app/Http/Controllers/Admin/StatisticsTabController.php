@@ -199,9 +199,9 @@ class StatisticsTabController extends Controller
         $records = $query->get();
 
         $stats = [
-            'male' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'total' => 0],
-            'female' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'total' => 0],
-            'total' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'total' => 0]
+            'male' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'invalid' => 0, 'total' => 0],
+            'female' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'invalid' => 0, 'total' => 0],
+            'total' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'invalid' => 0, 'total' => 0]
         ];
 
         foreach ($records as $record) {
@@ -224,6 +224,11 @@ class StatisticsTabController extends Controller
                 case 'overweight':
                     $stats[$gender]['overweight']++;
                     $stats['total']['overweight']++;
+                    break;
+                default:
+                    // Unknown, invalid, or any other non-standard result
+                    $stats[$gender]['invalid']++;
+                    $stats['total']['invalid']++;
                     break;
             }
 
@@ -256,9 +261,9 @@ class StatisticsTabController extends Controller
         $records = $query->get();
 
         $stats = [
-            'male' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'total' => 0],
-            'female' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'total' => 0],
-            'total' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'total' => 0]
+            'male' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'invalid' => 0, 'total' => 0],
+            'female' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'invalid' => 0, 'total' => 0],
+            'total' => ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'invalid' => 0, 'total' => 0]
         ];
 
         foreach ($records as $record) {
@@ -277,6 +282,11 @@ class StatisticsTabController extends Controller
                 case 'normal':
                     $stats[$gender]['normal']++;
                     $stats['total']['normal']++;
+                    break;
+                default:
+                    // Unknown, invalid, or any other non-standard result
+                    $stats[$gender]['invalid']++;
+                    $stats['total']['invalid']++;
                     break;
             }
 
@@ -308,9 +318,9 @@ class StatisticsTabController extends Controller
         $records = $query->get();
 
         $stats = [
-            'male' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'total' => 0],
-            'female' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'total' => 0],
-            'total' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'total' => 0]
+            'male' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'invalid' => 0, 'total' => 0],
+            'female' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'invalid' => 0, 'total' => 0],
+            'total' => ['wasted_severe' => 0, 'wasted_moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'invalid' => 0, 'total' => 0]
         ];
 
         foreach ($records as $record) {
@@ -337,6 +347,11 @@ class StatisticsTabController extends Controller
                 case 'obese':
                     $stats[$gender]['obese']++;
                     $stats['total']['obese']++;
+                    break;
+                default:
+                    // Unknown, invalid, or any other non-standard result
+                    $stats[$gender]['invalid']++;
+                    $stats['total']['invalid']++;
                     break;
             }
 

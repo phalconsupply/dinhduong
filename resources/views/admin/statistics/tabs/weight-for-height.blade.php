@@ -143,6 +143,42 @@
                         <span class="badge bg-warning text-dark fw-bold">{{ $stats['total']['wasted_pct'] ?? 0 }}%</span>
                     </td>
                 </tr>
+                @if(($stats['total']['invalid'] ?? 0) > 0)
+                <tr class="table-secondary">
+                    <td class="fw-semibold">
+                        <span class="badge bg-secondary me-2"><i class="uil uil-question-circle"></i></span>
+                        Không xác định / Ngoài phạm vi
+                        <small class="text-muted d-block">Dữ liệu không hợp lệ hoặc ngoài chuẩn WHO</small>
+                    </td>
+                    <td class="text-center">{{ $stats['male']['invalid'] ?? 0 }}</td>
+                    <td class="text-center">
+                        @php
+                            $maleInvalidPct = ($stats['male']['total'] ?? 0) > 0 
+                                ? round(($stats['male']['invalid'] ?? 0) / $stats['male']['total'] * 100, 1) 
+                                : 0;
+                        @endphp
+                        <span class="badge bg-light text-dark">{{ $maleInvalidPct }}%</span>
+                    </td>
+                    <td class="text-center">{{ $stats['female']['invalid'] ?? 0 }}</td>
+                    <td class="text-center">
+                        @php
+                            $femaleInvalidPct = ($stats['female']['total'] ?? 0) > 0 
+                                ? round(($stats['female']['invalid'] ?? 0) / $stats['female']['total'] * 100, 1) 
+                                : 0;
+                        @endphp
+                        <span class="badge bg-light text-dark">{{ $femaleInvalidPct }}%</span>
+                    </td>
+                    <td class="text-center fw-bold">{{ $stats['total']['invalid'] ?? 0 }}</td>
+                    <td class="text-center">
+                        @php
+                            $totalInvalidPct = ($stats['total']['total'] ?? 0) > 0 
+                                ? round(($stats['total']['invalid'] ?? 0) / $stats['total']['total'] * 100, 1) 
+                                : 0;
+                        @endphp
+                        <span class="badge bg-secondary">{{ $totalInvalidPct }}%</span>
+                    </td>
+                </tr>
+                @endif
                 <tr class="table-info">
                     <td class="fw-bold">
                         <i class="uil uil-users-alt text-info"></i>
