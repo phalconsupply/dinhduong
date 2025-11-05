@@ -37,10 +37,13 @@ class UserController extends Controller
                 ->orWhere('id_number', 'like', '%' . $keyword . '%');
         });
         if(is_manager()){
-            if(is_super_admin_province()){
-                $users = $users->where('unit_province_code', Auth::user()->unit->province_code);
-            }else{
-                $users = $users->where('unit_id', Auth::user()->unit_id);
+            $authUser = Auth::user();
+            if($authUser->unit) {
+                if(is_super_admin_province()){
+                    $users = $users->where('unit_province_code', $authUser->unit->province_code);
+                }else{
+                    $users = $users->where('unit_id', $authUser->unit_id);
+                }
             }
         }
         $users = $users->paginate(20);

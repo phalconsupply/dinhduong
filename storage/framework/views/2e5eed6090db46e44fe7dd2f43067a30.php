@@ -49,7 +49,7 @@
                 </td>
                 <td>
                     <span class="small"><?php echo e($unit->created_at->format('d-m-Y')); ?></span><br>
-                    <span class="small"><?php echo e($unit->creator->username); ?></span>
+                    <span class="small"><?php echo e($unit->creator->username ?? 'N/A'); ?></span>
                 </td>
                 <td>
                     <div class="btn-group dropdown-primary me-2 mt-2">

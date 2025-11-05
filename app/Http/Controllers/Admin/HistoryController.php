@@ -118,6 +118,11 @@ class HistoryController extends Controller
         $is_delete = false;
         $user = Auth::user();
         if($user->role !== 'admin'){
+            // Check if user has a unit before accessing it
+            if(!$user->unit || !$user->unit->unit_type) {
+                return redirect()->back()->with('error', 'Bạn không có quyền xóa bản ghi này (không thuộc đơn vị nào).');
+            }
+            
             $unit_role =  $user->unit->unit_type->role;
             switch ($unit_role) {
                 case 'super_admin_province':

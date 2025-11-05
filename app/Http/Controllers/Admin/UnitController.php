@@ -35,9 +35,15 @@ class UnitController extends Controller
         });
 
         if(!$user->hasRole('admin')){
-            $units = $units->where('id', $user->unit->id);
-            if($user->hasRole('manager') && $user->unit->unit_type->role == 'super_admin_province'){
-                $units = $units->orWhere('created_by', Auth::id());
+            // Check if user has a unit before accessing it
+            if($user->unit) {
+                $units = $units->where('id', $user->unit->id);
+                if($user->hasRole('manager') && $user->unit->unit_type && $user->unit->unit_type->role == 'super_admin_province'){
+                    $units = $units->orWhere('created_by', Auth::id());
+                }
+            } else {
+                // User has no unit, show only units they created
+                $units = $units->where('created_by', Auth::id());
             }
         }
 
@@ -49,7 +55,10 @@ class UnitController extends Controller
     {
         $provinces = Province::select('name','code');
         if(is_manager()){
-            $provinces = $provinces->where('code', Auth::user()->unit->province_code);
+            $user = Auth::user();
+            if($user->unit) {
+                $provinces = $provinces->where('code', $user->unit->province_code);
+            }
         }
         $provinces = $provinces->get();
         $unit_types = UnitTypes::get();

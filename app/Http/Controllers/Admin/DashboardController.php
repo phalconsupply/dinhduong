@@ -188,6 +188,12 @@ class DashboardController extends Controller
         if($user->role === 'admin'){
             return $query;
         }
+        
+        // Check if user has a unit before accessing it
+        if(!$user->unit || !$user->unit->unit_type) {
+            return $query; // Return unfiltered query if no unit
+        }
+        
         $unit_role =  $user->unit->unit_type->role;
         switch ($unit_role) {
             case 'super_admin_province':
