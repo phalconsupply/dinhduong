@@ -320,10 +320,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadTabData(tabName) {
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
-    // Convert tab name: weight-for-age -> weight-age
+    // Convert tab name to match HTML IDs
     const tabId = tabName.replace('weight-for-age', 'weight-age')
                          .replace('height-for-age', 'height-age')
-                         .replace('weight-for-height', 'weight-height');
+                         .replace('weight-for-height', 'weight-height')
+                         .replace('mean-stats', 'mean-stats')  // Keep as-is
+                         .replace('who-combined', 'who-combined'); // Keep as-is
     const tabContent = document.getElementById(tabId);
     
     if (!tab || !tabContent) {
