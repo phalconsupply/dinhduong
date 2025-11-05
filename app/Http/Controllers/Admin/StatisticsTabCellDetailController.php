@@ -159,11 +159,12 @@ class StatisticsTabCellDetailController extends Controller
                 $check = $record->check_weight_for_age_auto();
                 $matches = $this->matchesClassification($check, $classification, 'wa');
                 
-                // Debug log for invalid classification
-                if ($classification === 'invalid' && $matches) {
-                    \Log::info('Invalid record found', [
+                // Debug log for invalid classification - log ALL records to see what results we're getting
+                if ($classification === 'invalid') {
+                    \Log::info('Checking record for invalid', [
                         'id' => $record->id,
-                        'check' => $check,
+                        'result' => $check['result'] ?? 'N/A',
+                        'zscore' => $check['zscore'] ?? 'N/A',
                         'matches' => $matches
                     ]);
                 }
@@ -201,34 +202,21 @@ class StatisticsTabCellDetailController extends Controller
         $zscore = $check['zscore'] ?? null;
         
         // Invalid/unknown classification - matches StatisticsTabController logic
-        // Any result that is NOT in the standard classifications is considered invalid
+        // Records are counted as "invalid" if they fall into the default case in the switch statement
+        // This means their result is NOT one of the valid classification values for that indicator
         if ($classification === 'invalid' || $classification === 'unknown') {
-            // For Weight-for-Age: valid results are underweight_severe, underweight_moderate, normal, overweight
-            // For Height-for-Age: valid results are stunted_severe, stunted_moderate, normal
-            // For Weight-for-Height: valid results are wasted_severe, wasted_moderate, normal, overweight, obese
-            
-            $validResults = [
-                'underweight_severe', 'underweight_moderate',
-                'stunted_severe', 'stunted_moderate',
-                'wasted_severe', 'wasted_moderate',
-                'normal', 'overweight', 'obese'
+            // Define valid results per indicator type (must match switch cases in StatisticsTabController)
+            $validResultsByType = [
+                'wa' => ['underweight_severe', 'underweight_moderate', 'normal', 'overweight'], // Weight-for-Age
+                'ha' => ['stunted_severe', 'stunted_moderate', 'normal'], // Height-for-Age
+                'wh' => ['wasted_severe', 'wasted_moderate', 'normal', 'overweight', 'obese'] // Weight-for-Height
             ];
             
-            // If result is not in valid list, it's invalid
-            if (!in_array($result, $validResults)) {
-                return true;
-            }
+            $validResults = $validResultsByType[$type] ?? [];
             
-            // Also check if zscore is outside WHO valid range
-            if ($zscore === null || $zscore === false) {
-                return true;
-            }
-            
-            if (is_numeric($zscore) && ($zscore < -6 || $zscore > 6)) {
-                return true;
-            }
-            
-            return false;
+            // If result is NOT in the valid list for this indicator, it's considered invalid
+            // Examples: 'obese' in Weight-for-Age, 'unknown', or any other unexpected result
+            return !in_array($result, $validResults);
         }
         
         // Map classification to result values
