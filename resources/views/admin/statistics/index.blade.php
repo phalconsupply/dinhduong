@@ -413,12 +413,47 @@ function updateQuickStats(data) {
         const riskElement = document.getElementById('total-risk');
         const normalElement = document.getElementById('total-normal');
         
+        let totalCount = 0;
+        let riskCount = 0;
+        let normalCount = 0;
+        
+        // Check for total.total (Weight/Height for Age, Weight for Height)
         if (data.total && data.total.total) {
-            totalElement.textContent = data.total.total.toLocaleString();
+            totalCount = data.total.total;
+            normalCount = data.total.normal || 0;
+            
+            // Risk = severe + moderate (or stunted, wasted)
+            riskCount = (data.total.severe || 0) + 
+                       (data.total.moderate || 0) + 
+                       (data.total.wasted_severe || 0) + 
+                       (data.total.wasted_moderate || 0) + 
+                       (data.total.overweight || 0);
+        }
+        // Check for Mean Stats structure
+        else if (data['0-11'] || data['12-23'] || data['24-35']) {
+            // Mean stats has different structure - calculate from all age groups
+            const ageGroups = ['0-11', '12-23', '24-35', '36-47', '48-59'];
+            ageGroups.forEach(group => {
+                if (data[group] && data[group].total) {
+                    totalCount += data[group].total.count || 0;
+                }
+            });
+        }
+        // Check for WHO Combined structure
+        else if (data.all && data.all.stats) {
+            const stats = data.all.stats;
+            if (stats.total && stats.total.n) {
+                totalCount = stats.total.n;
+                // WHO Combined doesn't have simple risk/normal split
+                // Show total as both metrics are complex
+            }
         }
         
-        // Calculate risk and normal based on tab type
-        // This will be updated per tab implementation
+        totalElement.textContent = totalCount.toLocaleString();
+        riskElement.textContent = riskCount > 0 ? riskCount.toLocaleString() : '-';
+        normalElement.textContent = normalCount > 0 ? normalCount.toLocaleString() : '-';
+        
+        updateLastUpdated();
     }
 }
 

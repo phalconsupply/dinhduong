@@ -276,5 +276,233 @@ function initializeMeanStatsCharts(stats) {
     if (ageGroups.length === 0) return;
     
     console.log('Initializing mean stats charts with', ageGroups.length, 'age groups');
+    
+    // Create charts container if not exists
+    let chartsContainer = document.getElementById('mean-stats-charts');
+    if (!chartsContainer) {
+        const table = document.getElementById('table-mean');
+        if (table) {
+            chartsContainer = document.createElement('div');
+            chartsContainer.id = 'mean-stats-charts';
+            chartsContainer.className = 'row mt-4';
+            table.parentElement.parentElement.insertBefore(chartsContainer, table.parentElement);
+        }
+    }
+    
+    if (!chartsContainer) return;
+    
+    // Create Z-score comparison chart
+    chartsContainer.innerHTML = `
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="uil uil-chart-line"></i> Biểu đồ Z-score trung bình theo nhóm tuổi</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="mean-zscore-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="uil uil-weight"></i> Cân nặng và Chiều cao trung bình</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="mean-physical-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Z-score Chart
+    const zscoreCtx = document.getElementById('mean-zscore-chart');
+    if (zscoreCtx) {
+        new Chart(zscoreCtx, {
+            type: 'line',
+            data: {
+                labels: ageGroups,
+                datasets: [
+                    {
+                        label: 'W/A Z-score',
+                        data: waZscoreData,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'H/A Z-score',
+                        data: haZscoreData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'W/H Z-score',
+                        data: whZscoreData,
+                        borderColor: 'rgb(255, 159, 64)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Ngưỡng -2SD',
+                        data: Array(ageGroups.length).fill(-2),
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.8,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += Number(context.parsed.y).toFixed(2);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Z-score'
+                        },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === -2) {
+                                    return 'rgba(255, 99, 132, 0.3)';
+                                }
+                                return 'rgba(0, 0, 0, 0.1)';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Nhóm tuổi (tháng)'
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    }
+    
+    // Physical measurements chart
+    const physicalCtx = document.getElementById('mean-physical-chart');
+    if (physicalCtx) {
+        new Chart(physicalCtx, {
+            type: 'bar',
+            data: {
+                labels: ageGroups,
+                datasets: [
+                    {
+                        label: 'Cân nặng (kg)',
+                        data: weightData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Chiều cao (cm)',
+                        data: heightData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.8,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += Number(context.parsed.y).toFixed(1);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Cân nặng (kg)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Chiều cao (cm)'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Nhóm tuổi (tháng)'
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 </script>

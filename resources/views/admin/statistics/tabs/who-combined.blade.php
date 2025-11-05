@@ -164,5 +164,332 @@ function setupExportButtons() {
             console.log(`WHO Combined table for ${group} ready for export`);
         }
     });
+    
+    // Initialize WHO Combined charts
+    @if(!empty($stats))
+        initializeWhoCombinedCharts(@json($stats));
+    @endif
+}
+
+function initializeWhoCombinedCharts(stats) {
+    if (!stats || !stats.all || !stats.all.stats) {
+        console.log('No WHO Combined data available for charts');
+        return;
+    }
+    
+    // Create charts container
+    const tabContent = document.querySelector('#who-combined');
+    if (!tabContent) return;
+    
+    let chartsContainer = document.getElementById('who-charts-container');
+    if (!chartsContainer) {
+        chartsContainer = document.createElement('div');
+        chartsContainer.id = 'who-charts-container';
+        chartsContainer.className = 'row mb-4';
+        
+        // Insert before the tab navigation
+        const whoTabsNav = document.getElementById('who-combined-tabs');
+        if (whoTabsNav) {
+            whoTabsNav.parentElement.insertBefore(chartsContainer, whoTabsNav);
+        }
+    }
+    
+    // Prepare data
+    const allStats = stats.all.stats;
+    const ageGroups = [];
+    const waData = { lt3sd: [], lt2sd: [], mean: [] };
+    const haData = { lt3sd: [], lt2sd: [], mean: [] };
+    const whData = { lt3sd: [], lt2sd: [], gt2sd: [], mean: [] };
+    
+    const ageKeys = ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'];
+    ageKeys.forEach(key => {
+        if (allStats[key]) {
+            ageGroups.push(allStats[key].label);
+            waData.lt3sd.push(allStats[key].wa.lt_3sd_pct);
+            waData.lt2sd.push(allStats[key].wa.lt_2sd_pct);
+            waData.mean.push(allStats[key].wa.mean);
+            haData.lt3sd.push(allStats[key].ha.lt_3sd_pct);
+            haData.lt2sd.push(allStats[key].ha.lt_2sd_pct);
+            haData.mean.push(allStats[key].ha.mean);
+            whData.lt3sd.push(allStats[key].wh.lt_3sd_pct);
+            whData.lt2sd.push(allStats[key].wh.lt_2sd_pct);
+            whData.gt2sd.push(allStats[key].wh.gt_2sd_pct);
+            whData.mean.push(allStats[key].wh.mean);
+        }
+    });
+    
+    // Create charts HTML
+    chartsContainer.innerHTML = `
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="uil uil-chart-bar"></i> Tỷ lệ suy dinh dưỡng theo nhóm tuổi (%)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="who-malnutrition-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="uil uil-chart-line"></i> Z-score trung bình (Mean)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="who-zscore-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="uil uil-balance-scale"></i> So sánh W/H: Gầy còm vs Thừa cân (%)</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="who-wh-comparison-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Chart 1: Malnutrition rates (stacked bar)
+    const malnutritionCtx = document.getElementById('who-malnutrition-chart');
+    if (malnutritionCtx) {
+        new Chart(malnutritionCtx, {
+            type: 'bar',
+            data: {
+                labels: ageGroups,
+                datasets: [
+                    {
+                        label: 'W/A < -2SD (Suy dinh dưỡng)',
+                        data: waData.lt2sd,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'H/A < -2SD (Thấp còi)',
+                        data: haData.lt2sd,
+                        backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                        borderColor: 'rgb(255, 159, 64)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'W/H < -2SD (Gầy còm)',
+                        data: whData.lt2sd,
+                        backgroundColor: 'rgba(255, 205, 86, 0.7)',
+                        borderColor: 'rgb(255, 205, 86)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tỷ lệ (%)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Nhóm tuổi (tháng)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Chart 2: Z-score means
+    const zscoreCtx = document.getElementById('who-zscore-chart');
+    if (zscoreCtx) {
+        new Chart(zscoreCtx, {
+            type: 'line',
+            data: {
+                labels: ageGroups,
+                datasets: [
+                    {
+                        label: 'W/A Mean',
+                        data: waData.mean,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'H/A Mean',
+                        data: haData.mean,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'W/H Mean',
+                        data: whData.mean,
+                        borderColor: 'rgb(153, 102, 255)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Ngưỡng -2SD',
+                        data: Array(ageGroups.length).fill(-2),
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderDash: [5, 5],
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    },
+                    {
+                        label: 'Chuẩn (0)',
+                        data: Array(ageGroups.length).fill(0),
+                        borderColor: 'rgb(201, 203, 207)',
+                        borderDash: [2, 2],
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Z-score'
+                        },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === -2 || context.tick.value === 0) {
+                                    return 'rgba(255, 99, 132, 0.3)';
+                                }
+                                return 'rgba(0, 0, 0, 0.1)';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Nhóm tuổi (tháng)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Chart 3: W/H comparison (underweight vs overweight)
+    const whComparisonCtx = document.getElementById('who-wh-comparison-chart');
+    if (whComparisonCtx) {
+        new Chart(whComparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ageGroups,
+                datasets: [
+                    {
+                        label: 'W/H < -2SD (Gầy còm)',
+                        data: whData.lt2sd,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'W/H > +2SD (Thừa cân)',
+                        data: whData.gt2sd,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 3,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tỷ lệ (%)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Nhóm tuổi (tháng)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    console.log('WHO Combined charts initialized successfully');
 }
 </script>
