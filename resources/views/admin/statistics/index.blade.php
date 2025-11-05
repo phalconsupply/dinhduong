@@ -183,8 +183,8 @@
             </div>
         </div>
 
-        {{-- Quick Stats Summary --}}
-        <div class="row mt-4">
+        {{-- Quick Stats Summary (hidden for Mean Stats tab) --}}
+        <div class="row mt-4" id="quick-stats-container">
             <div class="col-md-3">
                 <div class="card border-primary">
                     <div class="card-body text-center">
@@ -291,6 +291,10 @@
 {{-- Scripts --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Show Quick Stats by default (first tab is weight-for-age)
+    const quickStatsContainer = document.getElementById('quick-stats-container');
+    quickStatsContainer.style.display = 'flex';
+    
     // Auto-load first tab
     loadTabData('weight-for-age');
     
@@ -331,6 +335,14 @@ function loadTabData(tabName) {
     if (!tab || !tabContent) {
         console.error('Tab or content not found:', { tabName, tabId, tab, tabContent });
         return;
+    }
+    
+    // Show/hide Quick Stats based on tab type
+    const quickStatsContainer = document.getElementById('quick-stats-container');
+    if (tabName === 'mean-stats') {
+        quickStatsContainer.style.display = 'none';
+    } else {
+        quickStatsContainer.style.display = 'flex';
     }
     
     // Show loading state
