@@ -157,7 +157,18 @@ class StatisticsTabCellDetailController extends Controller
             // Determine which check method to use
             if ($tab === 'weight-for-age' || ($tab === 'who-combined' && $indicator === 'wa')) {
                 $check = $record->check_weight_for_age_auto();
-                return $this->matchesClassification($check, $classification, 'wa');
+                $matches = $this->matchesClassification($check, $classification, 'wa');
+                
+                // Debug log for invalid classification
+                if ($classification === 'invalid' && $matches) {
+                    \Log::info('Invalid record found', [
+                        'id' => $record->id,
+                        'check' => $check,
+                        'matches' => $matches
+                    ]);
+                }
+                
+                return $matches;
             } elseif ($tab === 'height-for-age' || ($tab === 'who-combined' && $indicator === 'ha')) {
                 $check = $record->check_height_for_age_auto();
                 return $this->matchesClassification($check, $classification, 'ha');
@@ -172,6 +183,12 @@ class StatisticsTabCellDetailController extends Controller
             return false;
         });
         
+        \Log::info('Filtered results for invalid', [
+            'classification' => $classification,
+            'total_before' => $records->count(),
+            'total_after' => $filtered->count()
+        ]);
+        
         return $filtered;
     }
     
@@ -183,9 +200,35 @@ class StatisticsTabCellDetailController extends Controller
         $result = $check['result'] ?? 'unknown';
         $zscore = $check['zscore'] ?? null;
         
-        // Invalid/unknown classification
+        // Invalid/unknown classification - matches StatisticsTabController logic
+        // Any result that is NOT in the standard classifications is considered invalid
         if ($classification === 'invalid' || $classification === 'unknown') {
-            return $result === 'unknown' || $zscore === null || $zscore < -6 || $zscore > 6;
+            // For Weight-for-Age: valid results are underweight_severe, underweight_moderate, normal, overweight
+            // For Height-for-Age: valid results are stunted_severe, stunted_moderate, normal
+            // For Weight-for-Height: valid results are wasted_severe, wasted_moderate, normal, overweight, obese
+            
+            $validResults = [
+                'underweight_severe', 'underweight_moderate',
+                'stunted_severe', 'stunted_moderate',
+                'wasted_severe', 'wasted_moderate',
+                'normal', 'overweight', 'obese'
+            ];
+            
+            // If result is not in valid list, it's invalid
+            if (!in_array($result, $validResults)) {
+                return true;
+            }
+            
+            // Also check if zscore is outside WHO valid range
+            if ($zscore === null || $zscore === false) {
+                return true;
+            }
+            
+            if (is_numeric($zscore) && ($zscore < -6 || $zscore > 6)) {
+                return true;
+            }
+            
+            return false;
         }
         
         // Map classification to result values

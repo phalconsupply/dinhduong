@@ -210,7 +210,15 @@
                         Không xác định / Ngoài phạm vi
                         <small class="text-muted d-block">Dữ liệu không hợp lệ hoặc ngoài chuẩn WHO</small>
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['invalid'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-age"
+                        data-gender="male"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Tuổi: Không xác định - Bé trai">
+                        <?php echo e($stats['male']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $maleInvalidPct = ($stats['male']['total'] ?? 0) > 0 
@@ -219,7 +227,15 @@
                         ?>
                         <span class="badge bg-light text-dark"><?php echo e($maleInvalidPct); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['invalid'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-age"
+                        data-gender="female"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Tuổi: Không xác định - Bé gái">
+                        <?php echo e($stats['female']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $femaleInvalidPct = ($stats['female']['total'] ?? 0) > 0 
@@ -228,7 +244,15 @@
                         ?>
                         <span class="badge bg-light text-dark"><?php echo e($femaleInvalidPct); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['invalid'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-age"
+                        data-gender="total"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Tuổi: Không xác định - Tổng">
+                        <?php echo e($stats['total']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $totalInvalidPct = ($stats['total']['total'] ?? 0) > 0 
