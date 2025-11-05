@@ -157,19 +157,7 @@ class StatisticsTabCellDetailController extends Controller
             // Determine which check method to use
             if ($tab === 'weight-for-age' || ($tab === 'who-combined' && $indicator === 'wa')) {
                 $check = $record->check_weight_for_age_auto();
-                $matches = $this->matchesClassification($check, $classification, 'wa');
-                
-                // Debug log for invalid classification - log ALL records to see what results we're getting
-                if ($classification === 'invalid') {
-                    \Log::info('Checking record for invalid', [
-                        'id' => $record->id,
-                        'result' => $check['result'] ?? 'N/A',
-                        'zscore' => $check['zscore'] ?? 'N/A',
-                        'matches' => $matches
-                    ]);
-                }
-                
-                return $matches;
+                return $this->matchesClassification($check, $classification, 'wa');
             } elseif ($tab === 'height-for-age' || ($tab === 'who-combined' && $indicator === 'ha')) {
                 $check = $record->check_height_for_age_auto();
                 return $this->matchesClassification($check, $classification, 'ha');
@@ -183,12 +171,6 @@ class StatisticsTabCellDetailController extends Controller
             
             return false;
         });
-        
-        \Log::info('Filtered results for invalid', [
-            'classification' => $classification,
-            'total_before' => $records->count(),
-            'total_after' => $filtered->count()
-        ]);
         
         return $filtered;
     }
