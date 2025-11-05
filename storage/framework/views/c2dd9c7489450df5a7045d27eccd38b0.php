@@ -104,11 +104,15 @@
 
                     <?php if($row->slug == '' || $row->slug == 'tu-0-5-tuoi'): ?>
                         <?php
-                            $weight_for_age = $row->check_weight_for_age();
-                            $height_for_age = $row->check_height_for_age();
-                            $weight_for_height = $row->check_weight_for_height();
-                            $bmi_for_age = $row->check_bmi_for_age();
-                            $nutrition_status = $row->get_nutrition_status();
+                            // Sử dụng auto-switching methods (LMS hoặc SD Bands theo cấu hình)
+                            $weight_for_age = $row->check_weight_for_age_auto();
+                            $height_for_age = $row->check_height_for_age_auto();
+                            $weight_for_height = $row->check_weight_for_height_auto();
+                            $bmi_for_age = $row->check_bmi_for_age_auto();
+                            $nutrition_status = $row->get_nutrition_status_auto();
+                            
+                            // Thêm thông tin phương pháp đang sử dụng
+                            $current_method = isUsingLMS() ? 'WHO LMS 2006' : 'SD Bands Legacy';
                         ?>
 
                         <!-- BLOCK 2: Nutrition Status Summary -->
@@ -138,13 +142,44 @@
                                 <h3 class="card-title">Kết quả chi tiết</h3>
                             </div>
                             <div class="card-body">
+                                <!-- Thông tin phương pháp tính toán -->
+                                <div class="method-info" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5 style="margin: 0 0 8px 0; color: #495057;">
+                                                <i class="fas fa-cogs" style="color: #6c757d;"></i> Phương pháp tính toán
+                                            </h5>
+                                            <p style="margin: 0; font-weight: bold; color: #007bff;">
+                                                <?php echo e($current_method); ?>
+
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5 style="margin: 0 0 8px 0; color: #495057;">
+                                                <i class="fas fa-info-circle" style="color: #6c757d;"></i> Tiêu chuẩn đánh giá
+                                            </h5>
+                                            <p style="margin: 0 0 8px 0; color: #6c757d;">
+                                                <?php if(isUsingLMS()): ?>
+                                                    WHO Child Growth Standards 2006 (LMS Method)
+                                                <?php else: ?> 
+                                                    SD Bands Method (Legacy)
+                                                <?php endif; ?>
+                                            </p>
+                                            <a href="<?php echo e(asset('/huong-dan-danh-gia-dinh-duong.html')); ?>" target="_blank" 
+                                               style="color: #007bff; text-decoration: none; font-size: 12px;">
+                                                <i class="fas fa-external-link-alt"></i> Xem hướng dẫn chi tiết
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="results-table">
                                     <table class="table-modern">
                                         <thead>
                                             <tr>
-                                                <th style="width: 30%;">Tên chỉ số</th>
-                                                <th style="width: 30%;">Kết quả</th>
-                                                <th style="width: 40%;">Kết luận</th>
+                                                <th style="width: 25%;">Tên chỉ số</th>
+                                                <th style="width: 20%;">Giá trị</th>
+                                                <th style="width: 20%;">Z-Score</th>
+                                                <th style="width: 35%;">Kết luận</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -153,8 +188,11 @@
                                                     <i class="fas fa-weight-hanging"></i> Cân nặng theo tuổi
                                                 </td>
                                                 <td class="text-center">
-                                                    <strong><?php echo e($row->weight); ?> kg</strong><br>
-                                                    <small><em>(<?php echo e($weight_for_age['zscore_category']); ?>)</em></small>
+                                                    <strong><?php echo e($row->weight); ?> kg</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong><?php echo e(isset($weight_for_age['zscore']) ? number_format($weight_for_age['zscore'], 2) : 'N/A'); ?></strong><br>
+                                                    <small><em>(<?php echo e($weight_for_age['zscore_category'] ?? 'Unknown'); ?>)</em></small>
                                                 </td>
                                                 <td class="text-center"><?php echo e($weight_for_age['text']); ?></td>
                                             </tr>
@@ -163,8 +201,11 @@
                                                     <i class="fas fa-ruler-vertical"></i> Chiều cao theo tuổi
                                                 </td>
                                                 <td class="text-center">
-                                                    <strong><?php echo e($row->height); ?> cm</strong><br>
-                                                    <small><em>(<?php echo e($height_for_age['zscore_category']); ?>)</em></small>
+                                                    <strong><?php echo e($row->height); ?> cm</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong><?php echo e(isset($height_for_age['zscore']) ? number_format($height_for_age['zscore'], 2) : 'N/A'); ?></strong><br>
+                                                    <small><em>(<?php echo e($height_for_age['zscore_category'] ?? 'Unknown'); ?>)</em></small>
                                                 </td>
                                                 <td class="text-center"><?php echo e($height_for_age['text']); ?></td>
                                             </tr>
@@ -173,8 +214,11 @@
                                                     <i class="fas fa-balance-scale"></i> Cân nặng theo chiều cao
                                                 </td>
                                                 <td class="text-center">
-                                                    <strong><?php echo e($row->weight); ?> kg / <?php echo e($row->height); ?> cm</strong><br>
-                                                    <small><em>(<?php echo e($weight_for_height['zscore_category']); ?>)</em></small>
+                                                    <strong><?php echo e($row->weight); ?> kg / <?php echo e($row->height); ?> cm</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong><?php echo e(isset($weight_for_height['zscore']) ? number_format($weight_for_height['zscore'], 2) : 'N/A'); ?></strong><br>
+                                                    <small><em>(<?php echo e($weight_for_height['zscore_category'] ?? 'Unknown'); ?>)</em></small>
                                                 </td>
                                                 <td class="text-center"><?php echo e($weight_for_height['text']); ?></td>
                                             </tr>
@@ -183,13 +227,202 @@
                                                     <i class="fas fa-calculator"></i> BMI theo tuổi
                                                 </td>
                                                 <td class="text-center">
-                                                    <strong><?php echo e(number_format($row->weight / (($row->height / 100) * ($row->height / 100)), 2)); ?></strong><br>
-                                                    <small><em>(<?php echo e($bmi_for_age['zscore_category']); ?>)</em></small>
+                                                    <strong><?php echo e(number_format($row->weight / (($row->height / 100) * ($row->height / 100)), 2)); ?></strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong><?php echo e(isset($bmi_for_age['zscore']) ? number_format($bmi_for_age['zscore'], 2) : 'N/A'); ?></strong><br>
+                                                    <small><em>(<?php echo e($bmi_for_age['zscore_category'] ?? 'Unknown'); ?>)</em></small>
                                                 </td>
                                                 <td class="text-center"><?php echo e($bmi_for_age['text']); ?></td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WHO LMS Classification Details -->
+                        <div class="form-section-card result-block">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                <h3 class="card-title">Chi tiết bảng chuẩn WHO LMS được sử dụng</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="lms-details-grid">
+                                    <?php
+                                        $wfaInfo = $row->getWeightForAgeZScoreLMSDetails();
+                                        $hfaInfo = $row->getHeightForAgeZScoreLMSDetails();
+                                        $wfhInfo = $row->getWeightForHeightZScoreLMSDetails();
+                                        $bmiInfo = $row->getBMIForAgeZScoreLMSDetails();
+                                    ?>
+                                    
+                                    <!-- Weight for Age LMS Info -->
+                                    <?php if($wfaInfo): ?>
+                                    <div class="lms-info-card">
+                                        <div class="lms-header">
+                                            <h5><i class="fas fa-weight-hanging"></i> Cân nặng theo tuổi (WFA)</h5>
+                                            <span class="age-range-badge age-range-<?php echo e(str_replace(['_', 'y', 'w'], ['-', 'y', 'w'], $wfaInfo['age_range'])); ?>">
+                                                <?php echo e($wfaInfo['age_range']); ?>
+
+                                            </span>
+                                        </div>
+                                        <div class="lms-parameters">
+                                            <div class="parameter">
+                                                <label>L (Lambda):</label>
+                                                <span><?php echo e(number_format($wfaInfo['L'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>M (Median):</label>
+                                                <span><?php echo e(number_format($wfaInfo['M'], 4)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>S (Sigma):</label>
+                                                <span><?php echo e(number_format($wfaInfo['S'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>Phương pháp:</label>
+                                                <span class="method-badge method-<?php echo e($wfaInfo['method']); ?>">
+                                                    <?php echo e($wfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?>
+
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <!-- Height for Age LMS Info -->
+                                    <?php if($hfaInfo): ?>
+                                    <div class="lms-info-card">
+                                        <div class="lms-header">
+                                            <h5><i class="fas fa-ruler-vertical"></i> Chiều cao theo tuổi (HFA)</h5>
+                                            <span class="age-range-badge age-range-<?php echo e(str_replace(['_', 'y', 'w'], ['-', 'y', 'w'], $hfaInfo['age_range'])); ?>">
+                                                <?php echo e($hfaInfo['age_range']); ?>
+
+                                            </span>
+                                        </div>
+                                        <div class="lms-parameters">
+                                            <div class="parameter">
+                                                <label>L (Lambda):</label>
+                                                <span><?php echo e(number_format($hfaInfo['L'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>M (Median):</label>
+                                                <span><?php echo e(number_format($hfaInfo['M'], 4)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>S (Sigma):</label>
+                                                <span><?php echo e(number_format($hfaInfo['S'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>Phương pháp:</label>
+                                                <span class="method-badge method-<?php echo e($hfaInfo['method']); ?>">
+                                                    <?php echo e($hfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?>
+
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <!-- Weight for Height LMS Info -->
+                                    <?php if($wfhInfo): ?>
+                                    <div class="lms-info-card">
+                                        <div class="lms-header">
+                                            <h5><i class="fas fa-balance-scale"></i> 
+                                                <?php if(isset($wfhInfo['measurement_type']) && $wfhInfo['measurement_type'] == 'length'): ?>
+                                                    Cân nặng theo chiều dài (WFL)
+                                                <?php else: ?>
+                                                    Cân nặng theo chiều cao (WFH)
+                                                <?php endif; ?>
+                                            </h5>
+                                            <span class="age-range-badge age-range-<?php echo e(str_replace(['_', 'y', 'w'], ['-', 'y', 'w'], $wfhInfo['age_range'])); ?>">
+                                                <?php echo e($wfhInfo['age_range']); ?>
+
+                                            </span>
+                                        </div>
+                                        <div class="lms-parameters">
+                                            <div class="parameter">
+                                                <label>L (Lambda):</label>
+                                                <span><?php echo e(number_format($wfhInfo['L'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>M (Median):</label>
+                                                <span><?php echo e(number_format($wfhInfo['M'], 4)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>S (Sigma):</label>
+                                                <span><?php echo e(number_format($wfhInfo['S'], 6)); ?></span>
+                                            </div>
+                                            <div class="parameter">
+                                                <label>Phương pháp:</label>
+                                                <span class="method-badge method-<?php echo e($wfhInfo['method']); ?>">
+                                                    <?php echo e($wfhInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?>
+
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <?php if(isset($wfhInfo['measurement_type'])): ?>
+                                        <div class="measurement-type-note">
+                                            <small><i class="fas fa-info-circle"></i> 
+                                                <?php if($wfhInfo['measurement_type'] == 'length'): ?>
+                                                    Đo chiều dài nằm (< 24 tháng)
+                                                <?php else: ?>
+                                                    Đo chiều cao đứng (≥ 24 tháng)
+                                                <?php endif; ?>
+                                            </small>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <!-- Age Classification Summary -->
+                                <div class="age-classification-summary">
+                                    <div class="classification-header">
+                                        <h5><i class="fas fa-users"></i> Phân loại đối tượng theo tuổi</h5>
+                                    </div>
+                                    <div class="classification-content">
+                                        <?php
+                                            $ageInWeeks = $row->age * 4.33;
+                                            if ($ageInWeeks <= 13) {
+                                                $ageGroup = 'Trẻ sơ sinh (0-13 tuần)';
+                                                $ageGroupClass = 'infant';
+                                                $description = 'Giai đoạn tăng trưởng cực nhanh, sử dụng dữ liệu theo tuần';
+                                            } elseif ($row->age <= 24) {
+                                                $ageGroup = 'Trẻ nhỏ (0-2 tuổi)';
+                                                $ageGroupClass = 'toddler';
+                                                $description = 'Giai đoạn tăng trưởng nhanh, đo chiều dài nằm';
+                                            } elseif ($row->age <= 60) {
+                                                $ageGroup = 'Trẻ lớn (2-5 tuổi)';
+                                                $ageGroupClass = 'preschool';
+                                                $description = 'Giai đoạn ổn định tăng trưởng, đo chiều cao đứng';
+                                            } else {
+                                                $ageGroup = 'Trên 5 tuổi';
+                                                $ageGroupClass = 'school';
+                                                $description = 'Ngoài phạm vi đánh giá dinh dưỡng trẻ em WHO';
+                                            }
+                                        ?>
+                                        <div class="age-group-info age-group-<?php echo e($ageGroupClass); ?>">
+                                            <div class="age-group-icon">
+                                                <?php if($ageGroupClass == 'infant'): ?>
+                                                    <i class="fas fa-baby"></i>
+                                                <?php elseif($ageGroupClass == 'toddler'): ?>
+                                                    <i class="fas fa-child"></i>
+                                                <?php elseif($ageGroupClass == 'preschool'): ?>
+                                                    <i class="fas fa-users"></i>
+                                                <?php else: ?>
+                                                    <i class="fas fa-user-graduate"></i>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="age-group-details">
+                                                <h6><?php echo e($ageGroup); ?></h6>
+                                                <p><?php echo e($description); ?></p>
+                                                <small><strong>Tuổi hiện tại:</strong> <?php echo e($row->age); ?> tháng (<?php echo e(number_format($ageInWeeks, 1)); ?> tuần)</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,9 +501,10 @@
                                 <h3 class="card-title">Đánh giá chung</h3>
                             </div>
                             <div class="card-body">
-                                <div class="nutrition-status-badge" style="background-color: <?php echo e($row->check_bmi_for_age()['color']); ?>; padding: 20px; border-radius: 8px; text-align: center;">
+                                <?php $bmi_result_auto = $row->check_bmi_for_age_auto(); ?>
+                                <div class="nutrition-status-badge" style="background-color: <?php echo e($bmi_result_auto['color']); ?>; padding: 20px; border-radius: 8px; text-align: center;">
                                     <h2 style="margin: 0; color: white; font-size: 24px; font-weight: bold;">
-                                        <?php echo e($row->check_bmi_for_age()['text']); ?>
+                                        <?php echo e($bmi_result_auto['text']); ?>
 
                                     </h2>
                                 </div>
@@ -304,8 +538,8 @@
                                     if (!empty($advices)) {
                                         $default_advice .= '<div class="advice-list">';
                                         
-                                        // Weight for age advice
-                                        $waResult = $row->check_weight_for_age()['result'] ?? null;
+                                        // Weight for age advice (using auto method)
+                                        $waResult = $row->check_weight_for_age_auto()['result'] ?? null;
                                         if ($waResult) {
                                             $waAdvice = $advices[$ageGroup]['weight_for_age'][$waResult] 
                                                      ?? $advices['weight_for_age'][$waResult] 
@@ -315,8 +549,8 @@
                                             }
                                         }
                                         
-                                        // Weight for height advice
-                                        $whResult = $row->check_weight_for_height()['result'] ?? null;
+                                        // Weight for height advice (using auto method)
+                                        $whResult = $row->check_weight_for_height_auto()['result'] ?? null;
                                         if ($whResult) {
                                             $whAdvice = $advices[$ageGroup]['weight_for_height'][$whResult] 
                                                      ?? $advices['weight_for_height'][$whResult] 
@@ -326,8 +560,8 @@
                                             }
                                         }
                                         
-                                        // Height for age advice
-                                        $haResult = $row->check_height_for_age()['result'] ?? null;
+                                        // Height for age advice (using auto method)
+                                        $haResult = $row->check_height_for_age_auto()['result'] ?? null;
                                         if ($haResult) {
                                             $haAdvice = $advices[$ageGroup]['height_for_age'][$haResult] 
                                                      ?? $advices['height_for_age'][$haResult] 
@@ -892,6 +1126,247 @@
 
             .chart-modal-body canvas {
                 height: 400px !important;
+            }
+        }
+
+        /* LMS Details Styles */
+        .lms-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .lms-info-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lms-info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .lms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .lms-header h5 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .lms-header i {
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+
+        .age-range-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .age-range-0-13w { background: linear-gradient(45deg, #ff6b6b, #ff8e53); }
+        .age-range-0-2y { background: linear-gradient(45deg, #4ecdc4, #44a08d); }
+        .age-range-0-5y { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .age-range-2-5y { background: linear-gradient(45deg, #f093fb, #f5576c); }
+
+        .lms-parameters {
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .parameter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .parameter:last-child {
+            border-bottom: none;
+        }
+
+        .parameter label {
+            font-weight: 600;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .parameter span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .method-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .method-exact {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .method-interpolated {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .measurement-type-note {
+            padding: 0.75rem 1.25rem;
+            background: #f0f9ff;
+            border-top: 1px solid #e0e7ff;
+        }
+
+        .measurement-type-note small {
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        /* Age Classification Summary */
+        .age-classification-summary {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .classification-header {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .classification-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .classification-header i {
+            margin-right: 0.5rem;
+        }
+
+        .classification-content {
+            padding: 1.5rem;
+        }
+
+        .age-group-info {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .age-group-infant {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+        }
+
+        .age-group-toddler {
+            background: #f0fdfa;
+            border-left-color: #059669;
+        }
+
+        .age-group-preschool {
+            background: #eff6ff;
+            border-left-color: #2563eb;
+        }
+
+        .age-group-school {
+            background: #fefce8;
+            border-left-color: #ca8a04;
+        }
+
+        .age-group-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .age-group-infant .age-group-icon {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .age-group-toddler .age-group-icon {
+            background: linear-gradient(45deg, #059669, #10b981);
+            color: white;
+        }
+
+        .age-group-preschool .age-group-icon {
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            color: white;
+        }
+
+        .age-group-school .age-group-icon {
+            background: linear-gradient(45deg, #ca8a04, #eab308);
+            color: white;
+        }
+
+        .age-group-details h6 {
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .age-group-details p {
+            margin: 0 0 0.5rem 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .age-group-details small {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .lms-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .lms-parameters {
+                grid-template-columns: 1fr;
+            }
+
+            .age-group-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .age-group-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
             }
         }
     </style>

@@ -3,10 +3,10 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>{{$setting['site-title']}} - Kết quả đánh giá tình trạng dinh dưỡng</title>
-    <link href="{{asset($setting['logo-light'])}}" rel="shortcut icon" type="image/x-icon">
-    @include("sections.in-style")
-    <script src="{{url('/web/frontend/js/lib/jquery-2.2.3.min.js')}}"></script>
+    <title><?php echo e($setting['site-title']); ?> - Kết quả đánh giá tình trạng dinh dưỡng</title>
+    <link href="<?php echo e(asset($setting['logo-light'])); ?>" rel="shortcut icon" type="image/x-icon">
+    <?php echo $__env->make("sections.in-style", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <script src="<?php echo e(url('/web/frontend/js/lib/jquery-2.2.3.min.js')); ?>"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -98,7 +98,7 @@
 <div class="nuti-print">
     <div class="print-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <figure style="margin: 0;">
-            <img src="{{$setting['logo-light']}}" width="90px">
+            <img src="<?php echo e($setting['logo-light']); ?>" width="90px">
         </figure>
         <div class="print-header-info">
             <p>SỞ Y TẾ LÂM ĐỒNG</p>
@@ -113,7 +113,7 @@
     <div class="print-info">
         <div class="col50">
             <p class="label">Họ và tên:</p>
-            <p class="value uppercase">{{ $row['fullname'] }}</p>
+            <p class="value uppercase"><?php echo e($row['fullname']); ?></p>
         </div>
 
         <div class="col25">
@@ -122,28 +122,29 @@
                 Số tháng tuổi:
             </p>
             <p class="value" >
-                {{$row['age']}} tháng
+                <?php echo e($row['age']); ?> tháng
             </p>
         </div>
         <div class="cf"></div>
         <div class="col50">
             <p class="label">Giới tính:</p>
-            <p class="value">{{$row->get_gender()}}</p>
+            <p class="value"><?php echo e($row->get_gender()); ?></p>
         </div>
         <div class="col50">
             <p class="label">Dân tộc</p>
-            <p class="value">{{$row->ethnic->name}}</p>
+            <p class="value"><?php echo e($row->ethnic->name); ?></p>
         </div>
         <div class="cf"></div>
         <div class="col50">
             <p class="label">Ngày sinh:</p>
 
-            <p class="value">{{$row->birthday ? $row->birthday->format('d/m/Y') : '' }}</p>
+            <p class="value"><?php echo e($row->birthday ? $row->birthday->format('d/m/Y') : ''); ?></p>
         </div>
         <div class="col50">
             <p class="label" style="width: 91px">Ngày cân đo:</p>
             <p class="value">
-                {{$row->cal_date->format('d-m-Y')}}
+                <?php echo e($row->cal_date->format('d-m-Y')); ?>
+
             </p>
 
 
@@ -152,15 +153,15 @@
         <div class="cl" style="margin-top:10px"></div>
         <div class="col20" style="display: table;">
             <p class="label">Cân nặng:</p>
-            <p class="value">{{$row->weight}} kg</p>
+            <p class="value"><?php echo e($row->weight); ?> kg</p>
         </div>
         <div class="col80" style="display: table">
             <p><em>(
-                    Chuẩn cân nặng theo tuổi: {{$row->WeightForAge()['Median'] ?? 'Chưa có dữ liệu'}} kg
+                    Chuẩn cân nặng theo tuổi: <?php echo e($row->WeightForAge()['Median'] ?? 'Chưa có dữ liệu'); ?> kg
                     )
 
                     <br/>
-                    ( Chuẩn cân nặng theo chiều cao hiện có: {{$row->WeightForHeight()['Median'] ?? 'Chưa có dữ liệu'}} kg )
+                    ( Chuẩn cân nặng theo chiều cao hiện có: <?php echo e($row->WeightForHeight()['Median'] ?? 'Chưa có dữ liệu'); ?> kg )
 
                 </em>
 
@@ -172,47 +173,47 @@
 
         <div class="col20">
             <p class="label">Chiều cao:</p>
-            <p class="value">{{$row->height}} cm</p>
+            <p class="value"><?php echo e($row->height); ?> cm</p>
         </div>
         <div class="col80">
-            <p><em>( Chuẩn chiều cao theo tuổi: {{$row->HeightForAge()['Median'] ?? 'Chưa có dữ liệu'}} cm )</em></p>
+            <p><em>( Chuẩn chiều cao theo tuổi: <?php echo e($row->HeightForAge()['Median'] ?? 'Chưa có dữ liệu'); ?> cm )</em></p>
         </div>
         <div class="cf"></div>
         
         <!-- Thông tin lúc sinh -->
-        @if($row->birth_weight || $row->gestational_age)
+        <?php if($row->birth_weight || $row->gestational_age): ?>
         <div class="cl" style="margin-top:10px"></div>
         <div class="col50">
             <p class="label">Cân nặng lúc sinh:</p>
             <p class="value">
-                @if($row->birth_weight)
-                    {{number_format($row->birth_weight, 0, ',', '.')}} gram
-                    @if($row->birth_weight_category)
+                <?php if($row->birth_weight): ?>
+                    <?php echo e(number_format($row->birth_weight, 0, ',', '.')); ?> gram
+                    <?php if($row->birth_weight_category): ?>
                         <span style="color: 
-                            @if($row->birth_weight_category == 'Nhẹ cân') #856404
-                            @elseif($row->birth_weight_category == 'Đủ cân') #155724
-                            @elseif($row->birth_weight_category == 'Thừa cân') #721c24
-                            @endif
+                            <?php if($row->birth_weight_category == 'Nhẹ cân'): ?> #856404
+                            <?php elseif($row->birth_weight_category == 'Đủ cân'): ?> #155724
+                            <?php elseif($row->birth_weight_category == 'Thừa cân'): ?> #721c24
+                            <?php endif; ?>
                             ; font-weight: bold;">
-                            ({{$row->birth_weight_category}})
+                            (<?php echo e($row->birth_weight_category); ?>)
                         </span>
-                    @endif
-                @else
+                    <?php endif; ?>
+                <?php else: ?>
                     Chưa có dữ liệu
-                @endif
+                <?php endif; ?>
             </p>
         </div>
         <div class="col50">
             <p class="label">Tuổi thai lúc sinh:</p>
-            <p class="value">{{$row->gestational_age ?? 'Chưa có dữ liệu'}}</p>
+            <p class="value"><?php echo e($row->gestational_age ?? 'Chưa có dữ liệu'); ?></p>
         </div>
         <div class="cf"></div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <div class="print-info">
-        @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi')
-            @php
+        <?php if($row->slug == '' || $row->slug == 'tu-0-5-tuoi'): ?>
+            <?php
                 $weight_for_age = $row->check_weight_for_age();
                 $height_for_age = $row->check_height_for_age();
                 $weight_for_height = $row->check_weight_for_height();
@@ -224,7 +225,7 @@
                                $height_for_age['result'] == 'normal' && 
                                $weight_for_height['result'] == 'normal' &&
                                $bmi_for_age['result'] == 'normal');
-            @endphp
+            ?>
             
             <!-- Tình trạng dinh dưỡng tổng hợp -->
             <table style="width: 100%; margin-bottom: 10px; page-break-inside: avoid;">
@@ -232,9 +233,10 @@
                 <th style="text-align: center; background: #418c39; color: white">Tình trạng dinh dưỡng</th>
                 </thead>
                 <tbody>
-                <tr style="background-color: {{$nutrition_status['color']}}">
+                <tr style="background-color: <?php echo e($nutrition_status['color']); ?>">
                     <td style="text-align: center; font-weight: bold; padding: 8px; font-size: 14px;">
-                        {{$nutrition_status['text']}}
+                        <?php echo e($nutrition_status['text']); ?>
+
                     </td>
                 </tr>
                 </tbody>
@@ -251,60 +253,60 @@
                 </thead>
                 <tbody>
                     <!-- Hiển thị đầy đủ 4 chỉ số -->
-                    <tr style="background-color: {{$weight_for_age['color']}}">
+                    <tr style="background-color: <?php echo e($weight_for_age['color']); ?>">
                         <td style="vertical-align: middle;">Cân nặng theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
-                            {{$row->weight}} kg<br>
-                            <small><em>({{$weight_for_age['zscore_category']}})</em></small>
+                            <?php echo e($row->weight); ?> kg<br>
+                            <small><em>(<?php echo e($weight_for_age['zscore_category']); ?>)</em></small>
                         </td>
-                        <td style="text-align: center; vertical-align: middle;">{{$weight_for_age['text']}}</td>
+                        <td style="text-align: center; vertical-align: middle;"><?php echo e($weight_for_age['text']); ?></td>
                     </tr>
-                    <tr style="background-color: {{$height_for_age['color']}}">
+                    <tr style="background-color: <?php echo e($height_for_age['color']); ?>">
                         <td style="vertical-align: middle;">Chiều cao theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
-                            {{$row->height}} cm<br>
-                            <small><em>({{$height_for_age['zscore_category']}})</em></small>
+                            <?php echo e($row->height); ?> cm<br>
+                            <small><em>(<?php echo e($height_for_age['zscore_category']); ?>)</em></small>
                         </td>
-                        <td style="text-align: center; vertical-align: middle;">{{$height_for_age['text']}}</td>
+                        <td style="text-align: center; vertical-align: middle;"><?php echo e($height_for_age['text']); ?></td>
                     </tr>
-                    <tr style="background-color: {{$weight_for_height['color']}}">
+                    <tr style="background-color: <?php echo e($weight_for_height['color']); ?>">
                         <td style="vertical-align: middle;">Cân nặng theo chiều cao</td>
                         <td style="text-align: center; vertical-align: middle;">
-                            {{$row->weight}} kg / {{$row->height}} cm<br>
-                            <small><em>({{$weight_for_height['zscore_category']}})</em></small>
+                            <?php echo e($row->weight); ?> kg / <?php echo e($row->height); ?> cm<br>
+                            <small><em>(<?php echo e($weight_for_height['zscore_category']); ?>)</em></small>
                         </td>
-                        <td style="text-align: center; vertical-align: middle;">{{$weight_for_height['text']}}</td>
+                        <td style="text-align: center; vertical-align: middle;"><?php echo e($weight_for_height['text']); ?></td>
                     </tr>
-                    <tr style="background-color: {{$bmi_for_age['color']}}">
+                    <tr style="background-color: <?php echo e($bmi_for_age['color']); ?>">
                         <td style="vertical-align: middle;">BMI theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
-                            {{ number_format($row->weight / (($row->height / 100) * ($row->height / 100)), 2) }}<br>
-                            <small><em>({{$bmi_for_age['zscore_category']}})</em></small>
+                            <?php echo e(number_format($row->weight / (($row->height / 100) * ($row->height / 100)), 2)); ?><br>
+                            <small><em>(<?php echo e($bmi_for_age['zscore_category']); ?>)</em></small>
                         </td>
-                        <td style="text-align: center; vertical-align: middle;">{{$bmi_for_age['text']}}</td>
+                        <td style="text-align: center; vertical-align: middle;"><?php echo e($bmi_for_age['text']); ?></td>
                     </tr>
                 </tbody>
             </table>
-        @else
+        <?php else: ?>
             <table style="width: 100%">
                 <thead>
                 <th style="text-align: center; background: #418c39; color: white">Đánh giá chung</th>
                 </thead>
                 <tbody>
-                <tr style="text-align: center; background-color: {{$row->check_bmi_for_age()['color']}}">
-                    <td>{{$row->check_bmi_for_age()['text']}}</td>
+                <tr style="text-align: center; background-color: <?php echo e($row->check_bmi_for_age()['color']); ?>">
+                    <td><?php echo e($row->check_bmi_for_age()['text']); ?></td>
                 </tr>
                 </tbody>
             </table>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!-- WHO LMS Classification Details for Print -->
-    @if($row->slug == 'tu-0-5-tuoi')
+    <?php if($row->slug == 'tu-0-5-tuoi'): ?>
         <div style="page-break-inside: avoid; margin-top: 15px;">
             <h5>Chi tiết bảng chuẩn WHO LMS được sử dụng</h5>
             
-            @php
+            <?php
                 $wfaInfo = $row->getWeightForAgeZScoreLMSDetails();
                 $hfaInfo = $row->getHeightForAgeZScoreLMSDetails();
                 $wfhInfo = $row->getWeightForHeightZScoreLMSDetails();
@@ -323,7 +325,7 @@
                     $ageGroup = 'Trên 5 tuổi';
                     $description = 'Ngoài phạm vi đánh giá dinh dưỡng trẻ em WHO';
                 }
-            @endphp
+            ?>
 
             <table style="width: 100%; margin-bottom: 10px;">
                 <thead>
@@ -336,15 +338,15 @@
                 <tbody>
                     <tr>
                         <td style="padding: 6px; font-weight: bold; width: 30%;">Nhóm tuổi:</td>
-                        <td style="padding: 6px;">{{$ageGroup}}</td>
+                        <td style="padding: 6px;"><?php echo e($ageGroup); ?></td>
                     </tr>
                     <tr>
                         <td style="padding: 6px; font-weight: bold;">Mô tả:</td>
-                        <td style="padding: 6px;">{{$description}}</td>
+                        <td style="padding: 6px;"><?php echo e($description); ?></td>
                     </tr>
                     <tr>
                         <td style="padding: 6px; font-weight: bold;">Tuổi hiện tại:</td>
-                        <td style="padding: 6px;">{{$row->age}} tháng ({{number_format($ageInWeeks, 1)}} tuần)</td>
+                        <td style="padding: 6px;"><?php echo e($row->age); ?> tháng (<?php echo e(number_format($ageInWeeks, 1)); ?> tuần)</td>
                     </tr>
                     <tr>
                         <td style="padding: 6px; font-weight: bold;">Phương pháp:</td>
@@ -353,7 +355,7 @@
                 </tbody>
             </table>
 
-            @if($wfaInfo || $hfaInfo || $wfhInfo)
+            <?php if($wfaInfo || $hfaInfo || $wfhInfo): ?>
             <table style="width: 100%; font-size: 12px;">
                 <thead>
                     <tr>
@@ -366,52 +368,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($wfaInfo)
+                    <?php if($wfaInfo): ?>
                     <tr>
                         <td style="padding: 4px;">Cân nặng theo tuổi</td>
-                        <td style="text-align: center; padding: 4px;">{{$wfaInfo['age_range']}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfaInfo['L'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfaInfo['M'], 2)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfaInfo['S'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{$wfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'}}</td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($wfaInfo['age_range']); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfaInfo['L'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfaInfo['M'], 2)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfaInfo['S'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($wfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?></td>
                     </tr>
-                    @endif
-                    @if($hfaInfo)
+                    <?php endif; ?>
+                    <?php if($hfaInfo): ?>
                     <tr>
                         <td style="padding: 4px;">Chiều cao theo tuổi</td>
-                        <td style="text-align: center; padding: 4px;">{{$hfaInfo['age_range']}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($hfaInfo['L'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($hfaInfo['M'], 2)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($hfaInfo['S'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{$hfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'}}</td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($hfaInfo['age_range']); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($hfaInfo['L'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($hfaInfo['M'], 2)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($hfaInfo['S'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($hfaInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?></td>
                     </tr>
-                    @endif
-                    @if($wfhInfo)
+                    <?php endif; ?>
+                    <?php if($wfhInfo): ?>
                     <tr>
                         <td style="padding: 4px;">
-                            @if(isset($wfhInfo['measurement_type']) && $wfhInfo['measurement_type'] == 'length')
+                            <?php if(isset($wfhInfo['measurement_type']) && $wfhInfo['measurement_type'] == 'length'): ?>
                                 Cân nặng theo chiều dài
-                            @else
+                            <?php else: ?>
                                 Cân nặng theo chiều cao
-                            @endif
+                            <?php endif; ?>
                         </td>
-                        <td style="text-align: center; padding: 4px;">{{$wfhInfo['age_range']}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfhInfo['L'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfhInfo['M'], 2)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{number_format($wfhInfo['S'], 4)}}</td>
-                        <td style="text-align: center; padding: 4px;">{{$wfhInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'}}</td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($wfhInfo['age_range']); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfhInfo['L'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfhInfo['M'], 2)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e(number_format($wfhInfo['S'], 4)); ?></td>
+                        <td style="text-align: center; padding: 4px;"><?php echo e($wfhInfo['method'] == 'exact' ? 'Chính xác' : 'Nội suy'); ?></td>
                     </tr>
-                    @endif
+                    <?php endif; ?>
                 </tbody>
             </table>
-            @endif
+            <?php endif; ?>
         </div>
-    @endif
+    <?php endif; ?>
 
     <h5>Lời khuyên</h5>
 
     <div class="print-recommendation">
-        @php
+        <?php
             $advices = json_decode($setting['advices'], true);
             $ageGroup = $row->getAgeGroupKey(); // Get age group: '0-5', '6-11', etc.
             
@@ -430,31 +432,31 @@
             $haAdvice = $advices[$ageGroup]['height_for_age'][$haResult] 
                      ?? $advices['height_for_age'][$haResult] 
                      ?? '';
-        @endphp
+        ?>
         <ul>
-            @if($waAdvice)<li>{{ $waAdvice }}</li>@endif
-            @if($whAdvice)<li>{{ $whAdvice }}</li>@endif
-            @if($haAdvice)<li>{{ $haAdvice }}</li>@endif
+            <?php if($waAdvice): ?><li><?php echo e($waAdvice); ?></li><?php endif; ?>
+            <?php if($whAdvice): ?><li><?php echo e($whAdvice); ?></li><?php endif; ?>
+            <?php if($haAdvice): ?><li><?php echo e($haAdvice); ?></li><?php endif; ?>
         </ul>
 
-        <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>
+        <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong><?php echo e($setting['phone']); ?></strong> để được tư vấn thêm.</p>
     </div>
 
     <div style="display: flex; margin-top: 8px; gap: 8px;">
         <div style="width: 50%;">
-            @include('sections.Chart-HeightForAge')
+            <?php echo $__env->make('sections.Chart-HeightForAge', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
         <div style="width: 50%;">
-            @include('sections.Chart-WeightForAge')
+            <?php echo $__env->make('sections.Chart-WeightForAge', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
     </div>
     
     <div style="display: flex; margin-top: 8px; gap: 8px;">
         <div style="width: 50%;">
-            @include('sections.Chart-WeightForHeight')
+            <?php echo $__env->make('sections.Chart-WeightForHeight', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
         <div style="width: 50%;">
-            @include('sections.Chart-BMIForAge')
+            <?php echo $__env->make('sections.Chart-BMIForAge', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
     </div>
 
@@ -705,7 +707,8 @@
         <div style="display:flex;"></div>
         <div class="print-signature" style="width: 100%;text-align: center;">
             <p class="print-date">
-                Ngày {{$row->cal_date->format('d-m-Y')}}
+                Ngày <?php echo e($row->cal_date->format('d-m-Y')); ?>
+
             </p>
             <h5 class="print-name">
                 <!--  -->
@@ -714,6 +717,7 @@
         </div>
     </div>
 </div>
-@stack('foot')
+<?php echo $__env->yieldPushContent('foot'); ?>
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\dinhduong\resources\views/in.blade.php ENDPATH**/ ?>

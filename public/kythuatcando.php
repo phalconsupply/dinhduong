@@ -133,6 +133,55 @@
             margin-right: 8px;
         }
 
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1001;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+            border-bottom: none !important;
+            transition: all 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9ff;
+            color: #667eea;
+        }
+
+        .dropdown-content a.active {
+            background-color: #f8f9ff;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown > a:after {
+            content: ' ▼';
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
         /* Main Container */
         .page-container {
             padding: 20px;
@@ -577,15 +626,21 @@
                             <i class="fas fa-user"></i> Trên 19 tuổi
                         </a>
                     </li>
-                    <li>
-                        <a href="/who-statistics.php">
-                            <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại
+                    <li class="dropdown current">
+                        <a href="#">
+                            <i class="fas fa-book"></i> Documents
                         </a>
-                    </li>
-                    <li class="current">
-                        <a href="/kythuatcando.php">
-                            <i class="fas fa-ruler-combined"></i> Kỹ thuật cân đo
-                        </a>
+                        <div class="dropdown-content">
+                            <a href="/who-statistics.php">
+                                <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại WHO
+                            </a>
+                            <a href="/kythuatcando.php" class="active">
+                                <i class="fas fa-ruler-combined"></i> Kỹ thuật cân đo
+                            </a>
+                            <a href="/huong-dan-danh-gia-dinh-duong.html">
+                                <i class="fas fa-chart-line"></i> Hướng dẫn đánh giá dinh dưỡng
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>

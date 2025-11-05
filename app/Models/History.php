@@ -767,6 +767,96 @@ class History extends Model
         
         return $this->calculateZScoreLMS($indicator, $this->weight);
     }
+
+    /**
+     * Lấy thông tin chi tiết LMS cho Weight-for-Age
+     */
+    public function getWeightForAgeZScoreLMSDetails()
+    {
+        if ($this->weight === null || $this->gender === null || $this->age === null) {
+            return null;
+        }
+        
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $lms = WHOZScoreLMS::getLMSForAge('wfa', $sex, $this->age);
+        
+        if ($lms) {
+            $lms['indicator'] = 'wfa';
+            $lms['sex'] = $sex;
+            $lms['age_months'] = $this->age;
+            $lms['value'] = $this->weight;
+        }
+        
+        return $lms;
+    }
+
+    /**
+     * Lấy thông tin chi tiết LMS cho Height-for-Age
+     */
+    public function getHeightForAgeZScoreLMSDetails()
+    {
+        if ($this->height === null || $this->gender === null || $this->age === null) {
+            return null;
+        }
+        
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $lms = WHOZScoreLMS::getLMSForAge('hfa', $sex, $this->age);
+        
+        if ($lms) {
+            $lms['indicator'] = 'hfa';
+            $lms['sex'] = $sex;
+            $lms['age_months'] = $this->age;
+            $lms['value'] = $this->height;
+        }
+        
+        return $lms;
+    }
+
+    /**
+     * Lấy thông tin chi tiết LMS cho BMI-for-Age
+     */
+    public function getBMIForAgeZScoreLMSDetails()
+    {
+        if ($this->bmi === null || $this->gender === null || $this->age === null) {
+            return null;
+        }
+        
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $lms = WHOZScoreLMS::getLMSForAge('bmi', $sex, $this->age);
+        
+        if ($lms) {
+            $lms['indicator'] = 'bmi';
+            $lms['sex'] = $sex;
+            $lms['age_months'] = $this->age;
+            $lms['value'] = $this->bmi;
+        }
+        
+        return $lms;
+    }
+
+    /**
+     * Lấy thông tin chi tiết LMS cho Weight-for-Height
+     */
+    public function getWeightForHeightZScoreLMSDetails()
+    {
+        if ($this->age === null || $this->height === null || $this->weight === null || $this->gender === null) {
+            return null;
+        }
+        
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $indicator = ($this->age < 24) ? 'wfl' : 'wfh';
+        $lms = WHOZScoreLMS::getLMSForHeight($indicator, $sex, $this->height, $this->age);
+        
+        if ($lms) {
+            $lms['indicator'] = $indicator;
+            $lms['sex'] = $sex;
+            $lms['age_months'] = $this->age;
+            $lms['height'] = $this->height;
+            $lms['value'] = $this->weight;
+        }
+        
+        return $lms;
+    }
     
     /**
      * Phân loại dinh dưỡng dựa trên Z-score (WHO standard)
@@ -915,8 +1005,10 @@ class History extends Model
     public function check_weight_for_age_lms()
     {
         $zscore = $this->getWeightForAgeZScoreLMS();
+        $lmsInfo = $this->getWeightForAgeZScoreLMSDetails();
         $classification = $this->classifyByZScore($zscore, 'wfa');
         $classification['zscore'] = $zscore;
+        $classification['lms_info'] = $lmsInfo;
         return $classification;
     }
     
@@ -926,8 +1018,10 @@ class History extends Model
     public function check_height_for_age_lms()
     {
         $zscore = $this->getHeightForAgeZScoreLMS();
+        $lmsInfo = $this->getHeightForAgeZScoreLMSDetails();
         $classification = $this->classifyByZScore($zscore, 'hfa');
         $classification['zscore'] = $zscore;
+        $classification['lms_info'] = $lmsInfo;
         return $classification;
     }
     
@@ -937,8 +1031,10 @@ class History extends Model
     public function check_bmi_for_age_lms()
     {
         $zscore = $this->getBMIForAgeZScoreLMS();
+        $lmsInfo = $this->getBMIForAgeZScoreLMSDetails();
         $classification = $this->classifyByZScore($zscore, 'bmi');
         $classification['zscore'] = $zscore;
+        $classification['lms_info'] = $lmsInfo;
         return $classification;
     }
     
@@ -948,9 +1044,11 @@ class History extends Model
     public function check_weight_for_height_lms()
     {
         $zscore = $this->getWeightForHeightZScoreLMS();
+        $lmsInfo = $this->getWeightForHeightZScoreLMSDetails();
         // WFH/WFL uses same classification as wfh
         $classification = $this->classifyByZScore($zscore, 'wfh');
         $classification['zscore'] = $zscore;
+        $classification['lms_info'] = $lmsInfo;
         return $classification;
     }
     
@@ -1038,6 +1136,108 @@ class History extends Model
         return isUsingLMS() 
             ? $this->check_weight_for_height_lms() 
             : $this->check_weight_for_height();
+    }
+
+    public function get_nutrition_status_auto()
+    {
+        // Lấy kết quả các chỉ số với auto-switching
+        $wfa = $this->check_weight_for_age_auto();      // Cân nặng/tuổi
+        $hfa = $this->check_height_for_age_auto();      // Chiều cao/tuổi
+        $wfh = $this->check_weight_for_height_auto();   // Cân nặng/chiều cao
+        
+        $text = 'Chưa xác định';
+        $color = 'gray';
+        $code = 'unknown';
+        
+        // Kiểm tra dữ liệu có đủ không
+        if ($wfa['result'] === 'unknown' || $hfa['result'] === 'unknown' || $wfh['result'] === 'unknown') {
+            return ['text' => 'Chưa có đủ dữ liệu', 'color' => 'gray', 'code' => 'unknown'];
+        }
+        
+        // 1. SUY DINH DƯỠNG PHỐI HỢP (vừa thấp còi vừa gầy còm)
+        // Cả H/A và W/H đều < -2SD
+        if (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe']) && 
+            in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
+            $text = 'Suy dinh dưỡng phối hợp';
+            $color = 'red';
+            $code = 'malnutrition_combined';
+        }
+        // 2. SDD GẦY CÒM (W/H < -2SD nhưng H/A bình thường)
+        elseif (in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
+            if ($wfh['result'] === 'underweight_severe') {
+                $text = 'Suy dinh dưỡng gầy còm nặng';
+                $color = 'red';
+                $code = 'wasted_severe';
+            } else {
+                $text = 'Suy dinh dưỡng gầy còm';
+                $color = 'orange';
+                $code = 'wasted';
+            }
+        }
+        // 3. SDD THẤP CÒI (H/A < -2SD nhưng W/H bình thường)
+        elseif (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe'])) {
+            if ($hfa['result'] === 'stunted_severe') {
+                $text = 'Suy dinh dưỡng thấp còi nặng';
+                $color = 'red';
+                $code = 'stunted_severe';
+            } else {
+                $text = 'Suy dinh dưỡng thấp còi';
+                $color = 'orange';
+                $code = 'stunted';
+            }
+        }
+        // 4. SDD NHẸ CÂN (W/A < -2SD)
+        elseif (in_array($wfa['result'], ['underweight_moderate', 'underweight_severe'])) {
+            if ($wfa['result'] === 'underweight_severe') {
+                $text = 'Suy dinh dưỡng nhẹ cân nặng';
+                $color = 'red';
+                $code = 'underweight_severe';
+            } else {
+                $text = 'Suy dinh dưỡng nhẹ cân';
+                $color = 'orange';
+                $code = 'underweight';
+            }
+        }
+        // 5. BÉO PHÌ (W/A > +3SD hoặc W/H > +3SD)
+        elseif ($wfa['result'] === 'obese' || $wfh['result'] === 'obese') {
+            $text = 'Béo phì';
+            $color = 'red';
+            $code = 'obese';
+        }
+        // 6. THỪA CÂN (W/A > +2SD hoặc W/H > +2SD)
+        elseif ($wfa['result'] === 'overweight' || $wfh['result'] === 'overweight') {
+            $text = 'Thừa cân';
+            $color = 'orange';
+            $code = 'overweight';
+        }
+        // 7. CHIỀU CAO VƯỢT CHUẨN (H/A > +2SD hoặc +3SD)
+        elseif (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) {
+            $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
+            $color = 'cyan';
+            $code = 'over_standard';
+        }
+        // 8. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
+        elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
+            $text = 'Bình thường';
+            $color = 'green';
+            $code = 'normal';
+        }
+        // 9. CÓ CHỈ SỐ VƯỢT TIÊU CHUẨN KHÁC (fallback cho các trường hợp còn lại có chỉ số cao)
+        else {
+            // Kiểm tra nếu có bất kỳ chỉ số nào vượt chuẩn
+            $hasHighIndicator = false;
+            if (in_array($wfa['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            if (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            if (in_array($wfh['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
+            
+            if ($hasHighIndicator) {
+                $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
+                $color = 'cyan';
+                $code = 'over_standard';
+            }
+        }
+        
+        return ['text' => $text, 'color' => $color, 'code' => $code];
     }
 
 }

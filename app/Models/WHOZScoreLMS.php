@@ -54,16 +54,14 @@ class WHOZScoreLMS extends Model
      */
     public static function getLMSForAge(string $indicator, string $sex, float $ageInMonths): ?array
     {
-        // Try to find exact match in any available age range
+        // Determine optimal age range based on age and theory
+        $optimalRange = self::determineOptimalAgeRange($ageInMonths);
+        
+        // Try to find exact match in optimal range first
         $exact = self::where('indicator', $indicator)
             ->where('sex', $sex)
             ->where('age_in_months', $ageInMonths)
-            ->orderByRaw("CASE age_range 
-                WHEN '0_5y' THEN 1 
-                WHEN '0_2y' THEN 2 
-                WHEN '2_5y' THEN 3 
-                WHEN '0_13w' THEN 4 
-                ELSE 5 END")
+            ->where('age_range', $optimalRange)
             ->first();
             
         if ($exact) {
@@ -76,24 +74,122 @@ class WHOZScoreLMS extends Model
             ];
         }
         
-        // If no exact match, try interpolation with appropriate age range
-        $ageRange = self::determineBestAgeRangeForInterpolation($indicator, $sex, $ageInMonths);
-        if (!$ageRange) {
-            return null;
+        // If not found in optimal range, try other ranges with priority order
+        $exact = self::where('indicator', $indicator)
+            ->where('sex', $sex)
+            ->where('age_in_months', $ageInMonths)
+            ->orderByRaw(self::getAgeRangePriorityOrder($ageInMonths))
+            ->first();
+            
+        if ($exact) {
+            return [
+                'L' => (float) $exact->L,
+                'M' => (float) $exact->M,
+                'S' => (float) $exact->S,
+                'method' => 'exact',
+                'age_range' => $exact->age_range
+            ];
         }
         
-        return self::interpolateLMSForAge($indicator, $sex, $ageRange, $ageInMonths);
+        // If no exact match, try interpolation with optimal age range
+        return self::interpolateLMSForAge($indicator, $sex, $optimalRange, $ageInMonths);
     }
     
+    /**
+     * Determine optimal age range based on child's age (Theory-based selection)
+     */
+    private static function determineOptimalAgeRange(float $ageInMonths): string
+    {
+        // Convert months to weeks for infants
+        $ageInWeeks = $ageInMonths * 4.33; // Approximate weeks per month
+        
+        // 0-13 weeks (0-3 months): Use specialized infant data
+        if ($ageInWeeks <= 13) {
+            return '0_13w';
+        }
+        
+        // 0-24 months: Use 0_2y for better granularity in early childhood
+        if ($ageInMonths <= 24) {
+            return '0_2y';
+        }
+        
+        // 24-60 months: Use 0_5y as primary, 2_5y as fallback for WFH
+        if ($ageInMonths <= 60) {
+            return '0_5y';
+        }
+        
+        // Beyond 5 years: fallback to 0_5y
+        return '0_5y';
+    }
+    
+    /**
+     * Get priority order for age ranges based on child's age
+     */
+    private static function getAgeRangePriorityOrder(float $ageInMonths): string
+    {
+        $ageInWeeks = $ageInMonths * 4.33;
+        
+        if ($ageInWeeks <= 13) {
+            // For infants: 0_13w > 0_2y > 0_5y > 2_5y
+            return "CASE age_range 
+                WHEN '0_13w' THEN 1 
+                WHEN '0_2y' THEN 2 
+                WHEN '0_5y' THEN 3 
+                WHEN '2_5y' THEN 4 
+                ELSE 5 END";
+        } elseif ($ageInMonths <= 24) {
+            // For toddlers: 0_2y > 0_5y > 0_13w > 2_5y
+            return "CASE age_range 
+                WHEN '0_2y' THEN 1 
+                WHEN '0_5y' THEN 2 
+                WHEN '0_13w' THEN 3 
+                WHEN '2_5y' THEN 4 
+                ELSE 5 END";
+        } else {
+            // For older children: 0_5y > 2_5y > 0_2y > 0_13w
+            return "CASE age_range 
+                WHEN '0_5y' THEN 1 
+                WHEN '2_5y' THEN 2 
+                WHEN '0_2y' THEN 3 
+                WHEN '0_13w' THEN 4 
+                ELSE 5 END";
+        }
+    }
+
     /**
      * Find the best age range that contains data for interpolation
      */
     private static function determineBestAgeRangeForInterpolation(string $indicator, string $sex, float $ageInMonths): ?string
     {
-        // Try ranges in priority order
-        $ranges = ['0_5y', '0_2y', '2_5y', '0_13w'];
+        // Start with optimal range
+        $optimalRange = self::determineOptimalAgeRange($ageInMonths);
         
-        foreach ($ranges as $range) {
+        // Check if optimal range has sufficient data for interpolation
+        $hasOptimalData = self::where('indicator', $indicator)
+            ->where('sex', $sex)
+            ->where('age_range', $optimalRange)
+            ->where(function($query) use ($ageInMonths) {
+                $query->where('age_in_months', '<=', $ageInMonths)
+                    ->orWhere('age_in_months', '>=', $ageInMonths);
+            })
+            ->exists();
+            
+        if ($hasOptimalData) {
+            return $optimalRange;
+        }
+        
+        // Fallback to other ranges based on age priority
+        $ageInWeeks = $ageInMonths * 4.33;
+        
+        if ($ageInWeeks <= 13) {
+            $fallbackRanges = ['0_2y', '0_5y', '2_5y'];
+        } elseif ($ageInMonths <= 24) {
+            $fallbackRanges = ['0_5y', '0_13w', '2_5y'];
+        } else {
+            $fallbackRanges = ['2_5y', '0_2y', '0_13w'];
+        }
+        
+        foreach ($fallbackRanges as $range) {
             $hasData = self::where('indicator', $indicator)
                 ->where('sex', $sex)
                 ->where('age_range', $range)
@@ -138,7 +234,10 @@ class WHOZScoreLMS extends Model
                 'L' => (float) $exact->L,
                 'M' => (float) $exact->M,
                 'S' => (float) $exact->S,
-                'method' => 'exact'
+                'method' => 'exact',
+                'age_range' => $exact->age_range,
+                'indicator' => $actualIndicator,
+                'measurement_type' => ($ageInMonths < 24) ? 'length' : 'height'
             ];
         }
         
@@ -188,6 +287,7 @@ class WHOZScoreLMS extends Model
             'M' => $lower->M + $ratio * ($upper->M - $lower->M),
             'S' => $lower->S + $ratio * ($upper->S - $lower->S),
             'method' => 'interpolated',
+            'age_range' => $ageRange,
             'lower_age' => $lower->age_in_months,
             'upper_age' => $upper->age_in_months
         ];
@@ -221,7 +321,9 @@ class WHOZScoreLMS extends Model
                 'L' => (float) $lower->L,
                 'M' => (float) $lower->M,
                 'S' => (float) $lower->S,
-                'method' => 'exact'
+                'method' => 'exact',
+                'age_range' => $ageRange,
+                'indicator' => $indicator
             ];
         }
         
@@ -232,6 +334,8 @@ class WHOZScoreLMS extends Model
             'M' => $lower->M + $ratio * ($upper->M - $lower->M),
             'S' => $lower->S + $ratio * ($upper->S - $lower->S),
             'method' => 'interpolated',
+            'age_range' => $ageRange,
+            'indicator' => $indicator,
             'lower_height' => $lower->length_height_cm,
             'upper_height' => $upper->length_height_cm
         ];

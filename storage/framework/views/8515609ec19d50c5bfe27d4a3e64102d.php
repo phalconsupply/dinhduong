@@ -322,6 +322,73 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Classification Info Panel -->
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-section-card classification-info-panel">
+                                            <div class="card-header">
+                                                <div class="card-icon">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                                <h3 class="card-title">Phân loại & Bảng chuẩn WHO</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="classification-display" id="classification-info">
+                                                    <div class="info-card age-group-card">
+                                                        <div class="info-icon">
+                                                            <i class="fas fa-child"></i>
+                                                        </div>
+                                                        <div class="info-content">
+                                                            <h6 class="info-title">Nhóm tuổi</h6>
+                                                            <p class="info-value" id="age-group-info">Chưa xác định</p>
+                                                            <small class="info-detail" id="age-group-detail">Nhập ngày sinh để xác định</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="info-card standard-table-card">
+                                                        <div class="info-icon">
+                                                            <i class="fas fa-table"></i>
+                                                        </div>
+                                                        <div class="info-content">
+                                                            <h6 class="info-title">Bảng chuẩn sử dụng</h6>
+                                                            <p class="info-value" id="standard-table-info">--</p>
+                                                            <small class="info-detail" id="standard-table-detail">Tự động chọn theo tuổi</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="info-card measurement-method-card">
+                                                        <div class="info-icon">
+                                                            <i class="fas fa-ruler"></i>
+                                                        </div>
+                                                        <div class="info-content">
+                                                            <h6 class="info-title">Phương pháp đo</h6>
+                                                            <p class="info-value" id="measurement-method-info">--</p>
+                                                            <small class="info-detail" id="measurement-method-detail">Phụ thuộc vào tuổi</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="info-card calculation-method-card">
+                                                        <div class="info-icon">
+                                                            <i class="fas fa-calculator"></i>
+                                                        </div>
+                                                        <div class="info-content">
+                                                            <h6 class="info-title">Phương pháp tính toán</h6>
+                                                            <p class="info-value">WHO LMS 2006</p>
+                                                            <small class="info-detail">Lambda-Mu-Sigma Method</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Link to Guide -->
+                                                <div class="guide-link-wrapper">
+                                                    <a href="/dinhduong/public/huong-dan-danh-gia-dinh-duong.html" target="_blank" class="guide-link">
+                                                        <i class="fas fa-book-open"></i>
+                                                        Xem hướng dẫn chi tiết
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- End BLOCK 3 -->
                                 
@@ -499,6 +566,9 @@
                         }
 
                         $('#real-age').val(months / 12);
+                        
+                        // Cập nhật thông tin phân loại và bảng chuẩn
+                        updateClassificationInfo(months);
                     },
                     error: function(jqXHR, textStatus) {
                         if (jqXHR.status == 401) {
@@ -839,7 +909,176 @@
                 classifyBirthWeight();
             }
         });
+
+        /**
+         * Cập nhật thông tin phân loại và bảng chuẩn WHO LMS dựa trên tuổi
+         */
+        function updateClassificationInfo(ageInMonths) {
+            const ageInWeeks = ageInMonths * 4.33;
+            
+            // Xác định nhóm tuổi
+            let ageGroup = '';
+            let ageGroupDetail = '';
+            let standardTable = '';
+            let standardTableDetail = '';
+            let measurementMethod = '';
+            let measurementMethodDetail = '';
+            
+            if (ageInWeeks <= 13) {
+                ageGroup = 'Trẻ sơ sinh (0-13 tuần)';
+                ageGroupDetail = 'Giai đoạn tăng trưởng cực nhanh';
+                standardTable = 'Bảng 0_13w (0-13 tuần)';
+                standardTableDetail = 'Dữ liệu theo tuần, độ chính xác cao';
+                measurementMethod = 'Chiều dài nằm';
+                measurementMethodDetail = 'WFL - Weight for Length';
+            } else if (ageInMonths <= 24) {
+                ageGroup = 'Trẻ nhỏ (0-2 tuổi)';
+                ageGroupDetail = 'Giai đoạn tăng trưởng nhanh';
+                standardTable = 'Bảng 0_2y (0-24 tháng)';
+                standardTableDetail = 'Dữ liệu theo tháng, ưu tiên cho trẻ nhỏ';
+                measurementMethod = 'Chiều dài nằm';
+                measurementMethodDetail = 'WFL - Weight for Length';
+            } else if (ageInMonths <= 60) {
+                ageGroup = 'Trẻ lớn (2-5 tuổi)';
+                ageGroupDetail = 'Giai đoạn ổn định tăng trưởng';
+                standardTable = 'Bảng 0_5y (0-60 tháng)';
+                standardTableDetail = 'Phạm vi rộng nhất, ưu tiên cao';
+                measurementMethod = 'Chiều cao đứng';
+                measurementMethodDetail = 'WFH - Weight for Height';
+            } else {
+                ageGroup = 'Trên 5 tuổi';
+                ageGroupDetail = 'Ngoài phạm vi đánh giá dinh dưỡng trẻ em';
+                standardTable = 'Không áp dụng';
+                standardTableDetail = 'Cần sử dụng bảng chuẩn khác';
+                measurementMethod = 'Chiều cao đứng';
+                measurementMethodDetail = 'BMI for Age';
+            }
+            
+            // Cập nhật giao diện
+            document.getElementById('age-group-info').textContent = ageGroup;
+            document.getElementById('age-group-detail').textContent = ageGroupDetail;
+            document.getElementById('standard-table-info').textContent = standardTable;
+            document.getElementById('standard-table-detail').textContent = standardTableDetail;
+            document.getElementById('measurement-method-info').textContent = measurementMethod;
+            document.getElementById('measurement-method-detail').textContent = measurementMethodDetail;
+            
+            // Cập nhật màu sắc theo nhóm tuổi
+            const ageGroupCard = document.querySelector('.age-group-card .info-icon');
+            if (ageInWeeks <= 13) {
+                ageGroupCard.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e53)';
+            } else if (ageInMonths <= 24) {
+                ageGroupCard.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+            } else if (ageInMonths <= 60) {
+                ageGroupCard.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            } else {
+                ageGroupCard.style.background = 'linear-gradient(45deg, #f093fb, #f5576c)';
+            }
+        }
     </script>
+    
+    <!-- CSS cho Classification Panel -->
+    <style>
+        .classification-info-panel .card-body {
+            padding: 1.5rem;
+        }
+        
+        .classification-display {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .info-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-size: 1.1em;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        
+        .info-value {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #212529;
+            font-size: 1em;
+        }
+        
+        .info-detail {
+            color: #6c757d;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+        
+        .guide-link-wrapper {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .guide-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+        
+        .guide-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .guide-link i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Age Group Specific Colors */
+        .age-group-card .info-icon {
+            background: linear-gradient(45deg, #6c757d, #495057);
+        }
+        
+        .standard-table-card .info-icon {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+        }
+        
+        .measurement-method-card .info-icon {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+        }
+        
+        .calculation-method-card .info-icon {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+        }
+    </style>
 <?php $__env->stopPush(); ?>
 
 
