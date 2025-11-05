@@ -53,6 +53,71 @@
             border-radius: 5px;
             min-height: 50px;
         }
+
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1001;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+            border-bottom: none !important;
+            transition: all 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9ff;
+            color: #667eea;
+        }
+
+        .dropdown-content a.active {
+            background-color: #f8f9ff;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown > a:after {
+            content: ' ▼';
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        /* Update container-header to container */
+        .header-top .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .horizontal-menu .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
     </style>
     @stack('head')
 </head>
@@ -65,9 +130,9 @@
         <div class="container">
             <div class="header-info">
                 <div class="logo-section">
-                    <img src="{{asset($setting['logo-light'])}}" alt="Logo">
+                    <a href="/"><img src="{{asset($setting['logo-light'])}}" alt="Logo" onerror="this.style.display='none'"></a>
                     <div class="logo-text">
-                        <h1>Phần mềm đánh giá dinh dưỡng</h1>
+                        <h1><a href="/" style="color: white; text-decoration: none;">Phần mềm đánh giá dinh dưỡng</a></h1>
                         <p><i class="fas fa-phone"></i> Hotline: <a href="tel:{{$setting['phone']}}" style="color: white;">{{$setting['phone']}}</a></p>
                     </div>
                 </div>
@@ -100,7 +165,7 @@
             <ul class="nav-menu">
                 <?php $slug = $slug ?? 'tu-0-5-tuoi'; ?>
                 <li class="@if($slug == 'tu-0-5-tuoi') current @endif">
-                    <a href="/tu-0-5-tuoi">
+                    <a href="/">
                         <i class="fas fa-baby"></i> Từ 0-5 tuổi
                     </a>
                 </li>
@@ -109,20 +174,26 @@
                         <i class="fas fa-child"></i> Từ 5-19 tuổi
                     </a>
                 </li>
-                <li class="@if($slug == 'tu-19-tuoi') current @endif disabled">
+                <li class="@if($slug == 'tu-19-tuoi') current @endif">
                     <a href="/tu-19-tuoi">
                         <i class="fas fa-user"></i> Trên 19 tuổi
                     </a>
                 </li>
-                <li class="@if($slug == 'who-statistics') current @endif">
-                    <a href="/who-statistics.php">
-                        <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại
+                <li class="dropdown @if(in_array($slug, ['who-statistics', 'kythuatcando', 'huong-dan'])) current @endif">
+                    <a href="#">
+                        <i class="fas fa-book"></i> Documents
                     </a>
-                </li>
-                <li class="@if($slug == 'kythuatcando') current @endif">
-                    <a href="/kythuatcando.php">
-                        <i class="fas fa-ruler-combined"></i> Kỹ thuật cân đo
-                    </a>
+                    <div class="dropdown-content">
+                        <a href="/who-statistics.php" @if($slug == 'who-statistics') class="active" @endif>
+                            <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại WHO
+                        </a>
+                        <a href="/kythuatcando.php" @if($slug == 'kythuatcando') class="active" @endif>
+                            <i class="fas fa-ruler-combined"></i> Kỹ thuật cân đo
+                        </a>
+                        <a href="/huong-dan-danh-gia-dinh-duong.html" @if($slug == 'huong-dan') class="active" @endif>
+                            <i class="fas fa-chart-line"></i> Hướng dẫn đánh giá dinh dưỡng
+                        </a>
+                    </div>
                 </li>
             </ul>
         </div>
