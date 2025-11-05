@@ -446,6 +446,7 @@ class StatisticsTabController extends Controller
 
     /**
      * Helper to calculate mean and SD
+     * Uses sample standard deviation (N-1) as per WHO statistical methods
      */
     private function calcMeanSd($values)
     {
@@ -455,13 +456,19 @@ class StatisticsTabController extends Controller
             return ['mean' => 0, 'sd' => 0, 'count' => 0];
         }
         
+        if ($count == 1) {
+            return ['mean' => round($values[0], 2), 'sd' => 0, 'count' => 1];
+        }
+        
         $mean = round(array_sum($values) / $count, 2);
         
         $variance = 0;
         foreach ($values as $value) {
             $variance += pow($value - $mean, 2);
         }
-        $variance = $variance / $count;
+        // Use sample variance (N-1) not population variance (N)
+        // This is the standard for statistical estimation from samples
+        $variance = $variance / ($count - 1);
         $sd = round(sqrt($variance), 2);
         
         return ['mean' => $mean, 'sd' => $sd, 'count' => $count];
