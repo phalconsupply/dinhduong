@@ -483,12 +483,12 @@ function updateQuickStats(data) {
             ageGroups.forEach(group => {
                 if (data[group] && data[group].total) {
                     const groupTotal = data[group].total;
-                    const count = groupTotal.weight?.count || groupTotal.height?.count || 0;
+                    const count = groupTotal.count || groupTotal.weight?.count || groupTotal.height?.count || 0;
                     totalCount += count;
                     
                     // Estimate risk based on Z-scores
                     // If mean Z-score < -2, consider whole group at risk
-                    // If mean Z-score between -2 and -1, consider 50% at risk
+                    // If mean Z-score between -2 and -1, consider 30% at risk
                     // If mean Z-score > -1, consider normal
                     const waZscore = groupTotal.wa_zscore?.mean || 0;
                     const haZscore = groupTotal.ha_zscore?.mean || 0;
@@ -530,8 +530,16 @@ function updateQuickStats(data) {
         }
         
         totalElement.textContent = totalCount.toLocaleString();
-        riskElement.textContent = riskCount > 0 ? riskCount.toLocaleString() : '-';
-        normalElement.textContent = normalCount > 0 ? normalCount.toLocaleString() : '-';
+        
+        // For Mean Stats and WHO Combined, show calculated values even if 0
+        // Only show "-" if we couldn't calculate (no data structure match)
+        if (data['0-5m'] || data['6-11m'] || data['12-23m'] || (data.all && data.all.stats)) {
+            riskElement.textContent = riskCount.toLocaleString();
+            normalElement.textContent = normalCount.toLocaleString();
+        } else {
+            riskElement.textContent = riskCount > 0 ? riskCount.toLocaleString() : '-';
+            normalElement.textContent = normalCount > 0 ? normalCount.toLocaleString() : '-';
+        }
         
         updateLastUpdated();
     }
