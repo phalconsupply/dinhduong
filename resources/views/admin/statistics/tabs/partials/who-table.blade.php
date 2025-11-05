@@ -41,10 +41,29 @@
                 @if(isset($data['stats'][$ageKey]))
                     @php
                         $row = $data['stats'][$ageKey];
+                        // Determine gender from label
+                        $genderValue = 'total';
+                        if (isset($data['label'])) {
+                            if (str_contains($data['label'], 'trai')) {
+                                $genderValue = 'male';
+                            } elseif (str_contains($data['label'], 'gái')) {
+                                $genderValue = 'female';
+                            }
+                        }
+                        // Format age group for data attribute (0-5m format)
+                        $ageGroupFormatted = $ageKey . 'm';
                     @endphp
                     <tr>
                         <td class="text-center">{{ $row['label'] }}</td>
-                        <td class="text-center fw-bold">{{ number_format($row['n']) }}</td>
+                        <td class="text-center fw-bold"
+                            data-clickable="true"
+                            data-tab="who-combined"
+                            data-gender="{{ $genderValue }}"
+                            data-age-group="{{ $ageGroupFormatted }}"
+                            data-classification="all"
+                            data-title="WHO Combined: {{ $data['label'] }} - {{ $row['label'] }}">
+                            {{ number_format($row['n']) }}
+                        </td>
                         
                         {{-- Weight-for-Age --}}
                         <td class="text-end">{{ number_format($row['wa']['lt_3sd_pct'], 1) }}</td>
@@ -74,10 +93,26 @@
             @if(isset($data['stats']['total']))
                 @php
                     $total = $data['stats']['total'];
+                    // Determine gender from label
+                    $genderValue = 'total';
+                    if (isset($data['label'])) {
+                        if (str_contains($data['label'], 'trai')) {
+                            $genderValue = 'male';
+                        } elseif (str_contains($data['label'], 'gái')) {
+                            $genderValue = 'female';
+                        }
+                    }
                 @endphp
                 <tr class="table-primary fw-bold">
                     <td class="text-center">{{ $total['label'] }}</td>
-                    <td class="text-center">{{ number_format($total['n']) }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="who-combined"
+                        data-gender="{{ $genderValue }}"
+                        data-classification="all"
+                        data-title="WHO Combined: {{ $data['label'] }} - Tổng">
+                        {{ number_format($total['n']) }}
+                    </td>
                     
                     {{-- Weight-for-Age --}}
                     <td class="text-end">{{ number_format($total['wa']['lt_3sd_pct'], 1) }}</td>

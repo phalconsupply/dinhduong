@@ -40,15 +40,39 @@
                         <span class="badge bg-danger me-2">< -3SD</span>
                         Gầy còm nặng
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['wasted_severe'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Bé trai">
+                        <?php echo e($stats['male']['wasted_severe'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['male']['wasted_severe_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['wasted_severe'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Bé gái">
+                        <?php echo e($stats['female']['wasted_severe'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['female']['wasted_severe_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['wasted_severe'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Tổng">
+                        <?php echo e($stats['total']['wasted_severe'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-danger"><?php echo e($stats['total']['wasted_severe_pct'] ?? 0); ?>%</span>
                     </td>
@@ -58,15 +82,39 @@
                         <span class="badge bg-warning text-dark me-2">-3SD → -2SD</span>
                         Gầy còm vừa
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['wasted_moderate'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Bé trai">
+                        <?php echo e($stats['male']['wasted_moderate'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['male']['wasted_moderate_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['wasted_moderate'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Bé gái">
+                        <?php echo e($stats['female']['wasted_moderate'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['female']['wasted_moderate_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['wasted_moderate'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Tổng">
+                        <?php echo e($stats['total']['wasted_moderate'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-warning text-dark"><?php echo e($stats['total']['wasted_moderate_pct'] ?? 0); ?>%</span>
                     </td>
@@ -76,15 +124,39 @@
                         <span class="badge bg-success me-2">-2SD → +2SD</span>
                         Bình thường
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['normal'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Bé trai">
+                        <?php echo e($stats['male']['normal'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['male']['normal_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['normal'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Bé gái">
+                        <?php echo e($stats['female']['normal'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['female']['normal_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['normal'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Tổng">
+                        <?php echo e($stats['total']['normal'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-success"><?php echo e($stats['total']['normal_pct'] ?? 0); ?>%</span>
                     </td>
@@ -94,15 +166,39 @@
                         <span class="badge bg-info me-2">+2SD → +3SD</span>
                         Thừa cân
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['overweight'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Bé trai">
+                        <?php echo e($stats['male']['overweight'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['male']['overweight_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['overweight'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Bé gái">
+                        <?php echo e($stats['female']['overweight'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['female']['overweight_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['overweight'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Tổng">
+                        <?php echo e($stats['total']['overweight'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-info"><?php echo e($stats['total']['overweight_pct'] ?? 0); ?>%</span>
                     </td>
@@ -112,15 +208,39 @@
                         <span class="badge bg-dark me-2">> +3SD</span>
                         Béo phì
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['obese'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Bé trai">
+                        <?php echo e($stats['male']['obese'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['male']['obese_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['obese'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Bé gái">
+                        <?php echo e($stats['female']['obese'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark"><?php echo e($stats['female']['obese_pct'] ?? 0); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['obese'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Tổng">
+                        <?php echo e($stats['total']['obese'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-dark"><?php echo e($stats['total']['obese_pct'] ?? 0); ?>%</span>
                     </td>
@@ -150,7 +270,15 @@
                         Không xác định / Ngoài phạm vi
                         <small class="text-muted d-block">Dữ liệu không hợp lệ hoặc ngoài chuẩn WHO</small>
                     </td>
-                    <td class="text-center"><?php echo e($stats['male']['invalid'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Bé trai">
+                        <?php echo e($stats['male']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $maleInvalidPct = ($stats['male']['total'] ?? 0) > 0 
@@ -159,7 +287,15 @@
                         ?>
                         <span class="badge bg-light text-dark"><?php echo e($maleInvalidPct); ?>%</span>
                     </td>
-                    <td class="text-center"><?php echo e($stats['female']['invalid'] ?? 0); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Bé gái">
+                        <?php echo e($stats['female']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $femaleInvalidPct = ($stats['female']['total'] ?? 0) > 0 
@@ -168,7 +304,15 @@
                         ?>
                         <span class="badge bg-light text-dark"><?php echo e($femaleInvalidPct); ?>%</span>
                     </td>
-                    <td class="text-center fw-bold"><?php echo e($stats['total']['invalid'] ?? 0); ?></td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Tổng">
+                        <?php echo e($stats['total']['invalid'] ?? 0); ?>
+
+                    </td>
                     <td class="text-center">
                         <?php
                             $totalInvalidPct = ($stats['total']['total'] ?? 0) > 0 

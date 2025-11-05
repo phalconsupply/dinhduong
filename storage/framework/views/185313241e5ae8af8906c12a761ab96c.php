@@ -42,10 +42,30 @@
                 <?php if(isset($data['stats'][$ageKey])): ?>
                     <?php
                         $row = $data['stats'][$ageKey];
+                        // Determine gender from label
+                        $genderValue = 'total';
+                        if (isset($data['label'])) {
+                            if (str_contains($data['label'], 'trai')) {
+                                $genderValue = 'male';
+                            } elseif (str_contains($data['label'], 'gái')) {
+                                $genderValue = 'female';
+                            }
+                        }
+                        // Format age group for data attribute (0-5m format)
+                        $ageGroupFormatted = $ageKey . 'm';
                     ?>
                     <tr>
                         <td class="text-center"><?php echo e($row['label']); ?></td>
-                        <td class="text-center fw-bold"><?php echo e(number_format($row['n'])); ?></td>
+                        <td class="text-center fw-bold"
+                            data-clickable="true"
+                            data-tab="who-combined"
+                            data-gender="<?php echo e($genderValue); ?>"
+                            data-age-group="<?php echo e($ageGroupFormatted); ?>"
+                            data-classification="all"
+                            data-title="WHO Combined: <?php echo e($data['label']); ?> - <?php echo e($row['label']); ?>">
+                            <?php echo e(number_format($row['n'])); ?>
+
+                        </td>
                         
                         
                         <td class="text-end"><?php echo e(number_format($row['wa']['lt_3sd_pct'], 1)); ?></td>
@@ -75,10 +95,27 @@
             <?php if(isset($data['stats']['total'])): ?>
                 <?php
                     $total = $data['stats']['total'];
+                    // Determine gender from label
+                    $genderValue = 'total';
+                    if (isset($data['label'])) {
+                        if (str_contains($data['label'], 'trai')) {
+                            $genderValue = 'male';
+                        } elseif (str_contains($data['label'], 'gái')) {
+                            $genderValue = 'female';
+                        }
+                    }
                 ?>
                 <tr class="table-primary fw-bold">
                     <td class="text-center"><?php echo e($total['label']); ?></td>
-                    <td class="text-center"><?php echo e(number_format($total['n'])); ?></td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="who-combined"
+                        data-gender="<?php echo e($genderValue); ?>"
+                        data-classification="all"
+                        data-title="WHO Combined: <?php echo e($data['label']); ?> - Tổng">
+                        <?php echo e(number_format($total['n'])); ?>
+
+                    </td>
                     
                     
                     <td class="text-end"><?php echo e(number_format($total['wa']['lt_3sd_pct'], 1)); ?></td>

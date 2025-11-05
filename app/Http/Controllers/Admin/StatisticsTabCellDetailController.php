@@ -154,6 +154,11 @@ class StatisticsTabCellDetailController extends Controller
         
         // Filter by classification based on tab
         $filtered = $records->filter(function($record) use ($tab, $classification, $indicator) {
+            // Special case: "all" classification means show all records (for WHO Combined N column)
+            if ($classification === 'all') {
+                return true;
+            }
+            
             // Determine which check method to use
             if ($tab === 'weight-for-age' || ($tab === 'who-combined' && $indicator === 'wa')) {
                 $check = $record->check_weight_for_age_auto();
