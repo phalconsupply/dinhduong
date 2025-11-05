@@ -40,15 +40,36 @@
                         <span class="badge bg-danger me-2">< -3SD</span>
                         Gầy còm nặng
                     </td>
-                    <td class="text-center">{{ $stats['male']['wasted_severe'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Bé trai">
+                        {{ $stats['male']['wasted_severe'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['male']['wasted_severe_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['wasted_severe'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Bé gái">
+                        {{ $stats['female']['wasted_severe'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['female']['wasted_severe_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['wasted_severe'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="wasted_severe"
+                        data-title="Cân nặng/Chiều cao: Gầy còm nặng - Tổng">
+                        {{ $stats['total']['wasted_severe'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-danger">{{ $stats['total']['wasted_severe_pct'] ?? 0 }}%</span>
                     </td>
@@ -58,15 +79,36 @@
                         <span class="badge bg-warning text-dark me-2">-3SD → -2SD</span>
                         Gầy còm vừa
                     </td>
-                    <td class="text-center">{{ $stats['male']['wasted_moderate'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Bé trai">
+                        {{ $stats['male']['wasted_moderate'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['male']['wasted_moderate_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['wasted_moderate'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Bé gái">
+                        {{ $stats['female']['wasted_moderate'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['female']['wasted_moderate_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['wasted_moderate'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="wasted_moderate"
+                        data-title="Cân nặng/Chiều cao: Gầy còm vừa - Tổng">
+                        {{ $stats['total']['wasted_moderate'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-warning text-dark">{{ $stats['total']['wasted_moderate_pct'] ?? 0 }}%</span>
                     </td>
@@ -76,15 +118,36 @@
                         <span class="badge bg-success me-2">-2SD → +2SD</span>
                         Bình thường
                     </td>
-                    <td class="text-center">{{ $stats['male']['normal'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Bé trai">
+                        {{ $stats['male']['normal'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['male']['normal_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['normal'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Bé gái">
+                        {{ $stats['female']['normal'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['female']['normal_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['normal'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="normal"
+                        data-title="Cân nặng/Chiều cao: Bình thường - Tổng">
+                        {{ $stats['total']['normal'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-success">{{ $stats['total']['normal_pct'] ?? 0 }}%</span>
                     </td>
@@ -94,15 +157,36 @@
                         <span class="badge bg-info me-2">+2SD → +3SD</span>
                         Thừa cân
                     </td>
-                    <td class="text-center">{{ $stats['male']['overweight'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Bé trai">
+                        {{ $stats['male']['overweight'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['male']['overweight_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['overweight'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Bé gái">
+                        {{ $stats['female']['overweight'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['female']['overweight_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['overweight'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="overweight"
+                        data-title="Cân nặng/Chiều cao: Thừa cân - Tổng">
+                        {{ $stats['total']['overweight'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-info">{{ $stats['total']['overweight_pct'] ?? 0 }}%</span>
                     </td>
@@ -112,15 +196,36 @@
                         <span class="badge bg-dark me-2">> +3SD</span>
                         Béo phì
                     </td>
-                    <td class="text-center">{{ $stats['male']['obese'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Bé trai">
+                        {{ $stats['male']['obese'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['male']['obese_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['obese'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Bé gái">
+                        {{ $stats['female']['obese'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-light text-dark">{{ $stats['female']['obese_pct'] ?? 0 }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['obese'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="obese"
+                        data-title="Cân nặng/Chiều cao: Béo phì - Tổng">
+                        {{ $stats['total']['obese'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         <span class="badge bg-dark">{{ $stats['total']['obese_pct'] ?? 0 }}%</span>
                     </td>
@@ -150,7 +255,14 @@
                         Không xác định / Ngoài phạm vi
                         <small class="text-muted d-block">Dữ liệu không hợp lệ hoặc ngoài chuẩn WHO</small>
                     </td>
-                    <td class="text-center">{{ $stats['male']['invalid'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="male"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Bé trai">
+                        {{ $stats['male']['invalid'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         @php
                             $maleInvalidPct = ($stats['male']['total'] ?? 0) > 0 
@@ -159,7 +271,14 @@
                         @endphp
                         <span class="badge bg-light text-dark">{{ $maleInvalidPct }}%</span>
                     </td>
-                    <td class="text-center">{{ $stats['female']['invalid'] ?? 0 }}</td>
+                    <td class="text-center"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="female"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Bé gái">
+                        {{ $stats['female']['invalid'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         @php
                             $femaleInvalidPct = ($stats['female']['total'] ?? 0) > 0 
@@ -168,7 +287,14 @@
                         @endphp
                         <span class="badge bg-light text-dark">{{ $femaleInvalidPct }}%</span>
                     </td>
-                    <td class="text-center fw-bold">{{ $stats['total']['invalid'] ?? 0 }}</td>
+                    <td class="text-center fw-bold"
+                        data-clickable="true"
+                        data-tab="weight-for-height"
+                        data-gender="total"
+                        data-classification="invalid"
+                        data-title="Cân nặng/Chiều cao: Không xác định - Tổng">
+                        {{ $stats['total']['invalid'] ?? 0 }}
+                    </td>
                     <td class="text-center">
                         @php
                             $totalInvalidPct = ($stats['total']['total'] ?? 0) > 0 
