@@ -1,25 +1,61 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="mb-0">
         <i class="uil uil-chart-pie text-primary"></i>
-        Bảng tổng hợp WHO - Set 1: Sexes combined
-        @if(isset($stats['_meta']['invalid_records']) && $stats['_meta']['invalid_records'] > 0)
-            <span class="badge bg-warning text-dark ms-2">
-                {{ $stats['_meta']['invalid_records'] }} records bị loại bỏ
+        Bảng tổng hợp WHO Combined Statistics
+        @if(!empty($stats) && !empty($stats['all']))
+            <span class="badge bg-success ms-2">
+                <i class="uil uil-check"></i> {{ $stats['all']['stats']['total']['n'] ?? 0 }} bản ghi
             </span>
         @endif
     </h6>
     <div>
-        <button onclick="exportTable('table-who-combined', 'WHO_Combined_Statistics')" class="btn btn-sm btn-success">
-            <i class="uil uil-download-alt"></i> Tải xuống Excel
-        </button>
+        @if(!empty($stats) && !empty($stats['all']))
+            <div class="btn-group">
+                <button onclick="exportWhoCombinedTable('all')" class="btn btn-sm btn-success">
+                    <i class="uil uil-download-alt"></i> Tải tất cả
+                </button>
+                <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="exportWhoCombinedTable('all'); return false;">
+                        <i class="uil uil-users-alt"></i> Tất cả
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportWhoCombinedTable('male'); return false;">
+                        <i class="uil uil-mars"></i> Bé trai
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportWhoCombinedTable('female'); return false;">
+                        <i class="uil uil-venus"></i> Bé gái
+                    </a></li>
+                </ul>
+            </div>
+        @endif
     </div>
 </div>
 
-@if(empty($stats) || empty($stats['data']))
+<script>
+function exportWhoCombinedTable(group) {
+    const tableIds = {
+        'all': 'table-who-tất-cả',
+        'male': 'table-who-bé-trai', 
+        'female': 'table-who-bé-gái'
+    };
+    const tableId = tableIds[group];
+    const fileName = `WHO_Combined_Statistics_${group}_${new Date().toISOString().split('T')[0]}`;
+    
+    if (typeof exportTable === 'function') {
+        exportTable(tableId, fileName);
+    } else {
+        console.error('Export function not found');
+    }
+}
+</script>
+
+@if(empty($stats) || empty($stats['all']))
     <div class="alert alert-info text-center">
         <i class="uil uil-info-circle"></i>
-        <strong>Tính năng đang phát triển</strong><br>
-        Bảng WHO Combined Statistics đang được phát triển và sẽ có sẵn trong bản cập nhật tiếp theo.
+        <strong>Không có dữ liệu</strong><br>
+        Không tìm thấy dữ liệu cho bộ lọc hiện tại. Vui lòng thử điều chỉnh bộ lọc.
     </div>
     
     <div class="card border-0 shadow-sm">
@@ -69,52 +105,64 @@
         </div>
     </div>
 @else
-    {{-- Actual WHO Combined Statistics implementation will go here --}}
-    <div class="alert alert-success">
-        <i class="uil uil-check-circle"></i>
-        <strong>Dữ liệu WHO Combined có sẵn</strong><br>
-        Tìm thấy {{ count($stats['data']) }} bản ghi để phân tích.
-    </div>
+    {{-- WHO Combined Statistics Tables --}}
     
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="table-who-combined">
-            <thead class="table-light">
-                <tr>
-                    <th>Nhóm tuổi</th>
-                    <th>Số lượng</th>
-                    <th>W/A < -2SD (%)</th>
-                    <th>H/A < -2SD (%)</th>
-                    <th>W/H < -2SD (%)</th>
-                    <th>W/H > +2SD (%)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{-- Data rows will be populated here when implemented --}}
-                <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
-                        <i class="uil uil-construction"></i>
-                        Đang triển khai logic tính toán WHO Combined...
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    {{-- Tab Navigation for Gender Groups --}}
+    <ul class="nav nav-tabs mb-3" id="who-combined-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-content" type="button" role="tab">
+                <i class="uil uil-users-alt"></i> Tất cả
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="male-tab" data-bs-toggle="tab" data-bs-target="#male-content" type="button" role="tab">
+                <i class="uil uil-mars"></i> Bé trai
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="female-tab" data-bs-toggle="tab" data-bs-target="#female-content" type="button" role="tab">
+                <i class="uil uil-venus"></i> Bé gái
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="who-combined-content">
+        {{-- All Children Tab --}}
+        <div class="tab-pane fade show active" id="all-content" role="tabpanel">
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['all']])
+        </div>
+
+        {{-- Male Tab --}}
+        <div class="tab-pane fade" id="male-content" role="tabpanel">
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['male']])
+        </div>
+
+        {{-- Female Tab --}}
+        <div class="tab-pane fade" id="female-content" role="tabpanel">
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['female']])
+        </div>
     </div>
 @endif
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        initializeWhoCombinedCharts(@json($stats));
-    }, 100);
+    console.log('WHO Combined Statistics loaded successfully');
+    
+    // Initialize export buttons for each gender table
+    @if(!empty($stats) && !empty($stats['all']))
+        setupExportButtons();
+    @endif
 });
 
-function initializeWhoCombinedCharts(stats) {
-    if (!stats || !stats.data) {
-        console.log('WHO Combined statistics not yet implemented');
-        return;
-    }
-    
-    // Implementation will be added when WHO Combined logic is complete
-    console.log('WHO Combined charts initialization - coming soon');
+function setupExportButtons() {
+    // Add export buttons for each gender group if needed
+    const genderGroups = ['all', 'male', 'female'];
+    genderGroups.forEach(group => {
+        const tableId = `table-who-${group === 'all' ? 'tất-cả' : (group === 'male' ? 'bé-trai' : 'bé-gái')}`;
+        const table = document.getElementById(tableId);
+        if (table) {
+            console.log(`WHO Combined table for ${group} ready for export`);
+        }
+    });
 }
 </script>
