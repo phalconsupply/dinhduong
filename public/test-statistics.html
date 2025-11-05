@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Statistics API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test Statistics API Endpoints</h1>
+    
+    <div>
+        <button onclick="testWeightForAge()">Test Weight-for-Age</button>
+        <button onclick="testHeightForAge()">Test Height-for-Age</button>
+        <button onclick="testWeightForHeight()">Test Weight-for-Height</button>
+        <button onclick="testMeanStats()">Test Mean Stats</button>
+        <button onclick="testWhoCombined()">Test WHO Combined</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        function showResult(endpoint, success, data, error) {
+            const resultDiv = document.getElementById('result');
+            const className = success ? 'success' : 'error';
+            
+            let html = `<div class="result ${className}">`;
+            html += `<h3>Endpoint: ${endpoint}</h3>`;
+            
+            if (success) {
+                html += `<p><strong>Status:</strong> SUCCESS ✅</p>`;
+                html += `<p><strong>Data Keys:</strong> ${Object.keys(data).join(', ')}</p>`;
+                if (data.success !== undefined) {
+                    html += `<p><strong>Response Success:</strong> ${data.success}</p>`;
+                }
+                if (data.data) {
+                    html += `<p><strong>Stats Keys:</strong> ${Object.keys(data.data).join(', ')}</p>`;
+                    html += `<details><summary>Full Data (click to expand)</summary><pre>${JSON.stringify(data, null, 2)}</pre></details>`;
+                }
+            } else {
+                html += `<p><strong>Status:</strong> ERROR ❌</p>`;
+                html += `<p><strong>Error:</strong> ${error}</p>`;
+            }
+            
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+        
+        function testEndpoint(endpoint, name) {
+            // Try with index.php explicitly
+            const url = `${window.location.origin}/dinhduong/public/index.php/admin/statistics/${endpoint}`;
+            console.log('Fetching:', url);
+            
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                showResult(name, true, data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showResult(name, false, null, error.message);
+            });
+        }
+        
+        function testWeightForAge() {
+            testEndpoint('get-weight-for-age', 'Weight-for-Age');
+        }
+        
+        function testHeightForAge() {
+            testEndpoint('get-height-for-age', 'Height-for-Age');
+        }
+        
+        function testWeightForHeight() {
+            testEndpoint('get-weight-for-height', 'Weight-for-Height');
+        }
+        
+        function testMeanStats() {
+            testEndpoint('get-mean-stats', 'Mean Stats');
+        }
+        
+        function testWhoCombined() {
+            testEndpoint('get-who-combined', 'WHO Combined');
+        }
+    </script>
+</body>
+</html>

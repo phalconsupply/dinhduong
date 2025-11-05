@@ -332,8 +332,10 @@ function loadTabData(tabName) {
     const formData = new FormData(document.getElementById('statistics-filter'));
     const params = new URLSearchParams(formData);
     
-    // Make AJAX request
-    fetch(`/admin/statistics/get-${tabName}?${params.toString()}`, {
+    // Make AJAX request with proper base URL
+    const url = `{{ url('/admin/statistics') }}/get-${tabName}?${params.toString()}`;
+    
+    fetch(url, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
