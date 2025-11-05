@@ -321,9 +321,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadTabData(tabName) {
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
-    const tabContent = document.getElementById(tabName.replace('-', '-'));
+    // Convert tab name: weight-for-age -> weight-age
+    const tabId = tabName.replace('weight-for-age', 'weight-age')
+                         .replace('height-for-age', 'height-age')
+                         .replace('weight-for-height', 'weight-height');
+    const tabContent = document.getElementById(tabId);
     
-    if (!tab || !tabContent) return;
+    if (!tab || !tabContent) {
+        console.error('Tab or content not found:', { tabName, tabId, tab, tabContent });
+        return;
+    }
     
     // Show loading state
     showTabLoading(tab, true);

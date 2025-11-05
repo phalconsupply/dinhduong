@@ -320,9 +320,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadTabData(tabName) {
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
-    const tabContent = document.getElementById(tabName.replace('-', '-'));
+    // Convert tab name: weight-for-age -> weight-age
+    const tabId = tabName.replace('weight-for-age', 'weight-age')
+                         .replace('height-for-age', 'height-age')
+                         .replace('weight-for-height', 'weight-height');
+    const tabContent = document.getElementById(tabId);
     
-    if (!tab || !tabContent) return;
+    if (!tab || !tabContent) {
+        console.error('Tab or content not found:', { tabName, tabId, tab, tabContent });
+        return;
+    }
     
     // Show loading state
     showTabLoading(tab, true);
@@ -331,8 +338,10 @@ function loadTabData(tabName) {
     const formData = new FormData(document.getElementById('statistics-filter'));
     const params = new URLSearchParams(formData);
     
-    // Make AJAX request
-    fetch(`/admin/statistics/get-${tabName}?${params.toString()}`, {
+    // Make AJAX request with proper base URL
+    const url = `<?php echo e(url('/admin/statistics')); ?>/get-${tabName}?${params.toString()}`;
+    
+    fetch(url, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
