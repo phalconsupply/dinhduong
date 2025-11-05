@@ -5,9 +5,9 @@
     </h6>
     <div>
         <span class="badge bg-info me-2">
-            @if(isset($stats['_meta']['invalid_records']))
-                Loại bỏ: {{ $stats['_meta']['invalid_records'] }} bản ghi
-            @endif
+            <?php if(isset($stats['_meta']['invalid_records'])): ?>
+                Loại bỏ: <?php echo e($stats['_meta']['invalid_records']); ?> bản ghi
+            <?php endif; ?>
         </span>
         <button onclick="exportTable('table-mean', 'Chi_so_trung_binh')" class="btn btn-sm btn-success">
             <i class="uil uil-download-alt"></i> Tải xuống Excel
@@ -15,22 +15,22 @@
     </div>
 </div>
 
-@if(empty($stats) || count($stats) <= 1)
+<?php if(empty($stats) || count($stats) <= 1): ?>
     <div class="alert alert-warning text-center">
         <i class="uil uil-exclamation-triangle"></i>
         <strong>Không có dữ liệu</strong><br>
         Không tìm thấy bản ghi nào phù hợp với bộ lọc hiện tại để tính toán chỉ số trung bình.
     </div>
-@else
-    @if(isset($stats['_meta']['invalid_records']) && $stats['_meta']['invalid_records'] > 0)
+<?php else: ?>
+    <?php if(isset($stats['_meta']['invalid_records']) && $stats['_meta']['invalid_records'] > 0): ?>
         <div class="alert alert-warning">
             <i class="uil uil-exclamation-triangle"></i> 
-            <strong>Cảnh báo:</strong> Đã loại bỏ {{ $stats['_meta']['invalid_records'] }} bản ghi không hợp lệ 
+            <strong>Cảnh báo:</strong> Đã loại bỏ <?php echo e($stats['_meta']['invalid_records']); ?> bản ghi không hợp lệ 
             (Z-score < -6 hoặc > +6, hoặc giá trị không hợp lý)
         </div>
-    @endif
+    <?php endif; ?>
 
-    {{-- Statistics Table --}}
+    
     <div class="table-responsive mb-4">
         <table class="table table-bordered table-hover table-sm" id="table-mean">
             <thead class="table-light">
@@ -54,7 +54,7 @@
                 </tr>
             </thead>
             <tbody>
-                @php
+                <?php
                     $indicators = [
                         'weight' => 'Cân nặng (kg)',
                         'height' => 'Chiều cao (cm)',
@@ -63,12 +63,12 @@
                         'wh_zscore' => 'W/H Z-score',
                     ];
                     $problematicGroups = [];
-                @endphp
+                ?>
                 
-                @foreach($stats as $ageGroup => $data)
-                    @if($ageGroup === '_meta') @continue @endif
-                    @foreach($indicators as $key => $label)
-                        @php
+                <?php $__currentLoopData = $stats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php if($ageGroup === '_meta'): ?> <?php continue; ?> <?php endif; ?>
+                    <?php $__currentLoopData = $indicators; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php
                             // Check for problematic z-scores
                             if (in_array($key, ['wa_zscore', 'ha_zscore', 'wh_zscore'])) {
                                 $totalMean = $data['total'][$key]['mean'] ?? 0;
@@ -91,61 +91,63 @@
                                     $rowClass = 'table-warning';
                                 }
                             }
-                        @endphp
-                        <tr class="{{ $rowClass }}">
-                            @if($loop->first)
+                        ?>
+                        <tr class="<?php echo e($rowClass); ?>">
+                            <?php if($loop->first): ?>
                                 <td rowspan="5" class="align-middle fw-bold bg-light">
-                                    {{ $data['label'] }}
+                                    <?php echo e($data['label']); ?>
+
                                     <small class="d-block text-muted">
-                                        ({{ $data['total']['weight']['count'] ?? 0 }} trẻ)
+                                        (<?php echo e($data['total']['weight']['count'] ?? 0); ?> trẻ)
                                     </small>
                                 </td>
-                            @endif
+                            <?php endif; ?>
                             <td class="fw-semibold">
-                                @if(in_array($key, ['wa_zscore', 'ha_zscore', 'wh_zscore']))
+                                <?php if(in_array($key, ['wa_zscore', 'ha_zscore', 'wh_zscore'])): ?>
                                     <i class="uil uil-chart-line text-info me-1"></i>
-                                @endif
-                                {{ $label }}
+                                <?php endif; ?>
+                                <?php echo e($label); ?>
+
                             </td>
-                            {{-- Male stats --}}
-                            <td class="text-center">{{ $data['male'][$key]['mean'] ?? '-' }}</td>
-                            <td class="text-center">{{ $data['male'][$key]['sd'] ?? '-' }}</td>
+                            
+                            <td class="text-center"><?php echo e($data['male'][$key]['mean'] ?? '-'); ?></td>
+                            <td class="text-center"><?php echo e($data['male'][$key]['sd'] ?? '-'); ?></td>
                             <td class="text-center">
-                                <span class="badge bg-primary">{{ $data['male'][$key]['count'] ?? 0 }}</span>
+                                <span class="badge bg-primary"><?php echo e($data['male'][$key]['count'] ?? 0); ?></span>
                             </td>
-                            {{-- Female stats --}}
-                            <td class="text-center">{{ $data['female'][$key]['mean'] ?? '-' }}</td>
-                            <td class="text-center">{{ $data['female'][$key]['sd'] ?? '-' }}</td>
+                            
+                            <td class="text-center"><?php echo e($data['female'][$key]['mean'] ?? '-'); ?></td>
+                            <td class="text-center"><?php echo e($data['female'][$key]['sd'] ?? '-'); ?></td>
                             <td class="text-center">
-                                <span class="badge bg-danger">{{ $data['female'][$key]['count'] ?? 0 }}</span>
+                                <span class="badge bg-danger"><?php echo e($data['female'][$key]['count'] ?? 0); ?></span>
                             </td>
-                            {{-- Total stats --}}
-                            <td class="text-center fw-bold">{{ $data['total'][$key]['mean'] ?? '-' }}</td>
-                            <td class="text-center fw-bold">{{ $data['total'][$key]['sd'] ?? '-' }}</td>
+                            
+                            <td class="text-center fw-bold"><?php echo e($data['total'][$key]['mean'] ?? '-'); ?></td>
+                            <td class="text-center fw-bold"><?php echo e($data['total'][$key]['sd'] ?? '-'); ?></td>
                             <td class="text-center">
-                                <span class="badge bg-success">{{ $data['total'][$key]['count'] ?? 0 }}</span>
+                                <span class="badge bg-success"><?php echo e($data['total'][$key]['count'] ?? 0); ?></span>
                             </td>
                         </tr>
-                    @endforeach
-                @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
     </div>
 
-    {{-- Analysis Section --}}
-    @if(count($problematicGroups) > 0)
+    
+    <?php if(count($problematicGroups) > 0): ?>
         <div class="alert alert-danger">
             <h6 class="alert-heading">⚠️ CẢNH BÁO: Nhóm có vấn đề dinh dưỡng nghiêm trọng (Mean < -2 SD)</h6>
             <ul class="mb-0">
-                @foreach($problematicGroups as $group)
+                <?php $__currentLoopData = $problematicGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <li>
-                        <strong>{{ $group['age'] }}</strong> - {{ $group['indicator'] }}: 
-                        <span class="badge bg-danger">{{ $group['mean'] }}</span>
+                        <strong><?php echo e($group['age']); ?></strong> - <?php echo e($group['indicator']); ?>: 
+                        <span class="badge bg-danger"><?php echo e($group['mean']); ?></span>
                     </li>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="alert alert-info">
         <h6 class="alert-heading">📊 Hướng dẫn đọc bảng:</h6>
@@ -167,11 +169,11 @@
         </div>
     </div>
 
-    {{-- Summary Cards --}}
+    
     <div class="row">
-        @foreach($stats as $ageGroup => $data)
-            @if($ageGroup === '_meta') @continue @endif
-            @php
+        <?php $__currentLoopData = $stats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ageGroup => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php if($ageGroup === '_meta'): ?> <?php continue; ?> <?php endif; ?>
+            <?php
                 $totalChildren = $data['total']['weight']['count'] ?? 0;
                 $waZscore = $data['total']['wa_zscore']['mean'] ?? 0;
                 $haZscore = $data['total']['ha_zscore']['mean'] ?? 0;
@@ -190,43 +192,46 @@
                     $alertIcon = 'uil-exclamation-triangle text-warning';
                     $alertTitle = 'Cần theo dõi';
                 }
-            @endphp
+            ?>
             
-            @if($totalChildren > 0)
+            <?php if($totalChildren > 0): ?>
                 <div class="col-md-4 mb-3">
-                    <div class="card {{ $alertClass }} h-100">
+                    <div class="card <?php echo e($alertClass); ?> h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="uil {{ $alertIcon }} me-2" style="font-size: 1.2rem;"></i>
+                                <i class="uil <?php echo e($alertIcon); ?> me-2" style="font-size: 1.2rem;"></i>
                                 <div>
-                                    <h6 class="mb-0">{{ $data['label'] }}</h6>
-                                    <small class="text-muted">{{ $totalChildren }} trẻ</small>
+                                    <h6 class="mb-0"><?php echo e($data['label']); ?></h6>
+                                    <small class="text-muted"><?php echo e($totalChildren); ?> trẻ</small>
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <small class="fw-bold">{{ $alertTitle }}</small>
+                                <small class="fw-bold"><?php echo e($alertTitle); ?></small>
                             </div>
                             <div class="row small">
                                 <div class="col-4">
                                     <div class="text-center">
-                                        <div class="fw-bold {{ $waZscore < -2 ? 'text-danger' : ($waZscore < -1 ? 'text-warning' : 'text-success') }}">
-                                            {{ $waZscore }}
+                                        <div class="fw-bold <?php echo e($waZscore < -2 ? 'text-danger' : ($waZscore < -1 ? 'text-warning' : 'text-success')); ?>">
+                                            <?php echo e($waZscore); ?>
+
                                         </div>
                                         <small class="text-muted">W/A</small>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="text-center">
-                                        <div class="fw-bold {{ $haZscore < -2 ? 'text-danger' : ($haZscore < -1 ? 'text-warning' : 'text-success') }}">
-                                            {{ $haZscore }}
+                                        <div class="fw-bold <?php echo e($haZscore < -2 ? 'text-danger' : ($haZscore < -1 ? 'text-warning' : 'text-success')); ?>">
+                                            <?php echo e($haZscore); ?>
+
                                         </div>
                                         <small class="text-muted">H/A</small>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="text-center">
-                                        <div class="fw-bold {{ $whZscore < -2 ? 'text-danger' : ($whZscore < -1 ? 'text-warning' : 'text-success') }}">
-                                            {{ $whZscore }}
+                                        <div class="fw-bold <?php echo e($whZscore < -2 ? 'text-danger' : ($whZscore < -1 ? 'text-warning' : 'text-success')); ?>">
+                                            <?php echo e($whZscore); ?>
+
                                         </div>
                                         <small class="text-muted">W/H</small>
                                     </div>
@@ -235,10 +240,10 @@
                         </div>
                     </div>
                 </div>
-            @endif
-        @endforeach
+            <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
-@endif
+<?php endif; ?>
 
 <script>
 // Define function in global scope
@@ -518,4 +523,4 @@ window.initializeMeanStatsCharts = function(stats) {
         });
     }
 }
-</script>
+</script><?php /**PATH C:\xampp\htdocs\dinhduong\resources\views/admin/statistics/tabs/mean-stats.blade.php ENDPATH**/ ?>

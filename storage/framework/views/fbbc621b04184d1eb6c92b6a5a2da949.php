@@ -1,7 +1,6 @@
-@extends('admin.layouts.app-full')
-@section('title') Thống kê chi tiết khảo sát @endsection
-@section('body_class', 'statistics')
-@section('content')
+<?php $__env->startSection('title'); ?> Thống kê chi tiết khảo sát <?php $__env->stopSection(); ?>
+<?php $__env->startSection('body_class', 'statistics'); ?>
+<?php $__env->startSection('content'); ?>
 <div class="container-fluid">
     <div class="layout-specing">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -10,13 +9,13 @@
                 <button type="button" class="btn btn-sm btn-outline-warning me-2" onclick="clearCache()">
                     <i class="uil uil-refresh"></i> Xóa Cache
                 </button>
-                <a href="{{ route('admin.dashboard.index') }}" class="btn btn-sm btn-outline-primary">
+                <a href="<?php echo e(route('admin.dashboard.index')); ?>" class="btn btn-sm btn-outline-primary">
                     <i class="uil uil-arrow-left"></i> Quay lại Dashboard
                 </a>
             </div>
         </div>
 
-        {{-- Filter Form --}}
+        
         <form id="statistics-filter" class="mb-4">
             <div class="card">
                 <div class="card-body">
@@ -27,47 +26,47 @@
                     <div class="row g-3">
                         <div class="col-md-2">
                             <label class="form-label small">Từ ngày:</label>
-                            <input name="from_date" class="form-control filter-input" value="{{request()->get('from_date','')}}" type="date">
+                            <input name="from_date" class="form-control filter-input" value="<?php echo e(request()->get('from_date','')); ?>" type="date">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Đến ngày:</label>
-                            <input name="to_date" class="form-control filter-input" value="{{request()->get('to_date','')}}" type="date">
+                            <input name="to_date" class="form-control filter-input" value="<?php echo e(request()->get('to_date','')); ?>" type="date">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Tỉnh/TP:</label>
                             <select name="province_code" id="province_code" class="form-select filter-input">
                                 <option value="">Tất cả</option>
-                                @foreach($provinces as $province)
-                                    <option value="{{ $province->code }}" @if(request()->get('province_code') == $province->code) selected @endif>{{ $province->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $provinces; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $province): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($province->code); ?>" <?php if(request()->get('province_code') == $province->code): ?> selected <?php endif; ?>><?php echo e($province->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Quận/Huyện:</label>
                             <select name="district_code" id="district_code" class="form-select filter-input">
                                 <option value="">Tất cả</option>
-                                @foreach($districts as $district)
-                                    <option value="{{ $district->code }}" @if($district->code == request()->get('district_code')) selected @endif>{{ $district->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $districts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $district): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($district->code); ?>" <?php if($district->code == request()->get('district_code')): ?> selected <?php endif; ?>><?php echo e($district->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Phường/Xã:</label>
                             <select name="ward_code" id="ward_code" class="form-select filter-input">
                                 <option value="">Tất cả</option>
-                                @foreach($wards as $ward)
-                                    <option value="{{ $ward->code }}" @if($ward->code == request()->get('ward_code')) selected @endif>{{ $ward->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $wards; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ward): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($ward->code); ?>" <?php if($ward->code == request()->get('ward_code')): ?> selected <?php endif; ?>><?php echo e($ward->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Dân tộc:</label>
                             <select name="ethnic_id" id="ethnic_id" class="form-select filter-input">
-                                <option value="all" @if(request()->get('ethnic_id') == 'all') selected @endif>Tất cả</option>
-                                <option value="ethnic_minority" @if(request()->get('ethnic_id') == 'ethnic_minority') selected @endif>Dân tộc thiểu số</option>
-                                @foreach($ethnics as $ethnic)
-                                    <option value="{{ $ethnic->id }}" @if($ethnic->id == request()->get('ethnic_id')) selected @endif>{{ $ethnic->name }}</option>
-                                @endforeach
+                                <option value="all" <?php if(request()->get('ethnic_id') == 'all'): ?> selected <?php endif; ?>>Tất cả</option>
+                                <option value="ethnic_minority" <?php if(request()->get('ethnic_id') == 'ethnic_minority'): ?> selected <?php endif; ?>>Dân tộc thiểu số</option>
+                                <?php $__currentLoopData = $ethnics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ethnic): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($ethnic->id); ?>" <?php if($ethnic->id == request()->get('ethnic_id')): ?> selected <?php endif; ?>><?php echo e($ethnic->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                     </div>
@@ -75,7 +74,7 @@
             </div>
         </form>
 
-        {{-- Tab Navigation --}}
+        
         <div class="card">
             <div class="card-body p-0">
                 <nav class="nav nav-pills nav-justified bg-light p-2 mb-0" id="statistics-tabs" role="tablist">
@@ -136,9 +135,9 @@
                     </button>
                 </nav>
 
-                {{-- Tab Content --}}
+                
                 <div class="tab-content p-4" id="statistics-content">
-                    {{-- Weight for Age Tab --}}
+                    
                     <div class="tab-pane fade show active" id="weight-age" role="tabpanel">
                         <div class="text-center py-5">
                             <div class="spinner-border text-primary" role="status">
@@ -148,7 +147,7 @@
                         </div>
                     </div>
 
-                    {{-- Height for Age Tab --}}
+                    
                     <div class="tab-pane fade" id="height-age" role="tabpanel">
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-ruler-combined" style="font-size: 3rem;"></i>
@@ -156,7 +155,7 @@
                         </div>
                     </div>
 
-                    {{-- Weight for Height Tab --}}
+                    
                     <div class="tab-pane fade" id="weight-height" role="tabpanel">
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-balance-scale" style="font-size: 3rem;"></i>
@@ -164,7 +163,7 @@
                         </div>
                     </div>
 
-                    {{-- Mean Stats Tab --}}
+                    
                     <div class="tab-pane fade" id="mean-stats" role="tabpanel">
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-analytics" style="font-size: 3rem;"></i>
@@ -172,7 +171,7 @@
                         </div>
                     </div>
 
-                    {{-- WHO Combined Tab --}}
+                    
                     <div class="tab-pane fade" id="who-combined" role="tabpanel">
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-chart-pie" style="font-size: 3rem;"></i>
@@ -183,7 +182,7 @@
             </div>
         </div>
 
-        {{-- Quick Stats Summary --}}
+        
         <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card border-primary">
@@ -225,7 +224,7 @@
     </div>
 </div>
 
-{{-- Styles --}}
+
 <style>
 .nav-pills .nav-link {
     border-radius: 0.5rem;
@@ -283,12 +282,12 @@
 }
 </style>
 
-{{-- External Scripts --}}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="{{ asset('admin-assets/js/statistics-tabs.js') }}"></script>
+<script src="<?php echo e(asset('admin-assets/js/statistics-tabs.js')); ?>"></script>
 
-{{-- Scripts --}}
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-load first tab
@@ -341,7 +340,7 @@ function loadTabData(tabName) {
     const params = new URLSearchParams(formData);
     
     // Make AJAX request with proper base URL
-    const url = `{{ url('/admin/statistics') }}/get-${tabName}?${params.toString()}`;
+    const url = `<?php echo e(url('/admin/statistics')); ?>/get-${tabName}?${params.toString()}`;
     
     fetch(url, {
         method: 'GET',
@@ -630,4 +629,5 @@ window.statisticsApp = {
 };
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app-full', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\dinhduong\resources\views/admin/statistics/index.blade.php ENDPATH**/ ?>
