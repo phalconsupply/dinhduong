@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Statistics Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .canvas-container { width: 100%; max-width: 800px; height: 400px; margin: 20px 0; }
+        canvas { border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Statistics Charts</h1>
+    
+    <div class="section">
+        <h2>Step 1: Test Mean Stats API</h2>
+        <button onclick="testMeanStatsAPI()">🔄 Load Mean Stats Data</button>
+        <div id="mean-stats-status"></div>
+        <pre id="mean-stats-result"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Step 2: Test WHO Combined API</h2>
+        <button onclick="testWhoCombinedAPI()">🔄 Load WHO Combined Data</button>
+        <div id="who-status"></div>
+        <pre id="who-result"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Step 3: Test Mean Stats Chart Function</h2>
+        <button onclick="testMeanStatsChart()">📊 Render Mean Stats Chart</button>
+        <div id="mean-chart-status"></div>
+        <div class="canvas-container">
+            <canvas id="mean-test-chart"></canvas>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Step 4: Test WHO Combined Chart Function</h2>
+        <button onclick="testWhoChart()">📊 Render WHO Chart</button>
+        <div id="who-chart-status"></div>
+        <div class="canvas-container">
+            <canvas id="who-test-chart"></canvas>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Step 5: Test Complete Flow</h2>
+        <button onclick="testCompleteFlow()">🚀 Test Complete Flow</button>
+        <div id="flow-status"></div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin + '/dinhduong/public';
+        let meanStatsData = null;
+        let whoData = null;
+        
+        async function testMeanStatsAPI() {
+            const status = document.getElementById('mean-stats-status');
+            const result = document.getElementById('mean-stats-result');
+            
+            status.innerHTML = '⏳ Loading...';
+            
+            try {
+                const response = await fetch(`${baseUrl}/admin/statistics/get-mean-stats`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                meanStatsData = data;
+                
+                result.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success && data.data) {
+                    const keys = Object.keys(data.data);
+                    const hasCorrectKeys = keys.includes('0-5m') || keys.includes('6-11m');
+                    
+                    status.innerHTML = `<span class="success">✅ SUCCESS</span><br>
+                        Keys found: ${keys.join(', ')}<br>
+                        Has correct structure: ${hasCorrectKeys ? 'YES ✅' : 'NO ❌'}`;
+                    
+                    console.log('Mean Stats API Response:', data);
+                } else {
+                    status.innerHTML = `<span class="error">❌ FAILED</span><br>
+                        No data or success=false`;
+                }
+            } catch (error) {
+                status.innerHTML = `<span class="error">❌ ERROR: ${error.message}</span>`;
+                result.textContent = error.stack;
+            }
+        }
+        
+        async function testWhoCombinedAPI() {
+            const status = document.getElementById('who-status');
+            const result = document.getElementById('who-result');
+            
+            status.innerHTML = '⏳ Loading...';
+            
+            try {
+                const response = await fetch(`${baseUrl}/admin/statistics/get-who-combined`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                whoData = data;
+                
+                result.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success && data.data) {
+                    const hasAll = !!data.data.all;
+                    const hasStats = !!(data.data.all && data.data.all.stats);
+                    
+                    status.innerHTML = `<span class="success">✅ SUCCESS</span><br>
+                        Has 'all': ${hasAll ? 'YES ✅' : 'NO ❌'}<br>
+                        Has 'all.stats': ${hasStats ? 'YES ✅' : 'NO ❌'}`;
+                    
+                    console.log('WHO Combined API Response:', data);
+                } else {
+                    status.innerHTML = `<span class="error">❌ FAILED</span><br>
+                        No data or success=false`;
+                }
+            } catch (error) {
+                status.innerHTML = `<span class="error">❌ ERROR: ${error.message}</span>`;
+                result.textContent = error.stack;
+            }
+        }
+        
+        function testMeanStatsChart() {
+            const status = document.getElementById('mean-chart-status');
+            
+            if (!meanStatsData || !meanStatsData.data) {
+                status.innerHTML = '<span class="error">❌ Please load Mean Stats data first!</span>';
+                return;
+            }
+            
+            try {
+                const stats = meanStatsData.data;
+                const ageGroups = [];
+                const waZscoreData = [];
+                
+                Object.keys(stats).forEach(key => {
+                    if (key === '_meta') return;
+                    
+                    const data = stats[key];
+                    if (data && data.label && data.total) {
+                        ageGroups.push(data.label);
+                        waZscoreData.push(data.total.wa_zscore ? data.total.wa_zscore.mean : 0);
+                    }
+                });
+                
+                status.innerHTML = `<span class="success">✅ Chart Data Prepared</span><br>
+                    Age groups: ${ageGroups.length}<br>
+                    Data points: ${waZscoreData.length}`;
+                
+                const ctx = document.getElementById('mean-test-chart');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ageGroups,
+                        datasets: [{
+                            label: 'W/A Z-score',
+                            data: waZscoreData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                status.innerHTML += '<br><span class="success">✅ Chart Rendered!</span>';
+            } catch (error) {
+                status.innerHTML = `<span class="error">❌ ERROR: ${error.message}</span>`;
+                console.error(error);
+            }
+        }
+        
+        function testWhoChart() {
+            const status = document.getElementById('who-chart-status');
+            
+            if (!whoData || !whoData.data) {
+                status.innerHTML = '<span class="error">❌ Please load WHO Combined data first!</span>';
+                return;
+            }
+            
+            try {
+                const allStats = whoData.data.all.stats;
+                const ageGroups = [];
+                const waData = [];
+                
+                const ageKeys = ['0-5', '6-11', '12-23', '24-35', '36-47', '48-60'];
+                ageKeys.forEach(key => {
+                    if (allStats[key]) {
+                        ageGroups.push(allStats[key].label);
+                        waData.push(allStats[key].wa.lt_2sd_pct);
+                    }
+                });
+                
+                status.innerHTML = `<span class="success">✅ Chart Data Prepared</span><br>
+                    Age groups: ${ageGroups.length}<br>
+                    Data points: ${waData.length}`;
+                
+                const ctx = document.getElementById('who-test-chart');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ageGroups,
+                        datasets: [{
+                            label: 'W/A < -2SD (%)',
+                            data: waData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                
+                status.innerHTML += '<br><span class="success">✅ Chart Rendered!</span>';
+            } catch (error) {
+                status.innerHTML = `<span class="error">❌ ERROR: ${error.message}</span>`;
+                console.error(error);
+            }
+        }
+        
+        async function testCompleteFlow() {
+            const status = document.getElementById('flow-status');
+            status.innerHTML = '<h3>Running Complete Flow Test...</h3>';
+            
+            // Step 1
+            status.innerHTML += '<p>Step 1: Loading Mean Stats... ';
+            await testMeanStatsAPI();
+            await new Promise(r => setTimeout(r, 500));
+            status.innerHTML += meanStatsData ? '✅</p>' : '❌</p>';
+            
+            // Step 2
+            status.innerHTML += '<p>Step 2: Loading WHO Combined... ';
+            await testWhoCombinedAPI();
+            await new Promise(r => setTimeout(r, 500));
+            status.innerHTML += whoData ? '✅</p>' : '❌</p>';
+            
+            // Step 3
+            if (meanStatsData) {
+                status.innerHTML += '<p>Step 3: Rendering Mean Stats Chart... ';
+                testMeanStatsChart();
+                status.innerHTML += '✅</p>';
+            }
+            
+            // Step 4
+            if (whoData) {
+                status.innerHTML += '<p>Step 4: Rendering WHO Chart... ';
+                testWhoChart();
+                status.innerHTML += '✅</p>';
+            }
+            
+            status.innerHTML += '<h3 class="success">✅ Complete Flow Test Done!</h3>';
+            status.innerHTML += '<p>Now check if charts are visible above.</p>';
+        }
+        
+        console.log('Debug page loaded. Base URL:', baseUrl);
+    </script>
+</body>
+</html>

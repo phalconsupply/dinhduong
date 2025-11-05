@@ -353,25 +353,57 @@ function loadTabData(tabName) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Set HTML and execute any scripts in it
             tabContent.innerHTML = data.html;
+            
+            // Execute scripts in the inserted HTML
+            const scripts = tabContent.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
             updateQuickStats(data.data);
             
-            // Initialize charts based on tab type
+            // Initialize charts based on tab type - wait for DOM to be ready
             setTimeout(() => {
                 if (tabName === 'mean-stats') {
-                    console.log('Initializing Mean Stats charts...');
-                    if (typeof initializeMeanStatsCharts === 'function') {
-                        initializeMeanStatsCharts(data.data);
+                    console.log('=== Initializing Mean Stats charts ===');
+                    console.log('Data received:', data.data);
+                    console.log('Function exists?', typeof window.initializeMeanStatsCharts);
+                    
+                    if (typeof window.initializeMeanStatsCharts === 'function') {
+                        try {
+                            window.initializeMeanStatsCharts(data.data);
+                            console.log('Mean Stats charts initialized successfully');
+                        } catch (error) {
+                            console.error('Error initializing Mean Stats charts:', error);
+                        }
+                    } else {
+                        console.error('initializeMeanStatsCharts function not found!');
                     }
                 } else if (tabName === 'who-combined') {
-                    console.log('Initializing WHO Combined charts...');
-                    if (typeof initializeWhoCombinedCharts === 'function') {
-                        initializeWhoCombinedCharts(data.data);
+                    console.log('=== Initializing WHO Combined charts ===');
+                    console.log('Data received:', data.data);
+                    console.log('Function exists?', typeof window.initializeWhoCombinedCharts);
+                    
+                    if (typeof window.initializeWhoCombinedCharts === 'function') {
+                        try {
+                            window.initializeWhoCombinedCharts(data.data);
+                            console.log('WHO Combined charts initialized successfully');
+                        } catch (error) {
+                            console.error('Error initializing WHO Combined charts:', error);
+                        }
+                    } else {
+                        console.error('initializeWhoCombinedCharts function not found!');
                     }
                 } else if (typeof initializeCharts === 'function') {
                     initializeCharts(tabName, data.data);
                 }
-            }, 200);
+            }, 500);
         } else {
             showError(tabContent, data.message || 'Có lỗi xảy ra khi tải dữ liệu');
         }
