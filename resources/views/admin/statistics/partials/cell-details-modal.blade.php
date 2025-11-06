@@ -320,4 +320,10 @@ document.addEventListener('DOMContentLoaded', function() {
         transform: rotate(360deg);
     }
 }
+
+/* Custom badge colors */
+.badge.bg-pink {
+    background-color: #e83e8c !important;
+    color: white !important;
+}
 </style>
