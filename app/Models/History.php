@@ -215,14 +215,14 @@ class History extends Model
         $bmi = $this->bmi;
         $row = $this->BMIForAge();
         $text = 'Chưa có dữ liệu';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $result = 'unknown';
         $zscore_category = 'N/A';
         if ($row) {
             if ($row['-2SD'] <= $bmi && $bmi <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
                 if ($bmi >= $row['Median'] && $bmi <= $row['1SD']) {
@@ -237,22 +237,22 @@ class History extends Model
             } else if ($bmi < $row['-3SD']) {
                 $result = 'wasted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } else if ($bmi < $row['-2SD']) {
                 $result = 'wasted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } else if ($bmi > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
             } else if ($bmi >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '+2SD đến +3SD';
             }
         }
@@ -270,14 +270,14 @@ class History extends Model
         $weight = $this->weight;
         $row = $this->WeightForAge();
         $text = 'Chưa có dữ liệu';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $result = 'unknown';
         $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
                 if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
@@ -292,22 +292,22 @@ class History extends Model
             } else if ($weight < $row['-3SD']) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } else if ($weight > $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
             } else if ($weight >= $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '+2SD đến +3SD';
             }
         }
@@ -328,14 +328,14 @@ class History extends Model
         $height = $this->height;
         $row = $this->HeightForAge();
         $text = 'Chưa có dữ liệu';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $result = 'unknown';
         $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $height && $height <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
                 if ($height >= $row['Median'] && $height <= $row['1SD']) {
@@ -350,22 +350,22 @@ class History extends Model
             } else if ($height < $row['-3SD']) {
                 $result = 'stunted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể còi, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } else if ($height < $row['-2SD']) {
                 $result = 'stunted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } else if ($height >= $row['3SD']) {
                 $result = 'above_3sd';
                 $text = 'Trẻ cao bất thường';
-                $color = 'blue';
+                $color = '#2196F3'; // WHO Blue
                 $zscore_category = '≥ +3SD';
             } else if ($height > $row['2SD']) {
                 $result = 'above_2sd';
                 $text = 'Trẻ cao hơn bình thường';
-                $color = 'cyan';
+                $color = '#00BCD4'; // WHO Cyan
                 $zscore_category = '+2SD đến +3SD';
             }
         }
@@ -386,14 +386,14 @@ class History extends Model
         $weight = $this->weight;
         $row = $this->WeightForHeight();
         $text = 'Chưa có dữ liệu';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $result = 'unknown';
         $zscore_category = 'N/A';
         if($row){
             if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
                 if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
@@ -408,22 +408,22 @@ class History extends Model
             } else if ($weight < $row['-3SD']) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } else if ($weight < $row['-2SD']) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } else if ($weight >= $row['3SD']) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '≥ +3SD';
             } else if ($weight > $row['2SD']) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '+2SD đến +3SD';
             }
         }
@@ -454,7 +454,7 @@ class History extends Model
         $wfh = $this->check_weight_for_height();   // Cân nặng/chiều cao
         
         $text = 'Chưa xác định';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $code = 'unknown';
         
         // Kiểm tra dữ liệu có đủ không
@@ -467,18 +467,18 @@ class History extends Model
         if (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe']) && 
             in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
             $text = 'Suy dinh dưỡng phối hợp';
-            $color = 'red';
+            $color = '#F44336'; // WHO Red
             $code = 'malnutrition_combined';
         }
         // 2. SDD GẦY CÒM (W/H < -2SD nhưng H/A bình thường)
         elseif (in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
             if ($wfh['result'] === 'underweight_severe') {
                 $text = 'Suy dinh dưỡng gầy còm nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'wasted_severe';
             } else {
                 $text = 'Suy dinh dưỡng gầy còm';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'wasted';
             }
         }
@@ -486,11 +486,11 @@ class History extends Model
         elseif (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe'])) {
             if ($hfa['result'] === 'stunted_severe') {
                 $text = 'Suy dinh dưỡng thấp còi nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'stunted_severe';
             } else {
                 $text = 'Suy dinh dưỡng thấp còi';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'stunted';
             }
         }
@@ -498,36 +498,36 @@ class History extends Model
         elseif (in_array($wfa['result'], ['underweight_moderate', 'underweight_severe'])) {
             if ($wfa['result'] === 'underweight_severe') {
                 $text = 'Suy dinh dưỡng nhẹ cân nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'underweight_severe';
             } else {
                 $text = 'Suy dinh dưỡng nhẹ cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'underweight';
             }
         }
         // 5. BÉO PHÌ (W/A > +3SD hoặc W/H > +3SD)
         elseif ($wfa['result'] === 'obese' || $wfh['result'] === 'obese') {
             $text = 'Béo phì';
-            $color = 'red';
+            $color = '#F44336'; // WHO Red
             $code = 'obese';
         }
         // 6. THỪA CÂN (W/A > +2SD hoặc W/H > +2SD)
         elseif ($wfa['result'] === 'overweight' || $wfh['result'] === 'overweight') {
             $text = 'Thừa cân';
-            $color = 'orange';
+            $color = '#FF9800'; // WHO Orange
             $code = 'overweight';
         }
         // 7. CHIỀU CAO VƯỢT CHUẨN (H/A > +2SD hoặc +3SD)
         elseif (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) {
             $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-            $color = 'cyan';
+            $color = '#00BCD4'; // WHO Cyan
             $code = 'over_standard';
         }
         // 8. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
         elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
             $text = 'Bình thường';
-            $color = 'green';
+            $color = '#4CAF50'; // WHO Green
             $code = 'normal';
         }
         // 9. CÓ CHỈ SỐ VƯỢT TIÊU CHUẨN KHÁC (fallback cho các trường hợp còn lại có chỉ số cao)
@@ -540,7 +540,7 @@ class History extends Model
             
             if ($hasHighIndicator) {
                 $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-                $color = 'cyan';
+                $color = '#00BCD4'; // WHO Cyan
                 $code = 'over_standard';
             }
         }
@@ -868,7 +868,7 @@ class History extends Model
     public function classifyByZScore($zscore, $type = 'wfa')
     {
         $text = 'Chưa có dữ liệu';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $result = 'unknown';
         $zscore_category = 'N/A';
         
@@ -882,22 +882,22 @@ class History extends Model
             if ($zscore < -3) {
                 $result = 'stunted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } elseif ($zscore < -2) {
                 $result = 'stunted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } elseif ($zscore < -1) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 $zscore_category = '-2SD đến -1SD';
             } elseif ($zscore <= 2) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 if ($zscore < 0) {
                     $zscore_category = '-1SD đến Median';
                 } elseif ($zscore <= 1) {
@@ -908,12 +908,12 @@ class History extends Model
             } elseif ($zscore <= 3) {
                 $result = 'above_2sd';
                 $text = 'Trẻ cao hơn bình thường';
-                $color = 'cyan';
+                $color = '#00BCD4'; // WHO Cyan
                 $zscore_category = '+2SD đến +3SD';
             } else {
                 $result = 'above_3sd';
                 $text = 'Trẻ cao bất thường';
-                $color = 'blue';
+                $color = '#2196F3'; // WHO Blue
                 $zscore_category = '≥ +3SD';
             }
         } elseif ($type === 'wfa') {
@@ -921,22 +921,22 @@ class History extends Model
             if ($zscore < -3) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } elseif ($zscore < -2) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } elseif ($zscore < -1) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 $zscore_category = '-2SD đến -1SD';
             } elseif ($zscore <= 2) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 if ($zscore < 0) {
                     $zscore_category = '-1SD đến Median';
                 } elseif ($zscore <= 1) {
@@ -947,12 +947,12 @@ class History extends Model
             } elseif ($zscore <= 3) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '+2SD đến +3SD';
             } else {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
             }
         } elseif (in_array($type, ['wfh', 'bmi'])) {
@@ -960,22 +960,22 @@ class History extends Model
             if ($zscore < -3) {
                 $result = 'wasted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
             } elseif ($zscore < -2) {
                 $result = 'wasted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
             } elseif ($zscore < -1) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 $zscore_category = '-2SD đến -1SD';
             } elseif ($zscore <= 2) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
-                $color = 'green';
+                $color = '#4CAF50'; // WHO Green
                 if ($zscore < 0) {
                     $zscore_category = '-1SD đến Median';
                 } elseif ($zscore <= 1) {
@@ -986,12 +986,12 @@ class History extends Model
             } elseif ($zscore <= 3) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $zscore_category = '+2SD đến +3SD';
             } else {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
             }
         }
@@ -1146,12 +1146,12 @@ class History extends Model
         $wfh = $this->check_weight_for_height_auto();   // Cân nặng/chiều cao
         
         $text = 'Chưa xác định';
-        $color = 'gray';
+        $color = '#9E9E9E'; // WHO Gray
         $code = 'unknown';
         
         // Kiểm tra dữ liệu có đủ không
         if ($wfa['result'] === 'unknown' || $hfa['result'] === 'unknown' || $wfh['result'] === 'unknown') {
-            return ['text' => 'Chưa có đủ dữ liệu', 'color' => 'gray', 'code' => 'unknown'];
+            return ['text' => 'Chưa có đủ dữ liệu', 'color' => '#9E9E9E', 'code' => 'unknown'];
         }
         
         // 1. SUY DINH DƯỠNG PHỐI HỢP (vừa thấp còi vừa gầy còm)
@@ -1159,18 +1159,18 @@ class History extends Model
         if (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe']) && 
             in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
             $text = 'Suy dinh dưỡng phối hợp';
-            $color = 'red';
+            $color = '#F44336'; // WHO Red
             $code = 'malnutrition_combined';
         }
         // 2. SDD GẦY CÒM (W/H < -2SD nhưng H/A bình thường)
         elseif (in_array($wfh['result'], ['underweight_moderate', 'underweight_severe'])) {
             if ($wfh['result'] === 'underweight_severe') {
                 $text = 'Suy dinh dưỡng gầy còm nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'wasted_severe';
             } else {
                 $text = 'Suy dinh dưỡng gầy còm';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'wasted';
             }
         }
@@ -1178,11 +1178,11 @@ class History extends Model
         elseif (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe'])) {
             if ($hfa['result'] === 'stunted_severe') {
                 $text = 'Suy dinh dưỡng thấp còi nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'stunted_severe';
             } else {
                 $text = 'Suy dinh dưỡng thấp còi';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'stunted';
             }
         }
@@ -1190,36 +1190,36 @@ class History extends Model
         elseif (in_array($wfa['result'], ['underweight_moderate', 'underweight_severe'])) {
             if ($wfa['result'] === 'underweight_severe') {
                 $text = 'Suy dinh dưỡng nhẹ cân nặng';
-                $color = 'red';
+                $color = '#F44336'; // WHO Red
                 $code = 'underweight_severe';
             } else {
                 $text = 'Suy dinh dưỡng nhẹ cân';
-                $color = 'orange';
+                $color = '#FF9800'; // WHO Orange
                 $code = 'underweight';
             }
         }
         // 5. BÉO PHÌ (W/A > +3SD hoặc W/H > +3SD)
         elseif ($wfa['result'] === 'obese' || $wfh['result'] === 'obese') {
             $text = 'Béo phì';
-            $color = 'red';
+            $color = '#F44336'; // WHO Red
             $code = 'obese';
         }
         // 6. THỪA CÂN (W/A > +2SD hoặc W/H > +2SD)
         elseif ($wfa['result'] === 'overweight' || $wfh['result'] === 'overweight') {
             $text = 'Thừa cân';
-            $color = 'orange';
+            $color = '#FF9800'; // WHO Orange
             $code = 'overweight';
         }
         // 7. CHIỀU CAO VƯỢT CHUẨN (H/A > +2SD hoặc +3SD)
         elseif (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) {
             $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-            $color = 'cyan';
+            $color = '#00BCD4'; // WHO Cyan
             $code = 'over_standard';
         }
         // 8. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
         elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
             $text = 'Bình thường';
-            $color = 'green';
+            $color = '#4CAF50'; // WHO Green
             $code = 'normal';
         }
         // 9. CÓ CHỈ SỐ VƯỢT TIÊU CHUẨN KHÁC (fallback cho các trường hợp còn lại có chỉ số cao)
@@ -1232,7 +1232,7 @@ class History extends Model
             
             if ($hasHighIndicator) {
                 $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-                $color = 'cyan';
+                $color = '#00BCD4'; // WHO Cyan
                 $code = 'over_standard';
             }
         }
