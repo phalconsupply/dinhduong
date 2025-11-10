@@ -145,22 +145,25 @@
                                             </td>
                                             <td>
                                                 <?php
-                                                    $nutritionStatus = $row->nutrition_status ?? '';
-                                                    $isEmpty = in_array($nutritionStatus, ['', null, 'Chưa xác định', 'Chưa có đủ dữ liệu']);
+                                                    // Lấy trạng thái dinh dưỡng với màu WHO chuẩn
+                                                    $nutritionStatusData = $row->get_nutrition_status_auto();
+                                                    $nutritionStatus = $nutritionStatusData['text'] ?? ($row->nutrition_status ?? 'Chưa xác định');
+                                                    $statusColor = $nutritionStatusData['color'] ?? '#9E9E9E';
                                                     
-                                                    // Kiểm tra nếu có chứa "gầy còm" (case-insensitive)
-                                                    $isWasted = !$isEmpty && stripos($nutritionStatus, 'gầy còm') !== false;
+                                                    // Xác định class badge dựa trên màu WHO
+                                                    $badgeClass = 'bg-secondary'; // default
+                                                    if ($statusColor === '#F44336') { // WHO Red - Nguy hiểm
+                                                        $badgeClass = 'bg-danger';
+                                                    } elseif ($statusColor === '#FF9800') { // WHO Orange - Cảnh báo
+                                                        $badgeClass = 'bg-warning';
+                                                    } elseif ($statusColor === '#4CAF50') { // WHO Green - Bình thường
+                                                        $badgeClass = 'bg-success';
+                                                    } elseif ($statusColor === '#00BCD4') { // WHO Cyan - Cao hơn bình thường
+                                                        $badgeClass = 'bg-info';
+                                                    }
                                                 ?>
 
-                                                <?php if($isEmpty): ?>
-                                                    <span class="badge bg-secondary">Chưa xác định</span>
-                                                <?php elseif($isWasted): ?>
-                                                    
-                                                    <span class="badge bg-danger"><?php echo e($nutritionStatus); ?></span>
-                                                <?php else: ?>
-                                                    
-                                                    <span class="small"><?php echo e($nutritionStatus); ?></span>
-                                                <?php endif; ?>
+                                                <span class="badge <?php echo e($badgeClass); ?>"><?php echo e($nutritionStatus); ?></span>
                                             </td>
                                             <td>
                                                 <span class="badge bg-<?php echo e(v('gender.color.'.$row->gender)); ?>"><?php echo e(v('gender.'.$row->gender)); ?></span><br>

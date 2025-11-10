@@ -145,15 +145,117 @@ class History extends Model
     }
 
     public function BMIForAge(){
-        return BMIForAge::where('gender', $this->gender)->where('Months',$this->age)->first();
+        $age = $this->age;
+        $gender = $this->gender;
+        
+        // Nếu tuổi là số nguyên, tìm exact match
+        if (floor($age) == $age) {
+            return BMIForAge::where('gender', $gender)->where('Months', $age)->first();
+        }
+        
+        // Tuổi thập phân: nội suy giữa 2 điểm
+        $lowerAge = floor($age);
+        $upperAge = ceil($age);
+        
+        $lower = BMIForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
+        $upper = BMIForAge::where('gender', $gender)->where('Months', $upperAge)->first();
+        
+        if (!$lower || !$upper) {
+            return null;
+        }
+        
+        // Tính tỷ lệ nội suy
+        $ratio = $age - $lowerAge;
+        
+        // Nội suy tất cả các giá trị SD
+        $interpolated = new \stdClass();
+        $interpolated->gender = $gender;
+        $interpolated->Months = $age;
+        
+        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
+        foreach ($columns as $column) {
+            $lowerValue = $lower->{$column};
+            $upperValue = $upper->{$column};
+            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
+        }
+        
+        return $interpolated;
     }
 
     public function WeightForAge(){
-        return WeightForAge::where('gender', $this->gender)->where('Months',$this->age)->first();
+        $age = $this->age;
+        $gender = $this->gender;
+        
+        // Nếu tuổi là số nguyên, tìm exact match
+        if (floor($age) == $age) {
+            return WeightForAge::where('gender', $gender)->where('Months', $age)->first();
+        }
+        
+        // Tuổi thập phân: nội suy giữa 2 điểm
+        $lowerAge = floor($age);
+        $upperAge = ceil($age);
+        
+        $lower = WeightForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
+        $upper = WeightForAge::where('gender', $gender)->where('Months', $upperAge)->first();
+        
+        if (!$lower || !$upper) {
+            return null;
+        }
+        
+        // Tính tỷ lệ nội suy
+        $ratio = $age - $lowerAge;
+        
+        // Nội suy tất cả các giá trị SD
+        $interpolated = new \stdClass();
+        $interpolated->gender = $gender;
+        $interpolated->Months = $age;
+        
+        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
+        foreach ($columns as $column) {
+            $lowerValue = $lower->{$column};
+            $upperValue = $upper->{$column};
+            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
+        }
+        
+        return $interpolated;
     }
 
      public function HeightForAge(){
-         return HeightForAge::where('gender', $this->gender)->where('Months',$this->age)->first();
+        $age = $this->age;
+        $gender = $this->gender;
+        
+        // Nếu tuổi là số nguyên, tìm exact match
+        if (floor($age) == $age) {
+            return HeightForAge::where('gender', $gender)->where('Months', $age)->first();
+        }
+        
+        // Tuổi thập phân: nội suy giữa 2 điểm
+        $lowerAge = floor($age);
+        $upperAge = ceil($age);
+        
+        $lower = HeightForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
+        $upper = HeightForAge::where('gender', $gender)->where('Months', $upperAge)->first();
+        
+        if (!$lower || !$upper) {
+            return null;
+        }
+        
+        // Tính tỷ lệ nội suy
+        $ratio = $age - $lowerAge;
+        
+        // Nội suy tất cả các giá trị SD
+        $interpolated = new \stdClass();
+        $interpolated->gender = $gender;
+        $interpolated->Months = $age;
+        
+        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
+        foreach ($columns as $column) {
+            $lowerValue = $lower->{$column};
+            $upperValue = $upper->{$column};
+            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
+        }
+        
+        return $interpolated;
     }
     public function WeightForHeight(){
         $height = $this->height;
@@ -220,37 +322,37 @@ class History extends Model
         $result = 'unknown';
         $zscore_category = 'N/A';
         if ($row) {
-            if ($row['-2SD'] <= $bmi && $bmi <= $row['2SD']) {
+            if ($row->{'-2SD'} <= $bmi && $bmi <= $row->{'2SD'}) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
-                if ($bmi >= $row['Median'] && $bmi <= $row['1SD']) {
+                if ($bmi >= $row->Median && $bmi <= $row->{'1SD'}) {
                     $zscore_category = 'Median đến +1SD';
-                } else if ($bmi > $row['1SD'] && $bmi <= $row['2SD']) {
+                } else if ($bmi > $row->{'1SD'} && $bmi <= $row->{'2SD'}) {
                     $zscore_category = '+1SD đến +2SD';
-                } else if ($bmi >= $row['-1SD'] && $bmi < $row['Median']) {
+                } else if ($bmi >= $row->{'-1SD'} && $bmi < $row->Median) {
                     $zscore_category = '-1SD đến Median';
-                } else if ($bmi >= $row['-2SD'] && $bmi < $row['-1SD']) {
+                } else if ($bmi >= $row->{'-2SD'} && $bmi < $row->{'-1SD'}) {
                     $zscore_category = '-2SD đến -1SD';
                 }
-            } else if ($bmi < $row['-3SD']) {
+            } else if ($bmi < $row->{'-3SD'}) {
                 $result = 'wasted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
                 $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
-            } else if ($bmi < $row['-2SD']) {
+            } else if ($bmi < $row->{'-2SD'}) {
                 $result = 'wasted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
                 $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
-            } else if ($bmi > $row['3SD']) {
+            } else if ($bmi > $row->{'3SD'}) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
                 $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
-            } else if ($bmi >= $row['2SD']) {
+            } else if ($bmi >= $row->{'2SD'}) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
                 $color = '#FF9800'; // WHO Orange
@@ -275,37 +377,37 @@ class History extends Model
         $result = 'unknown';
         $zscore_category = 'N/A';
         if($row){
-            if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
+            if ($row->{'-2SD'} <= $weight && $weight <= $row->{'2SD'}) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
-                if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
+                if ($weight >= $row->Median && $weight <= $row->{'1SD'}) {
                     $zscore_category = 'Median đến +1SD';
-                } else if ($weight > $row['1SD'] && $weight <= $row['2SD']) {
+                } else if ($weight > $row->{'1SD'} && $weight <= $row->{'2SD'}) {
                     $zscore_category = '+1SD đến +2SD';
-                } else if ($weight >= $row['-1SD'] && $weight < $row['Median']) {
+                } else if ($weight >= $row->{'-1SD'} && $weight < $row->Median) {
                     $zscore_category = '-1SD đến Median';
-                } else if ($weight >= $row['-2SD'] && $weight < $row['-1SD']) {
+                } else if ($weight >= $row->{'-2SD'} && $weight < $row->{'-1SD'}) {
                     $zscore_category = '-2SD đến -1SD';
                 }
-            } else if ($weight < $row['-3SD']) {
+            } else if ($weight < $row->{'-3SD'}) {
                 $result = 'underweight_severe';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
                 $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
-            } else if ($weight < $row['-2SD']) {
+            } else if ($weight < $row->{'-2SD'}) {
                 $result = 'underweight_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
                 $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
-            } else if ($weight > $row['3SD']) {
+            } else if ($weight > $row->{'3SD'}) {
                 $result = 'obese';
                 $text = 'Trẻ béo phì';
                 $color = '#F44336'; // WHO Red
                 $zscore_category = '> +3SD';
-            } else if ($weight >= $row['2SD']) {
+            } else if ($weight >= $row->{'2SD'}) {
                 $result = 'overweight';
                 $text = 'Trẻ thừa cân';
                 $color = '#FF9800'; // WHO Orange
@@ -333,37 +435,37 @@ class History extends Model
         $result = 'unknown';
         $zscore_category = 'N/A';
         if($row){
-            if ($row['-2SD'] <= $height && $height <= $row['2SD']) {
+            if ($row->{'-2SD'} <= $height && $height <= $row->{'2SD'}) {
                 $result = 'normal';
                 $text = 'Trẻ bình thường';
                 $color = '#4CAF50'; // WHO Green
                 
                 // Xác định chính xác trong khoảng nào
-                if ($height >= $row['Median'] && $height <= $row['1SD']) {
+                if ($height >= $row->Median && $height <= $row->{'1SD'}) {
                     $zscore_category = 'Median đến +1SD';
-                } else if ($height > $row['1SD'] && $height <= $row['2SD']) {
+                } else if ($height > $row->{'1SD'} && $height <= $row->{'2SD'}) {
                     $zscore_category = '+1SD đến +2SD';
-                } else if ($height >= $row['-1SD'] && $height < $row['Median']) {
+                } else if ($height >= $row->{'-1SD'} && $height < $row->Median) {
                     $zscore_category = '-1SD đến Median';
-                } else if ($height >= $row['-2SD'] && $height < $row['-1SD']) {
+                } else if ($height >= $row->{'-2SD'} && $height < $row->{'-1SD'}) {
                     $zscore_category = '-2SD đến -1SD';
                 }
-            } else if ($height < $row['-3SD']) {
+            } else if ($height < $row->{'-3SD'}) {
                 $result = 'stunted_severe';
                 $text = 'Trẻ suy dinh dưỡng thể còi, mức độ nặng';
                 $color = '#F44336'; // WHO Red
                 $zscore_category = '< -3SD';
-            } else if ($height < $row['-2SD']) {
+            } else if ($height < $row->{'-2SD'}) {
                 $result = 'stunted_moderate';
                 $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
                 $color = '#FF9800'; // WHO Orange
                 $zscore_category = '-3SD đến -2SD';
-            } else if ($height >= $row['3SD']) {
+            } else if ($height >= $row->{'3SD'}) {
                 $result = 'above_3sd';
                 $text = 'Trẻ cao bất thường';
                 $color = '#2196F3'; // WHO Blue
                 $zscore_category = '≥ +3SD';
-            } else if ($height > $row['2SD']) {
+            } else if ($height > $row->{'2SD'}) {
                 $result = 'above_2sd';
                 $text = 'Trẻ cao hơn bình thường';
                 $color = '#00BCD4'; // WHO Cyan
@@ -600,15 +702,17 @@ class History extends Model
      */
     public function calculateZScore($value, $refRow)
     {
-        if (!$refRow || !isset($refRow['Median']) || $value === null) return null;
+        // Hỗ trợ cả array và object
+        $median = is_array($refRow) ? $refRow['Median'] : $refRow->Median ?? null;
         
-        $median = $refRow['Median'];
-        $sd0neg = $refRow['-1SD'] ?? null;
-        $sd1neg = $refRow['-2SD'] ?? null;
-        $sd2neg = $refRow['-3SD'] ?? null;
-        $sd0pos = $refRow['1SD'] ?? null;
-        $sd1pos = $refRow['2SD'] ?? null;
-        $sd2pos = $refRow['3SD'] ?? null;
+        if (!$refRow || !$median || $value === null) return null;
+        
+        $sd0neg = is_array($refRow) ? ($refRow['-1SD'] ?? null) : ($refRow->{'-1SD'} ?? null);
+        $sd1neg = is_array($refRow) ? ($refRow['-2SD'] ?? null) : ($refRow->{'-2SD'} ?? null);
+        $sd2neg = is_array($refRow) ? ($refRow['-3SD'] ?? null) : ($refRow->{'-3SD'} ?? null);
+        $sd0pos = is_array($refRow) ? ($refRow['1SD'] ?? null) : ($refRow->{'1SD'} ?? null);
+        $sd1pos = is_array($refRow) ? ($refRow['2SD'] ?? null) : ($refRow->{'2SD'} ?? null);
+        $sd2pos = is_array($refRow) ? ($refRow['3SD'] ?? null) : ($refRow->{'3SD'} ?? null);
         
         // Kiểm tra dữ liệu đầy đủ
         if (!$sd0neg || !$sd1neg || !$sd2neg || !$sd0pos || !$sd1pos || !$sd2pos) {
