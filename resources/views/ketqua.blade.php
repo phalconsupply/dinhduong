@@ -86,15 +86,25 @@
                                             <label><i class="fas fa-weight"></i> Cân nặng</label>
                                             <p class="info-value">
                                                 <strong>{{$row->weight}} kg</strong><br>
-                                                <small>Chuẩn theo tuổi: {{$row->WeightForAge()['Median'] ?? 'N/A'}} kg</small><br>
-                                                <small>Chuẩn theo chiều cao: {{$row->WeightForHeight()['Median'] ?? 'N/A'}} kg</small>
+                                                @php
+                                                    $wfa = $row->WeightForAge();
+                                                    $wfh = $row->WeightForHeight();
+                                                    $median_wfa = is_array($wfa) ? ($wfa['Median'] ?? null) : ($wfa->Median ?? null);
+                                                    $median_wfh = is_array($wfh) ? ($wfh['Median'] ?? null) : ($wfh->Median ?? null);
+                                                @endphp
+                                                <small>Chuẩn theo tuổi: {{ $median_wfa ? round($median_wfa, 1) : 'N/A' }} kg</small><br>
+                                                <small>Chuẩn theo chiều cao: {{ $median_wfh ? round($median_wfh, 1) : 'N/A' }} kg</small>
                                             </p>
                                         </div>
                                         <div class="info-item">
                                             <label><i class="fas fa-ruler-vertical"></i> Chiều cao</label>
                                             <p class="info-value">
                                                 <strong>{{$row->height}} cm</strong><br>
-                                                <small>Chuẩn theo tuổi: {{$row->HeightForAge()['Median'] ?? 'N/A'}} cm</small>
+                                                @php
+                                                    $hfa = $row->HeightForAge();
+                                                    $median_hfa = is_array($hfa) ? ($hfa['Median'] ?? null) : ($hfa->Median ?? null);
+                                                @endphp
+                                                <small>Chuẩn theo tuổi: {{ $median_hfa ? round($median_hfa, 1) : 'N/A' }} cm</small>
                                             </p>
                                         </div>
                                     </div>

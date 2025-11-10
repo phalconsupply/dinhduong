@@ -94,7 +94,11 @@
         </div>
         <div class="col80" style="display: table">
             <p><em>(
-                    Chuẩn cân nặng theo tuổi: {{$row->WeightForAge()['Median'] ?? 'Chưa có dữ liệu'}} kg
+                    @php
+                        $wfa = $row->WeightForAge();
+                        $median_wfa = is_array($wfa) ? ($wfa['Median'] ?? null) : ($wfa->Median ?? null);
+                    @endphp
+                    Chuẩn cân nặng theo tuổi: {{ $median_wfa ? round($median_wfa, 1) : 'Chưa có dữ liệu' }} kg
                     )
 
                     <br/>
@@ -113,7 +117,13 @@
             <p class="value">{{$row->height}} cm</p>
         </div>
         <div class="col80">
-            <p><em>( Chuẩn chiều cao theo tuổi: {{$row->HeightForAge()['Median'] ?? 'Chưa có dữ liệu'}} cm )</em></p>
+            <p><em>(
+                @php
+                    $hfa = $row->HeightForAge();
+                    $median_hfa = is_array($hfa) ? ($hfa['Median'] ?? null) : ($hfa->Median ?? null);
+                @endphp
+                Chuẩn chiều cao theo tuổi: {{ $median_hfa ? round($median_hfa, 1) : 'Chưa có dữ liệu' }} cm
+            )</em></p>
         </div>
         <div class="cf"></div>
     </div>
