@@ -541,7 +541,8 @@ class StatisticsTabController extends Controller
 
         foreach ($ageGroups as $key => $group) {
             $groupRecords = $records->filter(function($record) use ($group) {
-                return $record->age >= $group['min'] && $record->age <= $group['max'];
+                $ageInt = floor($record->age); // Chỉ lấy phần nguyên của tuổi
+                return $ageInt >= $group['min'] && $ageInt <= $group['max'];
             });
 
             $n = $groupRecords->count();
