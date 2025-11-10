@@ -148,128 +148,73 @@ class History extends Model
         $age = $this->age;
         $gender = $this->gender;
         
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return BMIForAge::where('gender', $gender)->where('Months', $age)->first();
-        }
+        // Làm tròn xuống số nguyên (VD: 5.95 → 5)
+        // Hiển thị vẫn giữ decimal, nhưng tính toán dùng số nguyên
+        $roundedAge = floor($age);
         
-        // Tuổi thập phân: nội suy giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-        
-        $lower = BMIForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
-        $upper = BMIForAge::where('gender', $gender)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
+        return BMIForAge::where('gender', $gender)->where('Months', $roundedAge)->first();
     }
 
     public function WeightForAge(){
         $age = $this->age;
         $gender = $this->gender;
         
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return WeightForAge::where('gender', $gender)->where('Months', $age)->first();
-        }
+        // Làm tròn xuống số nguyên (VD: 5.95 → 5)
+        // Hiển thị vẫn giữ decimal, nhưng tính toán dùng số nguyên
+        $roundedAge = floor($age);
         
-        // Tuổi thập phân: nội suy giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-        
-        $lower = WeightForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
-        $upper = WeightForAge::where('gender', $gender)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
+        return WeightForAge::where('gender', $gender)->where('Months', $roundedAge)->first();
     }
 
      public function HeightForAge(){
         $age = $this->age;
         $gender = $this->gender;
         
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return HeightForAge::where('gender', $gender)->where('Months', $age)->first();
-        }
+        // Làm tròn xuống số nguyên (VD: 5.95 → 5)
+        // Hiển thị vẫn giữ decimal, nhưng tính toán dùng số nguyên
+        $roundedAge = floor($age);
         
-        // Tuổi thập phân: nội suy giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-        
-        $lower = HeightForAge::where('gender', $gender)->where('Months', $lowerAge)->first();
-        $upper = HeightForAge::where('gender', $gender)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
+        return HeightForAge::where('gender', $gender)->where('Months', $roundedAge)->first();
     }
     public function WeightForHeight(){
         $height = $this->height;
         $gender = $this->gender;
+        $age = $this->age;  // Lấy age để filter theo age range
         
         // Kiểm tra nếu height hoặc gender null → return null
         if ($height === null || $gender === null) {
             return null;
         }
         
+        // ════════════════════════════════════════════════════════════════════
+        // WHO LENGTH/HEIGHT MEASUREMENT STANDARDS
+        // ════════════════════════════════════════════════════════════════════
+        // Database có 2 bảng riêng:
+        //   - [0-24 months]:  Weight-for-LENGTH (đo nằm - recumbent)
+        //   - [24-60 months]: Weight-for-HEIGHT (đo đứng - standing)
+        //
+        // Conversion: Length = Height + 0.7 cm
+        //
+        // Auto-adjustment strategy:
+        //   - Age < 24 → Giả định đo NẰM → Dùng bảng Length [0-24]
+        //   - Age ≥ 24 → Giả định đo ĐỨNG → Dùng bảng Height [24-60]
+        //
+        // LIMITATION: Nếu đo sai loại (VD: trẻ 26 tháng đo nằm thay vì đứng)
+        // sẽ có sai lệch ~0.7cm. Để chính xác 100%, cần thêm field 
+        // measurement_position ('recumbent'/'standing') vào histories table.
+        // ════════════════════════════════════════════════════════════════════
+        
+        $adjustedHeight = $height;
+        
+        // IMPORTANT: Filter theo age range để chọn đúng bảng (Length vs Height)
+        // Đây là bug fix quan trọng - trước đây thiếu filter này!
+        
         // Theo WHO: KHÔNG làm tròn height, sử dụng linear interpolation
-        // Thử tìm exact match trước
+        // Thử tìm exact match trước - PHẢI FILTER THEO AGE RANGE!
         $exact = WeightForHeight::where('gender', $gender)
-            ->where('cm', $height)
+            ->where('cm', $adjustedHeight)
+            ->where('fromAge', '<=', $age)
+            ->where('toAge', '>=', $age)
             ->first();
         
         if ($exact) {
@@ -277,14 +222,18 @@ class History extends Model
         }
         
         // Không tìm thấy exact → Linear Interpolation theo hướng dẫn WHO
-        // Tìm 2 giá trị gần nhất (lower và upper)
+        // Tìm 2 giá trị gần nhất (lower và upper) - FILTER THEO AGE RANGE!
         $lower = WeightForHeight::where('gender', $gender)
-            ->where('cm', '<=', $height)
+            ->where('cm', '<=', $adjustedHeight)
+            ->where('fromAge', '<=', $age)
+            ->where('toAge', '>=', $age)
             ->orderBy('cm', 'desc')
             ->first();
         
         $upper = WeightForHeight::where('gender', $gender)
-            ->where('cm', '>=', $height)
+            ->where('cm', '>=', $adjustedHeight)
+            ->where('fromAge', '<=', $age)
+            ->where('toAge', '>=', $age)
             ->orderBy('cm', 'asc')
             ->first();
         
@@ -293,11 +242,11 @@ class History extends Model
         }
         
         // Linear interpolation: Z(x) = Z(x1) + [(x - x1) / (x2 - x1)] × [Z(x2) - Z(x1)]
-        $ratio = ($height - $lower->cm) / ($upper->cm - $lower->cm);
+        $ratio = ($adjustedHeight - $lower->cm) / ($upper->cm - $lower->cm);
         
         // Tạo WeightForHeight model instance để tương thích với code existing
         $interpolated = new WeightForHeight();
-        $interpolated->cm = $height;
+        $interpolated->cm = $adjustedHeight;  // Sử dụng adjustedHeight
         $interpolated->gender = $gender;
         $interpolated->fromAge = $lower->fromAge;
         $interpolated->toAge = $lower->toAge;

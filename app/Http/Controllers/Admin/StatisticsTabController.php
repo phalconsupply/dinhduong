@@ -383,11 +383,11 @@ class StatisticsTabController extends Controller
         $records = $query->get();
 
         $ageGroups = [
-            '0-5m' => ['min' => 0, 'max' => 5, 'label' => '0-5 tháng'],
-            '6-11m' => ['min' => 6, 'max' => 11, 'label' => '6-11 tháng'],
-            '12-23m' => ['min' => 12, 'max' => 23, 'label' => '12-23 tháng'],
-            '24-35m' => ['min' => 24, 'max' => 35, 'label' => '24-35 tháng'],
-            '36-47m' => ['min' => 36, 'max' => 47, 'label' => '36-47 tháng'],
+            '0-5m' => ['min' => 0, 'max' => 5.99, 'label' => '0-5 tháng'],
+            '6-11m' => ['min' => 6, 'max' => 11.99, 'label' => '6-11 tháng'],
+            '12-23m' => ['min' => 12, 'max' => 23.99, 'label' => '12-23 tháng'],
+            '24-35m' => ['min' => 24, 'max' => 35.99, 'label' => '24-35 tháng'],
+            '36-47m' => ['min' => 36, 'max' => 47.99, 'label' => '36-47 tháng'],
             '48-60m' => ['min' => 48, 'max' => 60, 'label' => '48-60 tháng'], // Include 60 months per WHO standards
         ];
 
@@ -505,11 +505,11 @@ class StatisticsTabController extends Controller
         $records = $query->get();
 
         $ageGroups = [
-            '0-5' => ['min' => 0, 'max' => 5, 'label' => '0-5'],
-            '6-11' => ['min' => 6, 'max' => 11, 'label' => '6-11'],
-            '12-23' => ['min' => 12, 'max' => 23, 'label' => '12-23'],
-            '24-35' => ['min' => 24, 'max' => 35, 'label' => '24-35'],
-            '36-47' => ['min' => 36, 'max' => 47, 'label' => '36-47'],
+            '0-5' => ['min' => 0, 'max' => 5.99, 'label' => '0-5'],
+            '6-11' => ['min' => 6, 'max' => 11.99, 'label' => '6-11'],
+            '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23'],
+            '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35'],
+            '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47'],
             '48-60' => ['min' => 48, 'max' => 60, 'label' => '48-60'],
         ];
 

@@ -54,13 +54,23 @@ class WHOZScoreLMS extends Model
      */
     public static function getLMSForAge(string $indicator, string $sex, float $ageInMonths): ?array
     {
-        // Determine optimal age range based on age and theory
+        // Determine optimal age range based on age
         $optimalRange = self::determineOptimalAgeRange($ageInMonths);
+        
+        // For 0_13w range: age_in_months column stores WEEKS, not months!
+        // Need to convert months to weeks for lookup
+        if ($optimalRange === '0_13w') {
+            $ageInWeeks = $ageInMonths * (30.4375 / 7); // WHO standard: 365.25/12/7 = 4.348214 weeks per month
+            $roundedAge = floor($ageInWeeks); // Round down to nearest week
+        } else {
+            // For other ranges: use months and round down
+            $roundedAge = floor($ageInMonths);
+        }
         
         // Try to find exact match in optimal range first
         $exact = self::where('indicator', $indicator)
             ->where('sex', $sex)
-            ->where('age_in_months', $ageInMonths)
+            ->where('age_in_months', $roundedAge)
             ->where('age_range', $optimalRange)
             ->first();
             
@@ -70,15 +80,16 @@ class WHOZScoreLMS extends Model
                 'M' => (float) $exact->M,
                 'S' => (float) $exact->S,
                 'method' => 'exact',
-                'age_range' => $exact->age_range
+                'age_range' => $exact->age_range,
+                'age_used' => $roundedAge // Track which age was used
             ];
         }
         
         // If not found in optimal range, try other ranges with priority order
         $exact = self::where('indicator', $indicator)
             ->where('sex', $sex)
-            ->where('age_in_months', $ageInMonths)
-            ->orderByRaw(self::getAgeRangePriorityOrder($ageInMonths))
+            ->where('age_in_months', $roundedAge)
+            ->orderByRaw(self::getAgeRangePriorityOrder($roundedAge))
             ->first();
             
         if ($exact) {
@@ -87,24 +98,13 @@ class WHOZScoreLMS extends Model
                 'M' => (float) $exact->M,
                 'S' => (float) $exact->S,
                 'method' => 'exact',
-                'age_range' => $exact->age_range
+                'age_range' => $exact->age_range,
+                'age_used' => $roundedAge // Track which age was used
             ];
         }
         
-        // If no exact match, try interpolation with optimal age range first
-        $result = self::interpolateLMSForAge($indicator, $sex, $optimalRange, $ageInMonths);
-        
-        if ($result) {
-            return $result;
-        }
-        
-        // If interpolation failed, try other ranges with priority order
-        $bestRange = self::determineBestAgeRangeForInterpolation($indicator, $sex, $ageInMonths);
-        
-        if ($bestRange && $bestRange !== $optimalRange) {
-            return self::interpolateLMSForAge($indicator, $sex, $bestRange, $ageInMonths);
-        }
-        
+        // No exact match found - do NOT use interpolation
+        // Return null instead of trying to interpolate
         return null;
     }
     
@@ -119,7 +119,7 @@ class WHOZScoreLMS extends Model
     private static function determineOptimalAgeRange(float $ageInMonths): string
     {
         // Convert months to weeks for infants (0-3 months)
-        $ageInWeeks = $ageInMonths * 4.33; // Approximate weeks per month
+        $ageInWeeks = $ageInMonths * (30.4375 / 7); // WHO standard: 365.25/12/7 = 4.348214 weeks per month
         
         // 0-13 weeks (0-3 months): Use specialized infant data (available for all indicators)
         if ($ageInWeeks <= 13) {
@@ -266,7 +266,7 @@ class WHOZScoreLMS extends Model
             ];
         }
         
-        // Interpolate between two nearest heights
+        // Interpolate between two nearest heights (height uses interpolation, not rounding)
         return self::interpolateLMSForHeight($actualIndicator, $sex, $ageRange, $lengthHeightCm);
     }
 
