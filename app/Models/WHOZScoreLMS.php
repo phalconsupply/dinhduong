@@ -91,62 +91,84 @@ class WHOZScoreLMS extends Model
             ];
         }
         
-        // If no exact match, try interpolation with optimal age range
-        return self::interpolateLMSForAge($indicator, $sex, $optimalRange, $ageInMonths);
+        // If no exact match, try interpolation with optimal age range first
+        $result = self::interpolateLMSForAge($indicator, $sex, $optimalRange, $ageInMonths);
+        
+        if ($result) {
+            return $result;
+        }
+        
+        // If interpolation failed, try other ranges with priority order
+        $bestRange = self::determineBestAgeRangeForInterpolation($indicator, $sex, $ageInMonths);
+        
+        if ($bestRange && $bestRange !== $optimalRange) {
+            return self::interpolateLMSForAge($indicator, $sex, $bestRange, $ageInMonths);
+        }
+        
+        return null;
     }
     
     /**
-     * Determine optimal age range based on child's age (Theory-based selection)
+     * Determine optimal age range based on child's age (Data-driven selection)
+     * 
+     * Database actual ranges:
+     * - WFA: 0_13w (0-3 months), 0_5y (0-60 months)
+     * - HFA: 0_13w (0-3 months), 0_2y (0-24 months), 2_5y (24-60 months)
+     * - BMI: 0_13w (0-3 months), 0_2y (0-24 months), 2_5y (24-60 months)
      */
     private static function determineOptimalAgeRange(float $ageInMonths): string
     {
-        // Convert months to weeks for infants
+        // Convert months to weeks for infants (0-3 months)
         $ageInWeeks = $ageInMonths * 4.33; // Approximate weeks per month
         
-        // 0-13 weeks (0-3 months): Use specialized infant data
+        // 0-13 weeks (0-3 months): Use specialized infant data (available for all indicators)
         if ($ageInWeeks <= 13) {
             return '0_13w';
         }
         
-        // 0-24 months: Use 0_2y for better granularity in early childhood
-        if ($ageInMonths <= 24) {
-            return '0_2y';
+        // 3-24 months: Use 0_5y (for WFA) or 0_2y (for HFA/BMI)
+        // Priority: Try 0_5y first (covers WFA), fallback to 0_2y in getAgeRangePriorityOrder
+        if ($ageInMonths < 24) {
+            return '0_5y'; // Covers WFA fully; HFA/BMI will fallback to 0_2y automatically
         }
         
-        // 24-60 months: Use 0_5y as primary, 2_5y as fallback for WFH
+        // 24-60 months: Use 0_5y (for WFA) or 2_5y (for HFA/BMI)
         if ($ageInMonths <= 60) {
-            return '0_5y';
+            return '0_5y'; // Covers WFA fully; HFA/BMI will fallback to 2_5y automatically
         }
         
-        // Beyond 5 years: fallback to 0_5y
+        // Beyond 60 months: fallback to 0_5y
         return '0_5y';
     }
     
     /**
      * Get priority order for age ranges based on child's age
+     * Aligned with actual database distribution
      */
     private static function getAgeRangePriorityOrder(float $ageInMonths): string
     {
         $ageInWeeks = $ageInMonths * 4.33;
         
         if ($ageInWeeks <= 13) {
-            // For infants: 0_13w > 0_2y > 0_5y > 2_5y
+            // For infants (0-3 months): 0_13w > 0_5y > 0_2y > 2_5y
             return "CASE age_range 
                 WHEN '0_13w' THEN 1 
-                WHEN '0_2y' THEN 2 
-                WHEN '0_5y' THEN 3 
+                WHEN '0_5y' THEN 2 
+                WHEN '0_2y' THEN 3 
                 WHEN '2_5y' THEN 4 
                 ELSE 5 END";
-        } elseif ($ageInMonths <= 24) {
-            // For toddlers: 0_2y > 0_5y > 0_13w > 2_5y
+        } elseif ($ageInMonths < 24) {
+            // For toddlers (3-24 months): 0_5y > 0_2y > 0_13w > 2_5y
+            // Priority 0_5y for WFA, fallback to 0_2y for HFA/BMI
             return "CASE age_range 
-                WHEN '0_2y' THEN 1 
-                WHEN '0_5y' THEN 2 
+                WHEN '0_5y' THEN 1 
+                WHEN '0_2y' THEN 2 
                 WHEN '0_13w' THEN 3 
                 WHEN '2_5y' THEN 4 
                 ELSE 5 END";
         } else {
-            // For older children: 0_5y > 2_5y > 0_2y > 0_13w
+            // For older children (24-60 months): 0_5y > 2_5y > 0_2y > 0_13w
+            // Priority 0_5y for WFA, fallback to 2_5y for HFA/BMI
             return "CASE age_range 
                 WHEN '0_5y' THEN 1 
                 WHEN '2_5y' THEN 2 
@@ -178,14 +200,17 @@ class WHOZScoreLMS extends Model
             return $optimalRange;
         }
         
-        // Fallback to other ranges based on age priority
+        // Fallback to other ranges based on age priority (aligned with database structure)
         $ageInWeeks = $ageInMonths * 4.33;
         
         if ($ageInWeeks <= 13) {
-            $fallbackRanges = ['0_2y', '0_5y', '2_5y'];
-        } elseif ($ageInMonths <= 24) {
-            $fallbackRanges = ['0_5y', '0_13w', '2_5y'];
+            // Infant fallback: try 0_5y > 0_2y > 2_5y
+            $fallbackRanges = ['0_5y', '0_2y', '2_5y'];
+        } elseif ($ageInMonths < 24) {
+            // Toddler fallback: try 0_2y > 0_13w > 2_5y
+            $fallbackRanges = ['0_2y', '0_13w', '2_5y'];
         } else {
+            // Older child fallback: try 2_5y > 0_2y > 0_13w
             $fallbackRanges = ['2_5y', '0_2y', '0_13w'];
         }
         
