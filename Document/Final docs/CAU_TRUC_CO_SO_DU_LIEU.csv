@@ -1,0 +1,90 @@
+STT,Tên Bảng,Tên Tiếng Việt,Mục đích,Số trường quan trọng,Mô tả chi tiết
+1,administrative_regions,Vùng hành chính,Quản lý 8 vùng địa lý Việt Nam,4,"Lưu trữ thông tin về các vùng địa lý như Đông Bắc Bộ, Tây Bắc Bộ, Đồng bằng sông Hồng, v.v."
+2,administrative_units,Đơn vị hành chính,Phân loại đơn vị hành chính,7,"Định nghĩa các loại đơn vị như Tỉnh, Thành phố, Quận, Huyện, Xã, Phường, Thị trấn"
+3,bmi_for_age,BMI theo tuổi (WHO),Chuẩn BMI của WHO theo tuổi và giới tính,15,"Chứa giá trị chuẩn BMI từ WHO cho từng tháng tuổi (0-60 tháng), theo giới tính (Nam/Nữ), với các mức độ lệch chuẩn (-3SD đến +3SD, Median)"
+4,departments,Phòng ban,Quản lý các phòng ban trong hệ thống,6,"Tổ chức cơ cấu quản lý, phân quyền theo phòng ban"
+5,districts,Quận/Huyện,Danh mục quận huyện Việt Nam,10,"Thông tin chi tiết 713 quận/huyện toàn quốc, liên kết với tỉnh/thành phố và vùng địa lý"
+6,ethnics,Dân tộc,Danh mục 54 dân tộc Việt Nam,4,"Quản lý thông tin 54 dân tộc, phục vụ thống kê dinh dưỡng theo dân tộc"
+7,height_for_age,Chiều cao theo tuổi (WHO),Chuẩn chiều cao WHO theo tuổi,15,"Giá trị chuẩn chiều cao (cm) từ WHO cho mỗi tháng tuổi (0-60 tháng), theo giới tính, với các mức -3SD đến +3SD"
+8,weight_for_age,Cân nặng theo tuổi (WHO),Chuẩn cân nặng WHO theo tuổi,15,"Giá trị chuẩn cân nặng (kg) từ WHO cho mỗi tháng tuổi (0-60 tháng), theo giới tính, với các mức -3SD đến +3SD"
+9,weight_for_height,Cân nặng theo chiều cao (WHO),Chuẩn cân nặng WHO theo chiều cao,13,"Bảng tra cứu cân nặng chuẩn theo chiều cao (45-120cm), độc lập với tuổi, phát hiện gầy còm/béo phì cấp tính"
+10,history,Lịch sử đo lường,Lưu trữ toàn bộ dữ liệu đo lường trẻ em,40,"Bảng CHÍNH - Chứa thông tin nhân trắc trẻ em: họ tên, ngày sinh, giới tính, dân tộc, địa chỉ, cân nặng, chiều cao, tuổi, BMI, kết quả đánh giá dinh dưỡng (W/A, H/A, W/H, BMI/A), tình trạng dinh dưỡng tổng hợp, thông tin sinh (birth_weight, gestational_age, birth_weight_category)"
+11,provinces,Tỉnh/Thành phố,Danh mục 63 tỉnh thành,9,"Thông tin 63 tỉnh/thành phố Việt Nam, liên kết với vùng địa lý"
+12,wards,Xã/Phường/Thị trấn,Danh mục xã phường,9,"Thông tin chi tiết 10.599 xã/phường/thị trấn toàn quốc"
+13,units,Đơn vị/Cơ sở y tế,Quản lý cơ sở y tế,13,"Thông tin các trạm y tế, bệnh viện, cơ sở khám chữa bệnh tham gia đo lường"
+14,unit_types,Loại đơn vị,Phân loại đơn vị y tế,5,"Phân loại: Trạm Y tế, Bệnh viện Quận/Huyện, Bệnh viện Tỉnh, v.v."
+15,unit_users,Người dùng thuộc đơn vị,Liên kết user với đơn vị y tế,6,"Bảng trung gian liên kết người dùng với cơ sở y tế được phân công"
+16,users,Người dùng,Quản lý tài khoản người dùng,17,"Thông tin đăng nhập, phân quyền, thông tin cá nhân của bác sĩ, y tá, quản trị viên"
+17,roles,Vai trò,Vai trò người dùng,5,"Định nghĩa các vai trò: Admin, Bác sĩ, Y tá, Quản lý, v.v."
+18,permissions,Quyền hạn,Quyền truy cập chức năng,6,"Định nghĩa các quyền: xem, thêm, sửa, xóa, phê duyệt, v.v."
+19,role_has_permissions,Vai trò có quyền,Gán quyền cho vai trò,2,"Bảng trung gian liên kết vai trò với quyền hạn cụ thể"
+20,model_has_roles,User có vai trò,Gán vai trò cho user,4,"Bảng trung gian liên kết user với vai trò (Spatie Permission)"
+21,model_has_permissions,User có quyền,Gán quyền trực tiếp cho user,4,"Bảng trung gian gán quyền trực tiếp cho user (ngoài quyền từ vai trò)"
+22,settings,Cài đặt hệ thống,Lưu cấu hình hệ thống,5,"Lưu các thiết lập: zscore_method (lms/sd_bands), ngôn ngữ, múi giờ, cấu hình email, v.v."
+23,types,Loại/Danh mục,Quản lý danh mục chung,6,"Bảng danh mục tổng quát cho các loại phân loại khác trong hệ thống"
+24,migrations,Migration,Lịch sử migration database,4,"Lưu vết các lần chạy migration Laravel, quản lý phiên bản schema"
+25,who_zscore_lms,WHO Z-Score LMS,Tham số LMS tính Z-score WHO 2006,11,"Chứa tham số L (Lambda), M (Mu), S (Sigma) của phương pháp LMS (Box-Cox) để tính Z-score chính xác theo chuẩn WHO 2006. Bao gồm 4 chỉ số: Weight-for-Age, Height-for-Age, BMI-for-Age, Weight-for-Height/Length"
+26,who_percentile_lms,WHO Percentile LMS,Bảng tra Percentile WHO,10,"Bảng tra cứu percentile (P01, P3, P5, P10, P25, P50, P75, P85, P90, P95, P97, P99) tương ứng với Z-score, sử dụng phương pháp LMS"
+27,who_import_log,Log import WHO data,Nhật ký import dữ liệu WHO,8,"Ghi lại lịch sử import dữ liệu chuẩn WHO từ CSV, theo dõi file, indicator, số records, trạng thái success/failed"
+28,history_backup_bmi_27_10_2025,Backup History,Sao lưu dữ liệu history,40,"Bảng backup của bảng history trước khi cập nhật công thức BMI (27/10/2025), phục vụ khôi phục dữ liệu nếu cần"
+
+Tên Trường,Bảng,Kiểu dữ liệu,Mô tả,Ghi chú
+id,Tất cả bảng,INT AUTO_INCREMENT,Khóa chính,Primary Key
+uid,history,VARCHAR(50),Mã định danh duy nhất (UUID),Unique identifier cho mỗi lần đo
+fullname,history,VARCHAR(100),Họ và tên trẻ em,
+id_number,history,VARCHAR(15),Số giấy khai sinh / CMND,
+birthday,history,DATE,Ngày sinh trẻ,Format: YYYY-MM-DD
+cal_date,history,DATE,Ngày đo lường,Ngày thực hiện đo nhân trắc
+gender,history,TINYINT(4),Giới tính,1 = Nam; 2/0 = Nữ
+ethnic_id,history,TINYINT(4),Mã dân tộc,Foreign key đến bảng ethnics
+phone,history,VARCHAR(13),Số điện thoại liên hệ,
+address,history,VARCHAR(500),Địa chỉ chi tiết,
+weight,history,FLOAT,Cân nặng (kg),Số thập phân
+height,history,FLOAT,Chiều cao (cm),Số thập phân
+age,history,TINYINT(4),Tuổi (tháng),Tuổi tính theo tháng (0-60)
+age_show,history,VARCHAR(500),Tuổi hiển thị,VD: "24 tháng" hoặc "2 năm"
+realAge,history,FLOAT,Tuổi thực (năm),Tuổi tính theo năm (thập phân)
+bmi,history,FLOAT,Chỉ số BMI,BMI = weight / (height/100)²
+birth_weight,history,INT(11),Cân nặng lúc sinh (gram),Thông tin sơ sinh
+gestational_age,history,VARCHAR(50),Tuổi thai,"'Đủ tháng' hoặc 'Thiếu tháng'"
+birth_weight_category,history,VARCHAR(50),Phân loại cân nặng lúc sinh,"'Nhẹ cân', 'Đủ cân', 'Thừa cân'"
+province_code,history,VARCHAR(50),Mã tỉnh/thành phố,Foreign key
+district_code,history,VARCHAR(50),Mã quận/huyện,Foreign key
+ward_code,history,VARCHAR(50),Mã xã/phường,Foreign key
+unit_id,history,INT(11),Mã đơn vị y tế,Foreign key đến bảng units
+is_risk,history,TINYINT(4),Có nguy cơ suy dinh dưỡng,0 = Không; 1 = Có
+result_weight_age,history,TEXT,Kết quả đánh giá W/A,JSON: {result zscore_category text color}
+result_height_age,history,TEXT,Kết quả đánh giá H/A,JSON: {result zscore_category text color}
+result_weight_height,history,TEXT,Kết quả đánh giá W/H,JSON: {result zscore_category text color}
+result_bmi_age,history,TEXT,Kết quả đánh giá BMI/A,JSON: {result zscore_category text color}
+nutrition_status,history,VARCHAR(100),Tình trạng dinh dưỡng tổng hợp,"'Bình thường', 'SDD nhẹ cân', 'SDD thấp còi', 'SDD gầy còm', 'SDD phối hợp', 'Thừa cân', 'Béo phì'"
+advice_content,history,TEXT,Nội dung tư vấn,HTML formatted
+created_by,history,INT(11),Người tạo record,Foreign key đến users.id
+created_at,Tất cả bảng,DATETIME,Thời gian tạo,Timestamp
+updated_at,Tất cả bảng,DATETIME,Thời gian cập nhật,Timestamp
+deleted_at,history,DATETIME,Thời gian xóa (soft delete),NULL nếu chưa xóa
+Year_Month,bmi_for_age height_for_age weight_for_age,VARCHAR(50),Tuổi dạng Năm:Tháng,"VD: '0:1' = 1 tháng, '2:6' = 30 tháng"
+Months,bmi_for_age height_for_age weight_for_age,SMALLINT(6),Tổng số tháng tuổi,0-60 tháng
+-3SD,Các bảng WHO,FLOAT,Giá trị -3 độ lệch chuẩn,Suy dinh dưỡng nặng
+-2SD,Các bảng WHO,FLOAT,Giá trị -2 độ lệch chuẩn,Suy dinh dưỡng vừa
+-1SD,Các bảng WHO,FLOAT,Giá trị -1 độ lệch chuẩn,Dưới trung bình
+Median,Các bảng WHO,FLOAT,Giá trị trung bình (chuẩn),Giá trị chuẩn WHO
+1SD,Các bảng WHO,FLOAT,Giá trị +1 độ lệch chuẩn,Trên trung bình
+2SD,Các bảng WHO,FLOAT,Giá trị +2 độ lệch chuẩn,Thừa cân/Cao
+3SD,Các bảng WHO,FLOAT,Giá trị +3 độ lệch chuẩn,Béo phì/Rất cao
+cm,weight_for_height,FLOAT,Chiều cao (cm),Từ 45cm đến 120cm
+L,who_zscore_lms,DOUBLE,Tham số Lambda (Box-Cox),Dùng trong công thức LMS
+M,who_zscore_lms,DOUBLE,Tham số Mu (Median),Giá trị trung vị
+S,who_zscore_lms,DOUBLE,Tham số Sigma (CV),Hệ số biến thiên
+indicator,who_zscore_lms who_percentile_lms,VARCHAR(50),Chỉ số đo,"'wfa' 'hfa' 'bmi' 'wfh' 'wfl'"
+sex,who_zscore_lms who_percentile_lms,ENUM('M' 'F'),Giới tính,M = Male (Nam); F = Female (Nữ)
+age_days,who_zscore_lms who_percentile_lms,INT,Tuổi tính theo ngày,Từ 0-1856 ngày (0-5 tuổi)
+name,ethnics provinces districts wards,VARCHAR(255),Tên,Tên tiếng Việt
+code,ethnics provinces districts wards,VARCHAR(20),Mã,Mã định danh
+name_en,provinces districts wards,VARCHAR(255),Tên tiếng Anh,English name
+key,settings,VARCHAR(255),Khóa cấu hình,"VD: 'zscore_method', 'app_name', 'language'"
+value,settings,TEXT,Giá trị cấu hình,"VD: 'lms', 'sd_bands', 'vi', 'en'"
+email,users,VARCHAR(255),Email đăng nhập,Unique
+password,users,VARCHAR(255),Mật khẩu (hashed),Bcrypt hashed
+name,users roles permissions,VARCHAR(255),Tên,Tên hiển thị
+guard_name,roles permissions,VARCHAR(255),Guard name,Mặc định: 'web'

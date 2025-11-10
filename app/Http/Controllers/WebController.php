@@ -289,12 +289,16 @@ class WebController extends Controller
         // Ngày hiện tại (ngày cân đo)
         $now = Carbon::createFromFormat('d/m/Y', $end);
         
-        // Tính số tháng đầy đủ theo chuẩn WHO
-        // WHO sử dụng full calendar months (tháng dương lịch đầy đủ)
-        // Ví dụ: 31/8/2020 → 30/5/2025 = 56 tháng (vì chưa đến 31/5/2025)
-        $month = $now->diffInMonths($dob);
+        // Tính tuổi theo chuẩn WHO - DECIMAL MONTHS
+        // WHO Child Growth Standards (2006): "age is expressed as decimal months"
+        // Công thức: age_in_months = total_days / 30.4375
+        // 30.4375 = 365.25 / 12 (average days per month, including leap years)
+        // Ví dụ: 30/11/2024 → 30/05/2025 = 181 days / 30.4375 = 5.95 months
+        $totalDays = $now->diffInDays($dob);
+        $decimalMonths = $totalDays / 30.4375;
         
-        return $month;
+        // Làm tròn đến 2 chữ số thập phân theo chuẩn WHO
+        return round($decimalMonths, 2);
     }
     public function ajax_tinh_ngay_sinh(Request $request){
         return $this->tinh_so_thang($request->input('birthday'), $request->input('date'));

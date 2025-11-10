@@ -20,6 +20,10 @@
                                 </li>
 
                                 <li class="active">
+                                    <a href="<?php echo e(route('admin.dashboard.statistics')); ?>"><i class="ti ti-chart-bar me-2"></i>Thống kê chi tiết</a>
+                                </li>
+
+                                <li class="active">
                                     <a href="<?php echo e(route('admin.history.index')); ?>"><i class="ti ti-history me-2"></i>Khảo sát</a>
                                 </li>
                                 <?php if(is_admin() || is_super_admin_province() ): ?>

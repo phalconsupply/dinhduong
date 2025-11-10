@@ -59,6 +59,7 @@ class History extends Model
         'is_risk' => 'integer',
         'birthday' => 'date',
         'cal_date' => 'date',
+        'age' => 'decimal:2', // WHO decimal months (days / 30.4375)
     ];
 
     public function creator()
