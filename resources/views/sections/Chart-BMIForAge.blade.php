@@ -115,7 +115,7 @@
                 },
                 y: {
                     min: 10,
-                    max: 20,
+                    max: Math.max(20, Math.ceil(bmi + 2)),  // Tự động điều chỉnh nếu BMI > 20
                     title: { display: true, text: 'BMI (kg/m²)', font: { size: 12 } },
                     grid: { 
                         color: (ctx) => ctx.tick.value % 1 === 0 ? '#d0d0d0' : '#e8e8e8' 

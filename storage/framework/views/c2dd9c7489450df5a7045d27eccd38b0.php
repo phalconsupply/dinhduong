@@ -85,15 +85,25 @@
                                             <label><i class="fas fa-weight"></i> Cân nặng</label>
                                             <p class="info-value">
                                                 <strong><?php echo e($row->weight); ?> kg</strong><br>
-                                                <small>Chuẩn theo tuổi: <?php echo e($row->WeightForAge()['Median'] ?? 'N/A'); ?> kg</small><br>
-                                                <small>Chuẩn theo chiều cao: <?php echo e($row->WeightForHeight()['Median'] ?? 'N/A'); ?> kg</small>
+                                                <?php
+                                                    $wfa = $row->WeightForAge();
+                                                    $wfh = $row->WeightForHeight();
+                                                    $median_wfa = is_array($wfa) ? ($wfa['Median'] ?? null) : ($wfa->Median ?? null);
+                                                    $median_wfh = is_array($wfh) ? ($wfh['Median'] ?? null) : ($wfh->Median ?? null);
+                                                ?>
+                                                <small>Chuẩn theo tuổi: <?php echo e($median_wfa ? round($median_wfa, 1) : 'N/A'); ?> kg</small><br>
+                                                <small>Chuẩn theo chiều cao: <?php echo e($median_wfh ? round($median_wfh, 1) : 'N/A'); ?> kg</small>
                                             </p>
                                         </div>
                                         <div class="info-item">
                                             <label><i class="fas fa-ruler-vertical"></i> Chiều cao</label>
                                             <p class="info-value">
                                                 <strong><?php echo e($row->height); ?> cm</strong><br>
-                                                <small>Chuẩn theo tuổi: <?php echo e($row->HeightForAge()['Median'] ?? 'N/A'); ?> cm</small>
+                                                <?php
+                                                    $hfa = $row->HeightForAge();
+                                                    $median_hfa = is_array($hfa) ? ($hfa['Median'] ?? null) : ($hfa->Median ?? null);
+                                                ?>
+                                                <small>Chuẩn theo tuổi: <?php echo e($median_hfa ? round($median_hfa, 1) : 'N/A'); ?> cm</small>
                                             </p>
                                         </div>
                                     </div>
@@ -1836,7 +1846,7 @@
                         },
                         y: {
                             min: 10,
-                            max: 20,
+                            max: Math.max(20, Math.ceil(bmi + 2)),  // Tự động điều chỉnh nếu BMI > 20
                             title: { display: true, text: 'BMI (kg/m²)', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 1 === 0 ? '#e3e3e3' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
