@@ -88,6 +88,9 @@ class DashboardController extends Controller
 
         $year_statics = $this->getRiskStatistics($request);
 
+        // Lấy phân bố mức độ nghiêm trọng cho biểu đồ Pie
+        $severityQuery = clone $history;
+        $severity_distribution = $this->getSeverityDistribution($severityQuery);
 
         $provinces = Province::byUserRole($user)->select('name','code')->get();
         $districts = [];
@@ -126,7 +129,7 @@ class DashboardController extends Controller
             compact(
                 'members',
             'listMonth', 'currentMonth', 'count',
-            'new_survey', 'year_statics',
+            'new_survey', 'year_statics', 'severity_distribution',
             'years','provinces', 'districts', 'wards',
             'ethnics', 'labels', 'dataNormal', 'dataRisk'
         ));
@@ -137,7 +140,7 @@ class DashboardController extends Controller
         // Lấy year từ request nếu có, ngược lại lấy năm hiện tại
         $year = $request->filled('year') ? (int) $request->year : now()->year;
 
-        $query = History::byUserRole()->selectRaw('MONTH(created_at) as month')
+        $query = History::byUserRole()
             ->whereYear('created_at', $year);
 
         $query->when($request->filled('province_code'), function ($q) use ($request) {
@@ -162,22 +165,31 @@ class DashboardController extends Controller
             }
         );
 
-        // Chuẩn bị dữ liệu mặc định
-        $riskData = array_fill(1, 12, 0);
-        $normalData = array_fill(1, 12, 0);
+        // Chuẩn bị dữ liệu mặc định cho 5 loại
+        $underweightData = array_fill(1, 12, 0);   // Nhẹ cân
+        $stuntedData = array_fill(1, 12, 0);       // Thấp còi
+        $wastedData = array_fill(1, 12, 0);        // Gầy còm
+        $overweightData = array_fill(1, 12, 0);    // Thừa cân/béo phì
+        $normalData = array_fill(1, 12, 0);        // Bình thường
 
-        // Lấy dữ liệu theo từng tháng và tính toán nguy cơ
+        // Lấy dữ liệu theo từng tháng và tính toán chi tiết
         for ($month = 1; $month <= 12; $month++) {
             $monthQuery = clone $query;
             $monthQuery->whereMonth('created_at', $month);
             
-            $monthStats = $this->calculateRiskByWHOStandards($monthQuery);
-            $riskData[$month] = $monthStats['total_risk'];
-            $normalData[$month] = $monthStats['total_normal'];
+            $monthStats = $this->calculateDetailedNutritionStats($monthQuery);
+            $underweightData[$month] = $monthStats['underweight'];
+            $stuntedData[$month] = $monthStats['stunted'];
+            $wastedData[$month] = $monthStats['wasted'];
+            $overweightData[$month] = $monthStats['overweight'];
+            $normalData[$month] = $monthStats['normal'];
         }
 
         return [
-            'risk' => array_values($riskData),
+            'underweight' => array_values($underweightData),
+            'stunted' => array_values($stuntedData),
+            'wasted' => array_values($wastedData),
+            'overweight' => array_values($overweightData),
             'normal' => array_values($normalData)
         ];
     }
@@ -248,6 +260,131 @@ class DashboardController extends Controller
         return [
             'total_risk' => $totalRisk,
             'total_normal' => $totalNormal
+        ];
+    }
+
+    /**
+     * Tính toán chi tiết tình trạng dinh dưỡng theo WHO
+     * Phân loại: Nhẹ cân, Thấp còi, Gầy còm, Thừa cân/Béo phì, Bình thường
+     */
+    private function calculateDetailedNutritionStats($query)
+    {
+        $records = $query->get();
+        
+        $underweight = 0;  // Nhẹ cân (Weight-for-Age < -2SD)
+        $stunted = 0;      // Thấp còi (Height-for-Age < -2SD)
+        $wasted = 0;       // Gầy còm (Weight-for-Height < -2SD)
+        $overweight = 0;   // Thừa cân/béo phì (Weight-for-Height > +2SD)
+        $normal = 0;       // Bình thường
+
+        foreach ($records as $record) {
+            $wfa = $record->check_weight_for_age_auto()['result'];
+            $hfa = $record->check_height_for_age_auto()['result'];
+            $wfh = $record->check_weight_for_height_auto()['result'];
+
+            // Ưu tiên phân loại theo mức độ nghiêm trọng
+            // 1. Gầy còm (Wasting) - nguy hiểm nhất, cần can thiệp khẩn cấp
+            if (in_array($wfh, ['wasted_moderate', 'wasted_severe'])) {
+                $wasted++;
+            }
+            // 2. Thấp còi (Stunting) - suy dinh dưỡng mạn tính
+            elseif (in_array($hfa, ['stunted_moderate', 'stunted_severe'])) {
+                $stunted++;
+            }
+            // 3. Nhẹ cân (Underweight) - cân nặng thấp
+            elseif (in_array($wfa, ['underweight_moderate', 'underweight_severe'])) {
+                $underweight++;
+            }
+            // 4. Thừa cân/Béo phì (Overweight/Obese)
+            elseif (in_array($wfh, ['overweight', 'obese']) || in_array($wfa, ['overweight', 'obese'])) {
+                $overweight++;
+            }
+            // 5. Bình thường
+            elseif ($wfa === 'normal' && $hfa === 'normal' && $wfh === 'normal') {
+                $normal++;
+            }
+            // Các trường hợp khác (possible_risk, unknown) -> tính vào bình thường
+            else {
+                $normal++;
+            }
+        }
+
+        return [
+            'underweight' => $underweight,
+            'stunted' => $stunted,
+            'wasted' => $wasted,
+            'overweight' => $overweight,
+            'normal' => $normal,
+            'total' => $records->count()
+        ];
+    }
+
+    /**
+     * Lấy phân bố mức độ nghiêm trọng (Severity Distribution)
+     * Dựa trên Z-score: SD < -3, -3 to -2, -2 to -1, Normal, SD > +2
+     */
+    private function getSeverityDistribution($query)
+    {
+        $records = $query->get();
+        
+        $severe = 0;       // SD < -3 (rất nghiêm trọng)
+        $moderate = 0;     // -3 <= SD < -2 (nghiêm trọng)
+        $mild = 0;         // -2 <= SD < -1 (nhẹ)
+        $normal = 0;       // -1 <= SD <= +2 (bình thường)
+        $overweight = 0;   // SD > +2 (thừa cân)
+
+        foreach ($records as $record) {
+            $wfa = $record->check_weight_for_age_auto()['result'];
+            $hfa = $record->check_height_for_age_auto()['result'];
+            $wfh = $record->check_weight_for_height_auto()['result'];
+
+            // Kiểm tra mức độ nghiêm trọng nhất trong 3 chỉ số
+            $hasSevere = in_array($wfa, ['underweight_severe', 'stunted_severe']) ||
+                        in_array($hfa, ['stunted_severe']) ||
+                        in_array($wfh, ['underweight_severe', 'wasted_severe']);
+            
+            $hasModerate = in_array($wfa, ['underweight_moderate']) ||
+                          in_array($hfa, ['stunted_moderate']) ||
+                          in_array($wfh, ['underweight_moderate', 'wasted_moderate']);
+            
+            $hasMild = in_array($wfa, ['possible_risk']) ||
+                      in_array($hfa, ['possible_risk']) ||
+                      in_array($wfh, ['possible_risk']);
+            
+            $hasOverweight = in_array($wfh, ['overweight', 'obese']) ||
+                            in_array($wfa, ['overweight', 'obese']);
+
+            if ($hasSevere) {
+                $severe++;
+            } elseif ($hasModerate) {
+                $moderate++;
+            } elseif ($hasMild) {
+                $mild++;
+            } elseif ($hasOverweight) {
+                $overweight++;
+            } else {
+                $normal++;
+            }
+        }
+
+        $total = $records->count();
+        
+        return [
+            'labels' => ['SD < -3', 'SD -3 đến -2', 'SD -2 đến -1', 'Bình thường', 'SD > +2'],
+            'data' => [
+                $total > 0 ? round(($severe / $total) * 100, 1) : 0,
+                $total > 0 ? round(($moderate / $total) * 100, 1) : 0,
+                $total > 0 ? round(($mild / $total) * 100, 1) : 0,
+                $total > 0 ? round(($normal / $total) * 100, 1) : 0,
+                $total > 0 ? round(($overweight / $total) * 100, 1) : 0
+            ],
+            'counts' => [
+                $severe,
+                $moderate,
+                $mild,
+                $normal,
+                $overweight
+            ]
         ];
     }
 
@@ -507,12 +644,12 @@ class DashboardController extends Controller
     {
         // Define age groups: 0-5, 6-11, 12-23, 24-35, 36-47, 48-59 months
         $ageGroups = [
-            '0-5' => ['min' => 0, 'max' => 5, 'label' => '0-5 tháng'],
-            '6-11' => ['min' => 6, 'max' => 11, 'label' => '6-11 tháng'],
-            '12-23' => ['min' => 12, 'max' => 23, 'label' => '12-23 tháng'],
-            '24-35' => ['min' => 24, 'max' => 35, 'label' => '24-35 tháng'],
-            '36-47' => ['min' => 36, 'max' => 47, 'label' => '36-47 tháng'],
-            '48-59' => ['min' => 48, 'max' => 59, 'label' => '48-59 tháng'],
+            '0-5' => ['min' => 0, 'max' => 5.99, 'label' => '0-5 tháng'],
+            '6-11' => ['min' => 6, 'max' => 11.99, 'label' => '6-11 tháng'],
+            '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23 tháng'],
+            '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35 tháng'],
+            '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47 tháng'],
+            '48-59' => ['min' => 48, 'max' => 59.99, 'label' => '48-59 tháng'],
         ];
 
         $stats = [];
@@ -964,12 +1101,12 @@ class DashboardController extends Controller
 
         // Định nghĩa các nhóm tuổi WHO
         $ageGroups = [
-            '0-5' => ['min' => 0, 'max' => 5, 'label' => '0-5'],
-            '6-11' => ['min' => 6, 'max' => 11, 'label' => '6-11'],
-            '12-23' => ['min' => 12, 'max' => 23, 'label' => '12-23'],
-            '24-35' => ['min' => 24, 'max' => 35, 'label' => '24-35'],
-            '36-47' => ['min' => 36, 'max' => 47, 'label' => '36-47'],
-            '48-60' => ['min' => 48, 'max' => 60, 'label' => '48-60'],
+            '0-5' => ['min' => 0, 'max' => 5.99, 'label' => '0-5'],
+            '6-11' => ['min' => 6, 'max' => 11.99, 'label' => '6-11'],
+            '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23'],
+            '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35'],
+            '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47'],
+            '48-60' => ['min' => 48, 'max' => 60.99, 'label' => '48-60'],
         ];
 
         $stats = [];

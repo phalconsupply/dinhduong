@@ -54,6 +54,108 @@ class WHOZScoreLMS extends Model
      */
     public static function getLMSForAge(string $indicator, string $sex, float $ageInMonths): ?array
     {
+        // Use interpolation for more accurate results (matches WHO Anthro)
+        return self::getLMSForAgeWithInterpolation($indicator, $sex, $ageInMonths);
+    }
+    
+    /**
+     * Get LMS parameters with linear interpolation for fractional ages
+     * This matches WHO Anthro software behavior for accurate Z-scores
+     * 
+     * @param string $indicator 'wfa', 'hfa', 'bmi'
+     * @param string $sex 'M' or 'F'
+     * @param float $ageInMonths Exact age in months (can be fractional)
+     * @return array|null ['L' => float, 'M' => float, 'S' => float, 'method' => string]
+     */
+    public static function getLMSForAgeWithInterpolation(string $indicator, string $sex, float $ageInMonths): ?array
+    {
+        // Select appropriate age range based on indicator and age
+        $range = self::selectAgeRange($indicator, $ageInMonths);
+        
+        // Floor and ceiling ages for interpolation
+        $ageFloor = floor($ageInMonths);
+        $ageCeil = ceil($ageInMonths);
+        
+        // If age is already integer, use exact match (no interpolation needed)
+        if ($ageFloor == $ageCeil) {
+            $exact = self::where('indicator', $indicator)
+                ->where('sex', $sex)
+                ->where('age_in_months', $ageFloor)
+                ->where('age_range', $range)
+                ->first();
+                
+            if ($exact) {
+                return [
+                    'L' => (float) $exact->L,
+                    'M' => (float) $exact->M,
+                    'S' => (float) $exact->S,
+                    'method' => 'exact',
+                    'age_range' => $range,
+                    'age_used' => $ageFloor
+                ];
+            }
+            return null;
+        }
+        
+        // Get LMS for floor and ceiling ages
+        $lmsFloor = self::where('indicator', $indicator)
+            ->where('sex', $sex)
+            ->where('age_in_months', $ageFloor)
+            ->where('age_range', $range)
+            ->first();
+            
+        $lmsCeil = self::where('indicator', $indicator)
+            ->where('sex', $sex)
+            ->where('age_in_months', $ageCeil)
+            ->where('age_range', $range)
+            ->first();
+        
+        // Both boundaries must exist for interpolation
+        if (!$lmsFloor || !$lmsCeil) {
+            // Fallback to floor value if available
+            if ($lmsFloor) {
+                return [
+                    'L' => (float) $lmsFloor->L,
+                    'M' => (float) $lmsFloor->M,
+                    'S' => (float) $lmsFloor->S,
+                    'method' => 'floor_fallback',
+                    'age_range' => $range,
+                    'age_used' => $ageFloor
+                ];
+            }
+            return null;
+        }
+        
+        // Linear interpolation
+        $fraction = $ageInMonths - $ageFloor;
+        
+        $L = $lmsFloor->L + ($lmsCeil->L - $lmsFloor->L) * $fraction;
+        $M = $lmsFloor->M + ($lmsCeil->M - $lmsFloor->M) * $fraction;
+        $S = $lmsFloor->S + ($lmsCeil->S - $lmsFloor->S) * $fraction;
+        
+        return [
+            'L' => (float) $L,
+            'M' => (float) $M,
+            'S' => (float) $S,
+            'method' => 'interpolation',
+            'age_range' => $range,
+            'age_used' => $ageInMonths,
+            'age_floor' => $ageFloor,
+            'age_ceil' => $ageCeil,
+            'fraction' => $fraction
+        ];
+    }
+    
+    /**
+     * Get LMS parameters without interpolation (legacy method)
+     * 
+     * @param string $indicator 'wfa', 'hfa', 'bmi'
+     * @param string $sex 'M' or 'F'
+     * @param float $ageInMonths
+     * @return array|null ['L' => float, 'M' => float, 'S' => float]
+     */
+    public static function getLMSForAgeExact(string $indicator, string $sex, float $ageInMonths): ?array
+    {
         // Determine optimal age range based on age
         $optimalRange = self::determineOptimalAgeRange($ageInMonths);
         
@@ -106,6 +208,51 @@ class WHOZScoreLMS extends Model
         // No exact match found - do NOT use interpolation
         // Return null instead of trying to interpolate
         return null;
+    }
+    
+    /**
+     * Select appropriate age range for indicator based on age
+     * 
+     * WHO Database Structure:
+     * - WFA (Weight-for-Age): Uses 0_5y range (0-60 months)
+     * - HFA (Height-for-Age): Uses 0_2y (0-24m) or 2_5y (24-60m)
+     * - BMI (BMI-for-Age): Uses 0_2y (0-24m) or 2_5y (24-60m)
+     * - WFL (Weight-for-Length): Uses 0_2y range, indexed by HEIGHT not age
+     * - WFH (Weight-for-Height): Uses 2_5y range, indexed by HEIGHT not age
+     * 
+     * @param string $indicator 'wfa', 'hfa', 'bmi', 'wfl', 'wfh'
+     * @param float $ageInMonths Child's age in months
+     * @return string Age range code ('0_5y', '0_2y', '2_5y')
+     */
+    public static function selectAgeRange(string $indicator, float $ageInMonths): string
+    {
+        // WFA: Always uses 0_5y range (covers 0-60 months)
+        if ($indicator === 'wfa') {
+            return '0_5y';
+        }
+        
+        // HFA, BMI: Split at 24 months boundary
+        if (in_array($indicator, ['hfa', 'bmi'])) {
+            // 0-24 months: Use 0_2y range
+            if ($ageInMonths < 24) {
+                return '0_2y';
+            }
+            // 24-60 months: Use 2_5y range
+            return '2_5y';
+        }
+        
+        // WFL, WFH: Not age-based (use height), but need range for lookup
+        // WHO standard: < 24 months = WFL (recumbent), >= 24 months = WFH (standing)
+        if ($indicator === 'wfl') {
+            return '0_2y'; // Weight-for-Length (infants/toddlers)
+        }
+        
+        if ($indicator === 'wfh') {
+            return '2_5y'; // Weight-for-Height (older children)
+        }
+        
+        // Fallback (should not reach here)
+        return '0_5y';
     }
     
     /**

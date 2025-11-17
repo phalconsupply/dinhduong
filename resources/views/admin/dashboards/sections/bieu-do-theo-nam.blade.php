@@ -2,7 +2,7 @@
     <div class="col-xl-8 col-lg-7 mt-4">
         <div class="card shadow border-0 p-4 pb-0 rounded">
             <div class="d-flex justify-content-between">
-                <h6 class="mb-0 fw-bold">Biểu đồ theo năm</h6>
+                <h6 class="mb-0 fw-bold">Biểu đồ tình trạng dinh dưỡng theo năm</h6>
 
                 <div class="mb-0 position-relative">
                     <select name="year" class="form-select form-control" id="yearchart">
@@ -21,7 +21,32 @@
     </div><!--end col-->
     <!--end col-->
     <div class="col-xl-4 col-lg-5 mt-4 rounded">
-        @include('admin.dashboards.sections.tuy-le-nguy-co')
+        <div class="card shadow border-0 p-4 rounded">
+            <h6 class="mb-3 fw-bold">Phân bố mức độ nghiêm trọng</h6>
+            <div id="severityChart" style="min-height: 300px;"></div>
+            <div class="mt-3">
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span><i class="mdi mdi-circle" style="color: #dc3545;"></i> SD &lt; -3</span>
+                    <span class="fw-bold">{{ $severity_distribution['counts'][0] }} trẻ ({{ $severity_distribution['data'][0] }}%)</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span><i class="mdi mdi-circle" style="color: #fd7e14;"></i> SD -3 đến -2</span>
+                    <span class="fw-bold">{{ $severity_distribution['counts'][1] }} trẻ ({{ $severity_distribution['data'][1] }}%)</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span><i class="mdi mdi-circle" style="color: #ffc107;"></i> SD -2 đến -1</span>
+                    <span class="fw-bold">{{ $severity_distribution['counts'][2] }} trẻ ({{ $severity_distribution['data'][2] }}%)</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span><i class="mdi mdi-circle" style="color: #28a745;"></i> Bình thường</span>
+                    <span class="fw-bold">{{ $severity_distribution['counts'][3] }} trẻ ({{ $severity_distribution['data'][3] }}%)</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span><i class="mdi mdi-circle" style="color: #6f42c1;"></i> SD &gt; +2</span>
+                    <span class="fw-bold">{{ $severity_distribution['counts'][4] }} trẻ ({{ $severity_distribution['data'][4] }}%)</span>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-12 mt-4 rounded">
         @include('admin.dashboards.sections.tuy-le-theo-dan-toc')
@@ -45,6 +70,7 @@
             window.location.href = url.toString();
         });
         try {
+            // Biểu đồ Area - Tình trạng dinh dưỡng chi tiết
             var options = {
                 chart: {
                     height: 360,
@@ -56,14 +82,14 @@
                         autoSelected: 'zoom'
                     },
                 },
-                colors: ['#d4842f', '#2eca8b'],
+                colors: ['#e74c3c', '#f39c12', '#e67e22', '#9b59b6', '#2eca8b'],
                 dataLabels: {
                     enabled: false
                 },
                 stroke: {
                     curve: 'smooth',
-                    width: [1.5, 1.5],
-                    dashArray: [0, 4],
+                    width: [1.5, 1.5, 1.5, 1.5, 1.5],
+                    dashArray: [0, 0, 0, 0, 4],
                     lineCap: 'round',
                 },
                 grid: {
@@ -80,8 +106,17 @@
                     }
                 },
                 series: [{
-                    name: 'Có nguy cơ',
-                    data: {!! json_encode($year_statics['risk']) !!},
+                    name: 'Gầy còm',
+                    data: {!! json_encode($year_statics['wasted']) !!},
+                }, {
+                    name: 'Thấp còi',
+                    data: {!! json_encode($year_statics['stunted']) !!},
+                }, {
+                    name: 'Nhẹ cân',
+                    data: {!! json_encode($year_statics['underweight']) !!},
+                }, {
+                    name: 'Thừa cân/Béo phì',
+                    data: {!! json_encode($year_statics['overweight']) !!},
                 }, {
                     name: 'Bình thường',
                     data: {!! json_encode($year_statics['normal']) !!},
@@ -110,6 +145,11 @@
                     x: {
                         format: 'dd/MM/yy HH:mm'
                     },
+                    y: {
+                        formatter: function(value) {
+                            return value + ' trẻ';
+                        }
+                    }
                 },
                 legend: {
                     position: 'bottom',
@@ -123,8 +163,80 @@
             );
 
             chart.render();
-        } catch (error) {
 
+            // Biểu đồ Donut - Phân bố mức độ nghiêm trọng
+            var severityOptions = {
+                chart: {
+                    type: 'donut',
+                    height: 300,
+                },
+                series: {!! json_encode($severity_distribution['data']) !!},
+                labels: {!! json_encode($severity_distribution['labels']) !!},
+                colors: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#6f42c1'],
+                legend: {
+                    show: false
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        return val.toFixed(1) + "%"
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%',
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    offsetY: -10
+                                },
+                                value: {
+                                    show: true,
+                                    fontSize: '24px',
+                                    fontWeight: 700,
+                                    offsetY: 5,
+                                    formatter: function (val) {
+                                        return val + '%'
+                                    }
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'Tổng số',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    formatter: function (w) {
+                                        const total = w.globals.seriesTotals.reduce((a, b) => {
+                                            return a + b
+                                        }, 0);
+                                        return {{ array_sum($severity_distribution['counts']) }} + ' trẻ';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function(value, { seriesIndex, w }) {
+                            const count = {!! json_encode($severity_distribution['counts']) !!}[seriesIndex];
+                            return count + ' trẻ (' + value.toFixed(1) + '%)';
+                        }
+                    }
+                }
+            };
+
+            var severityChart = new ApexCharts(
+                document.querySelector("#severityChart"),
+                severityOptions
+            );
+
+            severityChart.render();
+        } catch (error) {
+            console.error('Chart rendering error:', error);
         }
     </script>
 @endpush
