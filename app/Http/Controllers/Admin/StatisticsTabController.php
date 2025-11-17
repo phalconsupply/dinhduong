@@ -510,7 +510,7 @@ class StatisticsTabController extends Controller
             '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23'],
             '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35'],
             '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47'],
-            '48-60' => ['min' => 48, 'max' => 60, 'label' => '48-60'],
+            '48-60' => ['min' => 48, 'max' => 60.99, 'label' => '48-60'],
         ];
 
         // Calculate for all children

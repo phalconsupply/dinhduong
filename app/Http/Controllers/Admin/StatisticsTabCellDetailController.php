@@ -135,12 +135,12 @@ class StatisticsTabCellDetailController extends Controller
         // Filter by age group (for mean-stats and who-combined)
         if ($ageGroup) {
             $ageRanges = [
-                '0-5m' => ['min' => 0, 'max' => 5],
-                '6-11m' => ['min' => 6, 'max' => 11],
-                '12-23m' => ['min' => 12, 'max' => 23],
-                '24-35m' => ['min' => 24, 'max' => 35],
-                '36-47m' => ['min' => 36, 'max' => 47],
-                '48-60m' => ['min' => 48, 'max' => 60],
+                '0-5m' => ['min' => 0, 'max' => 5.99],
+                '6-11m' => ['min' => 6, 'max' => 11.99],
+                '12-23m' => ['min' => 12, 'max' => 23.99],
+                '24-35m' => ['min' => 24, 'max' => 35.99],
+                '36-47m' => ['min' => 36, 'max' => 47.99],
+                '48-60m' => ['min' => 48, 'max' => 60.99],
             ];
             
             if (isset($ageRanges[$ageGroup])) {
