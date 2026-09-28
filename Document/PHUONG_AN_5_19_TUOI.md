@@ -612,6 +612,46 @@ tiêu đề nhóm tuổi đổi giữa "(tháng)" và "(tuổi)"; dòng tổng �
 **Không lẫn nhau** — chọn 0–5 vẫn đúng 400 hồ sơ dù đã có 6 hồ sơ 5–19 trong DB. Cả 6 tab đều
 render sạch ở cả hai đối tượng.
 
+### Phase 5 — Cấu hình lời khuyên cho 5–19 (28/09/2026) — ĐÃ XONG
+
+Trang `/admin/setting/advices` nay có **2 cấp tab**: chọn đối tượng, rồi chọn nhóm tuổi.
+
+| Đối tượng | Nhóm tuổi | Chỉ số cấu hình được |
+|---|---|---|
+| 0–5 | 0-5 … 48-59 tháng | W/A, W/H, H/A (giữ nguyên như cũ) |
+| 5–19 | **5-9** | H/A, **BMI/A**, W/A |
+| 5–19 | **10-14**, **15-19** | H/A, **BMI/A** (W/A hiện thông báo WHO không có chuẩn) |
+
+Nhãn mức của BMI ghi rõ ngưỡng riêng của 5–19: *Thừa cân (> +1SD)*, *Béo phì (> +2SD)*.
+Tên trường vẫn là `advices[nhóm][chỉ số][kết quả]` nên **82 KB lời khuyên đã soạn cho 0–5
+không phải nhập lại**.
+
+**🔴 Lỗi thứ sáu: `getAgeGroupKey()` trả sai nhóm cho mọi trẻ trên 5 tuổi**
+
+Hàm này kết thúc bằng `return '48-59'` cho mọi tuổi ≥ 60 tháng, nên **một em 12 tuổi nhận lời
+khuyên soạn cho trẻ 4 tuổi**. Nay trả `5-9` / `10-14` / `15-19`. Kiểm chứng biên: 59,9 tháng →
+`48-59`; 60,0 → `5-9`; 120 → `10-14`; 180 → `15-19`.
+
+**🔴 Lỗi thứ bảy: lưu lời khuyên có thể xoá sạch dữ liệu**
+
+`update_advices()` gọi thẳng `Setting::where('key','advices')->update(['value' => json_encode($request->advices)])`.
+Nếu request không mang `advices` thì ghi đè bằng `null` — mất toàn bộ 82 KB mà không báo gì.
+Nay chặn trước khi ghi và báo lỗi rõ ràng.
+
+Lưu ý kèm theo: bảng `settings` **không có khoá chính**, nên `Setting::updateOrCreate()` của
+Eloquent báo `Unknown column 'id' in 'where clause'`. Phải đi qua query builder.
+
+**Trang kết quả và bản in** bổ sung lời khuyên **BMI theo tuổi**, và bỏ qua lời khuyên
+cân nặng/chiều cao với 5–19 cũng như cân nặng/tuổi khi ≥ 121 tháng — dùng chung điều kiện với
+bảng kết quả nên không thể lệch nhau.
+
+**Kiểm chứng:**
+- Số ô nhập đúng theo thiết kế: `5-9` có H/A 6 + BMI 6 + W/A 4; `10-14` và `15-19` có H/A 6 + BMI 6.
+- Lưu nhóm mới không làm mất dữ liệu 0–5; form rỗng bị chặn, độ dài giữ nguyên 82.626 ký tự.
+- Hồ sơ 12 tuổi (`z_bmi` = 2,58 → *béo phì*) hiện đúng lời khuyên BMI ở cả trang kết quả và bản in,
+  không hiện lời khuyên cân nặng/chiều cao.
+- Hồi quy: **40/40 hồ sơ 0–5** vẫn hiện đủ 3 lời khuyên như trước.
+
 ---
 
 ## 11. ~~Việc cần chốt trước khi backfill `z_*`~~ — ĐÃ CHỐT: chọn cách B

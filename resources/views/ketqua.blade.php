@@ -565,8 +565,10 @@
                                     if (!empty($advices)) {
                                         $default_advice .= '<div class="advice-list">';
                                         
-                                        // Weight for age advice (using auto method)
-                                        $waResult = $row->check_weight_for_age_auto()['result'] ?? null;
+                                        // Cân nặng theo tuổi: WHO chỉ cấp chuẩn tới 10 tuổi
+                                        $waResult = ($hien_can_nang_tuoi ?? true)
+                                            ? ($row->check_weight_for_age_auto()['result'] ?? null)
+                                            : null;
                                         if ($waResult) {
                                             $waAdvice = $advices[$ageGroup]['weight_for_age'][$waResult] 
                                                      ?? $advices['weight_for_age'][$waResult] 
@@ -576,8 +578,10 @@
                                             }
                                         }
                                         
-                                        // Weight for height advice (using auto method)
-                                        $whResult = $row->check_weight_for_height_auto()['result'] ?? null;
+                                        // Cân nặng theo chiều cao: WHO chỉ có chỉ số này cho 0-5 tuổi
+                                        $whResult = ($hien_can_nang_chieu_cao ?? true)
+                                            ? ($row->check_weight_for_height_auto()['result'] ?? null)
+                                            : null;
                                         if ($whResult) {
                                             $whAdvice = $advices[$ageGroup]['weight_for_height'][$whResult] 
                                                      ?? $advices['weight_for_height'][$whResult] 
@@ -598,6 +602,15 @@
                                             }
                                         }
                                         
+                                        // BMI theo tuổi — chỉ số chính của đối tượng 5-19
+                                        $bmiResult = $bmi_for_age['result'] ?? null; // có thể chưa đặt với slug khác
+                                        if ($bmiResult) {
+                                            $bmiAdvice = $advices[$ageGroup]['bmi_for_age'][$bmiResult] ?? '';
+                                            if ($bmiAdvice) {
+                                                $default_advice .= '<div class="advice-item"><i class="fas fa-check-circle"></i> <strong>BMI theo tuổi:</strong> ' . $bmiAdvice . '</div>';
+                                            }
+                                        }
+
                                         $default_advice .= '</div>';
                                     }
                                     

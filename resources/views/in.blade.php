@@ -446,28 +446,37 @@
     <div class="print-recommendation">
         @php
             $advices = json_decode($setting['advices'], true);
-            $ageGroup = $row->getAgeGroupKey(); // Get age group: '0-5', '6-11', etc.
-            
-            // Get advice for specific age group, fallback to old structure if not found
-            $waResult = $row->check_weight_for_age()['result'];
-            $waAdvice = $advices[$ageGroup]['weight_for_age'][$waResult] 
-                     ?? $advices['weight_for_age'][$waResult] 
-                     ?? '';
-            
-            $whResult = $row->check_weight_for_height()['result'];
-            $whAdvice = $advices[$ageGroup]['weight_for_height'][$whResult] 
-                     ?? $advices['weight_for_height'][$whResult] 
-                     ?? '';
-            
-            $haResult = $row->check_height_for_age()['result'];
-            $haAdvice = $advices[$ageGroup]['height_for_age'][$haResult] 
-                     ?? $advices['height_for_age'][$haResult] 
-                     ?? '';
+            // Nhóm tuổi: '0-5'..'48-59' cho trẻ nhỏ, '5-9'/'10-14'/'15-19' cho 5-19 tuổi
+            $ageGroup = $row->getAgeGroupKey();
+
+            // Dùng các hàm _auto(): đọc snapshot và tự chọn chuẩn WHO
+            $waResult = ($hien_can_nang_tuoi ?? true)
+                ? ($row->check_weight_for_age_auto()['result'] ?? null) : null;
+            $waAdvice = $waResult
+                ? ($advices[$ageGroup]['weight_for_age'][$waResult] ?? $advices['weight_for_age'][$waResult] ?? '')
+                : '';
+
+            // WHO không có chỉ số cân nặng theo chiều cao cho 5-19 tuổi
+            $whResult = ($hien_can_nang_chieu_cao ?? true)
+                ? ($row->check_weight_for_height_auto()['result'] ?? null) : null;
+            $whAdvice = $whResult
+                ? ($advices[$ageGroup]['weight_for_height'][$whResult] ?? $advices['weight_for_height'][$whResult] ?? '')
+                : '';
+
+            $haResult = $row->check_height_for_age_auto()['result'] ?? null;
+            $haAdvice = $haResult
+                ? ($advices[$ageGroup]['height_for_age'][$haResult] ?? $advices['height_for_age'][$haResult] ?? '')
+                : '';
+
+            // BMI theo tuổi — chỉ số chính của đối tượng 5-19
+            $bmiResult = $bmi_for_age['result'] ?? null;
+            $bmiAdvice = $bmiResult ? ($advices[$ageGroup]['bmi_for_age'][$bmiResult] ?? '') : '';
         @endphp
         <ul>
             @if($waAdvice)<li>{{ $waAdvice }}</li>@endif
             @if($whAdvice)<li>{{ $whAdvice }}</li>@endif
             @if($haAdvice)<li>{{ $haAdvice }}</li>@endif
+            @if($bmiAdvice)<li>{{ $bmiAdvice }}</li>@endif
         </ul>
 
         <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>

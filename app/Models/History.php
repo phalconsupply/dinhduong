@@ -228,25 +228,28 @@ class History extends Model
      */
     public function getAgeGroupKey()
     {
-        $ageInMonths = $this->age; // age is stored in months
-        
-        if ($ageInMonths >= 0 && $ageInMonths <= 5) {
+        $ageInMonths = (float) $this->age; // tuổi lưu theo tháng
+
+        if ($ageInMonths < 0) {
             return '0-5';
-        } elseif ($ageInMonths >= 6 && $ageInMonths <= 11) {
-            return '6-11';
-        } elseif ($ageInMonths >= 12 && $ageInMonths <= 23) {
-            return '12-23';
-        } elseif ($ageInMonths >= 24 && $ageInMonths <= 35) {
-            return '24-35';
-        } elseif ($ageInMonths >= 36 && $ageInMonths <= 47) {
-            return '36-47';
-        } elseif ($ageInMonths >= 48 && $ageInMonths <= 59) {
-            return '48-59';
         }
-        
-        // Default to nearest group if age is out of range
-        if ($ageInMonths < 0) return '0-5';
-        return '48-59';
+
+        // Đối tượng 0-5 tuổi: chia theo tháng
+        if ($ageInMonths < 6)  return '0-5';
+        if ($ageInMonths < 12) return '6-11';
+        if ($ageInMonths < 24) return '12-23';
+        if ($ageInMonths < 36) return '24-35';
+        if ($ageInMonths < 48) return '36-47';
+        if ($ageInMonths < 60) return '48-59';
+
+        // Đối tượng 5-19 tuổi: chia theo năm.
+        // Trước đây mọi tuổi >= 60 tháng đều trả '48-59', nên một em 12 tuổi
+        // nhận lời khuyên soạn cho trẻ 4 tuổi.
+        if ($ageInMonths < 120) return '5-9';
+        if ($ageInMonths < 180) return '10-14';
+        if ($ageInMonths < 229) return '15-19';
+
+        return '15-19';
     }
     
     public function birthday_f()
