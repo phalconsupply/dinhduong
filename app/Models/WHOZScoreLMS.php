@@ -227,11 +227,19 @@ class WHOZScoreLMS extends Model
      */
     public static function selectAgeRange(string $indicator, float $ageInMonths): string
     {
+        // Từ 60 tháng trở lên là chuẩn WHO Reference 2007 (5-19 tuổi).
+        // Trước đây hàm này trả '2_5y' cho MỌI tuổi >= 24, kể cả 200 tháng,
+        // nên tra cứu cho đối tượng lớn tuổi sẽ rơi vào bảng 0-5 tuổi.
+        if ($ageInMonths >= 60) {
+            // WFA chỉ có tới 120 tháng; HFA/BMI tới 228 tháng
+            return $indicator === 'wfa' ? '5_10y' : '5_19y';
+        }
+
         // WFA: Always uses 0_5y range (covers 0-60 months)
         if ($indicator === 'wfa') {
             return '0_5y';
         }
-        
+
         // HFA, BMI: Split at 24 months boundary
         if (in_array($indicator, ['hfa', 'bmi'])) {
             // 0-24 months: Use 0_2y range

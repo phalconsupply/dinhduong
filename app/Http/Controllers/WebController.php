@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\History;
 use App\Services\WHO2006ZScoreService;
+use App\Services\WHO2007ZScoreService;
 use App\Models\Province;
 use App\Models\District;
 use App\Models\Ward;
@@ -227,13 +228,19 @@ class WebController extends Controller
             // snapshot này chứ không tính lại, nên sửa engine về sau không làm
             // thay đổi phiếu đã lập.
             $ageInDays = $history->getAgeInDays();
+            $ageInMonths = $ageInDays === null
+                ? null
+                : WHO2006ZScoreService::ageInMonths($ageInDays);
 
             if ($ageInDays !== null && WHO2006ZScoreService::isInRange($ageInDays)) {
+                // Dưới 60 tháng: WHO Child Growth Standards 2006
                 $history->applyWho2006Snapshot();
-            } else {
-                // Ngoài phạm vi chuẩn 0-5 tuổi (>= 60 tháng): chuẩn WHO 2007,
-                // engine sẽ bổ sung ở Phase 2 — chưa tính được Z-score.
-                $history->who_standard = $ageInDays === null ? null : 'who2007';
+            } elseif ($ageInMonths !== null && WHO2007ZScoreService::isInRange($ageInMonths)) {
+                // Từ 60 tháng đến dưới 19 tuổi: WHO Reference 2007
+                $history->applyWho2007Snapshot();
+            } elseif ($ageInMonths !== null) {
+                // Ngoài phạm vi cả hai chuẩn (>= 19 tuổi): không có chuẩn WHO áp dụng
+                $history->who_standard = null;
             }
 
             $history->save();

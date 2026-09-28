@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\History;
 use App\Services\WHO2006ZScoreService;
+use App\Services\WHO2007ZScoreService;
 use Illuminate\Console\Command;
 
 /**
@@ -14,7 +15,7 @@ use Illuminate\Console\Command;
  *
  * Chuẩn WHO áp dụng được xác định theo TUỔI TẠI THỜI ĐIỂM CÂN ĐO:
  *   - tuổi tháng < 60  -> who2006 (engine đã chuẩn hoá theo WHO Anthro)
- *   - tuổi tháng >= 60 -> who2007 (engine sẽ làm ở Phase 2 — hiện để trống)
+ *   - tuổi tháng >= 60 -> who2007 (WHO Reference 2007, tới dưới 19 tuổi)
  *
  * Cũng sửa luôn lỗi gán chéo cột của code cũ: result_height_age từng chứa kết quả
  * Weight-for-age và ngược lại. Từ lệnh này trở đi mỗi cột chứa đúng chỉ số của nó.
@@ -34,6 +35,7 @@ class BackfillZScores extends Command
 
         $this->info('=== Backfill snapshot Z-score ===');
         $this->line('Engine 0-5 : ' . WHO2006ZScoreService::ENGINE_VERSION);
+        $this->line('Engine 5-19: ' . WHO2007ZScoreService::ENGINE_VERSION);
         $this->line('Chế độ     : ' . ($dryRun ? 'DRY-RUN (không ghi DB)' : 'GHI DB'));
         $this->newLine();
 
@@ -52,7 +54,7 @@ class BackfillZScores extends Command
 
         $stat = [
             'who2006'        => 0,
-            'who2007_cho'    => 0,
+            'who2007'        => 0,
             'ngoai_pham_vi'  => 0,
             'thieu_du_lieu'  => 0,
             'doi_phan_loai'  => 0,
@@ -79,13 +81,19 @@ class BackfillZScores extends Command
 
             // Chuẩn áp dụng theo tuổi TẠI THỜI ĐIỂM ĐO
             if ($ageInMonths >= 60.0) {
-                $stat['who2007_cho']++;
-                $outOfRange[] = sprintf('id=%d age=%.2f tháng (%d ngày)', $row->id, $ageInMonths, $ageInDays);
+                if (!WHO2007ZScoreService::isInRange($ageInMonths)) {
+                    $stat['ngoai_pham_vi']++;
+                    $outOfRange[] = sprintf('id=%d age=%.2f tháng — trên 19 tuổi, ngoài mọi chuẩn WHO',
+                        $row->id, $ageInMonths);
+                    continue;
+                }
+
+                $stat['who2007']++;
 
                 if (!$dryRun) {
-                    // Ghi nhận chuẩn đúng, để trống Z-score cho Phase 2
-                    $row->who_standard = 'who2007';
+                    $row->applyWho2007Snapshot();
                     $row->saveQuietly();
+                    $stat['da_ghi']++;
                 }
                 continue;
             }
@@ -190,7 +198,7 @@ class BackfillZScores extends Command
         $this->line("Tính bằng WHO 2006          : {$stat['who2006']}");
         $this->line("Đổi phân loại so với result_* cũ: {$stat['doi_phan_loai']}");
         $this->line("  → trong đó ĐỔI THỨ ĐANG HIỂN THỊ (bản ghi còn dùng): {$stat['doi_hien_thi']}");
-        $this->line("Tuổi >= 60 tháng, chờ Phase 2  : {$stat['who2007_cho']}");
+        $this->line("Tính bằng WHO 2007 (5-19 tuổi) : {$stat['who2007']}");
         $this->line("Ngoài phạm vi bảng WHO 0-5     : {$stat['ngoai_pham_vi']}");
         $this->line("Thiếu dữ liệu đầu vào          : {$stat['thieu_du_lieu']}");
         $this->line("Đã ghi DB                      : {$stat['da_ghi']}");

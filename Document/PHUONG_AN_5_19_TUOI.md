@@ -455,6 +455,63 @@ gỡ dòng chết `$input['bim']`.
 **Còn lại cho Phase 2:** 2 bản ghi tuổi ≥ 60 tháng chưa có Z-score, và 2 bản ghi đang dùng bị
 gắn cờ `fhfa` (`z_hfa ≈ −6,5`, nhiều khả năng nhập sai chiều cao) cần rà bằng tay.
 
+### Phase 2 — Engine 5–19 tuổi (28/09/2026) — ĐÃ XONG
+
+**Nghiệm thu bằng bộ dữ liệu vàng của chính WHO** — `Survey_WHO2007.csv` +
+`survey_who2007_z.csv` (933 bản ghi, Z-score kỳ vọng do WHO sinh ra):
+
+| Chỉ số | Số ô so sánh | Lệch trung bình | Lệch lớn nhất | Ca > 0,01 |
+|---|---|---|---|---|
+| `z_hfa` | 924 | **0,00000** | **0,0000** | 0 |
+| `z_wfa` | 258 | **0,00000** | **0,0000** | 0 |
+| `z_bmi` | 919 | **0,00000** | **0,0000** | 0 |
+
+Các ca `null` cũng khớp chính xác (9 ca hfa, 675 ca wfa do tuổi > 120 tháng, 14 ca bmi),
+BMI tự tính trùng khít cột `cbmi` của WHO ở cả 933 bản ghi. **Tái hiện đúng WHO AnthroPlus.**
+
+**File đã thêm:** `app/Services/WHO2007ZScoreService.php`
+
+Nội suy LMS tuyến tính giữa `trunc(tuổi)` và `trunc(tuổi)+1` theo đúng `zscore_indicator()`
+của anthroplus; hiệu chỉnh ngoài ±3SD cho W/A và BMI/A, không hiệu chỉnh H/A; làm tròn 2 số;
+biên tuổi `60 ≤ m < 229` (hfa/bmi) và `60 ≤ m < 121` (wfa).
+
+**🔴 Sửa `WHOZScoreLMS::selectAgeRange()`** — hàm này trả `2_5y` cho **mọi** tuổi ≥ 24 tháng,
+kể cả 200 tháng, nên mọi tra cứu cho đối tượng lớn tuổi đều rơi nhầm vào bảng 0–5. Nay tuổi
+≥ 60 trả `5_19y` / `5_10y`.
+
+**Ngưỡng phân loại 5–19** (`classifyByZScore2007()`, tách riêng để không đụng ngưỡng 0–5):
+
+| z | 0–5 tuổi | 5–19 tuổi |
+|---|---|---|
+| +1,50 | bình thường | **thừa cân** |
+| +2,50 | thừa cân | **béo phì** |
+
+**Tình trạng dinh dưỡng 5–19** (`get_nutrition_status_5_19()`): dựa trên BMI/tuổi + chiều
+cao/tuổi. Không dùng cân nặng/tuổi vì WHO chỉ cung cấp chỉ số đó tới 10 tuổi và khuyến cáo
+không dùng nó để phân loại thừa cân.
+
+**Đã nối:** `zscoreAuto()`, `checkAuto()`, `get_nutrition_status_auto()` tự chọn chuẩn theo
+`who_standard` của bản ghi; `WebController` và lệnh backfill gọi `applyWho2006Snapshot()` hoặc
+`applyWho2007Snapshot()` tương ứng.
+
+**Kiểm chứng biên và hồi quy:**
+- Biên 60 tháng mượt (bé trai 17 kg / 110 cm): `z_hfa` 0,01 → 0,06; `z_bmi` −0,92 → −1,02;
+  tình trạng dinh dưỡng không đổi.
+- W/A cắt đúng tại 121 tháng: 120,99 còn giá trị, 121,00 trả `null`.
+- Hồi quy 0–5: **400 bản ghi, 0 ô lệch**.
+
+**Backfill:** 470/470 bản ghi có snapshot — 468 theo `who2006-v2`, 2 theo `who2007-v1`.
+Bản ghi id=438 (61,73 tháng, `z_bmi` = 1,42) nay xếp **"Thừa cân"** theo ngưỡng +1SD của
+chuẩn 5–19, trong khi ngưỡng 0–5 sẽ cho "bình thường" — minh hoạ đúng khác biệt của WHO.
+
+**Nợ kỹ thuật nên dọn:** `app/Models/WHOZScoreLMSCorrected.php` (cộng offset cố định
+`wfa +0.036`, `bmi +0.081`…) nay **không còn nơi nào dùng**. Giữ lại là một cái bẫy — nên xoá
+trong một commit dọn dẹp riêng.
+
+**Còn lại cho Phase 3:** trang kết quả và bản in cho `tu-5-19-tuoi` (hiện `ketqua.blade.php`
+chỉ render khối đánh giá cho slug `tu-0-5-tuoi`), form tự điều chỉnh theo tuổi, và ẩn khối
+cân nặng/chiều cao cho đối tượng 5–19.
+
 ---
 
 ## 11. ~~Việc cần chốt trước khi backfill `z_*`~~ — ĐÃ CHỐT: chọn cách B
