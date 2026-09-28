@@ -396,7 +396,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         $history = History::query()
             ->byUserRole($user)
-            ->where('age', '<=', 60)  // Chỉ lấy trẻ 0-5 tuổi (0-60 tháng)
+            ->where('who_standard', 'who2006')  // Chỉ lấy hồ sơ theo chuẩn WHO 0-5 tuổi
             ->whereNotNull('age')
             ->whereNotNull('cal_date');  // Bắt buộc phải có ngày cân đo
 
@@ -806,7 +806,7 @@ class DashboardController extends Controller
     private function getPopulationCharacteristics($records)
     {
         // Lọc chỉ lấy trẻ 0-60 tháng (5 tuổi)
-        $children = $records->where('slug', 'tu-0-5-tuoi')->where('age', '<=', 60);
+        $children = $records->where('slug', 'tu-0-5-tuoi')->where('who_standard', 'who2006');
         $totalChildren = $children->count();
 
         $stats = [];
@@ -1003,7 +1003,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         $query = History::query()
             ->byUserRole($user)
-            ->where('age', '<=', 60)  // Chỉ lấy trẻ 0-5 tuổi (0-60 tháng)
+            ->where('who_standard', 'who2006')  // Chỉ lấy hồ sơ theo chuẩn WHO 0-5 tuổi
             ->whereNotNull('age')
             ->whereNotNull('cal_date');  // Bắt buộc phải có ngày cân đo
 
@@ -1106,7 +1106,7 @@ class DashboardController extends Controller
             '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23'],
             '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35'],
             '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47'],
-            '48-60' => ['min' => 48, 'max' => 60.99, 'label' => '48-60'],
+            '48-59' => ['min' => 48, 'max' => 59.99, 'label' => '48-59'],
         ];
 
         $stats = [];
@@ -1649,7 +1649,7 @@ class DashboardController extends Controller
         // Lọc trẻ dưới 60 tháng (< 60 tháng, không bao gồm trẻ đúng 60 tháng)
         // WHO reference data có đầy đủ cho 0-60 tháng
         $children = $records->filter(function($record) {
-            return $record->age < 60;
+            return $record->who_standard === 'who2006';
         });
 
         $totalChildren = $children->count();
@@ -2035,7 +2035,7 @@ class DashboardController extends Controller
         if ($ageFilter === 'under_24') {
             $query->where('age', '<', 24);
         } elseif ($ageFilter === 'under_60') {
-            $query->where('age', '<=', 60);
+            $query->where('who_standard', 'who2006');
         }
         
         // Apply gender filter

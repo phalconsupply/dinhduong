@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\History;
+use App\Services\WHO2006ZScoreService;
+use App\Services\WHO2007ZScoreService;
 use App\Models\Province;
 use App\Models\District;
 use App\Models\Ward;
@@ -167,9 +169,11 @@ class WebController extends Controller
             unset($input['cal_date']);
         }
 
-        if($request->slug == 'tu-19-tuoi' || $request->slug == 'tu-5-19-tuoi'){
-            $input['bim'] = $request->input('bmi');
-        }
+        // BMI luôn được tính lại ở phía server theo công thức WHO
+        // weight / (height/100)^2 trong applyWho2006Snapshot(), không tin giá trị
+        // do JavaScript phía client gửi lên.
+        // (Trước đây ở đây có dòng $input['bim'] = ... — sai chính tả 'bim',
+        //  không phải cột nào cả nên hoàn toàn vô tác dụng.)
 
         // Handle file upload for thumb
         if ($request->hasFile('thumb')) {
@@ -218,26 +222,27 @@ class WebController extends Controller
         }
 
         if ($history) {
-            $is_risk = 0;
-            if ($history->check_bmi_for_age()['result'] !== 'normal' ||
-                $history->check_weight_for_age()['result'] !== 'normal' ||
-                $history->check_height_for_age()['result'] !== 'normal' ||
-                $history->check_weight_for_height()['result'] !== 'normal') {
-                $is_risk = 1;
+            // Tính Z-score bằng engine WHO đã chuẩn hoá (tra LMS theo ngày tuổi,
+            // hiệu chỉnh ngoài ±3SD) rồi ĐÓNG BĂNG kết quả vào bản ghi.
+            // Phiếu cân đo là dữ liệu của thời điểm đo: trang kết quả đọc lại
+            // snapshot này chứ không tính lại, nên sửa engine về sau không làm
+            // thay đổi phiếu đã lập.
+            $ageInDays = $history->getAgeInDays();
+            $ageInMonths = $ageInDays === null
+                ? null
+                : WHO2006ZScoreService::ageInMonths($ageInDays);
+
+            if ($ageInDays !== null && WHO2006ZScoreService::isInRange($ageInDays)) {
+                // Dưới 60 tháng: WHO Child Growth Standards 2006
+                $history->applyWho2006Snapshot();
+            } elseif ($ageInMonths !== null && WHO2007ZScoreService::isInRange($ageInMonths)) {
+                // Từ 60 tháng đến dưới 19 tuổi: WHO Reference 2007
+                $history->applyWho2007Snapshot();
+            } elseif ($ageInMonths !== null) {
+                // Ngoài phạm vi cả hai chuẩn (>= 19 tuổi): không có chuẩn WHO áp dụng
+                $history->who_standard = null;
             }
 
-            $history->is_risk = $is_risk;
-            $history->result_bmi_age = $history->check_bmi_for_age();
-            $history->result_height_age = $history->check_weight_for_age();
-            $history->result_weight_age = $history->check_height_for_age();
-            $history->result_weight_height = $history->check_weight_for_height();
-            
-            // Lưu tình trạng dinh dưỡng tổng hợp (chỉ cho trẻ dưới 5 tuổi - category = 1)
-            if ($request->category == 1 || $history->slug == 'tu-0-5-tuoi') {
-                $nutrition_status = $history->get_nutrition_status();
-                $history->nutrition_status = $nutrition_status['text'];
-            }
-            
             $history->save();
 
             return redirect(url('/ketqua?uid=' . $history->uid));

@@ -27,7 +27,32 @@ class SettingController extends Controller
     }
     public function update_advices(Request $request)
     {
-        Setting::where('key', 'advices')->update(['value'=>json_encode($request->advices)]);
+        $advices = $request->input('advices');
+
+        // Chặn trường hợp form không gửi gì mà vẫn ghi đè: toàn bộ lời khuyên
+        // đã soạn sẽ bị xoá sạch mà không có dấu hiệu nào.
+        if (!is_array($advices) || empty($advices)) {
+            return redirect()->back()
+                ->with(['error' => 'Không nhận được dữ liệu lời khuyên, chưa lưu gì cả.']);
+        }
+
+        $value = json_encode($advices, JSON_UNESCAPED_UNICODE);
+
+        // Bảng settings không có khoá chính nên KHÔNG dùng được updateOrCreate()
+        // của Eloquent (nó cần cột id để lưu) — phải đi qua query builder.
+        $query = Setting::where('key', 'advices');
+
+        if ($query->exists()) {
+            $query->update(['value' => $value, 'updated_at' => now()]);
+        } else {
+            Setting::insert([
+                'key' => 'advices',
+                'value' => $value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         return redirect()->back()->with(['success' => 'Cập nhật thành công']);
     }
     public function update(Request $request){

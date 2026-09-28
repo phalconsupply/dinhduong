@@ -12,6 +12,7 @@ class BMIForAge extends Model
     protected $table = 'bmi_for_age'; // Tên của bảng trong cơ sở dữ liệu
 
     protected $fillable = [ // Các cột có thể được gán giá trị thông qua Mass Assignment
+        'standard', // who2006 (0-5 tuổi) hoặc who2007 (5-19 tuổi)
         'gender',
         'fromAge',
         'toAge',
