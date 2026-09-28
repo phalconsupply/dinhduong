@@ -12,14 +12,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add setting for Z-score calculation method
-        DB::table('settings')->insert([
+        // Đã có sẵn thì không chèn lại
+        if (DB::table('settings')->where('key', 'zscore_method')->exists()) {
+            return;
+        }
+
+        $row = [
             'key' => 'zscore_method',
-            'value' => 'lms', // lms or sd_bands
-            'description' => 'Z-score calculation method: lms (WHO LMS 2006) or sd_bands (SD Bands approximation)',
+            'value' => 'lms', // lms hoặc sd_bands
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ];
+
+        // Bảng settings thật không có cột description. Migration này trước đây
+        // luôn chèn cả cột đó nên HỎNG trên DB trống (lỗi "Unknown column
+        // 'description'"), khiến không thể migrate từ số 0 được.
+        if (Schema::hasColumn('settings', 'description')) {
+            $row['description'] = 'Z-score calculation method: lms (WHO LMS 2006) or sd_bands (SD Bands approximation)';
+        }
+
+        DB::table('settings')->insert($row);
     }
 
     /**

@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // DB dung tu ban dump SQL da co san bang nay -> bo qua
+        if (Schema::hasTable('failed_jobs')) {
+            return;
+        }
+
         Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();

@@ -1,0 +1,157 @@
+# Triển khai trên máy chủ mới
+
+> Quy trình đã được kiểm chứng end-to-end: dựng CSDL trống → `php artisan migrate` →
+> nhập dữ liệu → sinh lại bảng tham chiếu WHO, cho ra hệ thống **trùng khít** với
+> bản đang chạy (đối chiếu checksum toàn bộ hồ sơ và dữ liệu LMS).
+
+---
+
+## 1. Chuẩn bị
+
+```bash
+git clone https://github.com/phalconsupply/dinhduong.git
+cd dinhduong
+composer install --no-dev --optimize-autoloader
+cp .env.example .env        # rồi sửa thông số DB, APP_URL, APP_KEY
+php artisan key:generate
+```
+
+Tạo CSDL với **đúng collation mà dự án cấu hình** (`config/database.php` dùng
+`utf8mb4_unicode_ci`):
+
+```sql
+CREATE DATABASE dinhduong CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+> CSDL cũ đang chạy `utf8mb4_general_ci` do trôi cấu hình từ lâu. Máy mới nên theo
+> `utf8mb4_unicode_ci`; chỉ cần lưu ý nếu có lúc nào truy vấn nối hai CSDL với nhau.
+
+---
+
+## 2. Dựng cấu trúc bảng
+
+```bash
+php artisan migrate --force
+```
+
+Chạy được **từ số 0**, 20 migration, không cần nạp dump SQL nào. Trước đây không làm
+được vì các bảng nghiệp vụ (`history`, `settings`, `provinces`, các bảng
+`*_for_age`…) chỉ tồn tại trong dump chứ không có migration nào tạo ra.
+
+Mọi migration tạo bảng đều có guard `hasTable()` / `hasColumn()` nên chạy lại trên
+CSDL đã có dữ liệu cũng an toàn — chỉ được ghi nhận là đã chạy, không đụng dữ liệu.
+
+---
+
+## 3. Mang dữ liệu từ máy cũ sang
+
+**Trên máy cũ** — xuất dữ liệu vận hành:
+
+```bash
+php artisan data:export
+# -> storage/app/data-export/<ngày_giờ>.json
+```
+
+Gồm 12.009 dòng: 470 hồ sơ cân đo, 8 tài khoản, 11 đơn vị, 40 dòng cấu hình
+(có toàn bộ lời khuyên), 57 dân tộc và 11.366 dòng danh mục hành chính.
+
+**Cố ý KHÔNG xuất** các bảng tham chiếu WHO — chúng được sinh lại ở bước 4 từ bộ LMS
+gốc trong thư mục `zscore/`, nên không có nguy cơ lệch phiên bản.
+
+> ⚠️ **File này chứa dữ liệu cá nhân của trẻ** (họ tên, số định danh, điện thoại,
+> địa chỉ). Thư mục `storage/app/` đã được `.gitignore` chặn, **không commit vào git**.
+> Chuyển sang máy mới bằng `scp` hoặc kênh có mã hoá:
+>
+> ```bash
+> scp storage/app/data-export/<file>.json user@may-chu-moi:/var/www/dinhduong/storage/app/data-export/
+> ```
+
+**Trên máy mới** — nhập vào:
+
+```bash
+php artisan data:import <file>.json --dry-run   # xem trước
+php artisan data:import <file>.json
+```
+
+Toàn bộ chạy trong một transaction: lỗi ở bất kỳ bảng nào thì huỷ sạch, không để lại
+trạng thái dở dang. Mặc định **bỏ qua bảng đã có dữ liệu**; thêm `--fresh` để ghi đè.
+
+Nếu chỉ muốn dựng hệ thống rỗng để chạy thử, không mang hồ sơ trẻ sang:
+
+```bash
+php artisan data:export --no-personal
+```
+
+---
+
+## 4. Sinh dữ liệu tham chiếu WHO
+
+```bash
+php artisan who:import-2006     # 13.366 dòng — LMS theo NGÀY tuổi và từng 0,1 cm
+php artisan who:import-2007     # 798 z-score + 798 percentile + 798 bảng đơn giản hoá
+```
+
+Nguồn là các file trong `zscore/who2006/` và `zscore/who2007/`, lấy từ repo chính thức
+của WHO (`WorldHealthOrganization/anthro` và `anthroplus`) và đã commit vào repo.
+Cả hai lệnh đều có `--dry-run`.
+
+Chỉ chạy `who:backfill-zscores` khi cần **tính lại** snapshot — dữ liệu nhập ở bước 3
+đã mang sẵn snapshot nên bình thường không cần.
+
+---
+
+## 5. Hoàn tất
+
+```bash
+php artisan config:clear && php artisan view:clear && php artisan cache:clear
+chmod -R 775 storage bootstrap/cache     # chown sang user của web server
+```
+
+Trỏ document root của web server vào thư mục `public/`.
+
+---
+
+## 6. Kiểm tra sau triển khai
+
+```bash
+php artisan tinker --execute="
+  echo 'Hồ sơ: '.App\Models\History::count().PHP_EOL;
+  echo 'Có snapshot: '.App\Models\History::whereNotNull('z_engine')->count().PHP_EOL;
+  echo 'LMS 0-5: '.DB::table('who2006_lms')->count().PHP_EOL;
+  echo 'LMS 5-19: '.DB::table('who_zscore_lms')->where('standard','who2007')->count().PHP_EOL;
+"
+```
+
+Kỳ vọng: `470 / 470 / 13366 / 798`.
+
+Kiểm tra bằng mắt:
+
+| Trang | Kỳ vọng |
+|---|---|
+| `/tu-0-5-tuoi` | Form nhận tuổi < 60 tháng |
+| `/tu-5-19-tuoi` | Form nhận 60–228 tháng, ô tuổi hiện "12 tuổi 6 tháng" |
+| `/ketqua?uid=…` | Hồ sơ 0–5 hiện 4 chỉ số; hồ sơ 5–19 hiện 2–3 chỉ số |
+| `/admin/statistics` | Đổi ô **Đối tượng** thấy tab tự ẩn/hiện |
+| `/admin/setting/advices` | Có 2 tab đối tượng, dữ liệu lời khuyên 0–5 còn nguyên |
+
+---
+
+## 7. Những điểm đã sửa để quy trình này chạy được
+
+Trong lúc dựng quy trình, bốn thứ cản trở việc triển khai từ số 0 đã được khắc phục:
+
+1. **Thiếu migration cho 17 bảng nghiệp vụ** — nay có
+   `2024_10_01_000001..000004`.
+2. **`AppServiceProvider` truy vấn bảng `settings` ngay lúc khởi động** — trên CSDL
+   trống thì ứng dụng không boot nổi, nên không chạy nổi chính migration tạo bảng đó.
+   Nay có kiểm tra `Schema::hasTable()` và bắt lỗi.
+3. **Migration `add_zscore_method_setting` vốn đã hỏng** — chèn vào cột `description`
+   không tồn tại trong bảng `settings`. Nay chỉ chèn khi cột có thật, và bỏ qua nếu đã
+   có dòng cấu hình.
+4. **`users.email` và `users.password` để NOT NULL** theo migration mặc định của
+   Laravel, trong khi hệ thống đăng nhập bằng `username` và dữ liệu thật có tài khoản
+   để trống hai cột này. Nay đã nới lỏng.
+
+Hai khác biệt còn lại giữa cấu trúc sinh từ migration và CSDL cũ, đều **an toàn vì
+rộng hơn**: `users.id` là `bigint` thay vì `int`, và `users.name` là `varchar(255)`
+thay vì `varchar(32)`.
