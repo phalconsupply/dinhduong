@@ -13,6 +13,17 @@
     </div>
 </div>
 
+@if(($stats['doi_tuong'] ?? '0-5') === '5-19')
+    <div class="alert alert-light border-start border-4 border-warning py-2 mb-3">
+        <small>
+            <i class="uil uil-info-circle"></i>
+            WHO chỉ cung cấp chuẩn <strong>Cân nặng/Tuổi đến 10 tuổi (120 tháng)</strong>.
+            Hồ sơ lớn hơn mốc này được xếp vào cột <em>Không xác định</em>; hãy dùng tab
+            <strong>BMI/Tuổi</strong> để đánh giá nhóm 10-19 tuổi.
+        </small>
+    </div>
+@endif
+
 @if(($stats['total']['total'] ?? 0) == 0)
     <div class="alert alert-warning text-center">
         <i class="uil uil-exclamation-triangle"></i>

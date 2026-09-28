@@ -26,6 +26,13 @@
                     </h6>
                     <div class="row g-3">
                         <div class="col-md-2">
+                            <label class="form-label small fw-bold">Đối tượng:</label>
+                            <select name="doi_tuong" id="doi_tuong" class="form-select filter-input">
+                                <option value="0-5" @if(request()->get('doi_tuong','0-5') == '0-5') selected @endif>Trẻ 0 - 5 tuổi</option>
+                                <option value="5-19" @if(request()->get('doi_tuong') == '5-19') selected @endif>Trẻ 5 - 19 tuổi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                             <label class="form-label small">Từ ngày:</label>
                             <input name="from_date" class="form-control filter-input" value="{{request()->get('from_date','')}}" type="date">
                         </div>
@@ -101,13 +108,25 @@
                             <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
                         </span>
                     </button>
-                    <button class="nav-link position-relative" 
+                    {{-- WHO khong co chi so can nang/chieu cao cho 5-19 tuoi, thay bang BMI/tuoi --}}
+                    <button class="nav-link position-relative tab-chi-0-5"
                             id="weight-height-tab" 
                             data-bs-toggle="pill" 
                             data-bs-target="#weight-height" 
                             data-tab="weight-for-height"
                             type="button" role="tab">
                         <i class="uil uil-balance-scale"></i> Cân nặng/Chiều cao (W/H)
+                        <span class="loading-spinner d-none">
+                            <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
+                        </span>
+                    </button>
+                    <button class="nav-link position-relative tab-chi-5-19"
+                            id="bmi-age-tab"
+                            data-bs-toggle="pill"
+                            data-bs-target="#bmi-age"
+                            data-tab="bmi-for-age"
+                            type="button" role="tab">
+                        <i class="uil uil-calculator"></i> BMI/Tuổi (BMI/A)
                         <span class="loading-spinner d-none">
                             <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
                         </span>
@@ -161,6 +180,14 @@
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-balance-scale" style="font-size: 3rem;"></i>
                             <p class="mt-2">Nhấn vào tab để tải dữ liệu Cân nặng/Chiều cao</p>
+                        </div>
+                    </div>
+
+                    {{-- BMI for Age Tab (5-19 tuổi) --}}
+                    <div class="tab-pane fade" id="bmi-age" role="tabpanel">
+                        <div class="text-center py-5 text-muted">
+                            <i class="uil uil-calculator" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Nhấn vào tab để tải dữ liệu BMI/Tuổi</p>
                         </div>
                     </div>
 
@@ -293,11 +320,46 @@
 
 {{-- Scripts --}}
 <script>
+// Moi doi tuong co bo chi so rieng: WHO khong co can nang/chieu cao cho 5-19,
+// va BMI/tuoi thi doi tuong 0-5 da co trong tab WHO Combined.
+function capNhatTabTheoDoiTuong(taiLaiNeuCanDoi) {
+    const o = document.getElementById('doi_tuong');
+    const la519 = o && o.value === '5-19';
+
+    document.querySelectorAll('.tab-chi-0-5').forEach(function(t) {
+        t.style.display = la519 ? 'none' : '';
+    });
+    document.querySelectorAll('.tab-chi-5-19').forEach(function(t) {
+        t.style.display = la519 ? '' : 'none';
+    });
+
+    // Neu tab dang mo vua bi an thi chuyen ve tab dau tien con hien
+    const dangMo = document.querySelector('.nav-link.active[data-tab]');
+    if (dangMo && dangMo.style.display === 'none') {
+        const thayThe = document.querySelector('[data-tab]:not([style*="display: none"])');
+        if (thayThe) {
+            new bootstrap.Tab(thayThe).show();
+            if (taiLaiNeuCanDoi) {
+                loadTabData(thayThe.getAttribute('data-tab'));
+            }
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Show Quick Stats by default (first tab is weight-for-age)
     const quickStatsContainer = document.getElementById('quick-stats-container');
     quickStatsContainer.style.display = 'flex';
-    
+
+    capNhatTabTheoDoiTuong(false);
+
+    const oDoiTuong = document.getElementById('doi_tuong');
+    if (oDoiTuong) {
+        oDoiTuong.addEventListener('change', function() {
+            capNhatTabTheoDoiTuong(true);
+        });
+    }
+
     // Auto-load first tab
     loadTabData('weight-for-age');
     
@@ -331,6 +393,7 @@ function loadTabData(tabName) {
     const tabId = tabName.replace('weight-for-age', 'weight-age')
                          .replace('height-for-age', 'height-age')
                          .replace('weight-for-height', 'weight-height')
+                         .replace('bmi-for-age', 'bmi-age')
                          .replace('mean-stats', 'mean-stats')  // Keep as-is
                          .replace('who-combined', 'who-combined'); // Keep as-is
     const tabContent = document.getElementById(tabId);

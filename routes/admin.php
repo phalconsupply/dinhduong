@@ -25,6 +25,7 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
     Route::get('/statistics/get-weight-for-age', 'StatisticsTabController@getWeightForAge')->name('admin.statistics.weight_for_age');
     Route::get('/statistics/get-height-for-age', 'StatisticsTabController@getHeightForAge')->name('admin.statistics.height_for_age');
     Route::get('/statistics/get-weight-for-height', 'StatisticsTabController@getWeightForHeight')->name('admin.statistics.weight_for_height');
+    Route::get('/statistics/get-bmi-for-age', 'StatisticsTabController@getBmiForAge')->name('admin.statistics.bmi_for_age');
     Route::get('/statistics/get-mean-stats', 'StatisticsTabController@getMeanStats')->name('admin.statistics.mean_stats');
     Route::get('/statistics/get-who-combined', 'StatisticsTabController@getWhoCombined')->name('admin.statistics.who_combined');
     Route::post('/statistics/clear-cache', 'StatisticsTabController@clearCache')->name('admin.statistics.clear_cache');

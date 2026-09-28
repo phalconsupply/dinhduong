@@ -58,7 +58,11 @@ class StatisticsTabController extends Controller
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            return $this->calculateWeightForAgeStats($query);
+            $stats = $this->calculateWeightForAgeStats($query);
+            // View dung co nay de nhac rang WHO chi co chuan W/A den 10 tuoi
+            $stats['doi_tuong'] = $this->doiTuong($request);
+
+            return $stats;
         });
         
         return response()->json([
@@ -94,6 +98,22 @@ class StatisticsTabController extends Controller
      */
     public function getWeightForHeight(Request $request)
     {
+        // WHO không có chỉ số cân nặng theo chiều cao cho 5-19 tuổi. Tab này đã
+        // được ẩn ở giao diện, chặn thêm ở đây để gọi thẳng endpoint không ra
+        // bảng toàn số 0 gây hiểu nhầm.
+        if ($this->doiTuong($request) === '5-19') {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+                'html' => '<div class="alert alert-info text-center mb-0">'
+                    . '<i class="uil uil-info-circle"></i> '
+                    . '<strong>Không áp dụng cho đối tượng 5-19 tuổi.</strong><br>'
+                    . 'WHO không cung cấp chuẩn cân nặng theo chiều cao cho lứa tuổi này; '
+                    . 'hãy dùng tab <strong>BMI/Tuổi</strong>.'
+                    . '</div>',
+            ]);
+        }
+
         $cacheKey = 'statistics_weight_for_height_' . md5(json_encode($request->all()) . auth()->id());
         
         $stats = Cache::remember($cacheKey, 300, function() use ($request) {
@@ -113,6 +133,75 @@ class StatisticsTabController extends Controller
     /**
      * Get Mean Statistics by Age Group (Tab 4)
      */
+    /**
+     * BMI theo tuổi — chỉ số chính của đối tượng 5-19 tuổi.
+     *
+     * Ngưỡng phân loại lấy từ classifyByZScore2007 qua check_bmi_for_age_auto():
+     * thừa cân từ +1SD và béo phì từ +2SD, khác với mốc +2SD/+3SD của 0-5 tuổi.
+     */
+    public function getBmiForAge(Request $request)
+    {
+        $cacheKey = 'statistics_bmi_for_age_' . md5(json_encode($request->all()) . auth()->id());
+
+        $stats = Cache::remember($cacheKey, 300, function () use ($request) {
+            $user = Auth::user();
+            $query = $this->getBaseQuery($request, $user);
+
+            return $this->calculateBmiForAgeStats($query);
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $stats,
+            'html' => view('admin.statistics.tabs.bmi-for-age', compact('stats'))->render(),
+        ]);
+    }
+
+    /**
+     * Gom nhóm theo kết quả phân loại BMI theo tuổi.
+     */
+    private function calculateBmiForAgeStats($query)
+    {
+        $records = $query->get();
+
+        $mau = ['severe' => 0, 'moderate' => 0, 'normal' => 0, 'overweight' => 0, 'obese' => 0, 'invalid' => 0, 'total' => 0];
+        $stats = ['male' => $mau, 'female' => $mau, 'total' => $mau];
+
+        foreach ($records as $record) {
+            $ketQua = $record->check_bmi_for_age_auto()['result'];
+            $gioi = $record->gender == 1 ? 'male' : 'female';
+
+            $o = match ($ketQua) {
+                'wasted_severe'   => 'severe',
+                'wasted_moderate' => 'moderate',
+                'normal'          => 'normal',
+                'overweight'      => 'overweight',
+                'obese'           => 'obese',
+                default           => 'invalid',
+            };
+
+            $stats[$gioi][$o]++;
+            $stats['total'][$o]++;
+            $stats[$gioi]['total']++;
+            $stats['total']['total']++;
+        }
+
+        foreach (['male', 'female', 'total'] as $gioi) {
+            $tong = $stats[$gioi]['total'];
+            if ($tong > 0) {
+                foreach (['severe', 'moderate', 'normal', 'overweight', 'obese'] as $o) {
+                    $stats[$gioi][$o . '_pct'] = round(($stats[$gioi][$o] / $tong) * 100, 1);
+                }
+                $stats[$gioi]['wasted_total'] = $stats[$gioi]['severe'] + $stats[$gioi]['moderate'];
+                $stats[$gioi]['wasted_pct'] = round(($stats[$gioi]['wasted_total'] / $tong) * 100, 1);
+                $stats[$gioi]['excess_total'] = $stats[$gioi]['overweight'] + $stats[$gioi]['obese'];
+                $stats[$gioi]['excess_pct'] = round(($stats[$gioi]['excess_total'] / $tong) * 100, 1);
+            }
+        }
+
+        return $stats;
+    }
+
     public function getMeanStats(Request $request)
     {
         $cacheKey = 'statistics_mean_stats_' . md5(json_encode($request->all()) . auth()->id());
@@ -121,7 +210,7 @@ class StatisticsTabController extends Controller
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            return $this->calculateMeanStats($query);
+            return $this->calculateMeanStats($query, $this->nhomTuoi($request));
         });
         
         return response()->json([
@@ -142,7 +231,7 @@ class StatisticsTabController extends Controller
             $user = Auth::user();
             $query = $this->getBaseQuery($request, $user);
             
-            return $this->calculateWhoCombinedStats($query);
+            return $this->calculateWhoCombinedStats($query, $this->nhomTuoi($request));
         });
         
         return response()->json([
@@ -155,9 +244,48 @@ class StatisticsTabController extends Controller
     /**
      * Get base query with filters applied
      */
+    /**
+     * Đối tượng đang thống kê: '0-5' hoặc '5-19'. Mặc định 0-5 để giữ nguyên
+     * hành vi của các màn hình đã có.
+     */
+    private function doiTuong(Request $request): string
+    {
+        return $request->get('doi_tuong') === '5-19' ? '5-19' : '0-5';
+    }
+
+    /**
+     * Nhóm tuổi báo cáo, theo từng đối tượng.
+     *
+     * Mốc chia của 5-19 là 5-9 / 10-14 / 15-19 theo cách WHO trình bày nhóm
+     * trẻ em và vị thành niên.
+     */
+    private function nhomTuoi(Request $request): array
+    {
+        if ($this->doiTuong($request) === '5-19') {
+            return [
+                '5-9'   => ['min' => 60,  'max' => 119.99, 'label' => '5-9 tuổi'],
+                '10-14' => ['min' => 120, 'max' => 179.99, 'label' => '10-14 tuổi'],
+                '15-19' => ['min' => 180, 'max' => 228.99, 'label' => '15-19 tuổi'],
+            ];
+        }
+
+        return [
+            '0-5'   => ['min' => 0,  'max' => 5.99,  'label' => '0-5 tháng'],
+            '6-11'  => ['min' => 6,  'max' => 11.99, 'label' => '6-11 tháng'],
+            '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23 tháng'],
+            '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35 tháng'],
+            '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47 tháng'],
+            '48-59' => ['min' => 48, 'max' => 59.99, 'label' => '48-59 tháng'],
+        ];
+    }
+
     private function getBaseQuery(Request $request, $user)
     {
         $query = History::query()->byUserRole($user);
+
+        // Tách hai đối tượng theo chuẩn WHO đã đóng băng trong bản ghi.
+        // Trước đây không hề lọc tuổi, nên hồ sơ 5-19 sẽ lẫn vào thống kê 0-5.
+        $query->where('who_standard', $this->doiTuong($request) === '5-19' ? 'who2007' : 'who2006');
 
         // Apply date filters
         if ($request->filled('from_date')) {
@@ -377,19 +505,10 @@ class StatisticsTabController extends Controller
     /**
      * Calculate Mean Statistics by Age Groups using auto methods
      */
-    private function calculateMeanStats($query)
+    private function calculateMeanStats($query, array $ageGroups)
     {
         // Use auto methods to calculate Z-scores dynamically
         $records = $query->get();
-
-        $ageGroups = [
-            '0-5m' => ['min' => 0, 'max' => 5.99, 'label' => '0-5 tháng'],
-            '6-11m' => ['min' => 6, 'max' => 11.99, 'label' => '6-11 tháng'],
-            '12-23m' => ['min' => 12, 'max' => 23.99, 'label' => '12-23 tháng'],
-            '24-35m' => ['min' => 24, 'max' => 35.99, 'label' => '24-35 tháng'],
-            '36-47m' => ['min' => 36, 'max' => 47.99, 'label' => '36-47 tháng'],
-            '48-60m' => ['min' => 48, 'max' => 60, 'label' => '48-60 tháng'], // Include 60 months per WHO standards
-        ];
 
         $stats = [];
         $invalidRecords = 0;
@@ -500,44 +619,40 @@ class StatisticsTabController extends Controller
     /**
      * Calculate WHO Combined Statistics using auto methods
      */
-    private function calculateWhoCombinedStats($query)
+    private function calculateWhoCombinedStats($query, array $ageGroups)
     {
         $records = $query->get();
 
-        $ageGroups = [
-            '0-5' => ['min' => 0, 'max' => 5.99, 'label' => '0-5'],
-            '6-11' => ['min' => 6, 'max' => 11.99, 'label' => '6-11'],
-            '12-23' => ['min' => 12, 'max' => 23.99, 'label' => '12-23'],
-            '24-35' => ['min' => 24, 'max' => 35.99, 'label' => '24-35'],
-            '36-47' => ['min' => 36, 'max' => 47.99, 'label' => '36-47'],
-            '48-60' => ['min' => 48, 'max' => 60.99, 'label' => '48-60'],
-        ];
-
         // Calculate for all children
-        $allStats = $this->calculateWhoStatsForGroup($records, $ageGroups, 'Tất cả');
+        $la519 = array_key_exists('5-9', $ageGroups);
+        $nhanTong = $la519 ? 'Tổng (5-19 tuổi)' : 'Tổng (0-59 tháng)';
+
+        $allStats = $this->calculateWhoStatsForGroup($records, $ageGroups, 'Tất cả', $nhanTong);
         
         // Calculate for male (gender = 1)
         $maleRecords = $records->where('gender', 1);
-        $maleStats = $this->calculateWhoStatsForGroup($maleRecords, $ageGroups, 'Bé trai');
+        $maleStats = $this->calculateWhoStatsForGroup($maleRecords, $ageGroups, 'Bé trai', $nhanTong);
         
         // Calculate for female (gender = 0)
         $femaleRecords = $records->where('gender', 0);
-        $femaleStats = $this->calculateWhoStatsForGroup($femaleRecords, $ageGroups, 'Bé gái');
+        $femaleStats = $this->calculateWhoStatsForGroup($femaleRecords, $ageGroups, 'Bé gái', $nhanTong);
 
         return [
             'all' => $allStats,
             'male' => $maleStats,
             'female' => $femaleStats,
+            // View dung co nay de chon cot BMI (5-19) hay cot can nang/chieu cao (0-5)
+            'doi_tuong' => $la519 ? '5-19' : '0-5',
         ];
     }
 
     /**
      * Calculate WHO stats for a specific group (all/male/female)
      */
-    private function calculateWhoStatsForGroup($records, $ageGroups, $groupLabel)
+    private function calculateWhoStatsForGroup($records, $ageGroups, $groupLabel, $nhanTong = 'Tổng (0-59 tháng)')
     {
         $stats = [];
-        $totalData = ['n' => 0, 'wa' => [], 'ha' => [], 'wh' => []];
+        $totalData = ['n' => 0, 'wa' => [], 'ha' => [], 'wh' => [], 'bmi' => []];
 
         foreach ($ageGroups as $key => $group) {
             $groupRecords = $records->filter(function($record) use ($group) {
@@ -549,6 +664,8 @@ class StatisticsTabController extends Controller
             $waData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'zscores' => []];
             $haData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'zscores' => []];
             $whData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'gt_1sd' => 0, 'gt_2sd' => 0, 'gt_3sd' => 0, 'zscores' => []];
+            // BMI theo tuoi: chi so chinh cua doi tuong 5-19, thay cho can nang/chieu cao
+            $bmiData = ['lt_3sd' => 0, 'lt_2sd' => 0, 'gt_1sd' => 0, 'gt_2sd' => 0, 'gt_3sd' => 0, 'zscores' => []];
 
             foreach ($groupRecords as $record) {
                 // Weight-for-Age
@@ -580,6 +697,18 @@ class StatisticsTabController extends Controller
                     if ($whZscore > 2) $whData['gt_2sd']++;
                     if ($whZscore > 3) $whData['gt_3sd']++;
                 }
+
+                // BMI-for-Age
+                $bmiZscore = $record->getBMIForAgeZScoreAuto();
+                if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                    $bmiData['zscores'][] = $bmiZscore;
+                    $totalData['bmi'][] = $bmiZscore;
+                    if ($bmiZscore < -3) $bmiData['lt_3sd']++;
+                    if ($bmiZscore < -2) $bmiData['lt_2sd']++;
+                    if ($bmiZscore > 1) $bmiData['gt_1sd']++;
+                    if ($bmiZscore > 2) $bmiData['gt_2sd']++;
+                    if ($bmiZscore > 3) $bmiData['gt_3sd']++;
+                }
             }
 
             $stats[$key] = [
@@ -606,6 +735,15 @@ class StatisticsTabController extends Controller
                     'mean' => !empty($whData['zscores']) ? round(array_sum($whData['zscores']) / count($whData['zscores']), 2) : 0,
                     'sd' => count($whData['zscores']) > 1 ? round($this->calculateSD($whData['zscores']), 2) : 0,
                 ],
+                'bmi' => [
+                    'lt_3sd_pct' => $n > 0 ? round(($bmiData['lt_3sd'] / $n) * 100, 1) : 0,
+                    'lt_2sd_pct' => $n > 0 ? round(($bmiData['lt_2sd'] / $n) * 100, 1) : 0,
+                    'gt_1sd_pct' => $n > 0 ? round(($bmiData['gt_1sd'] / $n) * 100, 1) : 0,
+                    'gt_2sd_pct' => $n > 0 ? round(($bmiData['gt_2sd'] / $n) * 100, 1) : 0,
+                    'gt_3sd_pct' => $n > 0 ? round(($bmiData['gt_3sd'] / $n) * 100, 1) : 0,
+                    'mean' => !empty($bmiData['zscores']) ? round(array_sum($bmiData['zscores']) / count($bmiData['zscores']), 2) : 0,
+                    'sd' => count($bmiData['zscores']) > 1 ? round($this->calculateSD($bmiData['zscores']), 2) : 0,
+                ],
             ];
 
             $totalData['n'] += $n;
@@ -614,7 +752,7 @@ class StatisticsTabController extends Controller
         // Calculate total (0-60)
         $totalN = $totalData['n'];
         $stats['total'] = [
-            'label' => 'Total (0-60)',
+            'label' => $nhanTong,
             'n' => $totalN,
             'wa' => [
                 'lt_3sd_pct' => 0,
@@ -637,12 +775,22 @@ class StatisticsTabController extends Controller
                 'mean' => !empty($totalData['wh']) ? round(array_sum($totalData['wh']) / count($totalData['wh']), 2) : 0,
                 'sd' => count($totalData['wh']) > 1 ? round($this->calculateSD($totalData['wh']), 2) : 0,
             ],
+            'bmi' => [
+                'lt_3sd_pct' => 0,
+                'lt_2sd_pct' => 0,
+                'gt_1sd_pct' => 0,
+                'gt_2sd_pct' => 0,
+                'gt_3sd_pct' => 0,
+                'mean' => !empty($totalData['bmi']) ? round(array_sum($totalData['bmi']) / count($totalData['bmi']), 2) : 0,
+                'sd' => count($totalData['bmi']) > 1 ? round($this->calculateSD($totalData['bmi']), 2) : 0,
+            ],
         ];
 
         // Calculate total percentages using Z-scores
         $waLt3 = 0; $waLt2 = 0;
         $haLt3 = 0; $haLt2 = 0;
         $whLt3 = 0; $whLt2 = 0; $whGt1 = 0; $whGt2 = 0; $whGt3 = 0;
+        $bmiLt3 = 0; $bmiLt2 = 0; $bmiGt1 = 0; $bmiGt2 = 0; $bmiGt3 = 0;
 
         foreach ($records as $record) {
             $waZscore = $record->getWeightForAgeZScoreAuto();
@@ -665,6 +813,15 @@ class StatisticsTabController extends Controller
                 if ($whZscore > 2) $whGt2++;
                 if ($whZscore > 3) $whGt3++;
             }
+
+            $bmiZscore = $record->getBMIForAgeZScoreAuto();
+            if ($bmiZscore !== null && $bmiZscore >= -6 && $bmiZscore <= 6) {
+                if ($bmiZscore < -3) $bmiLt3++;
+                if ($bmiZscore < -2) $bmiLt2++;
+                if ($bmiZscore > 1) $bmiGt1++;
+                if ($bmiZscore > 2) $bmiGt2++;
+                if ($bmiZscore > 3) $bmiGt3++;
+            }
         }
 
         if ($totalN > 0) {
@@ -677,6 +834,11 @@ class StatisticsTabController extends Controller
             $stats['total']['wh']['gt_1sd_pct'] = round(($whGt1 / $totalN) * 100, 1);
             $stats['total']['wh']['gt_2sd_pct'] = round(($whGt2 / $totalN) * 100, 1);
             $stats['total']['wh']['gt_3sd_pct'] = round(($whGt3 / $totalN) * 100, 1);
+            $stats['total']['bmi']['lt_3sd_pct'] = round(($bmiLt3 / $totalN) * 100, 1);
+            $stats['total']['bmi']['lt_2sd_pct'] = round(($bmiLt2 / $totalN) * 100, 1);
+            $stats['total']['bmi']['gt_1sd_pct'] = round(($bmiGt1 / $totalN) * 100, 1);
+            $stats['total']['bmi']['gt_2sd_pct'] = round(($bmiGt2 / $totalN) * 100, 1);
+            $stats['total']['bmi']['gt_3sd_pct'] = round(($bmiGt3 / $totalN) * 100, 1);
         }
 
         return [

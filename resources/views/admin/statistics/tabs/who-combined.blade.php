@@ -1,3 +1,4 @@
+@php $cotThu3 = (($stats['doi_tuong'] ?? '0-5') === '5-19') ? 'bmi' : 'wh'; @endphp
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="mb-0">
         <i class="uil uil-chart-pie text-primary"></i>
@@ -129,17 +130,17 @@ function exportWhoCombinedTable(group) {
     <div class="tab-content" id="who-combined-content">
         {{-- All Children Tab --}}
         <div class="tab-pane fade show active" id="all-content" role="tabpanel">
-            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['all']])
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['all'], 'cotThu3' => $cotThu3])
         </div>
 
         {{-- Male Tab --}}
         <div class="tab-pane fade" id="male-content" role="tabpanel">
-            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['male']])
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['male'], 'cotThu3' => $cotThu3])
         </div>
 
         {{-- Female Tab --}}
         <div class="tab-pane fade" id="female-content" role="tabpanel">
-            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['female']])
+            @include('admin.statistics.tabs.partials.who-table', ['data' => $stats['female'], 'cotThu3' => $cotThu3])
         </div>
     </div>
 @endif

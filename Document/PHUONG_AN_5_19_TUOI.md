@@ -564,6 +564,54 @@ chuẩn Laravel. (Production không bị ảnh hưởng vì `deploy_vps.sh` có 
 Bản in cho hồ sơ 12 tuổi chỉ còn đúng 2 dòng "Chiều cao theo tuổi" và "BMI theo tuổi"; bản in
 0–5 vẫn đủ 4 dòng.
 
+### Phase 4 — Thống kê / báo cáo admin (28/09/2026) — ĐÃ XONG
+
+**🔴 Lỗi thứ năm phát hiện: thống kê không hề lọc tuổi**
+
+`StatisticsTabController::getBaseQuery()` **không có bất kỳ điều kiện tuổi nào**. Khi chưa có
+hồ sơ 5–19 thì không ai thấy, nhưng kể từ Phase 2 mọi hồ sơ 5–19 sẽ **lẫn thẳng vào thống kê
+0–5**. Nay lọc theo `who_standard` — dùng chuẩn đã đóng băng trong bản ghi chứ không suy từ
+tuổi, nên nhất quán với nguyên tắc bất biến.
+
+**Bộ lọc "Đối tượng"** (`doi_tuong`) thêm vào đầu thanh lọc, mặc định `0-5` để mọi màn hình cũ
+giữ nguyên hành vi.
+
+**Nhóm tuổi báo cáo** gom về một hàm `nhomTuoi()` duy nhất thay cho 2 mảng hard-code rải rác:
+
+| Đối tượng | Nhóm |
+|---|---|
+| 0–5 | 0-5 / 6-11 / 12-23 / 24-35 / 36-47 / **48-59** tháng |
+| 5–19 | **5-9 / 10-14 / 15-19 tuổi** |
+
+Mốc cuối của 0–5 sửa từ `48-60` thành `48-59` cho khớp quy tắc `age < 60` của WHO — trước đây
+nhóm này lấn sang tháng 60 vốn đã thuộc chuẩn 2007.
+
+**Tab theo đối tượng:**
+- Thêm tab **BMI/Tuổi** (`getBmiForAge`, view `tabs/bmi-for-age.blade.php`) — chỉ số chính của
+  5–19, có chú thích rõ ngưỡng thừa cân +1SD / béo phì +2SD khác với 0–5.
+- Tab **Cân nặng/Chiều cao** tự ẩn với 5–19, và endpoint chặn thêm ở server trả thông báo
+  "không áp dụng" thay vì bảng toàn số 0 gây hiểu nhầm.
+- Tab **Cân nặng/Tuổi** với 5–19 có chú thích WHO chỉ cấp chuẩn tới 10 tuổi.
+- JS tự chuyển tab khi tab đang mở bị ẩn do đổi đối tượng.
+
+**Bảng WHO Combined:** cột thứ ba đổi giữa *Weight-for-Height* (0–5) và *BMI-for-Age* (5–19);
+tiêu đề nhóm tuổi đổi giữa "(tháng)" và "(tuổi)"; dòng tổng đổi nhãn tương ứng.
+
+**`DashboardController`:** 5 chỗ hard-code `age <= 60` / `age < 60` đổi sang
+`who_standard = 'who2006'`, để các bảng 0–5 của dashboard không nhận nhầm hồ sơ 5–19.
+
+**Kiểm chứng** (tạo 6 hồ sơ 5–19 tạm trong transaction rồi rollback):
+
+| | 0–5 | 5–19 |
+|---|---|---|
+| W/A, H/A, BMI | 400 hồ sơ | 6 hồ sơ |
+| Nhóm tuổi | 33+67+99+94+55+52 = **400** | 2+2+2 = **6** |
+| Dòng tổng | "Tổng (0-59 tháng)" | "Tổng (5-19 tuổi)" |
+| Cột thứ 3 | Weight-for-Height | BMI-for-Age |
+
+**Không lẫn nhau** — chọn 0–5 vẫn đúng 400 hồ sơ dù đã có 6 hồ sơ 5–19 trong DB. Cả 6 tab đều
+render sạch ở cả hai đối tượng.
+
 ---
 
 ## 11. ~~Việc cần chốt trước khi backfill `z_*`~~ — ĐÃ CHỐT: chọn cách B

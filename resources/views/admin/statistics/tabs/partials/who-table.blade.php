@@ -1,3 +1,10 @@
+@php
+    // Cột thứ ba đổi theo đối tượng: 0-5 tuổi dùng Cân nặng/Chiều cao,
+    // 5-19 tuổi dùng BMI/Tuổi vì WHO không có chỉ số W/H cho lứa tuổi này.
+    $cot = ($cotThu3 ?? 'wh');
+    $tenCot = $cot === 'bmi' ? 'BMI-for-Age' : 'Weight-for-Height';
+    $donViNhomTuoi = ($cot === 'bmi') ? '(tuổi)' : '(tháng)';
+@endphp
 <h6 class="mb-3">
     <i class="uil uil-analytics text-primary"></i>
     {{ $data['label'] }}
@@ -7,11 +14,11 @@
     <table class="table table-bordered table-hover table-sm" id="table-who-{{ strtolower(str_replace(' ', '-', $data['label'])) }}">
         <thead class="table-light">
             <tr>
-                <th rowspan="2" class="align-middle text-center" style="width: 120px;">Nhóm tuổi<br>(tháng)</th>
+                <th rowspan="2" class="align-middle text-center" style="width: 120px;">Nhóm tuổi<br>{{ $donViNhomTuoi }}</th>
                 <th rowspan="2" class="align-middle text-center" style="width: 80px;">N</th>
                 <th colspan="4" class="text-center bg-info bg-opacity-10">Weight-for-Age</th>
                 <th colspan="4" class="text-center bg-success bg-opacity-10">Height-for-Age</th>
-                <th colspan="7" class="text-center bg-warning bg-opacity-10">Weight-for-Height</th>
+                <th colspan="7" class="text-center bg-warning bg-opacity-10">{{ $tenCot }}</th>
             </tr>
             <tr>
                 {{-- Weight-for-Age --}}
@@ -78,13 +85,13 @@
                         <td class="text-end">{{ number_format($row['ha']['sd'], 2) }}</td>
                         
                         {{-- Weight-for-Height --}}
-                        <td class="text-end">{{ number_format($row['wh']['lt_3sd_pct'], 1) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['lt_2sd_pct'], 1) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['gt_1sd_pct'], 1) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['gt_2sd_pct'], 1) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['gt_3sd_pct'], 1) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['mean'], 2) }}</td>
-                        <td class="text-end">{{ number_format($row['wh']['sd'], 2) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['lt_3sd_pct'], 1) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['lt_2sd_pct'], 1) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['gt_1sd_pct'], 1) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['gt_2sd_pct'], 1) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['gt_3sd_pct'], 1) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['mean'], 2) }}</td>
+                        <td class="text-end">{{ number_format($row[$cot]['sd'], 2) }}</td>
                     </tr>
                 @endif
             @endforeach
@@ -127,13 +134,13 @@
                     <td class="text-end">{{ number_format($total['ha']['sd'], 2) }}</td>
                     
                     {{-- Weight-for-Height --}}
-                    <td class="text-end">{{ number_format($total['wh']['lt_3sd_pct'], 1) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['lt_2sd_pct'], 1) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['gt_1sd_pct'], 1) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['gt_2sd_pct'], 1) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['gt_3sd_pct'], 1) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['mean'], 2) }}</td>
-                    <td class="text-end">{{ number_format($total['wh']['sd'], 2) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['lt_3sd_pct'], 1) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['lt_2sd_pct'], 1) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['gt_1sd_pct'], 1) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['gt_2sd_pct'], 1) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['gt_3sd_pct'], 1) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['mean'], 2) }}</td>
+                    <td class="text-end">{{ number_format($total[$cot]['sd'], 2) }}</td>
                 </tr>
             @endif
         </tbody>

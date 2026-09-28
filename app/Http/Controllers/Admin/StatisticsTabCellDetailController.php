@@ -140,7 +140,11 @@ class StatisticsTabCellDetailController extends Controller
                 '12-23m' => ['min' => 12, 'max' => 23.99],
                 '24-35m' => ['min' => 24, 'max' => 35.99],
                 '36-47m' => ['min' => 36, 'max' => 47.99],
-                '48-60m' => ['min' => 48, 'max' => 60.99],
+                '48-59m' => ['min' => 48, 'max' => 59.99],
+                // Nhóm tuổi của đối tượng 5-19
+                '5-9'    => ['min' => 60,  'max' => 119.99],
+                '10-14'  => ['min' => 120, 'max' => 179.99],
+                '15-19'  => ['min' => 180, 'max' => 228.99],
             ];
             
             if (isset($ageRanges[$ageGroup])) {
