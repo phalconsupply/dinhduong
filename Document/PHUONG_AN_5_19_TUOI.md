@@ -512,6 +512,58 @@ trong một commit dọn dẹp riêng.
 chỉ render khối đánh giá cho slug `tu-0-5-tuoi`), form tự điều chỉnh theo tuổi, và ẩn khối
 cân nặng/chiều cao cho đối tượng 5–19.
 
+### Phase 3 — Giao diện cho đối tượng 5–19 (28/09/2026) — ĐÃ XONG
+
+**Dọn nợ kỹ thuật:** xoá 6 file tàn dư của giả thuyết "correction offset" đã được chứng minh
+sai — `app/Models/WHOZScoreLMSCorrected.php`, `analyze_who_differences.php`,
+`explain_correction_factors.php`, `real_solution_analysis.php`,
+`who_anthro_matching_solutions.php`, `reverse_engineer_who_logic.php`. Không còn `0.036`,
+`0.081`, `0.064` ở bất kỳ đâu trong mã nguồn.
+
+**🔴 Lỗi thứ ba phát hiện: form gán tuổi bằng NĂM thay vì THÁNG**
+
+Với `category == 2` và tuổi ≥ 72 tháng, `form.blade.php` gán `#age` bằng `getAge()` — tức số
+**năm**. Engine đọc `age` như tháng nên một em 12 tuổi sẽ bị tra bảng ở mốc 12 **tháng**.
+Với 61–71 tháng thì lại gán đúng số tháng, nên lỗi chỉ xuất hiện từ 6 tuổi trở lên.
+Nay `#age` **luôn** mang tháng thập phân, `#age_show` mang chuỗi "12 tuổi 5 tháng" để đọc.
+
+**Biên tuổi của form** chỉnh theo quyết định 9.1: 0–5 nhận `< 60` tháng (trước là `< 61`),
+5–19 nhận `60 ≤ m < 229` (trước là `≥ 61`), kèm thông báo chỉ đúng biểu mẫu cần dùng.
+
+**Trang kết quả và bản in** (`ketqua.blade.php`, `in.blade.php`):
+- Nhận thêm slug `tu-5-19-tuoi`; chuyển sang dùng các hàm `_auto()` nên **đọc snapshot** và tự
+  chọn chuẩn. Trước đó bản in còn gọi `check_*()` của đường SD-band cũ nên **không khớp trang
+  kết quả** — nay đã khớp.
+- Chỉ hiện chỉ số WHO thực sự có chuẩn: ẩn **cân nặng/chiều cao** với 5–19, ẩn **cân nặng/tuổi**
+  khi tuổi ≥ 121 tháng. Áp dụng cho cả bảng kết quả, bảng chi tiết LMS và biểu đồ.
+- `$all_normal` trong bản in chỉ xét các chỉ số được đánh giá, nếu không hồ sơ 5–19 không bao
+  giờ được coi là bình thường do cân nặng/chiều cao luôn trống.
+
+**Biểu đồ tăng trưởng:** đường chuẩn 0–5 đang là mảng toạ độ hard-code phủ 0–60 tháng. Thay vì
+chép tay thêm hàng trăm số cho 5–19, `getWho2007ChartSeries()` **sinh đường chuẩn từ chính bộ
+LMS trong DB** (lấy mẫu mỗi 3 tháng, 7 mốc SD) và JS tự chuyển nguồn; trục X/Y cũng đổi theo.
+Hồ sơ 0–5 giữ nguyên mảng cũ — `duongChuan519` bằng `null` nên không đổi gì.
+
+**🔴 Lỗi thứ tư: view biên dịch bị git theo dõi gây phục vụ bản cũ**
+
+26 file trong `storage/framework/views` được commit vào repo. Khi `git checkout` khôi phục
+chúng, mtime mới hơn file `.blade.php` nên Laravel coi là còn mới và **phục vụ bản biên dịch
+cũ** — thay đổi giao diện không có tác dụng, và kết quả kiểm thử đầu tiên của Phase 3 là dương
+tính giả vì lý do này. Đã ngừng theo dõi và thêm `storage/framework/views/.gitignore` theo
+chuẩn Laravel. (Production không bị ảnh hưởng vì `deploy_vps.sh` có chạy `view:clear`.)
+
+**Kiểm chứng render** trên 3 mốc tuổi đại diện:
+
+| Hồ sơ | Bảng kết quả | Biểu đồ |
+|---|---|---|
+| 7 tuổi (78 tháng) | CC/T, BMI/T, **CN/T** | 3 biểu đồ, không có CN/CC |
+| 12 tuổi (150 tháng) | CC/T, BMI/T | 2 biểu đồ |
+| 18 tuổi (217 tháng) | CC/T, BMI/T | 2 biểu đồ |
+| **Hồi quy 0–5** | đủ 4 chỉ số | đủ 4 biểu đồ, `duongChuan519 = null` |
+
+Bản in cho hồ sơ 12 tuổi chỉ còn đúng 2 dòng "Chiều cao theo tuổi" và "BMI theo tuổi"; bản in
+0–5 vẫn đủ 4 dòng.
+
 ---
 
 ## 11. ~~Việc cần chốt trước khi backfill `z_*`~~ — ĐÃ CHỐT: chọn cách B

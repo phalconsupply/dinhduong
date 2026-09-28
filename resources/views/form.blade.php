@@ -223,6 +223,10 @@
                                     
                                 <!-- BLOCK 3: Birth Information (left) + Health Measurements (right) - Equal Width -->
                                 <div class="row">
+                                    {{-- Thông tin lúc sinh chỉ dùng cho trẻ 0-5 tuổi; với đối
+                                         tượng 5-19 tuổi nó không tham gia đánh giá nào nên ẩn đi.
+                                         Khi ẩn, khối đo lường chiếm trọn chiều ngang. --}}
+                                    @if($category == 1)
                                     <!-- Birth Information Section (LEFT 50%) -->
                                     <div class="col-xs-12 col-md-6">
                                         <div class="form-section-card">
@@ -265,9 +269,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Health Measurements Section (RIGHT 50%) -->
-                                    <div class="col-xs-12 col-md-6">
+                                    @endif
+
+                                    <!-- Health Measurements Section -->
+                                    <div class="col-xs-12 {{ $category == 1 ? 'col-md-6' : 'col-md-12' }}">
                                         <div class="form-section-card">
                                             <div class="card-header">
                                                 <div class="card-icon">
@@ -528,31 +533,36 @@
                         var months = response;
                         var age = Math.floor(months / 12);
                         $("#addon3").text('tuổi');
+                        // Ô #age LUÔN mang tuổi theo THÁNG THẬP PHÂN — đây là đơn vị
+                        // mà engine WHO dùng để tra bảng. Ô #age_show chỉ để người
+                        // dùng đọc. Trước đây với category 2 và tuổi >= 72 tháng, #age
+                        // bị gán bằng số NĂM nên engine tra sai hoàn toàn.
+                        $("#addon3").text('tháng');
+
                         if (category == 1) {
-                            if (months < 61) { //0 - 60 tháng == 0- 5 tuổi
+                            // Dưới 60 tháng: chuẩn WHO 2006 (0-5 tuổi)
+                            if (months < 60) {
                                 $("#age_show").val(months + ' tháng');
                                 $("#age").val(months);
                             } else {
                                 $("#calendar-birth").val("");
                                 $('#age').val('');
                                 $('#real-age').val('');
-                                alert('Bé lớn hơn 5 tuổi hoặc > 61 tháng. Vui lòng chọn độ tuổi thích hợp!!');
+                                alert('Trẻ đã từ 5 tuổi (60 tháng) trở lên. Vui lòng dùng biểu mẫu "Từ 5 đến 19 tuổi".');
                                 return false;
                             }
                         } else if (category == 2) {
-                            if (months >= 61 && months < 72) {
-                                $("#age_show").val(months + ' tháng');
+                            // Từ 60 tháng đến dưới 19 tuổi (228 tháng): chuẩn WHO 2007
+                            if (months >= 60 && months < 229) {
+                                $("#age_show").val(moTaTuoi(months));
                                 $("#age").val(months);
-                            } else if (months >= 72 && months < 229) {
-                                console.log(getAge(birthdate, date));
-                                $("#addon3").text('');
-                                $('#age').val(getAge(birthdate, date));
                             } else {
-                                console.log(getAge(birthdate, date));
                                 $("#calendar-birth").val("");
                                 $('#age').val('');
                                 $('#real-age').val('');
-                                alert('Bé nhỏ hơn 5 tuổi hoặc > 19 tuổi. Vui lòng chọn độ tuổi thích hợp!!');
+                                alert(months < 60
+                                    ? 'Trẻ chưa đủ 5 tuổi (60 tháng). Vui lòng dùng biểu mẫu "Từ 0 đến 5 tuổi".'
+                                    : 'Đã từ 19 tuổi trở lên. Vui lòng dùng biểu mẫu "Từ 19 tuổi".');
                                 return false;
                             }
                         } else if (category == 3) {
@@ -581,6 +591,16 @@
 
                     }
                 })
+            }
+
+            // Mô tả tuổi cho người dùng đọc: 150.4 tháng -> "12 tuổi 6 tháng"
+            function moTaTuoi(thang) {
+                var nam = Math.floor(thang / 12);
+                var du = Math.floor(thang % 12);
+                if (du === 0) {
+                    return nam + ' tuổi';
+                }
+                return nam + ' tuổi ' + du + ' tháng';
             }
 
             function getAge(dateString, date) {
@@ -861,15 +881,27 @@
             }
         });
 
-        // Logic phân loại cân nặng lúc sinh
-        document.getElementById('birth-weight').addEventListener('input', function() {
-            classifyBirthWeight();
-        });
+        // Logic phân loại cân nặng lúc sinh.
+        // Khối này chỉ tồn tại ở biểu mẫu 0-5 tuổi nên phải kiểm tra trước khi gắn
+        // sự kiện, nếu không toàn bộ script phía sau sẽ chết ở các biểu mẫu khác.
+        var oCanNangLucSinh = document.getElementById('birth-weight');
+        if (oCanNangLucSinh) {
+            oCanNangLucSinh.addEventListener('input', function() {
+                classifyBirthWeight();
+            });
+        }
 
         function classifyBirthWeight() {
-            const birthWeight = parseFloat(document.getElementById('birth-weight').value);
+            const oCanNang = document.getElementById('birth-weight');
+            if (!oCanNang) {
+                return;
+            }
+            const birthWeight = parseFloat(oCanNang.value);
             const categoryDisplay = document.getElementById('birth-weight-category');
             const categoryHidden = document.getElementById('birth-weight-category-hidden');
+            if (!categoryDisplay || !categoryHidden) {
+                return;
+            }
             
             if (isNaN(birthWeight) || birthWeight <= 0) {
                 categoryDisplay.value = '';
@@ -906,7 +938,8 @@
 
         // Chạy phân loại khi load trang nếu đã có giá trị
         window.addEventListener('DOMContentLoaded', function() {
-            if (document.getElementById('birth-weight').value) {
+            var o = document.getElementById('birth-weight');
+            if (o && o.value) {
                 classifyBirthWeight();
             }
         });
@@ -939,20 +972,44 @@
                 standardTableDetail = 'Dữ liệu theo tháng, ưu tiên cho trẻ nhỏ';
                 measurementMethod = 'Chiều dài nằm';
                 measurementMethodDetail = 'WFL - Weight for Length';
-            } else if (ageInMonths <= 60) {
+            } else if (ageInMonths < 60) {
                 ageGroup = 'Trẻ lớn (2-5 tuổi)';
                 ageGroupDetail = 'Giai đoạn ổn định tăng trưởng';
-                standardTable = 'Bảng 0_5y (0-60 tháng)';
-                standardTableDetail = 'Phạm vi rộng nhất, ưu tiên cao';
+                standardTable = 'WHO 2006 (0-60 tháng)';
+                standardTableDetail = 'Đánh giá: CN/T, CC/T, CN/CC, BMI/T';
                 measurementMethod = 'Chiều cao đứng';
                 measurementMethodDetail = 'WFH - Weight for Height';
-            } else {
-                ageGroup = 'Trên 5 tuổi';
-                ageGroupDetail = 'Ngoài phạm vi đánh giá dinh dưỡng trẻ em';
-                standardTable = 'Không áp dụng';
-                standardTableDetail = 'Cần sử dụng bảng chuẩn khác';
+            } else if (ageInMonths < 120) {
+                // Từ 60 tháng trở lên chuyển sang WHO Reference 2007.
+                // Cân nặng theo tuổi chỉ có chuẩn tới 120 tháng nên phải nói rõ
+                // chỉ số nào sẽ được đánh giá ở từng mốc tuổi.
+                ageGroup = 'Trẻ 5-9 tuổi';
+                ageGroupDetail = 'Giai đoạn tiền dậy thì';
+                standardTable = 'WHO 2007 (5-19 tuổi)';
+                standardTableDetail = 'Đánh giá: CC/T, BMI/T, CN/T';
                 measurementMethod = 'Chiều cao đứng';
-                measurementMethodDetail = 'BMI for Age';
+                measurementMethodDetail = 'BMI for Age là chỉ số chính';
+            } else if (ageInMonths < 180) {
+                ageGroup = 'Trẻ 10-14 tuổi';
+                ageGroupDetail = 'Giai đoạn dậy thì';
+                standardTable = 'WHO 2007 (5-19 tuổi)';
+                standardTableDetail = 'Đánh giá: CC/T, BMI/T (WHO không có CN/T sau 10 tuổi)';
+                measurementMethod = 'Chiều cao đứng';
+                measurementMethodDetail = 'BMI for Age là chỉ số chính';
+            } else if (ageInMonths < 229) {
+                ageGroup = 'Vị thành niên 15-19 tuổi';
+                ageGroupDetail = 'Giai đoạn hoàn thiện tăng trưởng';
+                standardTable = 'WHO 2007 (5-19 tuổi)';
+                standardTableDetail = 'Đánh giá: CC/T, BMI/T (WHO không có CN/T sau 10 tuổi)';
+                measurementMethod = 'Chiều cao đứng';
+                measurementMethodDetail = 'BMI for Age là chỉ số chính';
+            } else {
+                ageGroup = 'Từ 19 tuổi trở lên';
+                ageGroupDetail = 'Ngoài phạm vi chuẩn tăng trưởng của WHO';
+                standardTable = 'Không áp dụng';
+                standardTableDetail = 'Dùng phân loại BMI cho người trưởng thành';
+                measurementMethod = 'Chiều cao đứng';
+                measurementMethodDetail = 'BMI người lớn';
             }
             
             // Cập nhật giao diện
@@ -969,8 +1026,10 @@
                 ageGroupCard.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e53)';
             } else if (ageInMonths <= 24) {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
-            } else if (ageInMonths <= 60) {
+            } else if (ageInMonths < 60) {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            } else if (ageInMonths < 229) {
+                ageGroupCard.style.background = 'linear-gradient(45deg, #11998e, #38ef7d)';
             } else {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #f093fb, #f5576c)';
             }

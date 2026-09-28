@@ -223,19 +223,27 @@
     </div>
 
     <div class="print-info">
-        @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi')
+        @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi' || $row->slug == 'tu-5-19-tuoi')
             @php
-                $weight_for_age = $row->check_weight_for_age();
-                $height_for_age = $row->check_height_for_age();
-                $weight_for_height = $row->check_weight_for_height();
-                $bmi_for_age = $row->check_bmi_for_age();
-                $nutrition_status = $row->get_nutrition_status();  // Tình trạng dinh dưỡng tổng hợp
+                // Dùng các hàm _auto(): đọc snapshot đã đóng băng và tự chọn chuẩn
+                // WHO theo bản ghi, để bản in luôn khớp với trang kết quả.
+                $weight_for_age = $row->check_weight_for_age_auto();
+                $height_for_age = $row->check_height_for_age_auto();
+                $weight_for_height = $row->check_weight_for_height_auto();
+                $bmi_for_age = $row->check_bmi_for_age_auto();
+                $nutrition_status = $row->get_nutrition_status_auto();
+
+                $la_5_19 = $row->getWhoStandard() === 'who2007';
+                $hien_can_nang_chieu_cao = !$la_5_19;
+                $hien_can_nang_tuoi = $weight_for_age['zscore'] !== null;
                 
-                // Kiểm tra nếu cả 4 chỉ số đều bình thường
-                $all_normal = ($weight_for_age['result'] == 'normal' && 
-                               $height_for_age['result'] == 'normal' && 
-                               $weight_for_height['result'] == 'normal' &&
-                               $bmi_for_age['result'] == 'normal');
+                // Chỉ xét những chỉ số thực sự được đánh giá ở lứa tuổi này,
+                // nếu không đối tượng 5-19 sẽ không bao giờ được coi là bình thường
+                // do chỉ số cân nặng/chiều cao luôn trống.
+                $all_normal = $height_for_age['result'] == 'normal'
+                    && $bmi_for_age['result'] == 'normal'
+                    && (!$hien_can_nang_tuoi || $weight_for_age['result'] == 'normal')
+                    && (!$hien_can_nang_chieu_cao || $weight_for_height['result'] == 'normal');
             @endphp
             
             <!-- Tình trạng dinh dưỡng tổng hợp -->
@@ -262,7 +270,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <!-- Hiển thị đầy đủ 4 chỉ số -->
+                    <!-- Chỉ in các chỉ số mà WHO có chuẩn cho lứa tuổi này -->
+                    @if($hien_can_nang_tuoi)
                     <tr style="background-color: {{$weight_for_age['color']}}">
                         <td style="vertical-align: middle;">Cân nặng theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
@@ -271,6 +280,7 @@
                         </td>
                         <td style="text-align: center; vertical-align: middle;">{{$weight_for_age['text']}}</td>
                     </tr>
+                    @endif
                     <tr style="background-color: {{$height_for_age['color']}}">
                         <td style="vertical-align: middle;">Chiều cao theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
@@ -279,6 +289,7 @@
                         </td>
                         <td style="text-align: center; vertical-align: middle;">{{$height_for_age['text']}}</td>
                     </tr>
+                    @if($hien_can_nang_chieu_cao)
                     <tr style="background-color: {{$weight_for_height['color']}}">
                         <td style="vertical-align: middle;">Cân nặng theo chiều cao</td>
                         <td style="text-align: center; vertical-align: middle;">
@@ -287,6 +298,7 @@
                         </td>
                         <td style="text-align: center; vertical-align: middle;">{{$weight_for_height['text']}}</td>
                     </tr>
+                    @endif
                     <tr style="background-color: {{$bmi_for_age['color']}}">
                         <td style="vertical-align: middle;">BMI theo tuổi</td>
                         <td style="text-align: center; vertical-align: middle;">
@@ -312,14 +324,14 @@
     </div>
 
     <!-- WHO LMS Classification Details for Print -->
-    @if($row->slug == 'tu-0-5-tuoi')
+    @if($row->slug == 'tu-0-5-tuoi' || $row->slug == 'tu-5-19-tuoi')
         <div style="page-break-inside: avoid; margin-top: 15px;">
             <h5>Chi tiết bảng chuẩn WHO LMS được sử dụng</h5>
             
             @php
-                $wfaInfo = $row->getWeightForAgeZScoreLMSDetails();
-                $hfaInfo = $row->getHeightForAgeZScoreLMSDetails();
-                $wfhInfo = $row->getWeightForHeightZScoreLMSDetails();
+                $wfaInfo = $row->getWhoLMSDetails('z_wfa');
+                $hfaInfo = $row->getWhoLMSDetails('z_hfa');
+                $wfhInfo = $row->getWhoLMSDetails('z_wfh');
                 $ageInWeeks = $row->age * 4.33;
                 
                 if ($ageInWeeks <= 13) {
@@ -328,12 +340,21 @@
                 } elseif ($row->age <= 24) {
                     $ageGroup = 'Trẻ nhỏ (0-2 tuổi)';
                     $description = 'Giai đoạn tăng trưởng nhanh, đo chiều dài nằm';
-                } elseif ($row->age <= 60) {
+                } elseif ($row->age < 60) {
                     $ageGroup = 'Trẻ lớn (2-5 tuổi)';
                     $description = 'Giai đoạn ổn định tăng trưởng, đo chiều cao đứng';
+                } elseif ($row->age < 120) {
+                    $ageGroup = 'Trẻ 5-9 tuổi';
+                    $description = 'Chuẩn WHO Reference 2007, đánh giá CC/T, BMI/T và CN/T';
+                } elseif ($row->age < 180) {
+                    $ageGroup = 'Trẻ 10-14 tuổi';
+                    $description = 'Chuẩn WHO Reference 2007, đánh giá CC/T và BMI/T';
+                } elseif ($row->age < 229) {
+                    $ageGroup = 'Vị thành niên 15-19 tuổi';
+                    $description = 'Chuẩn WHO Reference 2007, đánh giá CC/T và BMI/T';
                 } else {
-                    $ageGroup = 'Trên 5 tuổi';
-                    $description = 'Ngoài phạm vi đánh giá dinh dưỡng trẻ em WHO';
+                    $ageGroup = 'Từ 19 tuổi trở lên';
+                    $description = 'Ngoài phạm vi chuẩn tăng trưởng của WHO';
                 }
             @endphp
 
@@ -360,7 +381,7 @@
                     </tr>
                     <tr>
                         <td style="padding: 6px; font-weight: bold;">Phương pháp:</td>
-                        <td style="padding: 6px;">WHO LMS 2006 (Lambda-Mu-Sigma Method)</td>
+                        <td style="padding: 6px;">{{ $row->getWhoStandard() === 'who2007' ? 'WHO Reference 2007 (5-19 tuổi)' : 'WHO Child Growth Standards 2006 (0-5 tuổi)' }}</td>
                     </tr>
                 </tbody>
             </table>

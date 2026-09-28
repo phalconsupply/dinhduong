@@ -113,17 +113,34 @@
                         </div>
                     </div>
 
-                    @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi')
+                    @if($row->slug == '' || $row->slug == 'tu-0-5-tuoi' || $row->slug == 'tu-5-19-tuoi')
                         @php
-                            // Sử dụng auto-switching methods (LMS hoặc SD Bands theo cấu hình)
+                            // Các hàm _auto() tự chọn chuẩn WHO theo who_standard đã đóng băng
+                            // trong bản ghi, và đọc snapshot thay vì tính lại.
                             $weight_for_age = $row->check_weight_for_age_auto();
                             $height_for_age = $row->check_height_for_age_auto();
                             $weight_for_height = $row->check_weight_for_height_auto();
                             $bmi_for_age = $row->check_bmi_for_age_auto();
                             $nutrition_status = $row->get_nutrition_status_auto();
-                            
-                            // Thêm thông tin phương pháp đang sử dụng
-                            $current_method = isUsingLMS() ? 'WHO LMS 2006' : 'SD Bands Legacy';
+
+                            $la_5_19 = $row->getWhoStandard() === 'who2007';
+
+                            // Chỉ số chỉ hiển thị khi WHO thực sự có chuẩn cho lứa tuổi đó:
+                            //  - Cân nặng/chiều cao: chỉ có ở 0-5 tuổi
+                            //  - Cân nặng/tuổi: WHO chỉ cung cấp tới 10 tuổi (120 tháng)
+                            $hien_can_nang_chieu_cao = !$la_5_19;
+                            $hien_can_nang_tuoi = $weight_for_age['zscore'] !== null;
+
+                            $current_method = $la_5_19
+                                ? 'WHO Reference 2007 (LMS, nội suy theo tháng)'
+                                : 'WHO Child Growth Standards 2006 (LMS, tra theo ngày tuổi)';
+                            $ten_chuan = $la_5_19
+                                ? 'WHO Reference 2007 — 5 đến 19 tuổi'
+                                : 'WHO Child Growth Standards 2006 — 0 đến 5 tuổi';
+
+                            // Đường chuẩn biểu đồ cho 5-19 sinh từ LMS trong DB;
+                            // 0-5 vẫn dùng mảng toạ độ sẵn có trong file này.
+                            $duongChuan519 = $la_5_19 ? $row->getWho2007ChartSeries() : null;
                         @endphp
 
                         <!-- BLOCK 2: Nutrition Status Summary -->
@@ -168,11 +185,7 @@
                                                 <i class="fas fa-info-circle" style="color: #6c757d;"></i> Tiêu chuẩn đánh giá
                                             </h5>
                                             <p style="margin: 0 0 8px 0; color: #6c757d;">
-                                                @if(isUsingLMS())
-                                                    WHO Child Growth Standards 2006 (LMS Method)
-                                                @else 
-                                                    SD Bands Method (Legacy)
-                                                @endif
+                                                {{ $ten_chuan }}
                                             </p>
                                             <a href="{{ asset('/huong-dan-danh-gia-dinh-duong.html') }}" target="_blank" 
                                                style="color: #007bff; text-decoration: none; font-size: 12px;">
@@ -192,6 +205,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @if($hien_can_nang_tuoi)
                                             <tr class="result-row" style="background-color: {{$weight_for_age['color']}};">
                                                 <td>
                                                     <i class="fas fa-weight-hanging"></i> Cân nặng theo tuổi
@@ -205,6 +219,7 @@
                                                 </td>
                                                 <td class="text-center">{{$weight_for_age['text']}}</td>
                                             </tr>
+                                            @endif
                                             <tr class="result-row" style="background-color: {{$height_for_age['color']}};">
                                                 <td>
                                                     <i class="fas fa-ruler-vertical"></i> Chiều cao theo tuổi
@@ -218,6 +233,7 @@
                                                 </td>
                                                 <td class="text-center">{{$height_for_age['text']}}</td>
                                             </tr>
+                                            @if($hien_can_nang_chieu_cao)
                                             <tr class="result-row" style="background-color: {{$weight_for_height['color']}};">
                                                 <td>
                                                     <i class="fas fa-balance-scale"></i> Cân nặng theo chiều cao
@@ -231,6 +247,7 @@
                                                 </td>
                                                 <td class="text-center">{{$weight_for_height['text']}}</td>
                                             </tr>
+                                            @endif
                                             <tr class="result-row" style="background-color: {{$bmi_for_age['color']}};">
                                                 <td>
                                                     <i class="fas fa-calculator"></i> BMI theo tuổi
@@ -263,10 +280,10 @@
                                     @php
                                         // Tham số LMS của engine WHO đã chuẩn hoá (tra theo ngày tuổi),
                                         // để bảng này khớp với Z-score đang hiển thị ở trên.
-                                        $wfaInfo = $row->getWho2006LMSDetails('z_wfa');
-                                        $hfaInfo = $row->getWho2006LMSDetails('z_hfa');
-                                        $wfhInfo = $row->getWho2006LMSDetails('z_wfh');
-                                        $bmiInfo = $row->getWho2006LMSDetails('z_bmi');
+                                        $wfaInfo = $row->getWhoLMSDetails('z_wfa');
+                                        $hfaInfo = $row->getWhoLMSDetails('z_hfa');
+                                        $wfhInfo = $row->getWhoLMSDetails('z_wfh');
+                                        $bmiInfo = $row->getWhoLMSDetails('z_bmi');
                                     @endphp
                                     
                                     <!-- Weight for Age LMS Info -->
@@ -456,6 +473,7 @@
                                     </div>
 
                                     <!-- Chart 2: Weight for Age -->
+                                    @if($hien_can_nang_tuoi)
                                     <div class="chart-item" data-chart="weightForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-weight"></i> Cân nặng theo tuổi</h4>
@@ -468,7 +486,10 @@
                                         </div>
                                     </div>
 
+                                    @endif
+
                                     <!-- Chart 3: Weight for Height -->
+                                    @if($hien_can_nang_chieu_cao)
                                     <div class="chart-item" data-chart="weightForHeight">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-balance-scale"></i> Cân nặng theo chiều cao</h4>
@@ -480,6 +501,8 @@
                                             <canvas id="chartWeightForHeight" style="width: 100%; height: 100%;"></canvas>
                                         </div>
                                     </div>
+
+                                    @endif
 
                                     <!-- Chart 4: BMI for Age -->
                                     <div class="chart-item" data-chart="bmiForAge">
@@ -1387,6 +1410,75 @@
             const gender = {{ $row->gender ?? 1 }};
             const genderText = gender == 1 ? 'trai' : 'gái';
 
+            // Đường chuẩn 5-19 tuổi, sinh từ bộ LMS trong DB (null nếu là hồ sơ 0-5)
+            const duongChuan519 = @json($duongChuan519 ?? null);
+
+            // Các biểu đồ 0-5 dùng mảng toạ độ hard-code sẵn trong file này.
+            // Với hồ sơ 5-19 thì thay bằng đường chuẩn thật của WHO Reference 2007.
+            function chonDataset(chiSo, macDinh, x, y, nhanDiem, yMin, yMax) {
+                if (!duongChuan519 || !duongChuan519[chiSo]) {
+                    return macDinh;
+                }
+
+                const mau = {
+                    '3SD': 'black', '2SD': '#93372E', '1SD': '#93372E',
+                    'Median': '#46AF4E',
+                    '-1SD': '#C81F1F', '-2SD': '#C81F1F', '-3SD': '#564747'
+                };
+                const nhan = {
+                    '3SD': '+3SD', '2SD': '+2SD', '1SD': '+1SD', 'Median': 'Median',
+                    '-1SD': '-1SD', '-2SD': '-2SD', '-3SD': '-3SD'
+                };
+
+                const bo = [];
+                ['3SD', '2SD', '1SD', 'Median', '-1SD', '-2SD', '-3SD'].forEach(function(k) {
+                    if (!duongChuan519[chiSo].series[k]) {
+                        return;
+                    }
+                    bo.push({
+                        label: nhan[k],
+                        data: duongChuan519[chiSo].series[k],
+                        borderColor: mau[k],
+                        borderWidth: k === 'Median' ? 2 : 1.5,
+                        fill: false,
+                        pointRadius: 0
+                    });
+                });
+
+                bo.push({
+                    label: nhanDiem,
+                    data: [{x: x, y: y}],
+                    borderColor: 'red',
+                    backgroundColor: 'red',
+                    pointRadius: 5,
+                    pointHoverRadius: 6,
+                    type: 'scatter'
+                });
+                bo.push({
+                    label: 'Đường dọc',
+                    data: [{x: x, y: yMin}, {x: x, y: yMax}],
+                    borderColor: 'red', borderDash: [5, 5], borderWidth: 1,
+                    fill: false, pointRadius: 0
+                });
+                bo.push({
+                    label: 'Đường ngang',
+                    data: [{x: duongChuan519[chiSo].x_min, y: y}, {x: duongChuan519[chiSo].x_max, y: y}],
+                    borderColor: 'red', borderDash: [5, 5], borderWidth: 1,
+                    fill: false, pointRadius: 0
+                });
+
+                return bo;
+            }
+
+            // Truc toa do cung phai doi theo ho so: 0-5 ve 0-60 thang,
+            // 5-19 ve theo dai tuoi that cua chuan 2007.
+            function gioiHanTruc(chiSo, khoa, macDinh) {
+                if (!duongChuan519 || !duongChuan519[chiSo]) {
+                    return macDinh;
+                }
+                return duongChuan519[chiSo][khoa];
+            }
+
             // Chart 1: Height for Age
             const heightForAgeData = [
                 {
@@ -1455,7 +1547,7 @@
 
             window.chartHeightForAge = new Chart(document.getElementById('chartHeightForAge'), {
                 type: 'line',
-                data: { datasets: heightForAgeData },
+                data: { datasets: chonDataset('hfa', heightForAgeData, month, height, 'Chiều cao hiện tại', 40, 200) },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1472,15 +1564,15 @@
                     scales: {
                         x: {
                             type: 'linear',
-                            min: 0,
-                            max: 60,
+                            min: gioiHanTruc('hfa', 'x_min', 0),
+                            max: gioiHanTruc('hfa', 'x_max', 60),
                             title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
                         },
                         y: {
-                            min: 40,
-                            max: 130,
+                            min: duongChuan519 ? 90 : 40,
+                            max: duongChuan519 ? 200 : 130,
                             title: { display: true, text: 'Chiều cao (cm)', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#e3e3e3' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
@@ -1574,7 +1666,7 @@
 
             window.chartWeightForAge = new Chart(document.getElementById('chartWeightForAge'), {
                 type: 'line',
-                data: { datasets: weightForAgeData },
+                data: { datasets: chonDataset('wfa', weightForAgeData, month, weight, 'Cân nặng hiện tại', 0, 80) },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1591,15 +1683,15 @@
                     scales: {
                         x: {
                             type: 'linear',
-                            min: 0,
-                            max: 60,
+                            min: gioiHanTruc('wfa', 'x_min', 0),
+                            max: gioiHanTruc('wfa', 'x_max', 60),
                             title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
                         },
                         y: {
-                            min: 0,
-                            max: 25,
+                            min: duongChuan519 ? 10 : 0,
+                            max: duongChuan519 ? 70 : 25,
                             title: { display: true, text: 'Cân nặng (kg)', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#e3e3e3' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
@@ -1812,7 +1904,7 @@
 
             window.chartBMIForAge = new Chart(document.getElementById('chartBMIForAge'), {
                 type: 'line',
-                data: { datasets: bmiForAgeData },
+                data: { datasets: chonDataset('bmi', bmiForAgeData, month, bmi, 'BMI hiện tại', 8, 40) },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1829,15 +1921,15 @@
                     scales: {
                         x: {
                             type: 'linear',
-                            min: 0,
-                            max: 60,
+                            min: gioiHanTruc('bmi', 'x_min', 0),
+                            max: gioiHanTruc('bmi', 'x_max', 60),
                             title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }
                         },
                         y: {
                             min: 10,
-                            max: Math.max(20, Math.ceil(bmi + 2)),  // Tự động điều chỉnh nếu BMI > 20
+                            max: Math.max(duongChuan519 ? 32 : 20, Math.ceil(bmi + 2)),  // Dải BMI của 5-19 cao hơn 0-5
                             title: { display: true, text: 'BMI (kg/m²)', font: { size: 11 } },
                             grid: { color: (ctx) => ctx.tick.value % 1 === 0 ? '#e3e3e3' : '#f6f6f6' },
                             ticks: { font: { size: 10 } }

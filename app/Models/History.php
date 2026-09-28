@@ -1688,6 +1688,102 @@ class History extends Model
      * Tham số LMS thực sự đã dùng, để bảng chi tiết trên trang kết quả khớp với
      * con số đang hiển thị thay vì hiện LMS của đường tính cũ.
      */
+    /**
+     * Tham số LMS thực sự đã dùng, tự chọn chuẩn theo bản ghi.
+     * Dùng cho bảng chi tiết trên trang kết quả.
+     */
+    /**
+     * Sinh đường chuẩn cho biểu đồ tăng trưởng 5-19 tuổi từ chính bộ LMS trong DB.
+     *
+     * Biểu đồ 0-5 tuổi đang dùng mảng toạ độ hard-code trong blade, chỉ phủ 0-60
+     * tháng. Với 5-19 thì sinh từ dữ liệu thật, vừa đúng vừa không phải chép tay
+     * hàng trăm con số.
+     *
+     * @return array|null ['hfa' => ['x_min','x_max','series'=>['-3SD'=>[{x,y}...]]], 'bmi' => ...]
+     */
+    public function getWho2007ChartSeries(): ?array
+    {
+        if ($this->getWhoStandard() !== 'who2007' || $this->gender === null) {
+            return null;
+        }
+
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $mocSD = ['-3SD' => -3, '-2SD' => -2, '-1SD' => -1, 'Median' => 0, '1SD' => 1, '2SD' => 2, '3SD' => 3];
+        $ketQua = [];
+
+        foreach (['hfa' => 228, 'bmi' => 228, 'wfa' => 120] as $chiSo => $thangMax) {
+            $series = [];
+
+            // Lấy mẫu mỗi 3 tháng để đường đủ mượt mà không nặng trang
+            for ($thang = 60; $thang <= $thangMax; $thang += 3) {
+                $lms = WHO2007ZScoreService::lmsInterpolated($chiSo, $sex, (float) $thang);
+                if ($lms === null) {
+                    continue;
+                }
+
+                foreach ($mocSD as $ten => $z) {
+                    $giaTri = WHO2006ZScoreService::valueAtZ($z, $lms['L'], $lms['M'], $lms['S']);
+                    if ($giaTri !== null) {
+                        $series[$ten][] = ['x' => $thang, 'y' => round($giaTri, 2)];
+                    }
+                }
+            }
+
+            if ($series) {
+                $ketQua[$chiSo] = [
+                    'x_min'  => 60,
+                    'x_max'  => $thangMax,
+                    'series' => $series,
+                ];
+            }
+        }
+
+        return $ketQua ?: null;
+    }
+
+    public function getWhoLMSDetails(string $column): ?array
+    {
+        return $this->getWhoStandard() === 'who2007'
+            ? $this->getWho2007LMSDetails($column)
+            : $this->getWho2006LMSDetails($column);
+    }
+
+    /** Tham số LMS của chuẩn 5-19 (nội suy tuyến tính giữa 2 tháng) */
+    public function getWho2007LMSDetails(string $column): ?array
+    {
+        $indicator = ['z_hfa' => 'hfa', 'z_wfa' => 'wfa', 'z_bmi' => 'bmi'][$column] ?? null;
+
+        if ($indicator === null || $this->age === null || $this->gender === null) {
+            return null;
+        }
+
+        $ageInMonths = (float) $this->age;
+
+        if (!WHO2007ZScoreService::indicatorApplies($indicator, $ageInMonths)) {
+            return null;
+        }
+
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $lms = WHO2007ZScoreService::lmsInterpolated($indicator, $sex, $ageInMonths);
+
+        if ($lms === null) {
+            return null;
+        }
+
+        return [
+            'L'                => $lms['L'],
+            'M'                => $lms['M'],
+            'S'                => $lms['S'],
+            'method'           => abs($ageInMonths - floor($ageInMonths)) < 1e-9 ? 'exact' : 'interpolated',
+            'age_range'        => $indicator === 'wfa' ? '5_10y' : '5_19y',
+            'age_in_months'    => $ageInMonths,
+            'indicator'        => $indicator,
+            'standard'         => 'who2007',
+            'engine'           => WHO2007ZScoreService::ENGINE_VERSION,
+            'measurement_type' => null,
+        ];
+    }
+
     public function getWho2006LMSDetails(string $column): ?array
     {
         if ($this->getWhoStandard() !== 'who2006') {
