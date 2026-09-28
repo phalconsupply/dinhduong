@@ -13,6 +13,7 @@ class WHOPercentileLMS extends Model
 
     protected $fillable = [
         'indicator',
+        'standard', // who2006 (0-5 tuoi) hoac who2007 (5-19 tuoi)
         'sex',
         'age_range',
         'age_in_months',

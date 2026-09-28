@@ -261,10 +261,12 @@
                             <div class="card-body">
                                 <div class="lms-details-grid">
                                     @php
-                                        $wfaInfo = $row->getWeightForAgeZScoreLMSDetails();
-                                        $hfaInfo = $row->getHeightForAgeZScoreLMSDetails();
-                                        $wfhInfo = $row->getWeightForHeightZScoreLMSDetails();
-                                        $bmiInfo = $row->getBMIForAgeZScoreLMSDetails();
+                                        // Tham số LMS của engine WHO đã chuẩn hoá (tra theo ngày tuổi),
+                                        // để bảng này khớp với Z-score đang hiển thị ở trên.
+                                        $wfaInfo = $row->getWho2006LMSDetails('z_wfa');
+                                        $hfaInfo = $row->getWho2006LMSDetails('z_hfa');
+                                        $wfhInfo = $row->getWho2006LMSDetails('z_wfh');
+                                        $bmiInfo = $row->getWho2006LMSDetails('z_bmi');
                                     @endphp
                                     
                                     <!-- Weight for Age LMS Info -->
