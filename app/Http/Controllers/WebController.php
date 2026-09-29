@@ -10,9 +10,8 @@ use Carbon\Carbon;
 use App\Models\History;
 use App\Services\WHO2006ZScoreService;
 use App\Services\WHO2007ZScoreService;
-use App\Models\Province;
-use App\Models\District;
-use App\Models\Ward;
+use App\Models\VnProvince;
+use App\Models\VnWard;
 use Validator;
 class WebController extends Controller
 {
@@ -25,34 +24,11 @@ class WebController extends Controller
         return redirect()->route('form.index',['slug'=>'tu-0-5-tuoi']);
     }
 
-    public function formWizard(Request $request){
-        $provinces = Province::select('name','code')->get();
-        $ethnics = Ethnic::where('active',1)->get();
-        $item = new History();
-        $slug = 'tu-0-5-tuoi';
-        $category = 1;
-        
-        if($request->get('edit')){
-            $item = History::where('uid', $request->get('edit'))->first();
-            if($item){
-                $districts = District::select('name','code')->where('province_code', $item->province_code)->get();
-                $wards = Ward::select('name','code')->where('district_code', $item->district_code)->get();
-                session(['districts' => $districts]);
-                session(['wards' => $wards]);
-                return view('form-wizard', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
-            }
-            abort(404);
-        }
-        session(['districts' => []]);
-        session(['wards' => []]);
-        return view('form-wizard', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
-    }
-
     // Request dat TRUOC tham so tuy chon: PHP 8 canh bao Deprecated neu tham so
     // co gia tri mac dinh dung truoc tham so bat buoc. Laravel van khop dung vi
     // no tiem phu thuoc theo kieu, roi moi dien tham so tu route.
     public function form(Request $request, $slug = ''){
-        $provinces = Province::select('name','code')->get();
+        $provinces = VnProvince::select('name','code')->orderBy('name')->get();
         $ethnics = Ethnic::where('active',1)->get();
         $item = new History();
         $slug_ids = [
@@ -71,15 +47,11 @@ class WebController extends Controller
         if($request->get('edit')){
             $item = History::where('uid', $request->get('edit'))->first();
             if($item){
-                $districts = District::select('name','code')->where('province_code', $item->province_code)->get();
-                $wards = Ward::select('name','code')->where('district_code', $item->district_code)->get();
-                session(['districts' => $districts]);
-                session(['wards' => $wards]);
+                session(['wards' => VnWard::theoTinh($item->province_code_2026)]);
                 return view('form', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
             }
             abort(404);
         }
-        session(['districts' => []]);
         session(['wards' => []]);
         return view('form', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
     }
@@ -111,9 +83,9 @@ class WebController extends Controller
             'cal_date' => 'nullable|date_format:d/m/Y',
             'gender' => 'nullable|in:0,1',
             'address' => 'nullable|string|max:500',
-            'province_code' => 'required|exists:provinces,code',
-            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
-            'ward_code' => 'required|exists:wards,code,district_code,' . $request->district_code,
+            // Địa bàn 2026: province_code / ward_code trên form mang mã MỚI
+            'province_code' => 'required|exists:vn_provinces,code',
+            'ward_code' => 'required|exists:vn_wards,code,province_code,' . $request->province_code,
             'weight' => 'nullable|numeric|max:500',
             'height' => 'nullable|numeric|max:200',
             'realAge' => 'required|nullable|numeric|max:150',
@@ -140,22 +112,20 @@ class WebController extends Controller
             ]);
             
             // Handle validation errors
-            $districts = [];
-            $wards = [];
-            if($request->province_code && Province::where('code', $request->province_code)->exists()){
-                $districts = District::select('name','code')->where('province_code', $request->province_code)->get();
-                if($request->district_code && District::where('code', $request->district_code)->exists()){
-                    $wards = Ward::select('name','code')->where('district_code', $request->district_code)->get();
-                }
-            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('districts', $districts)
-                ->with('wards', $wards);
+                ->with('wards', VnWard::theoTinh($request->province_code));
         }
 //        $input = $request->all();
         $input = $request->only((new \App\Models\History)->getFillable());
+
+        // Form gửi địa bàn 2026 qua province_code / ward_code. Ghi vào cột *_2026;
+        // 3 cột cũ province_code/district_code/ward_code giữ nguyên địa bàn gốc của
+        // phiếu cũ (phiếu mới để trống) — không bao giờ ghi mã mới vào cột cũ.
+        unset($input['province_code'], $input['district_code'], $input['ward_code']);
+        $input['province_code_2026'] = $request->province_code;
+        $input['ward_code_2026'] = $request->ward_code;
 
         if ($request->filled('birthday')) {
             try {
@@ -206,19 +176,10 @@ class WebController extends Controller
                 $input['unit_id'] = Auth::check() ? Auth::user()->unit_id : 0;
                 $history->update($input);
             }else{
-                $districts = [];
-                $wards = [];
-                if($request->province_code && Province::where('code', $request->province_code)->exists()){
-                    $districts = District::select('name','code')->where('province_code', $request->province_code)->get();
-                    if($request->district_code && District::where('code', $request->district_code)->exists()){
-                        $wards = Ward::select('name','code')->where('district_code', $request->district_code)->get();
-                    }
-                }
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput()
-                    ->with('districts', $districts)
-                    ->with('wards', $wards)
+                    ->with('wards', VnWard::theoTinh($request->province_code))
                     ->with('error', "Không tìm thấy khảo sát");
             }
         }else{
@@ -259,19 +220,10 @@ class WebController extends Controller
         }
 
         // Handle failure case
-        $districts = [];
-        $wards = [];
-        if($request->province_code && Province::where('code', $request->province_code)->exists()){
-            $districts = District::select('name','code')->where('province_code', $request->province_code)->get();
-            if($request->district_code && District::where('code', $request->district_code)->exists()){
-                $wards = Ward::select('name','code')->where('district_code', $request->district_code)->get();
-            }
-        }
         return redirect()->back()
             ->withErrors(['error' => 'Thêm khảo sát không thành công!'])
             ->withInput()
-            ->with('districts', $districts)
-            ->with('wards', $wards);
+            ->with('wards', VnWard::theoTinh($request->province_code));
     }
 
 
@@ -320,18 +272,7 @@ class WebController extends Controller
     }
 
 
-    public function ajax_get_district_by_province(Request $request){
-        $provinceCode = $request->input('province_code');
-        // Lấy danh sách các district thuộc province
-        $districts = District::select('name','code')->where('province_code', $provinceCode)->get();
-        return response()->json(['districts' => $districts]);
-    }
-
-    public function ajax_get_ward_by_district(Request $request){
-        $districtCode = $request->input('district_code');
-        // Lấy danh sách các district thuộc province
-        $wards = Ward::select('name','code')->where('district_code', $districtCode)->get();
-
-        return response()->json(['wards' => $wards]);
+    public function ajax_get_ward_by_province(Request $request){
+        return response()->json(['wards' => VnWard::theoTinh($request->input('province_code'))]);
     }
 }

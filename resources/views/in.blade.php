@@ -155,21 +155,13 @@
             <p class="value">{{$row->weight}} kg</p>
         </div>
         <div class="col80" style="display: table">
-            <p><em>(
-                    @php
-                        $wfa = $row->WeightForAge();
-                        $wfh = $row->WeightForHeight();
-                        $median_wfa = is_array($wfa) ? ($wfa['Median'] ?? null) : ($wfa->Median ?? null);
-                        $median_wfh = is_array($wfh) ? ($wfh['Median'] ?? null) : ($wfh->Median ?? null);
-                    @endphp
-                    Chuẩn cân nặng theo tuổi: {{ $median_wfa ? round($median_wfa, 1) : 'Chưa có dữ liệu' }} kg
-                    )
-
-                    <br/>
-                    ( Chuẩn cân nặng theo chiều cao hiện có: {{ $median_wfh ? round($median_wfh, 1) : 'Chưa có dữ liệu' }} kg )
-
+            {{-- Trung vị M của đúng bộ LMS đã dùng tính Z-score; chỉ số không có chuẩn cho lứa tuổi thì ẩn --}}
+            @php $trungVi = $row->trungViChuan(); @endphp
+            <p><em>
+                    @isset($trungVi['wfa'])( Chuẩn cân nặng theo tuổi: {{ round($trungVi['wfa'], 1) }} kg )@endisset
+                    @if(isset($trungVi['wfa']) && isset($trungVi['wfh']))<br/>@endif
+                    @isset($trungVi['wfh'])( Chuẩn cân nặng theo chiều cao hiện có: {{ round($trungVi['wfh'], 1) }} kg )@endisset
                 </em>
-
             </p>
         </div>
 
@@ -181,13 +173,9 @@
             <p class="value">{{$row->height}} cm</p>
         </div>
         <div class="col80">
-            <p><em>(
-                @php
-                    $hfa = $row->HeightForAge();
-                    $median_hfa = is_array($hfa) ? ($hfa['Median'] ?? null) : ($hfa->Median ?? null);
-                @endphp
-                Chuẩn chiều cao theo tuổi: {{ $median_hfa ? round($median_hfa, 1) : 'Chưa có dữ liệu' }} cm
-            )</em></p>
+            <p><em>
+                @isset($trungVi['hfa'])( Chuẩn chiều cao theo tuổi: {{ round($trungVi['hfa'], 1) }} cm )@endisset
+            </em></p>
         </div>
         <div class="cf"></div>
         
@@ -315,8 +303,10 @@
                 <th style="text-align: center; background: #418c39; color: white">Đánh giá chung</th>
                 </thead>
                 <tbody>
-                <tr style="text-align: center; background-color: {{$row->check_bmi_for_age()['color']}}">
-                    <td>{{$row->check_bmi_for_age()['text']}}</td>
+                {{-- Giống nhánh "Đánh giá chung" của trang kết quả --}}
+                @php $bmi_result_auto = $row->check_bmi_for_age_auto(); @endphp
+                <tr style="text-align: center; background-color: {{$bmi_result_auto['color']}}">
+                    <td>{{$bmi_result_auto['text']}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -482,23 +472,35 @@
         <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>
     </div>
 
-    <div style="display: flex; margin-top: 8px; gap: 8px;">
-        <div style="width: 50%;">
-            @include('sections.Chart-HeightForAge')
+    {{-- Cùng dữ liệu và cùng script vẽ với trang kết quả (sections.bieu-do-who),
+         chỉ hiện chỉ số WHO có chuẩn cho lứa tuổi của trẻ --}}
+    @php $bieuDoWho = $row->getWhoChartSeries(); @endphp
+    @if($bieuDoWho)
+        <div class="print-charts">
+            @foreach(['hfa', 'wfa', 'wfh', 'bmi'] as $khoa)
+                @if(isset($bieuDoWho[$khoa]))
+                    <div class="print-chart"><canvas data-who-chart="{{ $khoa }}"></canvas></div>
+                @endif
+            @endforeach
         </div>
-        <div style="width: 50%;">
-            @include('sections.Chart-WeightForAge')
-        </div>
-    </div>
-    
-    <div style="display: flex; margin-top: 8px; gap: 8px;">
-        <div style="width: 50%;">
-            @include('sections.Chart-WeightForHeight')
-        </div>
-        <div style="width: 50%;">
-            @include('sections.Chart-BMIForAge')
-        </div>
-    </div>
+        @include('sections.bieu-do-who', ['bieuDo' => $bieuDoWho, 'cheDoIn' => true])
+    @endif
+
+    <style type="text/css">
+        .print-charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .print-chart {
+            position: relative;
+            width: calc(50% - 4px);
+            height: 250px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+    </style>
 
 
     <style type="text/css">

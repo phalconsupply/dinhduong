@@ -12,6 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Traits\HasPermissions;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Concerns\HasDiaBan2026;
 
 class User extends Authenticatable
 {
@@ -19,6 +20,7 @@ class User extends Authenticatable
     use HasRoles;
     use HasPermissions;
     use SoftDeletes;
+    use HasDiaBan2026;
     /**
      * The attributes that are mass assignable.
      *
@@ -36,6 +38,8 @@ class User extends Authenticatable
         'province_code',
         'district_code',
         'ward_code',
+        'province_code_2026',
+        'ward_code_2026',
         'address',
         'note',
         'is_active',
@@ -46,6 +50,8 @@ class User extends Authenticatable
         'unit_province_code',
         'unit_district_code',
         'unit_ward_code',
+        'unit_province_code_2026',
+        'unit_ward_code_2026',
         'department_id',
         'role',
         'role_title',
@@ -79,20 +85,6 @@ class User extends Authenticatable
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id', 'id');
-    }
-    public function province()
-    {
-        return $this->belongsTo(Province::class, 'province_code', 'code');
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class, 'district_code', 'code');
-    }
-
-    public function ward()
-    {
-        return $this->belongsTo(Ward::class, 'ward_code', 'code');
     }
     public function creator()
     {

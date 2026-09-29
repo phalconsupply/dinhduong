@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Province;
-use App\Models\District;
-use App\Models\Ward;
+use App\Models\VnProvince;
+use App\Models\VnWard;
 use DB;
 class UserController extends Controller
 {
@@ -40,7 +39,7 @@ class UserController extends Controller
             $authUser = Auth::user();
             if($authUser->unit) {
                 if(is_super_admin_province()){
-                    $users = $users->where('unit_province_code', $authUser->unit->province_code);
+                    $users = $users->where('unit_province_code_2026', $authUser->unit->province_code_2026);
                 }else{
                     $users = $users->where('unit_id', $authUser->unit_id);
                 }
@@ -94,7 +93,7 @@ class UserController extends Controller
         return view('admin.users.show-update-password', compact('user', 'tab'));
     }
     public function create(Request $request){
-        $provinces = Province::select('name','code')->get();
+        $provinces = VnProvince::select('name','code')->orderBy('name')->get();
         $units     = Unit::where('is_active',1);
         if(is_manager()){
             $units = Unit::where('created_by', Auth::id())
@@ -106,9 +105,8 @@ class UserController extends Controller
     }
 
     public function edit(User $user){
-        $provinces = Province::select('name','code')->get();
-        $districts = District::select('name','code')->where('province_code', $user->province_code)->get();
-        $wards     = Ward::select('name','code')->where('district_code', $user->district_code)->get();
+        $provinces = VnProvince::select('name','code')->orderBy('name')->get();
+        $wards     = VnWard::theoTinh($user->province_code_2026);
         $units     = Unit::where('is_active',1);
         if(is_manager()){
             $units = Unit::where('created_by', Auth::id())
@@ -116,7 +114,7 @@ class UserController extends Controller
         }
         $units = $units->get();
         $departments     = Department::where('is_active',1)->get();
-        return view('admin.users.edit', compact('user','provinces', 'districts', 'wards','units', 'departments'));
+        return view('admin.users.edit', compact('user','provinces', 'wards','units', 'departments'));
     }
 
 
@@ -150,9 +148,8 @@ class UserController extends Controller
             'gender' => 'required|in:0,1,3',
             'password'  => 'required|confirmed|min:6|max:10',
 //            'email'     => 'required|email|unique:users',
-            'province_code' => 'required|exists:provinces,code',
-            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
-            'ward_code' => 'required|exists:wards,code,district_code,' . $request->district_code,
+            'province_code' => 'required|exists:vn_provinces,code',
+            'ward_code' => 'required|exists:vn_wards,code,province_code,' . $request->province_code,
             'address' => 'required|max:255',
 //            'department' => 'required|max:50',
             'role' => 'required|in:manager,employee',
@@ -173,14 +170,17 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             $input = $request->all();
-            $input['districts'] = District::select('name','code')->where('province_code', $request->province_code)->get();
-            $input['wards']     = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+            $input['wards']     = VnWard::theoTinh($request->province_code);
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput($input);
         }
 
         $input = $request->all();
+        // Form gửi địa bàn 2026 qua province_code / ward_code; không ghi vào cột cũ
+        unset($input['province_code'], $input['district_code'], $input['ward_code']);
+        $input['province_code_2026'] = $request->province_code;
+        $input['ward_code_2026'] = $request->ward_code;
         $input['password'] = Hash::make($request->password);
         $input['is_active'] = ($request->input('is_active') == 'on') ? 1 : 0;
         $input['created_by'] = Auth::id();
@@ -188,9 +188,8 @@ class UserController extends Controller
         //config Unit
         $unit = Unit::find($request->unit_id);
         $input['unit_id'] = $request->unit_id;
-        $input['unit_province_code'] = $unit->province_code;
-        $input['unit_district_code'] = $unit->district_code;
-        $input['unit_ward_code'] = $unit->ward_code;
+        $input['unit_province_code_2026'] = $unit->province_code_2026;
+        $input['unit_ward_code_2026'] = $unit->ward_code_2026;
 
         $user = User::create($input);
         $user->assignRole($request->role);
@@ -206,9 +205,8 @@ class UserController extends Controller
             'id_number' => 'required|digits:12',
             'gender' => 'required|in:0,1,3',
 //            'email'     => 'required|email|unique:users,email,'.$user->id,
-            'province_code' => 'required|exists:provinces,code',
-            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
-            'ward_code' => 'required|exists:wards,code,district_code,' . $request->district_code,
+            'province_code' => 'required|exists:vn_provinces,code',
+            'ward_code' => 'required|exists:vn_wards,code,province_code,' . $request->province_code,
             'address' => 'required|max:255',
 //            'department' => 'required|max:50',
             'role' => 'required|in:manager,employee',
@@ -228,8 +226,7 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             $input = $request->all();
-            $input['districts'] = District::select('name','code')->where('province_code', $request->province_code)->get();
-            $input['wards']     = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+            $input['wards']     = VnWard::theoTinh($request->province_code);
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput($input);
@@ -245,9 +242,8 @@ class UserController extends Controller
             'email'    => $request->email,
             'thumb'    => $request->thumb,
             'gender'   => $request->gender,
-            'province_code' => $request->province_code,
-            'district_code' => $request->district_code,
-            'ward_code'     => $request->ward_code,
+            'province_code_2026' => $request->province_code,
+            'ward_code_2026'     => $request->ward_code,
             'address'       => $request->address,
             'note'          => $request->note,
             'birthday'      => $request->birthday,
@@ -255,9 +251,8 @@ class UserController extends Controller
             'role' => $request->role,
             'role_title' => $request->role_title,
             'unit_id' => $request->unit_id,
-            'unit_province_code' => $unit->province_code,
-            'unit_district_code' => $unit->district_code,
-            'unit_ward_code' => $unit->ward_code,
+            'unit_province_code_2026' => $unit->province_code_2026,
+            'unit_ward_code_2026' => $unit->ward_code_2026,
             'department' => $request->department,
         ];
 

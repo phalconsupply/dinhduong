@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-md-2">
                             <label class="form-label small">Tỉnh/TP:</label>
-                            <select name="province_code" id="province_code" class="form-select filter-input">
+                            <select name="province_code" id="province_code" data-wards-url="{{ route('admin.ajax_get_ward_by_province') }}" class="form-select filter-input">
                                 <option value="">Tất cả</option>
                                 @foreach($provinces as $province)
                                     <option value="{{ $province->code }}" @if(request()->get('province_code') == $province->code) selected @endif>{{ $province->name }}</option>
@@ -50,17 +50,8 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label small">Quận/Huyện:</label>
-                            <select name="district_code" id="district_code" class="form-select filter-input">
-                                <option value="">Tất cả</option>
-                                @foreach($districts as $district)
-                                    <option value="{{ $district->code }}" @if($district->code == request()->get('district_code')) selected @endif>{{ $district->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
                             <label class="form-label small">Phường/Xã:</label>
-                            <select name="ward_code" id="ward_code" class="form-select filter-input">
+                            <select name="ward_code" id="ward_code" data-placeholder="Tất cả" class="form-select filter-input">
                                 <option value="">Tất cả</option>
                                 @foreach($wards as $ward)
                                     <option value="{{ $ward->code }}" @if($ward->code == request()->get('ward_code')) selected @endif>{{ $ward->name }}</option>
@@ -383,8 +374,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Setup province -> district -> ward cascade
-    setupLocationCascade();
 });
 
 function loadTabData(tabName) {
@@ -664,56 +653,6 @@ function clearCache() {
     }
 }
 
-function setupLocationCascade() {
-    // Province change handler
-    document.getElementById('province_code').addEventListener('change', function() {
-        const provinceCode = this.value;
-        const districtSelect = document.getElementById('district_code');
-        const wardSelect = document.getElementById('ward_code');
-        
-        // Reset district and ward
-        districtSelect.innerHTML = '<option value="">Tất cả</option>';
-        wardSelect.innerHTML = '<option value="">Tất cả</option>';
-        
-        if (provinceCode) {
-            // Load districts for selected province
-            fetch(`/admin/get-districts/${provinceCode}`)
-                .then(response => response.json())
-                .then(districts => {
-                    districts.forEach(district => {
-                        const option = document.createElement('option');
-                        option.value = district.code;
-                        option.textContent = district.name;
-                        districtSelect.appendChild(option);
-                    });
-                });
-        }
-    });
-    
-    // District change handler
-    document.getElementById('district_code').addEventListener('change', function() {
-        const districtCode = this.value;
-        const wardSelect = document.getElementById('ward_code');
-        
-        // Reset ward
-        wardSelect.innerHTML = '<option value="">Tất cả</option>';
-        
-        if (districtCode) {
-            // Load wards for selected district
-            fetch(`/admin/get-wards/${districtCode}`)
-                .then(response => response.json())
-                .then(wards => {
-                    wards.forEach(ward => {
-                        const option = document.createElement('option');
-                        option.value = ward.code;
-                        option.textContent = ward.name;
-                        wardSelect.appendChild(option);
-                    });
-                });
-        }
-    });
-}
-
 // Export functions for external use
 window.statisticsApp = {
     loadTabData: loadTabData,
@@ -723,3 +662,7 @@ window.statisticsApp = {
 </script>
 
 @endsection
+
+@push('foot')
+    <script src="{{ asset('web/js/dia-ban-2026.js') }}"></script>
+@endpush

@@ -1,0 +1,2155 @@
+{
+  "generated_utc": "2026-09-29T15:50:29.156750+00:00",
+  "method": "HTTP GET/HEAD and source inspection; no browser layout measurement",
+  "pages": [
+    {
+      "route": "/",
+      "status": 200,
+      "final_url": "http://dinhduong.test/tu-0-5-tuoi",
+      "html_characters": 84741,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [
+        {
+          "line": 698,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              189
+            ],
+            [
+              "div",
+              190
+            ],
+            [
+              "section",
+              191
+            ]
+          ]
+        },
+        {
+          "line": 700,
+          "close": "section",
+          "open_stack": []
+        },
+        {
+          "line": 701,
+          "close": "div",
+          "open_stack": []
+        },
+        {
+          "line": 702,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "unclosed_structural_tags": [],
+      "html_lang": null
+    },
+    {
+      "route": "/tu-0-5-tuoi",
+      "status": 200,
+      "final_url": "http://dinhduong.test/tu-0-5-tuoi",
+      "html_characters": 84741,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [
+        {
+          "line": 698,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              189
+            ],
+            [
+              "div",
+              190
+            ],
+            [
+              "section",
+              191
+            ]
+          ]
+        },
+        {
+          "line": 700,
+          "close": "section",
+          "open_stack": []
+        },
+        {
+          "line": 701,
+          "close": "div",
+          "open_stack": []
+        },
+        {
+          "line": 702,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "unclosed_structural_tags": [],
+      "html_lang": null,
+      "form_fields": [
+        {
+          "name": "thumb",
+          "id": "avatar-input",
+          "type": "file"
+        },
+        {
+          "name": "fullname",
+          "id": "last-name",
+          "type": "text"
+        },
+        {
+          "name": "id_number",
+          "id": "id_number",
+          "type": "text"
+        },
+        {
+          "name": "phone",
+          "id": "phone",
+          "type": "number",
+          "maxlength": "11",
+          "minlength": "10"
+        },
+        {
+          "name": "gender",
+          "id": "gender"
+        },
+        {
+          "name": "ethnic_id",
+          "id": "ethnic_id"
+        },
+        {
+          "name": "cal_date",
+          "id": "cal-date",
+          "type": "text"
+        },
+        {
+          "name": "birthday",
+          "id": "calendar-birth",
+          "type": "text"
+        },
+        {
+          "name": "over19",
+          "id": "over19",
+          "type": "hidden"
+        },
+        {
+          "name": "address",
+          "id": "address",
+          "type": "text"
+        },
+        {
+          "name": "province_code",
+          "id": "province_code"
+        },
+        {
+          "name": "ward_code",
+          "id": "ward_code"
+        },
+        {
+          "name": "birth_weight",
+          "id": "birth-weight",
+          "type": "number"
+        },
+        {
+          "name": "gestational_age",
+          "id": "gestational-age"
+        },
+        {
+          "name": "birth_weight_category_display",
+          "id": "birth-weight-category",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "birth_weight_category",
+          "id": "birth-weight-category-hidden",
+          "type": "hidden"
+        },
+        {
+          "name": "weight",
+          "id": "weight-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "id": "length-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "age_show",
+          "id": "age_show",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "age",
+          "id": "age",
+          "type": "hidden",
+          "readonly": ""
+        },
+        {
+          "name": "realAge",
+          "id": "real-age",
+          "type": "hidden"
+        },
+        {
+          "name": "bmi",
+          "id": "bmi-user-profile",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "category",
+          "id": "category-user-profile",
+          "type": "hidden"
+        },
+        {
+          "name": "slug",
+          "type": "hidden"
+        }
+      ],
+      "inline_defines_nextStep": false,
+      "nextStep_buttons": 0,
+      "calendar_birth_exists": true,
+      "script_references_calendar_birth": true,
+      "measurement_labels_associated": 0
+    },
+    {
+      "route": "/tu-5-19-tuoi",
+      "status": 200,
+      "final_url": "http://dinhduong.test/tu-5-19-tuoi",
+      "html_characters": 80652,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [
+        {
+          "line": 652,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              189
+            ],
+            [
+              "div",
+              190
+            ],
+            [
+              "section",
+              191
+            ]
+          ]
+        },
+        {
+          "line": 654,
+          "close": "section",
+          "open_stack": []
+        },
+        {
+          "line": 655,
+          "close": "div",
+          "open_stack": []
+        },
+        {
+          "line": 656,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "unclosed_structural_tags": [],
+      "html_lang": null,
+      "form_fields": [
+        {
+          "name": "thumb",
+          "id": "avatar-input",
+          "type": "file"
+        },
+        {
+          "name": "fullname",
+          "id": "last-name",
+          "type": "text"
+        },
+        {
+          "name": "id_number",
+          "id": "id_number",
+          "type": "text"
+        },
+        {
+          "name": "phone",
+          "id": "phone",
+          "type": "number",
+          "maxlength": "11",
+          "minlength": "10"
+        },
+        {
+          "name": "gender",
+          "id": "gender"
+        },
+        {
+          "name": "ethnic_id",
+          "id": "ethnic_id"
+        },
+        {
+          "name": "cal_date",
+          "id": "cal-date",
+          "type": "text"
+        },
+        {
+          "name": "birthday",
+          "id": "calendar-birth",
+          "type": "text"
+        },
+        {
+          "name": "over19",
+          "id": "over19",
+          "type": "hidden"
+        },
+        {
+          "name": "address",
+          "id": "address",
+          "type": "text"
+        },
+        {
+          "name": "province_code",
+          "id": "province_code"
+        },
+        {
+          "name": "ward_code",
+          "id": "ward_code"
+        },
+        {
+          "name": "weight",
+          "id": "weight-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "id": "length-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "age_show",
+          "id": "age_show",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "age",
+          "id": "age",
+          "type": "hidden",
+          "readonly": ""
+        },
+        {
+          "name": "realAge",
+          "id": "real-age",
+          "type": "hidden"
+        },
+        {
+          "name": "bmi",
+          "id": "bmi-user-profile",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "category",
+          "id": "category-user-profile",
+          "type": "hidden"
+        },
+        {
+          "name": "slug",
+          "type": "hidden"
+        }
+      ],
+      "inline_defines_nextStep": false,
+      "nextStep_buttons": 0,
+      "calendar_birth_exists": true,
+      "script_references_calendar_birth": true,
+      "measurement_labels_associated": 0
+    },
+    {
+      "route": "/tu-19-tuoi",
+      "status": 200,
+      "final_url": "http://dinhduong.test/tu-19-tuoi",
+      "html_characters": 80021,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [
+        {
+          "line": 647,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              189
+            ],
+            [
+              "div",
+              190
+            ],
+            [
+              "section",
+              191
+            ]
+          ]
+        },
+        {
+          "line": 649,
+          "close": "section",
+          "open_stack": []
+        },
+        {
+          "line": 650,
+          "close": "div",
+          "open_stack": []
+        },
+        {
+          "line": 651,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "unclosed_structural_tags": [],
+      "html_lang": null,
+      "form_fields": [
+        {
+          "name": "thumb",
+          "id": "avatar-input",
+          "type": "file"
+        },
+        {
+          "name": "fullname",
+          "id": "last-name",
+          "type": "text"
+        },
+        {
+          "name": "id_number",
+          "id": "id_number",
+          "type": "text"
+        },
+        {
+          "name": "phone",
+          "id": "phone",
+          "type": "number",
+          "maxlength": "11",
+          "minlength": "10"
+        },
+        {
+          "name": "gender",
+          "id": "gender"
+        },
+        {
+          "name": "ethnic_id",
+          "id": "ethnic_id"
+        },
+        {
+          "name": "cal_date",
+          "id": "cal-date",
+          "type": "text"
+        },
+        {
+          "name": "address",
+          "id": "address",
+          "type": "text"
+        },
+        {
+          "name": "province_code",
+          "id": "province_code"
+        },
+        {
+          "name": "ward_code",
+          "id": "ward_code"
+        },
+        {
+          "name": "weight",
+          "id": "weight-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "id": "length-user-profile",
+          "type": "number"
+        },
+        {
+          "name": "age_show",
+          "id": "age_show",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "age",
+          "id": "age",
+          "type": "hidden",
+          "readonly": ""
+        },
+        {
+          "name": "realAge",
+          "id": "real-age",
+          "type": "hidden"
+        },
+        {
+          "name": "bmi",
+          "id": "bmi-user-profile",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "category",
+          "id": "category-user-profile",
+          "type": "hidden"
+        },
+        {
+          "name": "slug",
+          "type": "hidden"
+        }
+      ],
+      "inline_defines_nextStep": false,
+      "nextStep_buttons": 0,
+      "calendar_birth_exists": false,
+      "script_references_calendar_birth": true,
+      "measurement_labels_associated": 0
+    },
+    {
+      "route": "/wizard",
+      "status": 200,
+      "final_url": "http://dinhduong.test/wizard",
+      "html_characters": 39102,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [],
+      "unclosed_structural_tags": [],
+      "html_lang": null,
+      "form_fields": [
+        {
+          "name": "fullname",
+          "id": "fullname",
+          "type": "text"
+        },
+        {
+          "name": "date_of_birth",
+          "id": "date_of_birth",
+          "type": "date"
+        },
+        {
+          "name": "gender",
+          "id": "gender"
+        },
+        {
+          "name": "ethnic_id",
+          "id": "ethnic_id"
+        },
+        {
+          "name": "phone",
+          "id": "phone",
+          "type": "tel"
+        },
+        {
+          "name": "id_number",
+          "id": "id_number",
+          "type": "text"
+        },
+        {
+          "name": "address",
+          "id": "address",
+          "type": "text"
+        },
+        {
+          "name": "province_code",
+          "id": "province_code"
+        },
+        {
+          "name": "ward_code",
+          "id": "ward_code"
+        },
+        {
+          "name": "weight",
+          "id": "weight",
+          "type": "number"
+        },
+        {
+          "name": "height",
+          "id": "height",
+          "type": "number"
+        },
+        {
+          "name": "age_show",
+          "id": "age_show",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "bmi",
+          "id": "bmi",
+          "type": "text",
+          "readonly": ""
+        },
+        {
+          "name": "age",
+          "id": "age",
+          "type": "hidden"
+        },
+        {
+          "name": "birth_weight",
+          "id": "birth_weight",
+          "type": "number"
+        },
+        {
+          "name": "gestational_age",
+          "id": "gestational_age"
+        },
+        {
+          "name": "birth_weight_category",
+          "id": "birth_weight_category",
+          "type": "text",
+          "readonly": ""
+        }
+      ],
+      "inline_defines_nextStep": false,
+      "nextStep_buttons": 2,
+      "calendar_birth_exists": false,
+      "script_references_calendar_birth": false,
+      "measurement_labels_associated": 0
+    },
+    {
+      "route": "/admin",
+      "status": 200,
+      "final_url": "http://dinhduong.test/admin/auth/login",
+      "html_characters": 6268,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [],
+      "unclosed_structural_tags": [],
+      "html_lang": "en"
+    },
+    {
+      "route": "/admin/auth/login",
+      "status": 200,
+      "final_url": "http://dinhduong.test/admin/auth/login",
+      "html_characters": 6268,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [],
+      "unclosed_structural_tags": [],
+      "html_lang": "en"
+    },
+    {
+      "route": "/auth/login",
+      "status": 500,
+      "error_title": "View [auth.login] not found."
+    },
+    {
+      "route": "/admin/dashboard/statistics",
+      "status": 500,
+      "error_title": "Call to a member function hasRole() on null"
+    },
+    {
+      "route": "/who-statistics.php",
+      "status": 200,
+      "final_url": "http://dinhduong.test/who-statistics.php",
+      "html_characters": 55943,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [],
+      "unclosed_structural_tags": [],
+      "html_lang": "vi"
+    },
+    {
+      "route": "/kythuatcando.php",
+      "status": 200,
+      "final_url": "http://dinhduong.test/kythuatcando.php",
+      "html_characters": 37699,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [
+        {
+          "line": 914,
+          "close": "section",
+          "open_stack": [
+            [
+              "div",
+              652
+            ],
+            [
+              "div",
+              658
+            ],
+            [
+              "main",
+              668
+            ],
+            [
+              "div",
+              813
+            ]
+          ]
+        }
+      ],
+      "unclosed_structural_tags": [],
+      "html_lang": "vi"
+    },
+    {
+      "route": "/huong-dan-danh-gia-dinh-duong.html",
+      "status": 200,
+      "final_url": "http://dinhduong.test/huong-dan-danh-gia-dinh-duong.html",
+      "html_characters": 85863,
+      "duplicate_ids": {},
+      "structural_nesting_flags": [],
+      "unclosed_structural_tags": [],
+      "html_lang": "vi"
+    }
+  ],
+  "assets": [
+    {
+      "path": "/admin-assets/css/admin.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/css/bootstrap.min.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/css/icons.min.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/css/style.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/js/app.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/js/jquery-1.12.4.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/js/plugins.init.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/libs/@iconscout/unicons/css/line.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/libs/@mdi/font/css/materialdesignicons.min.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/libs/bootstrap/js/bootstrap.bundle.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/libs/feather-icons/feather.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/libs/simplebar/simplebar.min.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/admin-assets/libs/simplebar/simplebar.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/admin-assets/libs/tiny-slider/tiny-slider.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/uploads/app/logo.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "path": "/web/css/flexbox-grid.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/css/form-clean.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/css/form-tailwind.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/css/modern-layout.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/frontend/css/all.min.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/frontend/images/ava01.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "path": "/web/frontend/js/custom2.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/web/frontend/plugins/datatimepickerbootstrap/bootstrap-datetimepicker.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "path": "/web/frontend/plugins/datatimepickerbootstrap/bootstrap-datetimepicker.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/web/frontend/plugins/datatimepickerbootstrap/moment.min.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/web/js/b47b5bf.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/web/js/bmi-fix.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "/web/js/dia-ban-2026.js",
+      "status": 200,
+      "content_type": "text/javascript"
+    }
+  ],
+  "template_inventory": [
+    {
+      "path": "resources/views/admin/auth/login.blade.php",
+      "lines": 50,
+      "sha256": "acf7f5c4374f69d644454d6edbea6536dfbf2f2a7d5716424ef07a1a6c5d8946",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/index-admin.blade.php",
+      "lines": 75,
+      "sha256": "2cfe11a4ff47450bb4aaea333857d84bbd2016e0f24be4ecf972794f877de6cb",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/index-employee.blade.php",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/index-manager.blade.php",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/bieu-do-theo-nam.blade.php",
+      "lines": 242,
+      "sha256": "d5d4b1b5cc23dbc3a81acd227c73660edd6d44bfcd4154e9859bc519cf007f3c",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/count.blade.php",
+      "lines": 66,
+      "sha256": "54dee9d0f7de0f74c6c5b80ff628844b73c3f22b1c83ea1af72405000746d871",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/dashboard-footer.blade.php",
+      "lines": 7,
+      "sha256": "caba441fc98709daf0e47cfd0ae91c942d4150cd2002bad6f854fac1b78324c4",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/khao-sat-moi.blade.php",
+      "lines": 119,
+      "sha256": "9ea38c0fa7a95dbe45bffdbf9cc2adae39576730419e6d9e7c816ab421969905",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/nhan-su.blade.php",
+      "lines": 81,
+      "sha256": "4ec45cd33c56c79560a56ec24a1c89bd747d0d4faa18199573cdd9482008cc09",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/nhom-nguy-co.blade.php",
+      "lines": 106,
+      "sha256": "167f40fe6aefaf9c70cb633644081403f50445bad23f11a3ffa1ee66bcf3ffb2",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/thong-ke-theo-thang.blade.php",
+      "lines": 64,
+      "sha256": "0369cb8ceb0895f14f77faba3f0b306323f07b54e0b7a8f54a50a366be04d217",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/tuy-le-nguy-co.blade.php",
+      "lines": 59,
+      "sha256": "fb7434025f04814eec452ecfab69d6b6353d116b3abd14c0e76e6c4ae18b7659",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/sections/tuy-le-theo-dan-toc.blade.php",
+      "lines": 64,
+      "sha256": "3b7b5fa45a8aeefbe55ffed74303d7adf7dd1891ac86d17a5f84a9ae8e1e9896",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/statistics-legacy.blade.php",
+      "lines": 2970,
+      "sha256": "4f026cf3fd0fae237f2f23b66d1a98dcc9de4a0ab2247bd152ee47a9cc44a397",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 17,
+      "push_stacks": [
+        "scripts"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/dashboards/statistics.blade.php",
+      "lines": 2929,
+      "sha256": "9b154a17826cdf450a2205423d9dcbe1d2aad20a4c3399ec09c5ccef736fd159",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 17,
+      "push_stacks": [
+        "scripts",
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/errors/403.blade.php",
+      "lines": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/history/index.blade.php",
+      "lines": 217,
+      "sha256": "8c027a7b5bffb9b589f60c10059ebe468b5e63a69494d7c24c8ca49663c481cd",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/alert.blade.php",
+      "lines": 19,
+      "sha256": "8befedb44421bf53090417567ce81c1fbf85214fd1207c827f352932f951c7f4",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/app-full.blade.php",
+      "lines": 98,
+      "sha256": "5bea6908a97c2b249e77ea4cb5d022f1d1bfd805290c8d06308af0c66593cf23",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "head",
+        "foot"
+      ]
+    },
+    {
+      "path": "resources/views/admin/layouts/app-single.blade.php",
+      "lines": 35,
+      "sha256": "115adfd9042230d7d05dc2f9b76e5094126e0790b71d40d65566d65136c9ee3f",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "head",
+        "foot"
+      ]
+    },
+    {
+      "path": "resources/views/admin/layouts/footer.blade.php",
+      "lines": 12,
+      "sha256": "4819990df02483ea044f2904fd1c157c4a114aac14899e2d1ed1720fb9eeb37e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/head.blade.php",
+      "lines": 26,
+      "sha256": "ae3b62e6e8699755c8c2ba3e50ef9c015078148eb6e5f3b7f78bd28ec1e25e0d",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/header.blade.php",
+      "lines": 43,
+      "sha256": "ba3f701c31a8cff9a6053ea1e17b428694263631b69a8f0be9a04c5f4bd860ff",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/modal.blade.php",
+      "lines": 20,
+      "sha256": "97091855ac99c64f046e6543213afdaf953bd19df29dae33945ee8c080b688f3",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/nav.blade.php",
+      "lines": 95,
+      "sha256": "dbc6993764a8132a2cbd7726894680a24bbdf537a8b6ede5bf8fb358340e5c3e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/layouts/tab-history.blade.php",
+      "lines": 109,
+      "sha256": "8bd4ea1d3d4faabb01f44f04d34ef5aad67462f09f1244f35af9179fb9d5bb59",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/media/index.blade.php",
+      "lines": 17,
+      "sha256": "cc9d61d61280e657ffdbbfecb176b0f1074484e996196f38e29597d08ab26719",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        11
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/partials/dia-ban.blade.php",
+      "lines": 11,
+      "sha256": "67382311bd9f128c19b6e288428657f58e7c90390afb8b0d966024b90a553cce",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/profile/changepassword.blade.php",
+      "lines": 79,
+      "sha256": "d65a7f23c8091a86cf0181723ef5207a97a49316f7b79b54574343689535d848",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/profile/index.blade.php",
+      "lines": 106,
+      "sha256": "6f954f3ab920f021a81b681fb7e87da749a3a3adcc67936f6059f000fe5d57d5",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/setting/advices.blade.php",
+      "lines": 224,
+      "sha256": "458c0e7df57791a609813029ab546d17aff5b45eaa063ccada871d4ffd809a42",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        101
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/setting/index.blade.php",
+      "lines": 326,
+      "sha256": "84be2031122ad63b716dcb85330aad0ee88e5e54eff030e2bb6249dcd161d665",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/setting/sidebar.blade.php",
+      "lines": 29,
+      "sha256": "5c32117cfab3d97c0c615eb63c243a912a08dfdebe5a09ae34a8e13df6a09425",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/setting/zscore_info.blade.php",
+      "lines": 290,
+      "sha256": "1336edf65563e3c8fc476ef9e8995eec0ef5243c46df3cef12a842838deffabc",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/index.blade.php",
+      "lines": 668,
+      "sha256": "444d8188e8ba2539edc473c5ece769b607b141016ccbeb0158c349c094e2ad9e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/partials/cell-details-modal.blade.php",
+      "lines": 329,
+      "sha256": "153dc648b24c2b54916c35733c7e2f84af863145fee67d4b41c9040ed5ad9f5e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/bmi-for-age.blade.php",
+      "lines": 111,
+      "sha256": "5ba259f694e69359e5e15893eaad48df183327cf1f6a42382649df4587fe83dc",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/height-for-age.blade.php",
+      "lines": 515,
+      "sha256": "71835e7a29db3a7fc73ae953b37de243d310e5e3432f2cae24b7f8a01b103321",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/mean-stats.blade.php",
+      "lines": 521,
+      "sha256": "1237f470d5366276d29a4d81c2f939810d2a5bfd953d3d6c43f607cbdf672ddb",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 2,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/partials/who-table.blade.php",
+      "lines": 161,
+      "sha256": "ac2261f3d4a9852d08b5cd548d5540912e90d3f38acbd7f6d91a6223b39737ed",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/weight-for-age.blade.php",
+      "lines": 502,
+      "sha256": "981a9ba9a3fe1d6975bd63719d9cb7d57e698d964200b469e83d0fd8e19b9cc6",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/weight-for-height.blade.php",
+      "lines": 589,
+      "sha256": "cd34e88f363678511f0ad7353c7af3fd3e1d436c065735276d954686cbf5a741",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/statistics/tabs/who-combined.blade.php",
+      "lines": 509,
+      "sha256": "54f58add6a17f5cf9c43f7c7b797036fe45188c9c134f28e170487c299d1b80e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/bmi-for-age.blade.php",
+      "lines": 58,
+      "sha256": "8ef720c95085bf961a9b7536ab2eb04d6cd2a8da3852afc59e413546e58f98e8",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/height-for-age.blade.php",
+      "lines": 59,
+      "sha256": "53482e0e2e7e897272c5e8d8a8e26ae4197ac6862c1534850e3f8e6b66cffb91",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/index.blade.php",
+      "lines": 72,
+      "sha256": "afe1bedd977124f979cb3289ffdcf64dc7b7f04e9cfa97414985594efa9d7bfe",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "head"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/script.blade.php",
+      "lines": 142,
+      "sha256": "c94d6e9a510941e9ec3b4ca2ecf05548e614e2b48789bbe8ebd1786a3224edb5",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/tabs.blade.php",
+      "lines": 99,
+      "sha256": "cf116164caa7eab8e972faba55da95e6e3f1422c9afdb86ced0da040598f607a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/weight-for-age.blade.php",
+      "lines": 60,
+      "sha256": "4b5f73b662daa305f362e74c1dac88a66851b78218f4dcc8ebd93eea12cde242",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/type/weight-for-height.blade.php",
+      "lines": 57,
+      "sha256": "089c518585f4155aede611e22028837f8b7ec576577e38269a74af4563e89b38",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/create.blade.php",
+      "lines": 171,
+      "sha256": "5a4c5b99b6d9a08457bd10c4ab325594e6777ebc79766425faaf1aff184428bf",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/edit.blade.php",
+      "lines": 172,
+      "sha256": "f8f490bac99cdb1fd103186622ef0f436950d57694e0f1714f7a09b4c0dba434",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/index.blade.php",
+      "lines": 60,
+      "sha256": "920b403adb6316e5d948ab1eeb7e77ae359171525b6f43243c4d7eda6890055e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/show-detail.blade.php",
+      "lines": 51,
+      "sha256": "bbf76d75891a7bb0f91473737b8a9e8066ed471d02b2ebd72f46cf933b0b5bc6",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/show-history.blade.php",
+      "lines": 8,
+      "sha256": "74ca05ad6eebcf20deedf9f3b27504608bc7d71b19b498920acd19f5abc3ac1e",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/show-users.blade.php",
+      "lines": 121,
+      "sha256": "cd2c4e4ece1066503095f65200e4277c018ed7e34aab635918b9e7a9f4199393",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/show.blade.php",
+      "lines": 31,
+      "sha256": "ecf0ff8efcfe9da904d09e7c86e86e95a2c0db9941542a06ef02c26283edc02a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/table.blade.php",
+      "lines": 88,
+      "sha256": "81bd49d09f60ef087bfb3af606fbffd312792b6f46c39e15032b1bdd0b980602",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/units/tabs.blade.php",
+      "lines": 26,
+      "sha256": "7cabe7f3bd05a0f97263c793ec09c5ad6f3c0d1f557e973fa6cb5324c5ef2ea0",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/create.blade.php",
+      "lines": 214,
+      "sha256": "07ac172bf52cd4b5afa302895104e2f58c6b26ade5d57cca2d27edcdaa85dcbf",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/edit.blade.php",
+      "lines": 199,
+      "sha256": "c3bd6db6b05bd190f750ff47e3a91fccab4e451c3088601a7f4c826c3c55ec85",
+      "scope": "application",
+      "hidden_lg_only_lines": [
+        10
+      ],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/index.blade.php",
+      "lines": 185,
+      "sha256": "75b455821d375c9846c16ec28dee700d06e0ab95aa47f3c9f6cf463e28bfeea0",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/show-detail.blade.php",
+      "lines": 83,
+      "sha256": "9c5badc694422ac46dfe184af7dfb6e3bbdb5ec850deb562d279f7cc7c72448b",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/show-history.blade.php",
+      "lines": 8,
+      "sha256": "5dcdb0d8414d9fe50bb6b8bdc50da836c5269824d81a2b45e81ad39f53270284",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/show-roles.blade.php",
+      "lines": 158,
+      "sha256": "d06614b4ad69347352e4632cfbb53e419e4d4e5015cd108d5ccf9e586a9e97b3",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/show-update-password.blade.php",
+      "lines": 61,
+      "sha256": "c1640762b5078b3f3b897839d4570a2dbbd19c0f3fbd74ae5b6a3be6e7731f02",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/show.blade.php",
+      "lines": 31,
+      "sha256": "0cc55c319b5e5236248e83ad87ecc135804d52ff439dfe38168347ce0227a503",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/table-detail.blade.php",
+      "lines": 84,
+      "sha256": "b80bf669fbcfed96976a5e421b9715bc07b809a889a41c29064c5000426ef8ad",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 1,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/admin/users/tabs.blade.php",
+      "lines": 30,
+      "sha256": "077592ae93344dd96a46da629902ccd0064ae9e8d1eac368597fd52b876f9dfb",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/backup/tu-0-5-tuoi.blade.php",
+      "lines": 625,
+      "sha256": "80ec16c5a138d4b0015d858b3d6000839420a534267027d684aa582af78a33a1",
+      "scope": "backup",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/backup/tu-19-tuoi.blade.php",
+      "lines": 618,
+      "sha256": "46dfdf5c3b6972d9064a9ef7f7ce5dcb67a0ff839546b710fe72d232ab275027",
+      "scope": "backup",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/backup/tu-5-19-tuoi.blade.php",
+      "lines": 637,
+      "sha256": "c428b57b325aeccd14cacf2d58821526e046f12cb4181d5b0dc6ede7dba514bd",
+      "scope": "backup",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/errors/404.blade.php",
+      "lines": 62,
+      "sha256": "4f1aca2450ca3509ddf82d6565deb22e4dec9638a669d1411e2c1be175b3ae99",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/form-wizard.blade.php",
+      "lines": 493,
+      "sha256": "4f42741981fcb05c76471d1304144e5d500c2da95b56edb7e6800c4180b8e9a2",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "scripts",
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/form.blade.php",
+      "lines": 1081,
+      "sha256": "51908fc9596d9d9a5f49df540d388277acf90fd2ac48f8fe633a1688e339112a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-24-thang.blade.php",
+      "lines": 125,
+      "sha256": "71b9a3f8d437505e5025de03038abbe80f306b495484038463cd9d297af76feb",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-5-19.blade.php",
+      "lines": 1206,
+      "sha256": "b9835d209d56465f9852e8572b85a5abb09438e3707868e5e45f927bf7f978f7",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-backup-2.blade.php",
+      "lines": 786,
+      "sha256": "e0d7645dd962a2d4358c46fc2f684bf12b6eb28d97571b1444bd23c1fde23a2e",
+      "scope": "backup",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-backup.blade.php",
+      "lines": 1324,
+      "sha256": "2aee6a5fab228edf36ab89514a2a3c99f6899cd906dc7b57762d3e08302b90d5",
+      "scope": "backup",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-mau.blade.php",
+      "lines": 162,
+      "sha256": "35d4c544676c4c1e0813c0c92207f6e64340e1c5ef13aa334c81258909c0076a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in-tren-19.blade.php",
+      "lines": 548,
+      "sha256": "177673d10c7e5801899c7af624a3d5b4ba64f056b1fbe803097654c71cc0013a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/in.blade.php",
+      "lines": 761,
+      "sha256": "644813f8cbe70c682d489a6f28df964ace73f9f25281c2ff092aa0d6a72ac3c6",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "foot"
+      ]
+    },
+    {
+      "path": "resources/views/ketqua.blade.php",
+      "lines": 2136,
+      "sha256": "2eb8032f58122e8f2796c0bca623f0fe777d8d6d6cb06af56de758ebc932c16d",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [
+        "head",
+        "foot"
+      ],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/layouts/alert.blade.php",
+      "lines": 16,
+      "sha256": "4f10136f76de6440f3a0f485fa739839286ab39c8a81cbc557d476d2fa1651e9",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/layouts/app.blade.php",
+      "lines": 3,
+      "sha256": "1102f3f7ffd29c5523dc57eaca3d72c99e7f9eec9683441c7569643da6cb21e3",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/layouts/footer.blade.php",
+      "lines": 189,
+      "sha256": "0a4e9c73bf4cbd6fc46b59db783f89197e128b230473c2aa47240a236617ef1c",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "foot"
+      ]
+    },
+    {
+      "path": "resources/views/layouts/frontend-header.blade.php",
+      "lines": 201,
+      "sha256": "5235fab5b2c5de86dae2853165a9eba303d85a874b8af4de70edd70ffefba395",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "head"
+      ]
+    },
+    {
+      "path": "resources/views/layouts/header.blade.php",
+      "lines": 130,
+      "sha256": "39f0901bbf809ec72f24a92289b38e58ee842efe98d0c3ff83a804b493dc38b5",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": [
+        "head"
+      ]
+    },
+    {
+      "path": "resources/views/layouts/siderbar-old.blade.php",
+      "lines": 44,
+      "sha256": "0f9b328e446aea4992cd4732a39ea4e2461c026ef2f0a0aaeeb5e3af1dbed04a",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/Chart-BMIForAge.blade.php",
+      "lines": 151,
+      "sha256": "a4b912f146110ddb1353a9d7f7760b475305c6255fa4abd355de19692a7417db",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/Chart-HeightForAge.blade.php",
+      "lines": 161,
+      "sha256": "5738ba17aaf9ba3b772b53d1c49e4e663f919c74190be35f44093743c144000f",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/Chart-WeightForAge.blade.php",
+      "lines": 161,
+      "sha256": "8cd2ee3505db06ae2736558f26189b429305e1085b0c750440734f90dae4392f",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/Chart-WeightForHeight.blade.php",
+      "lines": 158,
+      "sha256": "fabba71df833cb2836ee1125bffd1e59e62695e5e97113985ca20f8b6ed612a1",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/form-avatar.blade.php",
+      "lines": 43,
+      "sha256": "90b437f9d16e0b8ca9c58b76e033a8a3d28d7a53e8739e9b081b13e8959f12ea",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/form-heading.blade.php",
+      "lines": 27,
+      "sha256": "bf4c489541cf9d29a165aa8fd24c093a64f58dcbcc7eef1eea095b80d4ccc473",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/sections/in-style.blade.php",
+      "lines": 362,
+      "sha256": "025dd5375db3888e31118db311de27139418025b7f19593e88e213e728ea9cfb",
+      "scope": "application",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/crop.blade.php",
+      "lines": 104,
+      "sha256": "a8f545a3abc922cf956227cc7c5efdcdac7c8da0446c702e194b230b81b57f59",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/demo.blade.php",
+      "lines": 213,
+      "sha256": "22f96fd394812fe4a9d5be5638dbf2371cdd87564f2aaa67d2a5ed75d70b79c9",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/index.blade.php",
+      "lines": 320,
+      "sha256": "a9ac4c60e1c4dfe21d2b95bf5db8f8e1192cdb5983561f4ffa7d13a7db5f448d",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/move.blade.php",
+      "lines": 40,
+      "sha256": "0ec83b13511e0efa52f7ff22d23476e9fce92262e35197de5759af25a074e220",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/resize.blade.php",
+      "lines": 132,
+      "sha256": "7db03a6149ddf1f1af712bee8e3885935b5c591ba070302008ec3aef6648213c",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/tree.blade.php",
+      "lines": 16,
+      "sha256": "4eb81b63163c2a30b68a17549febd56adfd66417a58ed1d0022ad3e265427878",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    },
+    {
+      "path": "resources/views/vendor/laravel-filemanager/use.blade.php",
+      "lines": 16,
+      "sha256": "372da0435c3b234f64ea1704eee86239f745de52c497692cdc030f129a669ed2",
+      "scope": "vendor",
+      "hidden_lg_only_lines": [],
+      "table_responsive_count": 0,
+      "push_stacks": [],
+      "render_stacks": []
+    }
+  ],
+  "source_checks": [
+    {
+      "path": "resources/views/form.blade.php",
+      "structural_nesting_flags": [
+        {
+          "line": 437,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              4
+            ],
+            [
+              "div",
+              5
+            ],
+            [
+              "section",
+              6
+            ]
+          ]
+        },
+        {
+          "line": 439,
+          "close": "section",
+          "open_stack": []
+        },
+        {
+          "line": 440,
+          "close": "div",
+          "open_stack": []
+        },
+        {
+          "line": 441,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "warning": "Source-level heuristic; inspect Blade branches before treating a flag as a defect"
+    },
+    {
+      "path": "resources/views/form-wizard.blade.php",
+      "structural_nesting_flags": [],
+      "warning": "Source-level heuristic; inspect Blade branches before treating a flag as a defect"
+    },
+    {
+      "path": "resources/views/admin/dashboards/index-admin.blade.php",
+      "structural_nesting_flags": [
+        {
+          "line": 50,
+          "close": "form",
+          "open_stack": [
+            [
+              "div",
+              1
+            ],
+            [
+              "div",
+              2
+            ],
+            [
+              "form",
+              4
+            ],
+            [
+              "div",
+              5
+            ]
+          ]
+        },
+        {
+          "line": 65,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "warning": "Source-level heuristic; inspect Blade branches before treating a flag as a defect"
+    },
+    {
+      "path": "resources/views/admin/users/create.blade.php",
+      "structural_nesting_flags": [
+        {
+          "line": 194,
+          "close": "div",
+          "open_stack": [
+            [
+              "div",
+              10
+            ],
+            [
+              "div",
+              11
+            ],
+            [
+              "div",
+              13
+            ],
+            [
+              "form",
+              15
+            ]
+          ]
+        },
+        {
+          "line": 200,
+          "close": "form",
+          "open_stack": [
+            [
+              "div",
+              8
+            ],
+            [
+              "div",
+              9
+            ],
+            [
+              "div",
+              10
+            ],
+            [
+              "div",
+              11
+            ]
+          ]
+        },
+        {
+          "line": 206,
+          "close": "div",
+          "open_stack": []
+        }
+      ],
+      "warning": "Source-level heuristic; inspect Blade branches before treating a flag as a defect"
+    },
+    {
+      "path": "public/kythuatcando.php",
+      "structural_nesting_flags": [
+        {
+          "line": 914,
+          "close": "section",
+          "open_stack": [
+            [
+              "div",
+              652
+            ],
+            [
+              "div",
+              658
+            ],
+            [
+              "main",
+              668
+            ],
+            [
+              "div",
+              813
+            ]
+          ]
+        }
+      ],
+      "warning": "Source-level heuristic; inspect Blade branches before treating a flag as a defect"
+    }
+  ],
+  "source_manifest": [
+    {
+      "path": "routes/web.php",
+      "sha256": "6d4e8861fa7dc61459e86f0365068558668b753c140414ab76087f4be60f2860"
+    },
+    {
+      "path": "routes/admin.php",
+      "sha256": "ba18164ee4ddbaf3b407e715ce7bbfc4466e9f5fd8b534f64c0ace29f0b2fad0"
+    },
+    {
+      "path": "app/Http/Controllers/WebController.php",
+      "sha256": "081bf02dea06b4fb17b68f203a28bd05477185fbcf4f001857c512b659451971"
+    },
+    {
+      "path": "public/web/css/form-clean.css",
+      "sha256": "2585e56a1185a112b808ab6a0a0ceec9979c3d28072f1983bddc8c23a004b355"
+    },
+    {
+      "path": "public/web/css/modern-layout.css",
+      "sha256": "3a5c304c7a3988ab87549a5df6e150a48de0566213e5d56696fc0b86772c4c6a"
+    },
+    {
+      "path": "public/web/css/flexbox-grid.css",
+      "sha256": "924a3d5369345439fe8c5dc2c0f2577f51662b37f860a34b19a22c173769190f"
+    },
+    {
+      "path": "public/admin-assets/css/admin.css",
+      "sha256": "2a997de673767dbaf8e4dfae5118507c22fd8b09f510135a56ce0562380a1fb7"
+    }
+  ]
+}

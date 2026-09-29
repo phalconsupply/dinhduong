@@ -86,25 +86,17 @@
                                             <label><i class="fas fa-weight"></i> Cân nặng</label>
                                             <p class="info-value">
                                                 <strong>{{$row->weight}} kg</strong><br>
-                                                @php
-                                                    $wfa = $row->WeightForAge();
-                                                    $wfh = $row->WeightForHeight();
-                                                    $median_wfa = is_array($wfa) ? ($wfa['Median'] ?? null) : ($wfa->Median ?? null);
-                                                    $median_wfh = is_array($wfh) ? ($wfh['Median'] ?? null) : ($wfh->Median ?? null);
-                                                @endphp
-                                                <small>Chuẩn theo tuổi: {{ $median_wfa ? round($median_wfa, 1) : 'N/A' }} kg</small><br>
-                                                <small>Chuẩn theo chiều cao: {{ $median_wfh ? round($median_wfh, 1) : 'N/A' }} kg</small>
+                                                {{-- Trung vị M của đúng bộ LMS đã dùng tính Z-score --}}
+                                                @php $trungVi = $row->trungViChuan(); @endphp
+                                                @isset($trungVi['wfa'])<small>Chuẩn theo tuổi: {{ round($trungVi['wfa'], 1) }} kg</small><br>@endisset
+                                                @isset($trungVi['wfh'])<small>Chuẩn theo chiều cao: {{ round($trungVi['wfh'], 1) }} kg</small>@endisset
                                             </p>
                                         </div>
                                         <div class="info-item">
                                             <label><i class="fas fa-ruler-vertical"></i> Chiều cao</label>
                                             <p class="info-value">
                                                 <strong>{{$row->height}} cm</strong><br>
-                                                @php
-                                                    $hfa = $row->HeightForAge();
-                                                    $median_hfa = is_array($hfa) ? ($hfa['Median'] ?? null) : ($hfa->Median ?? null);
-                                                @endphp
-                                                <small>Chuẩn theo tuổi: {{ $median_hfa ? round($median_hfa, 1) : 'N/A' }} cm</small>
+                                                @isset($trungVi['hfa'])<small>Chuẩn theo tuổi: {{ round($trungVi['hfa'], 1) }} cm</small>@endisset
                                             </p>
                                         </div>
                                     </div>
@@ -138,9 +130,9 @@
                                 ? 'WHO Reference 2007 — 5 đến 19 tuổi'
                                 : 'WHO Child Growth Standards 2006 — 0 đến 5 tuổi';
 
-                            // Đường chuẩn biểu đồ cho 5-19 sinh từ LMS trong DB;
-                            // 0-5 vẫn dùng mảng toạ độ sẵn có trong file này.
-                            $duongChuan519 = $la_5_19 ? $row->getWho2007ChartSeries() : null;
+                            // Biểu đồ: đường chuẩn sinh từ bộ LMS trong DB theo giới tính,
+                            // dùng chung với bản in (sections.bieu-do-who)
+                            $bieuDoWho = $row->getWhoChartSeries();
                         @endphp
 
                         <!-- BLOCK 2: Nutrition Status Summary -->
@@ -460,6 +452,7 @@
                             <div class="card-body">
                                 <div class="charts-grid">
                                     <!-- Chart 1: Height for Age -->
+                                    @if(isset($bieuDoWho['hfa']))
                                     <div class="chart-item" data-chart="heightForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-ruler-vertical"></i> Chiều cao theo tuổi</h4>
@@ -468,12 +461,13 @@
                                             </button>
                                         </div>
                                         <div class="chart-wrapper">
-                                            <canvas id="chartHeightForAge" style="width: 100%; height: 100%;"></canvas>
+                                            <canvas id="chartHeightForAge" data-who-chart="hfa" style="width: 100%; height: 100%;"></canvas>
                                         </div>
                                     </div>
+                                    @endif
 
                                     <!-- Chart 2: Weight for Age -->
-                                    @if($hien_can_nang_tuoi)
+                                    @if(isset($bieuDoWho['wfa']))
                                     <div class="chart-item" data-chart="weightForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-weight"></i> Cân nặng theo tuổi</h4>
@@ -482,14 +476,14 @@
                                             </button>
                                         </div>
                                         <div class="chart-wrapper">
-                                            <canvas id="chartWeightForAge" style="width: 100%; height: 100%;"></canvas>
+                                            <canvas id="chartWeightForAge" data-who-chart="wfa" style="width: 100%; height: 100%;"></canvas>
                                         </div>
                                     </div>
 
                                     @endif
 
                                     <!-- Chart 3: Weight for Height -->
-                                    @if($hien_can_nang_chieu_cao)
+                                    @if(isset($bieuDoWho['wfh']))
                                     <div class="chart-item" data-chart="weightForHeight">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-balance-scale"></i> Cân nặng theo chiều cao</h4>
@@ -498,13 +492,14 @@
                                             </button>
                                         </div>
                                         <div class="chart-wrapper">
-                                            <canvas id="chartWeightForHeight" style="width: 100%; height: 100%;"></canvas>
+                                            <canvas id="chartWeightForHeight" data-who-chart="wfh" style="width: 100%; height: 100%;"></canvas>
                                         </div>
                                     </div>
 
                                     @endif
 
                                     <!-- Chart 4: BMI for Age -->
+                                    @if(isset($bieuDoWho['bmi']))
                                     <div class="chart-item" data-chart="bmiForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-calculator"></i> BMI theo tuổi</h4>
@@ -513,9 +508,10 @@
                                             </button>
                                         </div>
                                         <div class="chart-wrapper">
-                                            <canvas id="chartBMIForAge" style="width: 100%; height: 100%;"></canvas>
+                                            <canvas id="chartBMIForAge" data-who-chart="bmi" style="width: 100%; height: 100%;"></canvas>
                                         </div>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -1413,562 +1409,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
+    @include('sections.bieu-do-who', ['bieuDo' => $bieuDoWho ?? null])
+
     <script>
-        // Render WHO Growth Charts
-        (function() {
-            const month = {{ $row->age ?? 0 }};
-            const height = {{ $row->height ?? 0 }};
-            const weight = {{ $row->weight ?? 0 }};
-            const bmi = {{ $row->bmi ?? 0 }};
-            const gender = {{ $row->gender ?? 1 }};
-            const genderText = gender == 1 ? 'trai' : 'gái';
-
-            // Đường chuẩn 5-19 tuổi, sinh từ bộ LMS trong DB (null nếu là hồ sơ 0-5)
-            const duongChuan519 = @json($duongChuan519 ?? null);
-
-            // Các biểu đồ 0-5 dùng mảng toạ độ hard-code sẵn trong file này.
-            // Với hồ sơ 5-19 thì thay bằng đường chuẩn thật của WHO Reference 2007.
-            function chonDataset(chiSo, macDinh, x, y, nhanDiem, yMin, yMax) {
-                if (!duongChuan519 || !duongChuan519[chiSo]) {
-                    return macDinh;
-                }
-
-                const mau = {
-                    '3SD': 'black', '2SD': '#93372E', '1SD': '#93372E',
-                    'Median': '#46AF4E',
-                    '-1SD': '#C81F1F', '-2SD': '#C81F1F', '-3SD': '#564747'
-                };
-                const nhan = {
-                    '3SD': '+3SD', '2SD': '+2SD', '1SD': '+1SD', 'Median': 'Median',
-                    '-1SD': '-1SD', '-2SD': '-2SD', '-3SD': '-3SD'
-                };
-
-                const bo = [];
-                ['3SD', '2SD', '1SD', 'Median', '-1SD', '-2SD', '-3SD'].forEach(function(k) {
-                    if (!duongChuan519[chiSo].series[k]) {
-                        return;
-                    }
-                    bo.push({
-                        label: nhan[k],
-                        data: duongChuan519[chiSo].series[k],
-                        borderColor: mau[k],
-                        borderWidth: k === 'Median' ? 2 : 1.5,
-                        fill: false,
-                        pointRadius: 0
-                    });
-                });
-
-                bo.push({
-                    label: nhanDiem,
-                    data: [{x: x, y: y}],
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 6,
-                    type: 'scatter'
-                });
-                bo.push({
-                    label: 'Đường dọc',
-                    data: [{x: x, y: yMin}, {x: x, y: yMax}],
-                    borderColor: 'red', borderDash: [5, 5], borderWidth: 1,
-                    fill: false, pointRadius: 0
-                });
-                bo.push({
-                    label: 'Đường ngang',
-                    data: [{x: duongChuan519[chiSo].x_min, y: y}, {x: duongChuan519[chiSo].x_max, y: y}],
-                    borderColor: 'red', borderDash: [5, 5], borderWidth: 1,
-                    fill: false, pointRadius: 0
-                });
-
-                return bo;
-            }
-
-            // Truc toa do cung phai doi theo ho so: 0-5 ve 0-60 thang,
-            // 5-19 ve theo dai tuoi that cua chuan 2007.
-            function gioiHanTruc(chiSo, khoa, macDinh) {
-                if (!duongChuan519 || !duongChuan519[chiSo]) {
-                    return macDinh;
-                }
-                return duongChuan519[chiSo][khoa];
-            }
-
-            // Chart 1: Height for Age
-            const heightForAgeData = [
-                {
-                    label: '+3SD',
-                    data: [{x:0,y:55.6},{x:12,y:82.9},{x:24,y:97},{x:36,y:107.2},{x:48,y:115.9},{x:60,y:123.9}],
-                    borderColor: 'black',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '+2SD',
-                    data: [{x:0,y:53.7},{x:12,y:80.5},{x:24,y:93.9},{x:36,y:103.5},{x:48,y:111.7},{x:60,y:119.2}],
-                    borderColor: '#93372E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Median',
-                    data: [{x:0,y:49.9},{x:12,y:75.7},{x:24,y:87.8},{x:36,y:96.1},{x:48,y:103.3},{x:60,y:110}],
-                    borderColor: '#46AF4E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-2SD',
-                    data: [{x:0,y:46.1},{x:12,y:71},{x:24,y:81.7},{x:36,y:88.7},{x:48,y:94.9},{x:60,y:100.7}],
-                    borderColor: '#C81F1F',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-3SD',
-                    data: [{x:0,y:44.2},{x:12,y:68.6},{x:24,y:78.7},{x:36,y:85},{x:48,y:90.7},{x:60,y:96.1}],
-                    borderColor: '#564747',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Chiều cao hiện tại',
-                    data: [{x: month, y: height}],
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 6,
-                    type: 'scatter'
-                },
-                {
-                    label: 'Đường dọc',
-                    data: [{x: month, y: 40}, {x: month, y: 130}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Đường ngang',
-                    data: [{x: 0, y: height}, {x: 60, y: height}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                }
-            ];
-
-            window.chartHeightForAge = new Chart(document.getElementById('chartHeightForAge'), {
-                type: 'line',
-                data: { datasets: chonDataset('hfa', heightForAgeData, month, height, 'Chiều cao hiện tại', 40, 200) },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { right: 60 } },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Chiều cao theo tuổi (bé ' + genderText + ')',
-                            font: { size: 12 }
-                        },
-                        legend: { display: false },
-                        tooltip: { mode: 'nearest' }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            min: gioiHanTruc('hfa', 'x_min', 0),
-                            max: gioiHanTruc('hfa', 'x_max', 60),
-                            title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            min: duongChuan519 ? 90 : 40,
-                            max: duongChuan519 ? 200 : 130,
-                            title: { display: true, text: 'Chiều cao (cm)', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#e3e3e3' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                },
-                plugins: [{
-                    id: 'customRightLabels',
-                    afterDraw(chart) {
-                        const {ctx, chartArea: {right}, scales: {y}} = chart;
-                        ctx.save();
-                        ctx.font = '10px sans-serif';
-                        ctx.textAlign = 'left';
-                        chart.data.datasets.slice(0, 5).forEach(ds => {
-                            const point = ds.data.find(p => p.x === 60);
-                            if (!point) return;
-                            const yPos = y.getPixelForValue(point.y);
-                            ctx.fillStyle = ds.borderColor || '#222';
-                            ctx.fillText(ds.label, right + 5, yPos + 4);
-                        });
-                        ctx.restore();
-                    }
-                }]
-            });
-
-            // Chart 2: Weight for Age
-            const weightForAgeData = [
-                {
-                    label: '+3SD',
-                    data: [{x:0,y:5.1},{x:12,y:12.4},{x:24,y:15.3},{x:36,y:17.8},{x:48,y:20.3},{x:60,y:22.9}],
-                    borderColor: 'black',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '+2SD',
-                    data: [{x:0,y:4.4},{x:12,y:11.3},{x:24,y:14},{x:36,y:16.2},{x:48,y:18.3},{x:60,y:20.6}],
-                    borderColor: '#93372E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Median',
-                    data: [{x:0,y:3.3},{x:12,y:9.6},{x:24,y:12.2},{x:36,y:14.3},{x:48,y:16.3},{x:60,y:18.3}],
-                    borderColor: '#46AF4E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-2SD',
-                    data: [{x:0,y:2.5},{x:12,y:8.1},{x:24,y:10.5},{x:36,y:12.5},{x:48,y:14.3},{x:60,y:16.1}],
-                    borderColor: '#C81F1F',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-3SD',
-                    data: [{x:0,y:2.1},{x:12,y:7.1},{x:24,y:9.3},{x:36,y:11.1},{x:48,y:12.8},{x:60,y:14.5}],
-                    borderColor: '#564747',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Cân nặng hiện tại',
-                    data: [{x: month, y: weight}],
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 6,
-                    type: 'scatter'
-                },
-                {
-                    label: 'Đường dọc',
-                    data: [{x: month, y: 0}, {x: month, y: 25}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Đường ngang',
-                    data: [{x: 0, y: weight}, {x: 60, y: weight}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                }
-            ];
-
-            window.chartWeightForAge = new Chart(document.getElementById('chartWeightForAge'), {
-                type: 'line',
-                data: { datasets: chonDataset('wfa', weightForAgeData, month, weight, 'Cân nặng hiện tại', 0, 80) },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { right: 60 } },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Cân nặng theo tuổi (bé ' + genderText + ')',
-                            font: { size: 12 }
-                        },
-                        legend: { display: false },
-                        tooltip: { mode: 'nearest' }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            min: gioiHanTruc('wfa', 'x_min', 0),
-                            max: gioiHanTruc('wfa', 'x_max', 60),
-                            title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            min: duongChuan519 ? 10 : 0,
-                            max: duongChuan519 ? 70 : 25,
-                            title: { display: true, text: 'Cân nặng (kg)', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#e3e3e3' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                },
-                plugins: [{
-                    id: 'customRightLabels',
-                    afterDraw(chart) {
-                        const {ctx, chartArea: {right}, scales: {y}} = chart;
-                        ctx.save();
-                        ctx.font = '10px sans-serif';
-                        ctx.textAlign = 'left';
-                        chart.data.datasets.slice(0, 5).forEach(ds => {
-                            const point = ds.data.find(p => p.x === 60);
-                            if (!point) return;
-                            const yPos = y.getPixelForValue(point.y);
-                            ctx.fillStyle = ds.borderColor || '#222';
-                            ctx.fillText(ds.label, right + 5, yPos + 4);
-                        });
-                        ctx.restore();
-                    }
-                }]
-            });
-
-            // Chart 3: Weight for Height
-            const weightForHeightData = [
-                {
-                    label: '+3SD',
-                    data: [{x:45,y:3.2},{x:50,y:4.2},{x:55,y:5.3},{x:60,y:6.5},{x:65,y:7.7},{x:70,y:9.1},{x:75,y:10.5},{x:80,y:12},{x:85,y:13.7},{x:90,y:15.4},{x:95,y:17.2},{x:100,y:19.2},{x:105,y:21.2},{x:110,y:23.4}],
-                    borderColor: 'black',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '+2SD',
-                    data: [{x:45,y:2.9},{x:50,y:3.8},{x:55,y:4.8},{x:60,y:5.9},{x:65,y:7},{x:70,y:8.3},{x:75,y:9.6},{x:80,y:11},{x:85,y:12.5},{x:90,y:14.1},{x:95,y:15.8},{x:100,y:17.6},{x:105,y:19.5},{x:110,y:21.5}],
-                    borderColor: '#93372E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Median',
-                    data: [{x:45,y:2.4},{x:50,y:3.2},{x:55,y:4.1},{x:60,y:5},{x:65,y:6},{x:70,y:7.1},{x:75,y:8.3},{x:80,y:9.6},{x:85,y:10.9},{x:90,y:12.3},{x:95,y:13.8},{x:100,y:15.4},{x:105,y:17.1},{x:110,y:18.9}],
-                    borderColor: '#46AF4E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-2SD',
-                    data: [{x:45,y:2},{x:50,y:2.6},{x:55,y:3.4},{x:60,y:4.2},{x:65,y:5},{x:70,y:5.9},{x:75,y:6.9},{x:80,y:8},{x:85,y:9.2},{x:90,y:10.4},{x:95,y:11.7},{x:100,y:13.1},{x:105,y:14.5},{x:110,y:16.1}],
-                    borderColor: '#C81F1F',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-3SD',
-                    data: [{x:45,y:1.8},{x:50,y:2.3},{x:55,y:3},{x:60,y:3.7},{x:65,y:4.4},{x:70,y:5.2},{x:75,y:6.1},{x:80,y:7.1},{x:85,y:8.2},{x:90,y:9.3},{x:95,y:10.5},{x:100,y:11.8},{x:105,y:13.1},{x:110,y:14.6}],
-                    borderColor: '#564747',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Điểm hiện tại',
-                    data: [{x: height, y: weight}],
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 6,
-                    type: 'scatter'
-                },
-                {
-                    label: 'Đường dọc',
-                    data: [{x: height, y: 0}, {x: height, y: 25}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Đường ngang',
-                    data: [{x: 45, y: weight}, {x: 110, y: weight}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                }
-            ];
-
-            window.chartWeightForHeight = new Chart(document.getElementById('chartWeightForHeight'), {
-                type: 'line',
-                data: { datasets: weightForHeightData },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { right: 60 } },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Cân nặng theo chiều cao (bé ' + genderText + ')',
-                            font: { size: 12 }
-                        },
-                        legend: { display: false },
-                        tooltip: { mode: 'nearest' }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            min: 45,
-                            max: 110,
-                            title: { display: true, text: 'Chiều cao (cm)', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            min: 0,
-                            max: 25,
-                            title: { display: true, text: 'Cân nặng (kg)', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#e3e3e3' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                },
-                plugins: [{
-                    id: 'customRightLabels',
-                    afterDraw(chart) {
-                        const {ctx, chartArea: {right}, scales: {y}} = chart;
-                        ctx.save();
-                        ctx.font = '10px sans-serif';
-                        ctx.textAlign = 'left';
-                        chart.data.datasets.slice(0, 5).forEach(ds => {
-                            const point = ds.data[ds.data.length - 1];
-                            if (!point) return;
-                            const yPos = y.getPixelForValue(point.y);
-                            ctx.fillStyle = ds.borderColor || '#222';
-                            ctx.fillText(ds.label, right + 5, yPos + 4);
-                        });
-                        ctx.restore();
-                    }
-                }]
-            });
-
-            // Chart 4: BMI for Age
-            const bmiForAgeData = [
-                {
-                    label: '+3SD',
-                    data: [{x:0,y:15.3},{x:12,y:18.3},{x:24,y:18.2},{x:36,y:17.8},{x:48,y:17.6},{x:60,y:17.5}],
-                    borderColor: 'black',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '+2SD',
-                    data: [{x:0,y:14.8},{x:12,y:17.5},{x:24,y:17.4},{x:36,y:17},{x:48,y:16.8},{x:60,y:16.7}],
-                    borderColor: '#93372E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'Median',
-                    data: [{x:0,y:13.4},{x:12,y:16.3},{x:24,y:16.2},{x:36,y:15.8},{x:48,y:15.5},{x:60,y:15.3}],
-                    borderColor: '#46AF4E',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-2SD',
-                    data: [{x:0,y:11.9},{x:12,y:15},{x:24,y:14.8},{x:36,y:14.3},{x:48,y:14},{x:60,y:13.7}],
-                    borderColor: '#C81F1F',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: '-3SD',
-                    data: [{x:0,y:11.1},{x:12,y:14.1},{x:24,y:13.9},{x:36,y:13.4},{x:48,y:13},{x:60,y:12.7}],
-                    borderColor: '#564747',
-                    borderWidth: 1.5,
-                    fill: false
-                },
-                {
-                    label: 'BMI hiện tại',
-                    data: [{x: month, y: bmi}],
-                    borderColor: 'red',
-                    backgroundColor: 'red',
-                    pointRadius: 5,
-                    pointHoverRadius: 6,
-                    type: 'scatter'
-                },
-                {
-                    label: 'Đường dọc',
-                    data: [{x: month, y: 10}, {x: month, y: 20}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Đường ngang',
-                    data: [{x: 0, y: bmi}, {x: 60, y: bmi}],
-                    borderColor: 'red',
-                    borderDash: [5, 5],
-                    borderWidth: 1,
-                    fill: false,
-                    pointRadius: 0
-                }
-            ];
-
-            window.chartBMIForAge = new Chart(document.getElementById('chartBMIForAge'), {
-                type: 'line',
-                data: { datasets: chonDataset('bmi', bmiForAgeData, month, bmi, 'BMI hiện tại', 8, 40) },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { right: 60 } },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'BMI theo tuổi (bé ' + genderText + ')',
-                            font: { size: 12 }
-                        },
-                        legend: { display: false },
-                        tooltip: { mode: 'nearest' }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            min: gioiHanTruc('bmi', 'x_min', 0),
-                            max: gioiHanTruc('bmi', 'x_max', 60),
-                            title: { display: true, text: 'Tháng tuổi', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 5 === 0 ? '#f1f1f1' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            min: 10,
-                            max: Math.max(duongChuan519 ? 32 : 20, Math.ceil(bmi + 2)),  // Dải BMI của 5-19 cao hơn 0-5
-                            title: { display: true, text: 'BMI (kg/m²)', font: { size: 11 } },
-                            grid: { color: (ctx) => ctx.tick.value % 1 === 0 ? '#e3e3e3' : '#f6f6f6' },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                },
-                plugins: [{
-                    id: 'customRightLabels',
-                    afterDraw(chart) {
-                        const {ctx, chartArea: {right}, scales: {y}} = chart;
-                        ctx.save();
-                        ctx.font = '10px sans-serif';
-                        ctx.textAlign = 'left';
-                        chart.data.datasets.slice(0, 5).forEach(ds => {
-                            const point = ds.data.find(p => p.x === 60);
-                            if (!point) return;
-                            const yPos = y.getPixelForValue(point.y);
-                            ctx.fillStyle = ds.borderColor || '#222';
-                            ctx.fillText(ds.label, right + 5, yPos + 4);
-                        });
-                        ctx.restore();
-                    }
-                }]
-            });
-        })();
-
         // Chart Zoom Functionality
         let currentChartInstance = null;
         const chartTitles = {

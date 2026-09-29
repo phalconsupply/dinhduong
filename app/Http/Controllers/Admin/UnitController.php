@@ -1,12 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Models\District;
 use App\Models\History;
-use App\Models\Province;
 use App\Models\Unit;
 use App\Models\UnitTypes;
-use App\Models\Ward;
+use App\Models\VnProvince;
+use App\Models\VnWard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -53,11 +52,11 @@ class UnitController extends Controller
 
     public function create()
     {
-        $provinces = Province::select('name','code');
+        $provinces = VnProvince::select('name','code')->orderBy('name');
         if(is_manager()){
             $user = Auth::user();
             if($user->unit) {
-                $provinces = $provinces->where('code', $user->unit->province_code);
+                $provinces = $provinces->where('code', $user->unit->province_code_2026);
             }
         }
         $provinces = $provinces->get();
@@ -66,28 +65,25 @@ class UnitController extends Controller
     }
     public function edit(Unit $unit)
     {
-        $provinces = Province::select('name','code')->get();
-        $districts = District::select('name','code')->where('province_code', $unit->province_code)->get();
-        $wards     = Ward::select('name','code')->where('district_code', $unit->district_code)->get();
+        $provinces = VnProvince::select('name','code')->orderBy('name')->get();
+        $wards     = VnWard::theoTinh($unit->province_code_2026);
         $unit_types = UnitTypes::get();
-        return view('admin.units.edit', compact('provinces', 'districts', 'wards', 'unit_types', 'unit'));
+        return view('admin.units.edit', compact('provinces', 'wards', 'unit_types', 'unit'));
     }
     public function store(Request $request){
         $rules = [
             'name' => 'required|max:32',
             'phone' => 'required|digits:10',
             'type_id'     => 'required|exists:unit_types,id',
-            'province_code' => 'required|exists:provinces,code',
-            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
-            'ward_code'=>'required|exists:wards,code,district_code,' . $request->district_code,
+            'province_code' => 'required|exists:vn_provinces,code',
+            'ward_code' => 'required|exists:vn_wards,code,province_code,' . $request->province_code,
             'address' => 'required|max:255',
         ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             $input = $request->all();
-            $input['districts'] = District::select('name','code')->where('province_code', $request->province_code)->get();
-            $input['wards']     = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+            $input['wards']     = VnWard::theoTinh($request->province_code);
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput($input);
@@ -98,9 +94,8 @@ class UnitController extends Controller
             'phone'    => $request->phone,
             'email'    => $request->email,
             'thumb'    => $request->thumb,
-            'province_code' => $request->province_code,
-            'district_code' => $request->district_code,
-            'ward_code'     => $request->ward_code,
+            'province_code_2026' => $request->province_code,
+            'ward_code_2026'     => $request->ward_code,
             'address'       => $request->address,
             'note'          => $request->note,
             'type_id'          => $request->type_id,
@@ -119,17 +114,15 @@ class UnitController extends Controller
             'name' => 'required|max:32',
             'phone' => 'required|digits:10',
             'type_id'     => 'required|exists:unit_types,id',
-            'province_code' => 'required|exists:provinces,code',
-            'district_code' => 'required|exists:districts,code,province_code,' . $request->province_code,
-            'ward_code' => 'required|exists:wards,code,district_code,' . $request->district_code,
+            'province_code' => 'required|exists:vn_provinces,code',
+            'ward_code' => 'required|exists:vn_wards,code,province_code,' . $request->province_code,
             'address' => 'required|max:255',
         ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             $input = $request->all();
-            $input['districts'] = District::select('name','code')->where('province_code', $request->province_code)->get();
-            $input['wards']     = Ward::select('name','code')->where('district_code', $request->district_code)->get();
+            $input['wards']     = VnWard::theoTinh($request->province_code);
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput($input);
@@ -140,9 +133,8 @@ class UnitController extends Controller
             'phone'    => $request->phone,
             'email'    => $request->email,
             'thumb'    => $request->thumb,
-            'province_code' => $request->province_code,
-            'district_code' => $request->district_code,
-            'ward_code'     => $request->ward_code,
+            'province_code_2026' => $request->province_code,
+            'ward_code_2026'     => $request->ward_code,
             'address'       => $request->address,
             'note'          => $request->note,
             'type_id'          => $request->type_id,
@@ -150,6 +142,11 @@ class UnitController extends Controller
         ];
         $unit->fill($data);
         $unit->save();
+        // Phạm vi dữ liệu của tài khoản đọc từ địa bàn đơn vị sao sang users
+        User::where('unit_id', $unit->id)->update([
+            'unit_province_code_2026' => $unit->province_code_2026,
+            'unit_ward_code_2026'     => $unit->ward_code_2026,
+        ]);
         return redirect()->route('admin.units.index')
             ->with('success', 'Cập nhật đơn vị thành công.');
     }
@@ -157,15 +154,14 @@ class UnitController extends Controller
     public function show(Unit $unit)
     {
         $tab = 'detail';
-        $provinces = Province::select('name','code')->get();
-        return view('admin.units.show-detail', compact('unit', 'provinces', 'tab'));
+        return view('admin.units.show-detail', compact('unit', 'tab'));
     }
 
     public function show_history(Unit $unit, Request $request)
     {
         $tab = 'history';
         $keyword = $request->get('keyword', '');
-        $history = History::where('province_code', $unit->province_code)->where(function ($query) use ($keyword) {
+        $history = History::where('province_code_2026', $unit->province_code_2026)->where(function ($query) use ($keyword) {
             $query->where('fullname', 'like', '%' . $keyword . '%')
                 ->orWhere('phone', 'like', '%' . $keyword . '%')
                 ->orWhere('id_number', 'like', '%' . $keyword . '%');
@@ -176,14 +172,13 @@ class UnitController extends Controller
     public function show_users(Unit $unit, Request $request)
     {
         $tab = 'users';
-        $provinces = Province::select('name','code')->get();
         $keyword = $request->get('keyword', '');
         $users = User::where('unit_id', $unit->id)->where(function ($query) use ($keyword) {
             $query->where('name', 'like', '%' . $keyword . '%')
                 ->orWhere('phone', 'like', '%' . $keyword . '%')
                 ->orWhere('id_number', 'like', '%' . $keyword . '%');
         })->orderBy('created_at', 'desc')->paginate(25);
-        return view('admin.units.show-users', compact('unit', 'users', 'provinces', 'tab'));
+        return view('admin.units.show-users', compact('unit', 'users', 'tab'));
     }
 //    public function show_roles(Unit $unit, Request $request)
 //    {

@@ -22,9 +22,6 @@ Route::get('/auth/logout', $namespace.'AuthController@logout')->name('auth.logou
 //Web
 Route::get('/', [WebController::class, 'index'])->name('index');
 
-// Wizard form route (NEW DESIGN)
-Route::get('/wizard', [WebController::class, 'formWizard'])->name('form.wizard');
-
 // KHÔNG đăng ký Lfm::routes() ở đây.
 //
 // Package tự đăng ký route của nó khi config('lfm.use_package_routes') = true,
@@ -49,5 +46,5 @@ Route::post('/post', [WebController::class, 'form_post'])->name('form.post');
 Route::get('/{slug}', [WebController::class, 'form'])->name('form.index');
 //Route::get('/run', $namespace.'WebController@run');
 //Ajax
-Route::get('/web/ajax_get_district_by_province', $namespace.'WebController@ajax_get_district_by_province')->name('web.ajax_get_district_by_province');
-Route::get('/web/ajax_get_ward_by_district', $namespace.'WebController@ajax_get_ward_by_district')->name('web.ajax_get_ward_by_district');
+// Địa bàn 2026: tỉnh → xã (không còn cấp huyện)
+Route::get('/web/ajax_get_ward_by_province', $namespace.'WebController@ajax_get_ward_by_province')->name('web.ajax_get_ward_by_province');

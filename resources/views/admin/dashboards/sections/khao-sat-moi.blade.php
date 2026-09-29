@@ -51,9 +51,7 @@
                     <span class="small">{{$row->cal_date_f() ?? '#'}}</span>
                 </td>
                 <td>
-                    <span class="small" style="background-color: {{$row->check_weight_for_age()['color']}}">Cân nặng theo tuổi:{{$row->check_weight_for_age()['text']}}</span><br>
-                    <span class="small" style="background-color: {{$row->check_height_for_age()['color']}}">Chiều cao theo tuổi:{{$row->check_height_for_age()['text']}}</span><br>
-                    <span class="small" style="background-color: {{$row->check_weight_for_height()['color']}}">Cân nặng theo chiều cao:{{$row->check_weight_for_height()['text']}}</span>
+                    @include('admin.partials.ket-qua-chi-so', ['m' => $row])
                 </td>
                 <td>
                     @php
@@ -81,8 +79,7 @@
                 </td>
                 <td>
                     <span class="small">{{$row->address ?? '#'}}</span><br>
-                    <span class="small">{{$row->ward->full_name ?? '#'}}, {{$row->district->full_name ?? '#'}}</span><br>
-                    <span  class="small">{{$row->province->full_name ?? '#'}}</span>
+                    @include('admin.partials.dia-ban', ['m' => $row])
                 </td>
                 <td>
                     @php $creator = $row->creator; @endphp

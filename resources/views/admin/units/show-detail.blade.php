@@ -21,7 +21,7 @@
         </tr>
         <tr>
             <th scope="row">Địa chỉ</th>
-            <td>{{$unit->address}}, <span class="small">{{$unit->ward->full_name ?? '#'}}, {{$unit->district->full_name ?? '#'}}, {{$unit->province->full_name ?? '#'}}</td>
+            <td>{{$unit->address}}, <span class=\"small\">{{ $unit->dia_ban ?: $unit->dia_ban_cu ?: '#' }}</span></td>
         </tr>
         <tr>
             <th scope="row">Được tạo bởi</th>

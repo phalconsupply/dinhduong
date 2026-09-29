@@ -328,7 +328,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12 text-center">
                     <h1><i class="fas fa-chart-line me-2"></i>Hướng dẫn đánh giá tình trạng dinh dưỡng trẻ em</h1>
-                    <p class="mb-0">Hệ thống đánh giá dựa trên chuẩn WHO Child Growth Standards 2006</p>
+                    <p class="mb-0">Hệ thống đánh giá dựa trên chuẩn WHO Child Growth Standards 2006 (0–5 tuổi) và WHO Growth Reference 2007 (5–19 tuổi)</p>
                 </div>
             </div>
         </div>
@@ -338,9 +338,9 @@
         <!-- Mục lục -->
         <div class="toc">
             <h5><i class="fas fa-list"></i> Mục lục</h5>
-            <a href="#overview"><i class="fas fa-info-circle"></i> Tổng quan về WHO 2006</a>
-            <a href="#age-classification"><i class="fas fa-users"></i> Phân loại đối tượng và lựa chọn bảng chuẩn</a>
-            <a href="#zscore-tables"><i class="fas fa-table"></i> Bảng đối chiếu Z-Score và công thức LMS</a>
+            <a href="#overview"><i class="fas fa-info-circle"></i> Tổng quan về chuẩn WHO</a>
+            <a href="#age-classification"><i class="fas fa-users"></i> Đối tượng và chuẩn WHO áp dụng</a>
+            <a href="#zscore-tables"><i class="fas fa-table"></i> Cách tính Z-Score và bảng ngưỡng phân loại</a>
             <a href="#nutrition-rules"><i class="fas fa-rules"></i> Quy tắc xác định tình trạng dinh dưỡng</a>
             <a href="#example"><i class="fas fa-child"></i> Ví dụ thực tế và giải thích</a>
             <a href="#glossary"><i class="fas fa-book"></i> Từ điển thuật ngữ</a>
@@ -358,8 +358,15 @@
                     </ul>
                     <div class="text-primary"><i class="fas fa-check-circle"></i> <strong>Kết quả:</strong> Tiêu chuẩn chính xác và có thể áp dụng toàn cầu cho trẻ 0-5 tuổi</div>
                 </div>
+
+                <div class="alert alert-secondary mb-4">
+                    <h5><i class="fas fa-user-graduate"></i> WHO Growth Reference 2007 (5–19 tuổi)</h5>
+                    <p class="mb-0">Với trẻ từ <strong>5 đến dưới 19 tuổi</strong>, hệ thống dùng <strong>WHO Growth Reference 2007</strong> — bộ tham chiếu WHO công bố cho lứa tuổi học đường,
+                    nối tiếp liền mạch với chuẩn 2006 tại mốc 5 tuổi. Lứa tuổi này chỉ đánh giá <strong>chiều cao theo tuổi</strong>, <strong>BMI theo tuổi</strong>
+                    và <strong>cân nặng theo tuổi (chỉ tới 10 tuổi)</strong>; WHO không có chuẩn cân nặng theo chiều cao cho trẻ trên 5 tuổi.</p>
+                </div>
                 
-                <p>Hệ thống đánh giá tình trạng dinh dưỡng trẻ em sử dụng <strong>4 chỉ số chính</strong> dựa trên chuẩn <strong>WHO Child Growth Standards 2006</strong> với phương pháp <strong>LMS (Lambda-Mu-Sigma)</strong>:</p>
+                <p>Với trẻ 0–5 tuổi, hệ thống đánh giá <strong>4 chỉ số</strong> theo chuẩn <strong>WHO Child Growth Standards 2006</strong> bằng phương pháp <strong>LMS (Lambda-Mu-Sigma)</strong>:</p>
                 
                 <div class="row">
                     <div class="col-md-6">
@@ -397,16 +404,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <ul class="mb-0">
-                                <li><i class="fas fa-check text-success"></i> <strong>Tự động 100%:</strong> Không cần chọn thủ công bảng chuẩn</li>
-                                <li><i class="fas fa-check text-success"></i> <strong>Chính xác tuyệt đối:</strong> Sử dụng 938 tham số WHO chính thức</li>
-                                <li><i class="fas fa-check text-success"></i> <strong>Tối ưu hóa tuổi:</strong> Chọn bộ dữ liệu phù hợp nhất cho từng trẻ</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Tự động chọn chuẩn:</strong> 0–5 tuổi dùng WHO 2006, 5–19 tuổi dùng WHO 2007</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Tham số chính thức:</strong> Bộ LMS gốc của WHO — 13.366 dòng (2006) và 798 dòng (2007)</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Tra theo ngày tuổi:</strong> Trẻ 0–5 tuổi được tra đúng ngày tuổi như phần mềm WHO Anthro</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <ul class="mb-0">
-                                <li><i class="fas fa-check text-success"></i> <strong>Nội suy thông minh:</strong> Tính toán chính xác cho tuổi thập phân</li>
-                                <li><i class="fas fa-check text-success"></i> <strong>Đa chỉ số:</strong> Phân tích toàn diện 4 chỉ số WHO</li>
-                                <li><i class="fas fa-check text-success"></i> <strong>Thuật toán ưu tiên:</strong> Chẩn đoán thông minh dựa trên tổ hợp chỉ số</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Kết quả cố định:</strong> Z-score tính một lần khi lưu phiếu và giữ nguyên về sau</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Đa chỉ số:</strong> Chỉ đánh giá các chỉ số WHO có chuẩn cho lứa tuổi của trẻ</li>
+                                <li><i class="fas fa-check text-success"></i> <strong>Thuật toán ưu tiên:</strong> Kết luận tổng hợp dựa trên tổ hợp các chỉ số</li>
                             </ul>
                         </div>
                     </div>
@@ -414,151 +421,83 @@
             </div>
         </div>
 
-        <!-- Phân loại đối tượng và lựa chọn bảng chuẩn -->
+        <!-- Đối tượng và chuẩn WHO áp dụng -->
         <div id="age-classification" class="section-card">
-            <h2 class="section-header"><i class="fas fa-users"></i> Phân loại đối tượng và lựa chọn bảng chuẩn WHO LMS</h2>
+            <h2 class="section-header"><i class="fas fa-users"></i> Đối tượng và chuẩn WHO áp dụng</h2>
             <div class="p-4">
-                <p><strong>Hệ thống sử dụng 4 nhóm tuổi khác nhau</strong> trong cơ sở dữ liệu WHO LMS để đảm bảo độ chính xác tối ưu cho từng giai đoạn phát triển:</p>
+                <p>Chuẩn WHO được <strong>chọn tự động</strong> theo tuổi của trẻ tại <strong>ngày cân đo</strong>, tính từ ngày sinh:</p>
 
-                <!-- Nhóm tuổi 0-13 tuần -->
-                <div class="method-info mb-4">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <i class="fas fa-baby fa-3x mb-2"></i>
-                                <h5><strong>0-13 tuần</strong></h5>
-                                <span class="badge bg-light text-dark">0_13w</span>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <h6><i class="fas fa-calendar-week"></i> <strong>Trẻ sơ sinh (0-13 tuần đầu đời)</strong></h6>
-                            <ul class="mb-0">
-                                <li><strong>Đặc điểm:</strong> Giai đoạn tăng trưởng cực nhanh, cần độ chính xác cao</li>
-                                <li><strong>Dữ liệu:</strong> Theo <strong>tuần</strong> với 14 điểm dữ liệu (tuần 0-13)</li>
-                                <li><strong>Ưu điểm:</strong> Phát hiện chậm phát triển sớm ở trẻ sơ sinh</li>
-                                <li><strong>Áp dụng:</strong> WFA (cân nặng/tuổi) - chỉ số quan trọng nhất giai đoạn này</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nhóm tuổi 0-2 năm -->
-                <div class="highlight-box mb-4">
-                    <div class="row align-items-center">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <i class="fas fa-child fa-3x mb-2 text-primary"></i>
-                                <h5><strong>0-2 tuổi</strong></h5>
-                                <span class="badge bg-primary">0_2y</span>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <h6><i class="fas fa-calendar-alt"></i> <strong>Trẻ nhỏ (0-24 tháng)</strong></h6>
-                            <ul class="mb-0">
-                                <li><strong>Đặc điểm:</strong> Giai đoạn tăng trưởng nhanh, đo chiều dài nằm</li>
-                                <li><strong>Dữ liệu:</strong> Theo <strong>tháng</strong> với 25 điểm dữ liệu (tháng 0-24)</li>
-                                <li><strong>Áp dụng:</strong> WFA, HFA (chiều cao/tuổi), WFL (cân nặng/chiều dài)</li>
-                                <li><strong>Lưu ý:</strong> Sử dụng WFL thay vì WFH do đo chiều dài nằm</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nhóm tuổi 0-5 năm -->
+                <!-- 0-5 tuổi -->
                 <div class="example-box mb-4">
                     <div class="row align-items-center">
                         <div class="col-md-3">
                             <div class="text-center">
-                                <i class="fas fa-users fa-3x mb-2"></i>
-                                <h5><strong>0-5 tuổi</strong></h5>
-                                <span class="badge bg-light text-dark">0_5y</span>
+                                <i class="fas fa-baby fa-3x mb-2"></i>
+                                <h5><strong>0 – dưới 5 tuổi</strong></h5>
+                                <span class="badge bg-light text-dark">WHO 2006</span>
                             </div>
                         </div>
                         <div class="col-md-9">
-                            <h6><i class="fas fa-star"></i> <strong>Phạm vi chung (0-60 tháng) - Ưu tiên cao</strong></h6>
+                            <h6><i class="fas fa-calendar-day"></i> <strong>WHO Child Growth Standards 2006 — dưới 60 tháng tuổi</strong></h6>
                             <ul class="mb-0">
-                                <li><strong>Đặc điểm:</strong> Phạm vi rộng nhất, bao phủ toàn bộ giai đoạn trẻ em</li>
-                                <li><strong>Dữ liệu:</strong> Theo <strong>tháng</strong> với 61 điểm dữ liệu (tháng 0-60)</li>
-                                <li><strong>Ưu tiên:</strong> Hệ thống ưu tiên sử dụng bảng này khi có thể</li>
-                                <li><strong>Áp dụng:</strong> WFA, HFA, BMI-for-Age cho trẻ từ 0-5 tuổi</li>
+                                <li><strong>Chỉ số:</strong> cân nặng/tuổi, chiều cao/tuổi, cân nặng/chiều cao, BMI/tuổi</li>
+                                <li><strong>Tra tham số theo NGÀY tuổi</strong> (bảng WHO có từng ngày, từ 0 đến 1.826 ngày) — không làm tròn theo tháng</li>
+                                <li><strong>Tuổi theo tháng</strong> = số ngày tuổi ÷ 30,4375 (365,25 ÷ 12), chỉ dùng để hiển thị và xét phạm vi</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <!-- Nhóm tuổi 2-5 năm -->
-                <div class="warning-box mb-4">
+                <!-- 5-19 tuổi -->
+                <div class="highlight-box mb-4">
                     <div class="row align-items-center">
                         <div class="col-md-3">
                             <div class="text-center">
-                                <i class="fas fa-user-graduate fa-3x mb-2 text-warning"></i>
-                                <h5><strong>2-5 tuổi</strong></h5>
-                                <span class="badge bg-warning text-dark">2_5y</span>
+                                <i class="fas fa-user-graduate fa-3x mb-2 text-primary"></i>
+                                <h5><strong>5 – dưới 19 tuổi</strong></h5>
+                                <span class="badge bg-primary">WHO 2007</span>
                             </div>
                         </div>
                         <div class="col-md-9">
-                            <h6><i class="fas fa-ruler"></i> <strong>Trẻ lớn (24-60 tháng) - Đo chiều cao đứng</strong></h6>
+                            <h6><i class="fas fa-calendar-alt"></i> <strong>WHO Growth Reference 2007 — từ 60 đến dưới 229 tháng tuổi</strong></h6>
                             <ul class="mb-0">
-                                <li><strong>Đặc điểm:</strong> Trẻ có thể đứng vững, đo chiều cao thay vì chiều dài</li>
-                                <li><strong>Dữ liệu:</strong> Theo <strong>tháng</strong> với 37 điểm dữ liệu (tháng 24-60)</li>
-                                <li><strong>Áp dụng:</strong> WFH (cân nặng/chiều cao) chuyên biệt</li>
-                                <li><strong>Phân biệt:</strong> WFH (height) khác WFL (length) về phương pháp đo</li>
+                                <li><strong>Chỉ số:</strong> chiều cao/tuổi và BMI/tuổi (tới 19 tuổi); cân nặng/tuổi <strong>chỉ tới 10 tuổi</strong> (dưới 121 tháng)</li>
+                                <li><strong>Không có</strong> cân nặng theo chiều cao — BMI theo tuổi thay thế vai trò này</li>
+                                <li>Bảng WHO có theo <strong>từng tháng</strong>, nên tham số được <strong>nội suy tuyến tính</strong> giữa 2 tháng liền kề</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <!-- Logic chọn bảng chuẩn -->
+                <!-- Từ 19 tuổi -->
+                <div class="warning-box mb-4">
+                    <h6><i class="fas fa-user"></i> <strong>Từ 19 tuổi trở lên</strong></h6>
+                    <p class="mb-0">Không có chuẩn WHO trẻ em áp dụng. Phiếu vẫn được lưu nhưng các chỉ số hiển thị "Chưa có dữ liệu".</p>
+                </div>
+
+                <!-- Nằm / đứng -->
                 <div class="section-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div class="p-4">
-                        <h5><i class="fas fa-cogs"></i> <strong>Thuật toán lựa chọn bảng chuẩn</strong></h5>
-                        
+                        <h5><i class="fas fa-ruler-combined"></i> <strong>Cân nặng theo chiều dài hay theo chiều cao (trẻ 0–5 tuổi)</strong></h5>
                         <div class="row mt-3">
                             <div class="col-md-6">
-                                <h6><span class="priority-badge">1</span><strong>Tìm kết quả chính xác</strong></h6>
-                                <p class="mb-2">Hệ thống tìm kiếm giá trị chính xác trong tất cả các bảng theo thứ tự ưu tiên:</p>
-                                <ol class="small">
-                                    <li><strong>0_5y</strong> - Phạm vi rộng nhất (ưu tiên cao)</li>
-                                    <li><strong>0_2y</strong> - Giai đoạn trẻ nhỏ</li>
-                                    <li><strong>2_5y</strong> - Giai đoạn trẻ lớn</li>
-                                    <li><strong>0_13w</strong> - Trẻ sơ sinh (ưu tiên thấp)</li>
-                                </ol>
+                                <strong>Dưới 731 ngày tuổi:</strong> <span class="badge bg-light text-dark">WFL</span> — cân nặng theo <strong>chiều dài nằm</strong>, bảng 45–110 cm
                             </div>
                             <div class="col-md-6">
-                                <h6><span class="priority-badge">2</span><strong>Nội suy khi cần thiết</strong></h6>
-                                <p class="mb-2">Nếu không tìm thấy giá trị chính xác, thực hiện nội suy tuyến tính:</p>
-                                <ul class="small">
-                                    <li>Tìm 2 điểm gần nhất trong cùng bảng</li>
-                                    <li>Áp dụng công thức nội suy cho L, M, S</li>
-                                    <li>Đảm bảo tính liên tục của dữ liệu</li>
-                                </ul>
+                                <strong>Từ 731 ngày tuổi:</strong> <span class="badge bg-light text-dark">WFH</span> — cân nặng theo <strong>chiều cao đứng</strong>, bảng 65–120 cm
                             </div>
                         </div>
-
-                        <div class="mt-4 p-3" style="background: rgba(255,255,255,0.1); border-radius: 8px;">
-                            <h6><i class="fas fa-lightbulb"></i> <strong>Quy tắc đặc biệt cho WFH/WFL</strong></h6>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>< 24 tháng:</strong> Sử dụng <span class="badge bg-light text-dark">WFL</span> với bảng <span class="badge bg-primary">0_2y</span><br>
-                                    <small>Weight-for-Length (chiều dài nằm)</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>≥ 24 tháng:</strong> Sử dụng <span class="badge bg-light text-dark">WFH</span> với bảng <span class="badge bg-warning text-dark">2_5y</span><br>
-                                    <small>Weight-for-Height (chiều cao đứng)</small>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="mt-3 mb-0 small">Mốc chuyển là <strong>731 ngày</strong> (đúng như WHO Anthro), không phải "24 tháng" làm tròn. Bảng WHO có tham số cho từng
+                        <strong>0,1 cm</strong>; chiều cao lẻ hơn 0,1 cm được nội suy tuyến tính giữa 2 mốc 0,1 cm liền kề.</p>
                     </div>
                 </div>
 
-                <!-- Lưu ý quan trọng -->
                 <div class="warning-box mt-4">
-                    <h6><i class="fas fa-exclamation-triangle"></i> <strong>Lưu ý quan trọng về độ chính xác</strong></h6>
+                    <h6><i class="fas fa-exclamation-triangle"></i> <strong>Lưu ý</strong></h6>
                     <ul class="mb-0">
-                        <li><strong>Trẻ sơ sinh (0-13 tuần):</strong> Nên ưu tiên bảng <code>0_13w</code> để có độ chính xác cao nhất</li>
-                        <li><strong>Ranh giới 24 tháng:</strong> Cần chuyển đổi từ WFL sang WFH và từ chiều dài sang chiều cao</li>
-                        <li><strong>Nội suy:</strong> Chỉ thực hiện trong cùng một bảng để đảm bảo tính nhất quán</li>
-                        <li><strong>Giới tính:</strong> Nam (M) và nữ (F) có bảng chuẩn riêng biệt</li>
+                        <li><strong>Giới tính:</strong> bé trai (M) và bé gái (F) có bộ tham số riêng</li>
+                        <li><strong>Ngày sinh và ngày cân đo</strong> là đầu vào chính xác nhất; nếu thiếu, hệ thống quy đổi từ tuổi theo tháng đã nhập</li>
+                        <li><strong>Số đo ≤ 0</strong> được coi là không có dữ liệu, chỉ số tương ứng để trống</li>
                     </ul>
                 </div>
             </div>
@@ -566,7 +505,7 @@
 
         <!-- Bảng đối chiếu Z-Score -->
         <div id="zscore-tables" class="section-card">
-            <h2 class="section-header"><i class="fas fa-table"></i> Bảng đối chiếu Z-Score và Kết luận</h2>
+            <h2 class="section-header"><i class="fas fa-table"></i> Cách tính Z-Score và bảng ngưỡng phân loại</h2>
             <div class="p-4">
                 
                 <!-- Công thức tính Z-Score -->
@@ -603,277 +542,102 @@
                             <small><strong>Trong đó:</strong> X = giá trị đo (cân nặng/chiều cao/BMI), L/M/S = tham số WHO LMS</small>
                         </div>
                         <div class="col-md-6">
-                            <h6><strong>💻 Thuật toán lập trình:</strong></h6>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.85em;">
+                            <h6><strong>💻 Cài đặt trong hệ thống:</strong></h6>
+                            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
 <pre style="margin: 0; color: inherit;">
-<span style="color: #9f7efe;">public static function</span> <span style="color: #68d391;">calculateZScore</span>(
-    <span style="color: #fbb6ce;">float</span> $X, <span style="color: #fbb6ce;">float</span> $L, 
-    <span style="color: #fbb6ce;">float</span> $M, <span style="color: #fbb6ce;">float</span> $S
-): ?<span style="color: #fbb6ce;">float</span> {
-    <span style="color: #718096;">// WHO LMS formula</span>
-    <span style="color: #9f7efe;">if</span> (<span style="color: #68d391;">abs</span>($L) < <span style="color: #f6ad55;">0.0001</span>) {
-        <span style="color: #9f7efe;">return</span> <span style="color: #68d391;">log</span>($X / $M) / $S;
-    } <span style="color: #9f7efe;">else</span> {
-        <span style="color: #9f7efe;">return</span> (<span style="color: #68d391;">pow</span>($X/$M, $L) - <span style="color: #f6ad55;">1</span>) 
-                / ($L * $S);
-    }
+<span style="color: #718096;">// app/Services/WHO2006ZScoreService.php</span>
+<span style="color: #9f7efe;">public static function</span> <span style="color: #68d391;">zPlain</span>(<span style="color: #fbb6ce;">float</span> $x, <span style="color: #fbb6ce;">float</span> $l, <span style="color: #fbb6ce;">float</span> $m, <span style="color: #fbb6ce;">float</span> $s): ?<span style="color: #fbb6ce;">float</span>
+{
+    <span style="color: #9f7efe;">if</span> ($x <= <span style="color: #f6ad55;">0</span> || $m <= <span style="color: #f6ad55;">0</span> || $s <= <span style="color: #f6ad55;">0</span>) <span style="color: #9f7efe;">return</span> <span style="color: #f6ad55;">null</span>;
+    <span style="color: #9f7efe;">return</span> <span style="color: #68d391;">abs</span>($l) < <span style="color: #f6ad55;">1e-7</span>
+        ? <span style="color: #68d391;">log</span>($x / $m) / $s
+        : ((($x / $m) ** $l) - <span style="color: #f6ad55;">1</span>) / ($l * $s);
 }
 </pre>
-                            </div>
-                            <small><strong>Tham chiếu:</strong> <code>app/Models/WHOZScoreLMS.php:278-296</code></small>
+</div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-3">
                         <h6><strong>📚 Tài liệu tham chiếu WHO:</strong></h6>
                         <ul class="mb-0" style="font-size: 0.9em;">
                             <li><strong><a href="https://www.who.int/publications/i/item/924154693X" target="_blank">Child Growth Standards (2006)</a></strong> - <em>Length/height-for-age, weight-for-age, weight-for-length, weight-for-height and body mass index-for-age: Methods and development</em></li>
                             <li><strong><a href="https://pubmed.ncbi.nlm.nih.gov/1518992/" target="_blank">LMS Method</a></strong> - Cole, T. J., & Green, P. J. (1992). <em>Smoothing reference centile curves: the LMS method and penalized likelihood. Statistics in Medicine, 11(10), 1305-1319.</em></li>
-                            <li><strong>WHO Technical Report</strong> - <code>who_zscore_lms</code> database với 938 records tham số L,M,S chính thức</li>
+                            <li><strong>Nguồn tham số:</strong> bộ LMS gốc trong phần mềm chính thức của WHO — gói R <code>anthro</code> (0–5 tuổi) và <code>anthroplus</code> (5–19 tuổi)</li>
                         </ul>
                     </div>
                 </div>
                 
-                <!-- Thuật toán Age Range Optimization -->
-                <div class="alert alert-warning mb-4">
-                    <h6><i class="fas fa-robot"></i> <strong>Thuật toán Age Range Optimization (Tự động chọn bộ tham số tối ưu)</strong></h6>
-                    <p class="mb-2">Hệ thống không sử dụng cố định "0-60 tháng" mà <strong>tự động chọn bộ tham số WHO phù hợp nhất</strong> cho từng trẻ:</p>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>📋 Thuật toán determineOptimalAgeRange():</strong>
-                            <ul style="font-size: 0.85em;" class="mb-1">
-                                <li><strong>0-13 tuần:</strong> Chọn <code>0_13w</code> (dữ liệu theo tuần, chính xác cho trẻ sơ sinh)</li>
-                                <li><strong>0-24 tháng:</strong> Chọn <code>0_2y</code> (granularity cao cho giai đoạn quan trọng)</li>
-                                <li><strong>24-60 tháng:</strong> Chọn <code>0_5y</code> (phạm vi toàn diện cho trẻ mầm non)</li>
-                                <li><strong>> 60 tháng:</strong> Fallback <code>0_5y</code> (giới hạn WHO Standards)</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>🎯 Ưu tiên khi có nhiều bộ dữ liệu:</strong>
-                            <ul style="font-size: 0.85em;" class="mb-1">
-                                <li><strong>Trẻ sơ sinh (≤ 6 tháng):</strong> <code>0_13w > 0_2y > 0_5y > 2_5y</code></li>
-                                <li><strong>Trẻ nhỏ (> 6 tháng):</strong> <code>0_2y > 0_5y > 0_13w > 2_5y</code></li>
-                                <li><strong>W/H đặc biệt:</strong> Có thể dùng <code>2_5y</code> nếu không tìm thấy chiều cao trong bộ khác</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="text-info mt-2">
-                        <i class="fas fa-lightbulb"></i> <strong>Lợi ích:</strong> Mỗi trẻ sẽ được tính toán với bộ tham số WHO chính xác nhất cho độ tuổi và giai đoạn phát triển của mình.
-                    </div>
-                </div>
-
-                <!-- Core Algorithm Implementation -->
+                <!-- Quy trình tính -->
                 <div class="alert alert-primary mb-4">
-                    <h6><i class="fas fa-microchip"></i> <strong>Core Algorithm - WHO LMS Z-Score Calculation</strong></h6>
+                    <h6><i class="fas fa-microchip"></i> <strong>Quy trình tính Z-Score khi lưu phiếu</strong></h6>
                     <div class="row">
-                        <div class="col-md-8">
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
+                        <div class="col-md-7">
+                            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
 <pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/WHOZScoreLMS.php:382-400 (Core WHO LMS Formula)</span>
-<span style="color: #9f7efe;">public static function</span> <span style="color: #68d391;">calculateZScore</span>(<span style="color: #fbb6ce;">float</span> $X, <span style="color: #fbb6ce;">float</span> $L, <span style="color: #fbb6ce;">float</span> $M, <span style="color: #fbb6ce;">float</span> $S): ?<span style="color: #fbb6ce;">float</span>
-{
-    <span style="color: #718096;">// Validate inputs (M > 0, S > 0, X > 0)</span>
-    <span style="color: #9f7efe;">if</span> ($M <= <span style="color: #f6ad55;">0</span> || $S <= <span style="color: #f6ad55;">0</span> || $X <= <span style="color: #f6ad55;">0</span>) <span style="color: #9f7efe;">return</span> <span style="color: #f6ad55;">null</span>;
-    
-    <span style="color: #718096;">// WHO LMS formula implementation</span>
-    <span style="color: #9f7efe;">if</span> (<span style="color: #68d391;">abs</span>($L) < <span style="color: #f6ad55;">0.0001</span>) {
-        <span style="color: #718096;">// When L ≈ 0: Z = ln(X/M) / S</span>
-        <span style="color: #9f7efe;">return</span> <span style="color: #68d391;">log</span>($X / $M) / $S;
-    } <span style="color: #9f7efe;">else</span> {
-        <span style="color: #718096;">// Standard: Z = [(X/M)^L - 1] / (L*S)</span>
-        <span style="color: #9f7efe;">return</span> (<span style="color: #68d391;">pow</span>($X/$M, $L) - <span style="color: #f6ad55;">1</span>) / ($L * $S);
-    }
-}
+<span style="color: #718096;">// app/Services/WHO2006ZScoreService.php — trẻ 0-5 tuổi</span>
+$ngay = <span style="color: #68d391;">ageInDaysBetween</span>($ngaySinh, $ngayCan);   <span style="color: #718096;">// số ngày tuổi</span>
+$lms  = <span style="color: #68d391;">lmsByDay</span>(<span style="color: #f6ad55;">'wfa'</span>, $gioi, $ngay);         <span style="color: #718096;">// tra đúng ngày, không nội suy</span>
+$z    = <span style="color: #68d391;">zAdjusted</span>($canNang, $lms[<span style="color: #f6ad55;">'L'</span>], $lms[<span style="color: #f6ad55;">'M'</span>], $lms[<span style="color: #f6ad55;">'S'</span>]);
+
+<span style="color: #718096;">// Cân nặng theo chiều dài / chiều cao: chọn bảng theo mốc 731 ngày</span>
+$bang = $ngay < <span style="color: #f6ad55;">731</span> ? <span style="color: #f6ad55;">'wfl'</span> : <span style="color: #f6ad55;">'wfh'</span>;
+$lms  = <span style="color: #68d391;">lmsByLenHei</span>($bang, $gioi, $chieuCao);     <span style="color: #718096;">// nội suy trên lưới 0,1 cm</span>
+
+<span style="color: #718096;">// app/Services/WHO2007ZScoreService.php — trẻ 5-19 tuổi</span>
+$lms  = <span style="color: #68d391;">lmsInterpolated</span>(<span style="color: #f6ad55;">'bmi'</span>, $gioi, $thangTuoi); <span style="color: #718096;">// nội suy giữa 2 tháng</span>
 </pre>
-                            </div>
+</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>🧮 Workflow tổng quát:</strong>
+                        <div class="col-md-5">
+                            <strong>🧮 Các bước:</strong>
                             <ol style="font-size: 0.85em;">
-                                <li><strong>Age Range Optimization</strong><br><small>determineOptimalAgeRange()</small></li>
-                                <li><strong>LMS Parameter Lookup</strong><br><small>getLMSForAge() / getLMSForHeight()</small></li>
-                                <li><strong>Interpolation (if needed)</strong><br><small>interpolateLMSForAge() / interpolateLMSForHeight()</small></li>
-                                <li><strong>Z-Score Calculation</strong><br><small>calculateZScore(X, L, M, S)</small></li>
-                                <li><strong>Classification</strong><br><small>interpretZScore()</small></li>
+                                <li><strong>Tính tuổi:</strong> số ngày giữa ngày sinh và ngày cân đo</li>
+                                <li><strong>Chọn chuẩn:</strong> dưới 60 tháng → WHO 2006; 60 đến dưới 229 tháng → WHO 2007</li>
+                                <li><strong>Tra tham số L, M, S</strong> theo chỉ số, giới tính và tuổi (hoặc chiều dài/cao)</li>
+                                <li><strong>Tính Z-score</strong> theo công thức LMS, hiệu chỉnh ngoài ±3SD khi cần</li>
+                                <li><strong>Làm tròn 2 chữ số</strong> rồi <strong>lưu cố định</strong> vào phiếu</li>
+                                <li><strong>Phân loại</strong> theo bảng ngưỡng bên dưới</li>
                             </ol>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quy trình tính toán cho từng chỉ số -->
+                <!-- Hiệu chỉnh ngoài ±3SD -->
                 <div class="warning-box mb-4">
-                    <h6><i class="fas fa-cogs"></i> Quy trình tính toán Z-Score cho từng chỉ số (sau khi Age Range Optimization)</h6>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <strong>🏋️ W/A (Weight-for-Age)</strong><br>
-                            <small>X = cân nặng (kg)<br><strong>Auto Range:</strong> 0_13w/0_2y/0_5y<br>Method: <code>calculateZScoreLMS('wfa', weight)</code></small>
-                        </div>
-                        <div class="col-md-3">
-                            <strong>📏 H/A (Height-for-Age)</strong><br>
-                            <small>X = chiều cao (cm)<br><strong>Auto Range:</strong> 0_13w/0_2y/0_5y<br>Method: <code>calculateZScoreLMS('hfa', height)</code></small>
-                        </div>
-                        <div class="col-md-3">
-                            <strong>⚖️ W/H (Weight-for-Height)</strong><br>
-                            <small>X = cân nặng (kg)<br><strong>Auto:</strong> WFL(&lt;24m) / WFH(≥24m)<br><strong>Auto Range:</strong> 0_2y/0_5y/2_5y<br>Method: <code>calculateZScoreLMS(indicator, weight)</code></small>
-                        </div>
-                        <div class="col-md-3">
-                            <strong>🧮 BMI/A (BMI-for-Age)</strong><br>
-                            <small>X = BMI (kg/m²)<br><strong>Auto Range:</strong> 0_13w/0_2y/0_5y<br>Method: <code>calculateZScoreLMS('bmi', bmi)</code></small>
-                        </div>
+                    <h6><i class="fas fa-sliders-h"></i> <strong>Hiệu chỉnh Z-score ngoài khoảng ±3SD</strong></h6>
+                    <p class="mb-2">Ở hai đầu phân phối, đường cong LMS không còn mô tả tốt số liệu thực. WHO quy định: với <strong>cân nặng theo tuổi, BMI theo tuổi và
+                    cân nặng theo chiều dài/cao</strong>, khi Z vượt ±3 thì tính lại theo khoảng cách tuyến tính tới mốc ±3SD:</p>
+                    <div style="background: #fff; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.85em;">
+                        Z &gt; 3:&nbsp; Z* = 3 + (X − SD3pos) / (SD3pos − SD2pos)<br>
+                        Z &lt; −3: Z* = −3 + (X − SD3neg) / (SD2neg − SD3neg)
                     </div>
+                    <small>Trong đó SDk là giá trị đo tại mốc Z = k: <code>SDk = M × (1 + L × S × k)^(1/L)</code>. <strong>Chiều cao theo tuổi không hiệu chỉnh</strong>.</small>
                 </div>
 
-                <!-- Interpolation Algorithm -->
-                <div class="alert alert-info mb-4">
-                    <h6><i class="fas fa-chart-line"></i> <strong>Thuật toán nội suy (Interpolation) - Tính năng nâng cao</strong></h6>
-                    <p class="mb-3">Khi tuổi hoặc chiều cao không có sẵn trong database, hệ thống tự động nội suy tuyến tính giữa 2 điểm gần nhất:</p>
-                    
-                    <!-- Diễn giải toán học -->
-                    <div class="alert alert-light mb-3">
-                        <h6><i class="fas fa-square-root-alt"></i> <strong>Cơ sở toán học - Linear Interpolation Formula:</strong></h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>🔢 Công thức tổng quát:</strong>
-                                <div style="background: #fff; padding: 12px; border-radius: 5px; font-size: 0.9em; border: 1px solid #ddd;">
-                                    <p class="mb-2"><strong>Cho 2 điểm:</strong> P₁(x₁, y₁) và P₂(x₂, y₂)</p>
-                                    <p class="mb-2"><strong>Cần tìm:</strong> y tại điểm x (với x₁ < x < x₂)</p>
-                                    <div style="background: #f0f8ff; padding: 8px; border-radius: 3px; font-family: 'Times New Roman', serif; text-align: center;">
-                                        <strong>y = y₁ + (x - x₁) × (y₂ - y₁) / (x₂ - x₁)</strong>
-                                    </div>
-                                    <p class="mb-0 mt-2"><small><strong>Ratio:</strong> r = (x - x₁) / (x₂ - x₁) → y = y₁ + r × (y₂ - y₁)</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>📐 Ý nghĩa hình học:</strong>
-                                <div style="background: #fff; padding: 12px; border-radius: 5px; font-size: 0.85em; border: 1px solid #ddd;">
-                                    <ul class="mb-1">
-                                        <li><strong>Tỷ lệ:</strong> Ratio r ∈ [0,1] biểu thị vị trí của x giữa x₁ và x₂</li>
-                                        <li><strong>r = 0:</strong> x = x₁ → y = y₁ (điểm đầu)</li>
-                                        <li><strong>r = 1:</strong> x = x₂ → y = y₂ (điểm cuối)</li>
-                                        <li><strong>r = 0.5:</strong> x ở giữa → y ở giữa y₁ và y₂</li>
-                                    </ul>
-                                    <div class="text-info">
-                                        <i class="fas fa-info-circle"></i> <strong>Giả định:</strong> Quan hệ tuyến tính giữa các điểm
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>📊 Age-based Interpolation (W/A, H/A, BMI/A):</strong>
-                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.75em;">
-<pre style="margin: 0;">
-<span style="color: #718096;">// File: WHOZScoreLMS.php:267-295</span>
-<span style="color: #718096;">// x₁ = lower->age_in_months, x₂ = upper->age_in_months</span>
-<span style="color: #718096;">// x = ageInMonths (cần nội suy)</span>
-$ratio = ($ageInMonths - $lower->age_in_months) 
-       / ($upper->age_in_months - $lower->age_in_months);
-
-<span style="color: #718096;">// Áp dụng cho từng tham số LMS:</span>
-L = L_lower + ratio * (L_upper - L_lower)
-M = M_lower + ratio * (M_upper - M_lower) 
-S = S_lower + ratio * (S_upper - S_lower)
-</pre>
-                            </div>
-                            <div class="alert alert-warning mt-2 mb-0" style="font-size: 0.8em;">
-                                <strong>Ví dụ:</strong> Trẻ 21.5 tháng, có dữ liệu tại 21 và 22 tháng<br>
-                                → ratio = (21.5-21)/(22-21) = 0.5<br>
-                                → L = L₂₁ + 0.5×(L₂₂ - L₂₁) = (L₂₁ + L₂₂)/2
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>📏 Height-based Interpolation (W/H):</strong>
-                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.75em;">
-<pre style="margin: 0;">
-<span style="color: #718096;">// File: WHOZScoreLMS.php:297-340</span>
-<span style="color: #718096;">// x₁ = lower->length_height_cm, x₂ = upper->length_height_cm</span>
-<span style="color: #718096;">// x = lengthHeightCm (cần nội suy)</span>
-$ratio = ($lengthHeightCm - $lower->length_height_cm) 
-       / ($upper->length_height_cm - $lower->length_height_cm);
-
-<span style="color: #718096;">// Áp dụng cho từng tham số LMS:</span>
-L = L_lower + ratio * (L_upper - L_lower)
-M = M_lower + ratio * (M_upper - M_lower)
-S = S_lower + ratio * (S_upper - S_lower)
-</pre>
-                            </div>
-                            <div class="alert alert-warning mt-2 mb-0" style="font-size: 0.8em;">
-                                <strong>Ví dụ:</strong> Trẻ cao 77.5cm, có dữ liệu tại 77cm và 78cm<br>
-                                → ratio = (77.5-77)/(78-77) = 0.5<br>
-                                → M = M₇₇ + 0.5×(M₇₈ - M₇₇) = (M₇₇ + M₇₈)/2
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert alert-success mt-3 mb-0">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <i class="fas fa-check-circle"></i> <strong>Lợi ích:</strong> 
-                                <ul class="mb-0" style="font-size: 0.9em;">
-                                    <li>Tính toán chính xác cho mọi tuổi/chiều cao</li>
-                                    <li>Smooth transition giữa các điểm dữ liệu</li>
-                                    <li>Không bị giới hạn bởi discrete values trong WHO database</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <i class="fas fa-exclamation-triangle"></i> <strong>Điều kiện:</strong>
-                                <ul class="mb-0" style="font-size: 0.9em;">
-                                    <li>Phải có ít nhất 2 điểm dữ liệu bao quanh</li>
-                                    <li>Giả định quan hệ tuyến tính (reasonable cho LMS parameters)</li>
-                                    <li>Fallback mechanism khi nội suy không khả thi</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- W/A Table -->
-                <h4><i class="fas fa-weight"></i> 1. Cân nặng theo tuổi (W/A)</h4>
-                <div class="highlight-box" style="font-size: 0.9em;">
-                    <strong>📊 Tham số tính toán:</strong> X = Cân nặng (kg) | Indicator = 'wfa' | <strong>Auto Age Range:</strong> 0_13w / 0_2y / 0_5y | 
-                    <strong>L,M,S lookup:</strong> <code>WHO_zscore_lms WHERE indicator='wfa' AND sex='{M|F}' AND age_range='{optimal}' AND age_in_months={tuổi}</code>
-                </div>
-                
-                <div class="alert alert-secondary mb-3">
-                    <h6><i class="fas fa-code"></i> <strong>Thuật toán lập trình W/A:</strong></h6>
-                    <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/History.php:736-740</span>
-<span style="color: #9f7efe;">public function</span> <span style="color: #68d391;">getWeightForAgeZScoreLMS</span>()
-{
-    <span style="color: #9f7efe;">return</span> $this-><span style="color: #68d391;">calculateZScoreLMS</span>(<span style="color: #f6ad55;">'wfa'</span>, $this->weight);
-}
-
-<span style="color: #718096;">// File: app/Models/WHOZScoreLMS.php:54-58</span>
-<span style="color: #9f7efe;">public static function</span> <span style="color: #68d391;">getLMSForAge</span>(<span style="color: #fbb6ce;">string</span> $indicator, <span style="color: #fbb6ce;">string</span> $sex, <span style="color: #fbb6ce;">float</span> $ageInMonths)
-{
-    $optimalRange = <span style="color: #68d391;">self::determineOptimalAgeRange</span>($ageInMonths);
-    <span style="color: #718096;">// Try exact match first, then interpolation if needed</span>
-}
-</pre>
-                    </div>
-                </div>
+                <!-- Ngưỡng phân loại 0-5 -->
+                <div class="highlight-box mb-4">
+                    <h5><i class="fas fa-table"></i> Bảng ngưỡng phân loại — trẻ 0–5 tuổi (WHO 2006)</h5>
+                <h6 class="mt-3"><strong>Cân nặng theo tuổi (W/A)</strong></h6>
                 <div class="table-responsive">
-                    <table class="table table-bordered zscore-table">
-                        <thead>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
                             <tr>
                                 <th>Khoảng Z-Score</th>
-                                <th>Phân loại</th>
-                                <th>Kết luận</th>
-                                <th>Màu sắc</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="color-red">
-                                <td><strong>Z ≥ +3SD</strong></td>
+                                <td><strong>Z &gt; +3SD</strong></td>
                                 <td><code>obese</code></td>
                                 <td>Trẻ béo phì</td>
                                 <td>🔴 Đỏ</td>
                             </tr>
                             <tr class="color-orange">
-                                <td><strong>+2SD &lt; Z &lt; +3SD</strong></td>
+                                <td><strong>+2SD &lt; Z ≤ +3SD</strong></td>
                                 <td><code>overweight</code></td>
                                 <td>Trẻ thừa cân</td>
                                 <td>🟠 Cam</td>
@@ -887,63 +651,41 @@ S = S_lower + ratio * (S_upper - S_lower)
                             <tr class="color-orange">
                                 <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
                                 <td><code>underweight_moderate</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa</td>
                                 <td>🟠 Cam</td>
                             </tr>
                             <tr class="color-red">
                                 <td><strong>Z &lt; -3SD</strong></td>
                                 <td><code>underweight_severe</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng</td>
                                 <td>🔴 Đỏ</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- H/A Table -->
-                <h4 class="mt-4"><i class="fas fa-ruler-vertical"></i> 2. Chiều cao theo tuổi (H/A)</h4>
-                <div class="highlight-box" style="font-size: 0.9em;">
-                    <strong>📊 Tham số tính toán:</strong> X = Chiều cao (cm) | Indicator = 'hfa' | <strong>Auto Age Range:</strong> 0_13w / 0_2y / 0_5y | 
-                    <strong>L,M,S lookup:</strong> <code>WHO_zscore_lms WHERE indicator='hfa' AND sex='{M|F}' AND age_range='{optimal}' AND age_in_months={tuổi}</code>
-                </div>
-                
-                <div class="alert alert-secondary mb-3">
-                    <h6><i class="fas fa-code"></i> <strong>Thuật toán lập trình H/A:</strong></h6>
-                    <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/History.php:742-746</span>
-<span style="color: #9f7efe;">public function</span> <span style="color: #68d391;">getHeightForAgeZScoreLMS</span>()
-{
-    <span style="color: #9f7efe;">return</span> $this-><span style="color: #68d391;">calculateZScoreLMS</span>(<span style="color: #f6ad55;">'hfa'</span>, $this->height);
-}
-
-<span style="color: #718096;">// Sử dụng cùng WHOZScoreLMS::getLMSForAge() như W/A</span>
-<span style="color: #718096;">// Chỉ khác về indicator='hfa' và X=height thay vì weight</span>
-</pre>
-                    </div>
-                </div>
+                <h6 class="mt-3"><strong>Chiều cao theo tuổi (H/A)</strong></h6>
                 <div class="table-responsive">
-                    <table class="table table-bordered zscore-table">
-                        <thead>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
                             <tr>
                                 <th>Khoảng Z-Score</th>
-                                <th>Phân loại</th>
-                                <th>Kết luận</th>
-                                <th>Màu sắc</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="color-blue">
-                                <td><strong>Z ≥ +3SD</strong></td>
+                            <tr class="">
+                                <td><strong>Z &gt; +3SD</strong></td>
                                 <td><code>above_3sd</code></td>
                                 <td>Trẻ cao bất thường</td>
                                 <td>🔵 Xanh dương</td>
                             </tr>
-                            <tr class="color-cyan">
-                                <td><strong>+2SD &lt; Z &lt; +3SD</strong></td>
+                            <tr class="">
+                                <td><strong>+2SD &lt; Z ≤ +3SD</strong></td>
                                 <td><code>above_2sd</code></td>
                                 <td>Trẻ cao hơn bình thường</td>
-                                <td>🟦 Xanh nhạt</td>
+                                <td>🔵 Xanh ngọc</td>
                             </tr>
                             <tr class="color-green">
                                 <td><strong>-2SD ≤ Z ≤ +2SD</strong></td>
@@ -954,137 +696,38 @@ S = S_lower + ratio * (S_upper - S_lower)
                             <tr class="color-orange">
                                 <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
                                 <td><code>stunted_moderate</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa</td>
                                 <td>🟠 Cam</td>
                             </tr>
                             <tr class="color-red">
                                 <td><strong>Z &lt; -3SD</strong></td>
                                 <td><code>stunted_severe</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể thấp còi, mức độ nặng</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể thấp còi, mức độ nặng</td>
                                 <td>🔴 Đỏ</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- W/H Table -->
-                <h4 class="mt-4"><i class="fas fa-balance-scale"></i> 3. Cân nặng theo chiều cao (W/H)</h4>
-                <div class="warning-box" style="font-size: 0.9em;">
-                    <strong>📊 Tham số tính toán:</strong> X = Cân nặng (kg) | 
-                    <strong>Auto-indicator:</strong> WFL (&lt;24 tháng) / WFH (≥24 tháng) | <strong>Auto Age Range:</strong> 0_2y / 0_5y / 2_5y |
-                    <strong>L,M,S lookup:</strong> <code>WHO_zscore_lms WHERE indicator='{wfl|wfh}' AND sex='{M|F}' AND age_range='{optimal}' AND length_height_cm={chiều_cao}</code>
-                </div>
-                
-                <div class="alert alert-warning mb-3">
-                    <h6><i class="fas fa-code"></i> <strong>Thuật toán lập trình W/H (phức tạp nhất):</strong></h6>
-                    <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/History.php:757-770</span>
-<span style="color: #9f7efe;">public function</span> <span style="color: #68d391;">getWeightForHeightZScoreLMS</span>()
-{
-    <span style="color: #718096;">// Auto-select WFL vs WFH based on age</span>
-    $indicator = ($this->age < <span style="color: #f6ad55;">24</span>) ? <span style="color: #f6ad55;">'wfl'</span> : <span style="color: #f6ad55;">'wfh'</span>;
-    <span style="color: #9f7efe;">return</span> $this-><span style="color: #68d391;">calculateZScoreLMS</span>($indicator, $this->weight);
-}
-
-<span style="color: #718096;">// File: app/Models/WHOZScoreLMS.php:210-235</span>
-<span style="color: #9f7efe;">public static function</span> <span style="color: #68d391;">getLMSForHeight</span>(<span style="color: #fbb6ce;">string</span> $indicator, <span style="color: #fbb6ce;">string</span> $sex, 
-                                        <span style="color: #fbb6ce;">float</span> $lengthHeightCm, <span style="color: #fbb6ce;">float</span> $ageInMonths)
-{
-    <span style="color: #718096;">// 1. Age Range Optimization based on age</span>
-    <span style="color: #718096;">// 2. Find exact height match OR interpolate between heights</span>
-    <span style="color: #718096;">// 3. Fallback to other age ranges if height not found</span>
-}
-</pre>
-                    </div>
-                </div>
+                <h6 class="mt-3"><strong>Cân nặng theo chiều cao/chiều dài (W/H) và BMI theo tuổi (BMI/A)</strong></h6>
                 <div class="table-responsive">
-                    <table class="table table-bordered zscore-table">
-                        <thead>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
                             <tr>
                                 <th>Khoảng Z-Score</th>
-                                <th>Phân loại</th>
-                                <th>Kết luận</th>
-                                <th>Màu sắc</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="color-red">
-                                <td><strong>Z ≥ +3SD</strong></td>
+                                <td><strong>Z &gt; +3SD</strong></td>
                                 <td><code>obese</code></td>
                                 <td>Trẻ béo phì</td>
                                 <td>🔴 Đỏ</td>
                             </tr>
                             <tr class="color-orange">
-                                <td><strong>+2SD &lt; Z &lt; +3SD</strong></td>
-                                <td><code>overweight</code></td>
-                                <td>Trẻ thừa cân</td>
-                                <td>🟠 Cam</td>
-                            </tr>
-                            <tr class="color-green">
-                                <td><strong>-2SD ≤ Z ≤ +2SD</strong></td>
-                                <td><code>normal</code></td>
-                                <td>Trẻ bình thường</td>
-                                <td>🟢 Xanh</td>
-                            </tr>
-                            <tr class="color-orange">
-                                <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
-                                <td><code>underweight_moderate</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa</strong></td>
-                                <td>🟠 Cam</td>
-                            </tr>
-                            <tr class="color-red">
-                                <td><strong>Z &lt; -3SD</strong></td>
-                                <td><code>underweight_severe</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng</strong></td>
-                                <td>🔴 Đỏ</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- BMI/A Table -->
-                <h4 class="mt-4"><i class="fas fa-calculator"></i> 4. BMI theo tuổi (BMI/A)</h4>
-                <div class="highlight-box" style="font-size: 0.9em;">
-                    <strong>📊 Tham số tính toán:</strong> X = BMI (kg/m²) = cân_nặng(kg) / [chiều_cao(m)]² | Indicator = 'bmi' | <strong>Auto Age Range:</strong> 0_13w / 0_2y / 0_5y | 
-                    <strong>L,M,S lookup:</strong> <code>WHO_zscore_lms WHERE indicator='bmi' AND sex='{M|F}' AND age_range='{optimal}' AND age_in_months={tuổi}</code>
-                </div>
-                
-                <div class="alert alert-secondary mb-3">
-                    <h6><i class="fas fa-code"></i> <strong>Thuật toán lập trình BMI/A:</strong></h6>
-                    <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/History.php:748-752</span>
-<span style="color: #9f7efe;">public function</span> <span style="color: #68d391;">getBMIForAgeZScoreLMS</span>()
-{
-    <span style="color: #9f7efe;">return</span> $this-><span style="color: #68d391;">calculateZScoreLMS</span>(<span style="color: #f6ad55;">'bmi'</span>, $this->bmi);
-}
-
-<span style="color: #718096;">// Automatically calculates BMI = weight(kg) / [height(m)]²</span>
-<span style="color: #718096;">// Then uses same WHOZScoreLMS::getLMSForAge() logic as W/A, H/A</span>
-<span style="color: #718096;">// BMI calculated in History model accessor: getBmiAttribute()</span>
-</pre>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered zscore-table">
-                        <thead>
-                            <tr>
-                                <th>Khoảng Z-Score</th>
-                                <th>Phân loại</th>
-                                <th>Kết luận</th>
-                                <th>Màu sắc</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="color-red">
-                                <td><strong>Z ≥ +3SD</strong></td>
-                                <td><code>obese</code></td>
-                                <td>Trẻ béo phì</td>
-                                <td>🔴 Đỏ</td>
-                            </tr>
-                            <tr class="color-orange">
-                                <td><strong>+2SD &lt; Z &lt; +3SD</strong></td>
+                                <td><strong>+2SD &lt; Z ≤ +3SD</strong></td>
                                 <td><code>overweight</code></td>
                                 <td>Trẻ thừa cân</td>
                                 <td>🟠 Cam</td>
@@ -1098,61 +741,186 @@ S = S_lower + ratio * (S_upper - S_lower)
                             <tr class="color-orange">
                                 <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
                                 <td><code>wasted_moderate</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa</td>
                                 <td>🟠 Cam</td>
                             </tr>
                             <tr class="color-red">
                                 <td><strong>Z &lt; -3SD</strong></td>
                                 <td><code>wasted_severe</code></td>
-                                <td><strong>Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng</strong></td>
+                                <td>Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng</td>
                                 <td>🔴 Đỏ</td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                </div>
+
+                <!-- Ngưỡng phân loại 5-19 -->
+                <div class="highlight-box mb-4">
+                    <h5><i class="fas fa-table"></i> Bảng ngưỡng phân loại — trẻ 5–19 tuổi (WHO 2007)</h5>
+                <h6 class="mt-3"><strong>Chiều cao theo tuổi (H/A)</strong></h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Khoảng Z-Score</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td><strong>Z &gt; +3SD</strong></td>
+                                <td><code>above_3sd</code></td>
+                                <td>Cao vượt trội</td>
+                                <td>🔵 Xanh dương</td>
+                            </tr>
+                            <tr class="">
+                                <td><strong>+2SD &lt; Z ≤ +3SD</strong></td>
+                                <td><code>above_2sd</code></td>
+                                <td>Cao hơn bình thường</td>
+                                <td>🔵 Xanh ngọc</td>
+                            </tr>
+                            <tr class="color-green">
+                                <td><strong>-2SD ≤ Z ≤ +2SD</strong></td>
+                                <td><code>normal</code></td>
+                                <td>Chiều cao bình thường</td>
+                                <td>🟢 Xanh</td>
+                            </tr>
+                            <tr class="color-orange">
+                                <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
+                                <td><code>stunted_moderate</code></td>
+                                <td>Thấp còi</td>
+                                <td>🟠 Cam</td>
+                            </tr>
+                            <tr class="color-red">
+                                <td><strong>Z &lt; -3SD</strong></td>
+                                <td><code>stunted_severe</code></td>
+                                <td>Thấp còi, mức độ nặng</td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h6 class="mt-3"><strong>BMI theo tuổi (BMI/A) — ngưỡng thừa cân từ +1SD</strong></h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Khoảng Z-Score</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="color-red">
+                                <td><strong>Z &gt; +2SD</strong></td>
+                                <td><code>obese</code></td>
+                                <td>Béo phì</td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                            <tr class="color-orange">
+                                <td><strong>+1SD &lt; Z ≤ +2SD</strong></td>
+                                <td><code>overweight</code></td>
+                                <td>Thừa cân</td>
+                                <td>🟠 Cam</td>
+                            </tr>
+                            <tr class="color-green">
+                                <td><strong>-2SD ≤ Z ≤ +1SD</strong></td>
+                                <td><code>normal</code></td>
+                                <td>Bình thường</td>
+                                <td>🟢 Xanh</td>
+                            </tr>
+                            <tr class="color-orange">
+                                <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
+                                <td><code>wasted_moderate</code></td>
+                                <td>Gầy còm</td>
+                                <td>🟠 Cam</td>
+                            </tr>
+                            <tr class="color-red">
+                                <td><strong>Z &lt; -3SD</strong></td>
+                                <td><code>wasted_severe</code></td>
+                                <td>Gầy còm, mức độ nặng</td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h6 class="mt-3"><strong>Cân nặng theo tuổi (W/A) — chỉ tới 10 tuổi, không dùng để xét thừa cân</strong></h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Khoảng Z-Score</th>
+                                <th>Mã phân loại</th>
+                                <th>Kết luận hiển thị</th>
+                                <th>Màu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="color-green">
+                                <td><strong>Z ≥ -2SD</strong></td>
+                                <td><code>normal</code></td>
+                                <td>Cân nặng theo tuổi bình thường</td>
+                                <td>🟢 Xanh</td>
+                            </tr>
+                            <tr class="color-orange">
+                                <td><strong>-3SD ≤ Z &lt; -2SD</strong></td>
+                                <td><code>underweight_moderate</code></td>
+                                <td>Nhẹ cân</td>
+                                <td>🟠 Cam</td>
+                            </tr>
+                            <tr class="color-red">
+                                <td><strong>Z &lt; -3SD</strong></td>
+                                <td><code>underweight_severe</code></td>
+                                <td>Nhẹ cân, mức độ nặng</td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 </div>
             </div>
         </div>
 
         <!-- Integration với History Model -->
         <div class="alert alert-success mb-4">
-            <h6><i class="fas fa-puzzle-piece"></i> <strong>Tích hợp với History Model - Main Controller Logic</strong></h6>
+            <h6><i class="fas fa-puzzle-piece"></i> <strong>Tích hợp với History Model - Tính một lần, đóng băng trong phiếu</strong></h6>
             <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
 <pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// File: app/Models/History.php:700-730 - Universal calculateZScoreLMS()</span>
-<span style="color: #9f7efe;">public function</span> <span style="color: #68d391;">calculateZScoreLMS</span>(<span style="color: #fbb6ce;">string</span> $indicator, <span style="color: #fbb6ce;">float</span> $value): ?<span style="color: #fbb6ce;">float</span>
-{
-    $sex = $this->gender == <span style="color: #f6ad55;">1</span> ? <span style="color: #f6ad55;">'M'</span> : <span style="color: #f6ad55;">'F'</span>;
-    $ageInMonths = $this->age;
-    
-    <span style="color: #718096;">// Route to appropriate LMS lookup method</span>
-    <span style="color: #9f7efe;">if</span> (<span style="color: #68d391;">in_array</span>($indicator, [<span style="color: #f6ad55;">'wfa'</span>, <span style="color: #f6ad55;">'hfa'</span>, <span style="color: #f6ad55;">'bmi'</span>])) {
-        $lms = WHOZScoreLMS::<span style="color: #68d391;">getLMSForAge</span>($indicator, $sex, $ageInMonths);
-    } <span style="color: #9f7efe;">else</span> {
-        <span style="color: #718096;">// wfh, wfl - height-based</span>
-        $lms = WHOZScoreLMS::<span style="color: #68d391;">getLMSForHeight</span>($indicator, $sex, $this->height, $ageInMonths);
-    }
-    
-    <span style="color: #9f7efe;">return</span> WHOZScoreLMS::<span style="color: #68d391;">calculateZScore</span>($value, $lms[<span style="color: #f6ad55;">'L'</span>], $lms[<span style="color: #f6ad55;">'M'</span>], $lms[<span style="color: #f6ad55;">'S'</span>]);
+<span style="color: #718096;">// Lúc lưu phiếu (WebController::form_post) — tính MỘT lần rồi lưu vào phiếu</span>
+<span style="color: #9f7efe;">if</span> (WHO2006ZScoreService::<span style="color: #68d391;">isInRange</span>($ageInDays)) {
+    $history-><span style="color: #68d391;">applyWho2006Snapshot</span>();   <span style="color: #718096;">// 0-5 tuổi: LMS tra theo NGÀY tuổi</span>
+} <span style="color: #9f7efe;">elseif</span> (WHO2007ZScoreService::<span style="color: #68d391;">isInRange</span>($ageInMonths)) {
+    $history-><span style="color: #68d391;">applyWho2007Snapshot</span>();   <span style="color: #718096;">// 5-19 tuổi: WHO Reference 2007</span>
 }
+$history-><span style="color: #68d391;">save</span>();   <span style="color: #718096;">// ghi z_hfa, z_wfa, z_bmi, z_wfh, who_standard, z_engine</span>
+
+<span style="color: #718096;">// Mọi trang (kết quả, bản in, danh sách, thống kê, Excel) chỉ ĐỌC lại snapshot,</span>
+<span style="color: #718096;">// không tính lại — sửa engine về sau không làm thay đổi phiếu đã lập</span>
+$kq = $history-><span style="color: #68d391;">check_weight_for_age_auto</span>();   <span style="color: #718096;">// [result, text, color, zscore, ...]</span>
+$tt = $history-><span style="color: #68d391;">get_nutrition_status_auto</span>();    <span style="color: #718096;">// tình trạng dinh dưỡng tổng hợp</span>
 </pre>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6">
-                    <small><strong>🎯 Usage trong controller:</strong></small>
+                    <small><strong>🎯 Hàm dùng trong giao diện:</strong></small>
                     <ul style="font-size: 0.8em;">
-                        <li><code>$history->getWeightForAgeZScoreLMS()</code> → W/A</li>
-                        <li><code>$history->getHeightForAgeZScoreLMS()</code> → H/A</li>
-                        <li><code>$history->getBMIForAgeZScoreLMS()</code> → BMI/A</li>
-                        <li><code>$history->getWeightForHeightZScoreLMS()</code> → W/H (auto WFL/WFH)</li>
+                        <li><code>$history->check_weight_for_age_auto()</code> → W/A</li>
+                        <li><code>$history->check_height_for_age_auto()</code> → H/A</li>
+                        <li><code>$history->check_bmi_for_age_auto()</code> → BMI/A</li>
+                        <li><code>$history->check_weight_for_height_auto()</code> → W/H (tự chọn WFL/WFH theo mốc 731 ngày)</li>
+                        <li><code>$history->ketQuaChiSo()</code> → các chỉ số có chuẩn cho lứa tuổi</li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <small><strong>📊 Output format:</strong></small>
                     <ul style="font-size: 0.8em;">
-                        <li>Z-Score: <code>float</code> (-5.00 to +5.00)</li>
-                        <li>Null nếu thiếu dữ liệu hoặc invalid</li>
-                        <li>Precision: 2 decimal places</li>
-                        <li>WHO standards compliance: 100%</li>
+                        <li>Z-Score: <code>float</code>, làm tròn 2 chữ số</li>
+                        <li>Null nếu thiếu dữ liệu hoặc chỉ số không có chuẩn cho lứa tuổi</li>
+                        <li>Nguồn LMS: bộ chính thức của WHO (<code>zscore/who2006</code>, <code>zscore/who2007</code>)</li>
                     </ul>
                 </div>
             </div>
@@ -1162,82 +930,152 @@ S = S_lower + ratio * (S_upper - S_lower)
         <div id="nutrition-rules" class="section-card">
             <h2 class="section-header"><i class="fas fa-rules"></i> Quy tắc xác định tình trạng dinh dưỡng tổng hợp</h2>
             <div class="p-4">
-                <p>Hệ thống sử dụng <strong>thuật toán ưu tiên</strong> để xác định tình trạng dinh dưỡng cuối cùng dựa trên <strong>kết hợp 3 chỉ số chính</strong> (W/A, H/A, W/H):</p>
-                
-                <h5 class="text-danger"><i class="fas fa-exclamation-triangle"></i> Mức độ NẶNG (Đỏ)</h5>
+                <p>Kết luận tổng hợp được xác định bằng cách <strong>xét lần lượt từ trên xuống</strong>, gặp điều kiện đầu tiên thỏa mãn thì dừng.
+                Trong mỗi dòng "&lt; -2SD", nếu chỉ số tương ứng &lt; -3SD thì kết luận thêm chữ <strong>"nặng"</strong> và tô đỏ.</p>
+
+                <h5 class="mt-3"><i class="fas fa-baby"></i> Trẻ 0–5 tuổi — dựa trên W/A, H/A, W/H</h5>
                 <div class="table-responsive">
                     <table class="table table-bordered">
-                        <thead class="table-danger">
+                        <thead class="table-light">
                             <tr>
-                                <th>Ưu tiên</th>
+                                <th>Thứ tự xét</th>
                                 <th>Điều kiện</th>
                                 <th>Kết luận</th>
+                                <th>Màu</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><span class="priority-badge">1</span></td>
-                                <td>H/A &lt; -2SD <strong>VÀ</strong> W/H &lt; -2SD</td>
-                                <td><strong>Suy dinh dưỡng phối hợp</strong></td>
+                                <td>Thiếu một trong ba chỉ số W/A, H/A, W/H</td>
+                                <td><strong>Chưa có đủ dữ liệu</strong></td>
+                                <td>⚪ Xám</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">2</span></td>
-                                <td>W/H &lt; -3SD</td>
-                                <td><strong>Suy dinh dưỡng gầy còm nặng</strong></td>
+                                <td>H/A &lt; -2SD <strong>VÀ</strong> W/H &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng phối hợp</strong></td>
+                                <td>🔴 Đỏ</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">3</span></td>
-                                <td>H/A &lt; -3SD</td>
-                                <td><strong>Suy dinh dưỡng thấp còi nặng</strong></td>
+                                <td>W/H &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng gầy còm (nặng)</strong></td>
+                                <td>🟠 Cam / 🔴 Đỏ nếu &lt; -3SD</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">4</span></td>
-                                <td>W/A &lt; -3SD</td>
-                                <td><strong>Suy dinh dưỡng nhẹ cân nặng</strong></td>
+                                <td>H/A &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng thấp còi (nặng)</strong></td>
+                                <td>🟠 Cam / 🔴 Đỏ nếu &lt; -3SD</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">5</span></td>
+                                <td>W/A &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng nhẹ cân (nặng)</strong></td>
+                                <td>🟠 Cam / 🔴 Đỏ nếu &lt; -3SD</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">6</span></td>
                                 <td>W/A &gt; +3SD <strong>HOẶC</strong> W/H &gt; +3SD</td>
                                 <td><strong>Béo phì</strong></td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">7</span></td>
+                                <td>W/A &gt; +2SD <strong>HOẶC</strong> W/H &gt; +2SD</td>
+                                <td><strong>Thừa cân</strong></td>
+                                <td>🟠 Cam</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">8</span></td>
+                                <td>H/A &gt; +2SD</td>
+                                <td><strong>Trẻ bình thường, và có chỉ số vượt tiêu chuẩn</strong></td>
+                                <td>🔵 Xanh ngọc</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">9</span></td>
+                                <td>Còn lại (cả 3 chỉ số bình thường)</td>
+                                <td><strong>Bình thường</strong></td>
+                                <td>🟢 Xanh</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h5 class="text-warning"><i class="fas fa-exclamation-circle"></i> Mức độ VỪA (Cam)</h5>
+                <p class="small text-muted">BMI theo tuổi được hiển thị và phân loại riêng nhưng không tham gia kết luận tổng hợp của trẻ 0–5 tuổi.</p>
+
+                <h5 class="mt-4"><i class="fas fa-user-graduate"></i> Trẻ 5–19 tuổi — dựa trên BMI/A và H/A</h5>
                 <div class="table-responsive">
                     <table class="table table-bordered">
-                        <thead class="table-warning">
+                        <thead class="table-primary">
                             <tr>
-                                <th>Ưu tiên</th>
+                                <th>Thứ tự xét</th>
                                 <th>Điều kiện</th>
                                 <th>Kết luận</th>
+                                <th>Màu</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td><span class="priority-badge">1</span></td>
+                                <td>Thiếu cả BMI/A và H/A</td>
+                                <td><strong>Chưa có đủ dữ liệu</strong></td>
+                                <td>⚪ Xám</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">2</span></td>
+                                <td>H/A &lt; -2SD <strong>VÀ</strong> BMI/A &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng phối hợp</strong></td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">3</span></td>
+                                <td>BMI/A &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng gầy còm (nặng)</strong></td>
+                                <td>🟠 Cam / 🔴 Đỏ nếu &lt; -3SD</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">4</span></td>
+                                <td>H/A &lt; -2SD</td>
+                                <td><strong>Suy dinh dưỡng thấp còi (nặng)</strong></td>
+                                <td>🟠 Cam / 🔴 Đỏ nếu &lt; -3SD</td>
+                            </tr>
+                            <tr>
+                                <td><span class="priority-badge">5</span></td>
+                                <td>BMI/A &gt; +2SD</td>
+                                <td><strong>Béo phì</strong></td>
+                                <td>🔴 Đỏ</td>
+                            </tr>
+                            <tr>
                                 <td><span class="priority-badge">6</span></td>
-                                <td>W/H: -3SD ≤ Z &lt; -2SD</td>
-                                <td><strong>Suy dinh dưỡng gầy còm</strong></td>
+                                <td>BMI/A &gt; +1SD</td>
+                                <td><strong>Thừa cân</strong></td>
+                                <td>🟠 Cam</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">7</span></td>
-                                <td>H/A: -3SD ≤ Z &lt; -2SD</td>
-                                <td><strong>Suy dinh dưỡng thấp còi</strong></td>
+                                <td>H/A &gt; +2SD</td>
+                                <td><strong>Bình thường, chiều cao vượt chuẩn</strong></td>
+                                <td>🔵 Xanh ngọc</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">8</span></td>
-                                <td>W/A: -3SD ≤ Z &lt; -2SD</td>
-                                <td><strong>Suy dinh dưỡng nhẹ cân</strong></td>
+                                <td>Thiếu một trong hai chỉ số</td>
+                                <td><strong>Chưa có đủ dữ liệu</strong></td>
+                                <td>⚪ Xám</td>
                             </tr>
                             <tr>
                                 <td><span class="priority-badge">9</span></td>
-                                <td>W/A &gt; +2SD <strong>HOẶC</strong> W/H &gt; +2SD</td>
-                                <td><strong>Thừa cân</strong></td>
+                                <td>Còn lại</td>
+                                <td><strong>Bình thường</strong></td>
+                                <td>🟢 Xanh</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <p class="small text-muted">Cân nặng theo tuổi (tới 10 tuổi) được hiển thị để tham khảo nhưng không dùng cho kết luận tổng hợp — đúng khuyến cáo của WHO.</p>
             </div>
         </div>
 
@@ -1246,87 +1084,59 @@ S = S_lower + ratio * (S_upper - S_lower)
             <h2 class="section-header"><i class="fas fa-calculator"></i> Ví dụ tính toán Z-Score chi tiết</h2>
             <div class="p-4">
                 <div class="highlight-box">
-                    <h5><i class="fas fa-step-forward"></i> Bước tính toán cho trẻ nữ 21 tháng - W/A Z-Score (với Age Range Optimization)</h5>
-                    
-                    <!-- Bước 0: Age Range Optimization -->
+                    <h5><i class="fas fa-step-forward"></i> Bé gái sinh 10/12/2024, cân đo 10/09/2026 — cân nặng 7,9 kg, chiều dài 75 cm</h5>
+
                     <div class="alert alert-info mb-3">
-                        <h6><strong>🎯 Bước 0: Age Range Optimization</strong></h6>
-                        <div style="background: #fff; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.8em;">
-                            <strong>Input:</strong> age = 21 tháng<br>
-                            <strong>Logic:</strong> determineOptimalAgeRange(21)<br>
-                            → 21 ≤ 24 months → <strong>Chọn: '0_2y'</strong><br>
-                            <strong>Lý do:</strong> Granularity cao cho giai đoạn early childhood
+                        <h6><strong>🎯 Bước 0: Tính tuổi và chọn chuẩn</strong></h6>
+                        <div style="background: #fff; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.85em;">
+                            Số ngày tuổi = 10/09/2026 − 10/12/2024 = <strong>639 ngày</strong><br>
+                            Tuổi theo tháng = 639 ÷ 30,4375 = <strong>20,99 tháng</strong> &lt; 60 → chuẩn <strong>WHO 2006</strong><br>
+                            639 &lt; 731 ngày → cân nặng theo <strong>chiều dài</strong> (WFL)
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
-                            <h6><strong>🔍 Bước 1: Lấy tham số L,M,S (với Age Range)</strong></h6>
+                            <h6><strong>🔍 Bước 1: Tra tham số L, M, S (cân nặng theo tuổi)</strong></h6>
                             <div style="background: #f8f9fa; padding: 12px; border-radius: 5px; font-family: monospace; font-size: 0.85em;">
-                                <strong>Query (THỰC TẾ):</strong> WHO_zscore_lms WHERE<br>
+                                who2006_lms WHERE<br>
                                 &nbsp;&nbsp;indicator = 'wfa'<br>
                                 &nbsp;&nbsp;sex = 'F'<br>
-                                &nbsp;&nbsp;<strong>age_range = '0_2y'</strong><br>
-                                &nbsp;&nbsp;age_in_months = 21<br><br>
+                                &nbsp;&nbsp;<strong>age_in_days = 639</strong><br><br>
                                 <strong>Kết quả:</strong><br>
-                                &nbsp;&nbsp;L = 0.3809<br>
-                                &nbsp;&nbsp;M = 10.9451 (kg)<br>
-                                &nbsp;&nbsp;S = 0.13058
+                                &nbsp;&nbsp;L = -0,2814<br>
+                                &nbsp;&nbsp;M = 10,8521 kg<br>
+                                &nbsp;&nbsp;S = 0,12335
                             </div>
                         </div>
                         <div class="col-md-6">
                             <h6><strong>🧮 Bước 2: Áp dụng công thức</strong></h6>
                             <div style="background: #f8f9fa; padding: 12px; border-radius: 5px; font-family: monospace; font-size: 0.85em;">
-                                <strong>Dữ liệu:</strong><br>
-                                &nbsp;&nbsp;X (cân nặng) = 7.9 kg<br>
-                                &nbsp;&nbsp;L = 0.3809<br>
-                                &nbsp;&nbsp;M = 10.9451<br>
-                                &nbsp;&nbsp;S = 0.13058<br><br>
-                                <strong>Tính toán:</strong><br>
-                                &nbsp;&nbsp;Z = [(7.9/10.9451)^0.3809 - 1]<br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ (0.3809 × 0.13058)<br>
-                                &nbsp;&nbsp;Z = <strong>-2.69</strong>
+                                Z = [(X/M)^L − 1] / (L × S)<br>
+                                &nbsp;&nbsp;= [(7,9/10,8521)^(−0,2814) − 1]<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;/ (−0,2814 × 0,12335)<br>
+                                &nbsp;&nbsp;= 0,09346 / −0,03471<br>
+                                &nbsp;&nbsp;= <strong>−2,69</strong><br><br>
+                                −3 ≤ Z &lt; −2 → không cần hiệu chỉnh ±3SD<br>
+                                → <strong>Suy dinh dưỡng thể nhẹ cân, mức độ vừa</strong>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="warning-box mt-3">
-                        <h6><i class="fas fa-code"></i> Code implementation tương ứng (với Age Range Optimization):</h6>
-                        <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.8em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #718096;">// 1. Age Range Optimization</span>
-$optimalRange = WHOZScoreLMS::determineOptimalAgeRange(21); <span style="color: #718096;">// '0_2y'</span>
 
-<span style="color: #718096;">// 2. Get LMS Parameters with optimized range</span>
-$lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
-
-<span style="color: #718096;">// 3. Calculate Z-Score</span>
-<span style="color: #9f7efe;">return</span> (<span style="color: #68d391;">pow</span>($X / $M, $L) - <span style="color: #f6ad55;">1</span>) / ($L * $S);
-<span style="color: #718096;">// pow(7.9/10.9451, 0.3809) - 1) / (0.3809 * 0.13058) = -2.69</span>
-</pre>
-                        </div>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-bordered bg-white">
+                            <thead class="table-light">
+                                <tr><th>Chỉ số</th><th>Bảng tra</th><th>L</th><th>M</th><th>S</th><th>Z-Score</th><th>Phân loại</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Cân nặng/tuổi</td><td>wfa, ngày 639</td><td>-0,2814</td><td>10,8521 kg</td><td>0,12335</td><td><strong>-2,69</strong></td><td>Nhẹ cân, mức độ vừa</td></tr>
+                                <tr><td>Chiều cao/tuổi</td><td>hfa, ngày 639</td><td>1</td><td>83,6595 cm</td><td>0,03665</td><td><strong>-2,82</strong></td><td>Thấp còi, mức độ vừa</td></tr>
+                                <tr><td>Cân nặng/chiều dài</td><td>wfl, 75,0 cm</td><td>-0,3833</td><td>9,1490 kg</td><td>0,09005</td><td><strong>-1,68</strong></td><td>Bình thường</td></tr>
+                                <tr><td>BMI/tuổi (14,04)</td><td>bmi, ngày 639</td><td>-0,5536</td><td>15,5281</td><td>0,08594</td><td><strong>-1,20</strong></td><td>Bình thường</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                
-                <div class="highlight-box mt-3">
-                    <h6><i class="fas fa-database"></i> Truy vấn database thực tế từ hệ thống (với Age Range):</h6>
-                    <div style="background: #1a202c; color: #e2e8f0; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-<pre style="margin: 0; color: inherit;">
-<span style="color: #68d391;">SELECT</span> L, M, S, indicator, sex, age_range, age_in_months
-<span style="color: #68d391;">FROM</span> <span style="color: #fbb6ce;">who_zscore_lms</span> 
-<span style="color: #68d391;">WHERE</span> indicator = <span style="color: #f6ad55;">'wfa'</span> 
-  <span style="color: #68d391;">AND</span> sex = <span style="color: #f6ad55;">'F'</span> 
-  <span style="color: #68d391;">AND</span> age_range = <span style="color: #f6ad55;">'0_2y'</span> <span style="color: #718096;">-- AUTO-SELECTED!</span>
-  <span style="color: #68d391;">AND</span> age_in_months = <span style="color: #f6ad55;">21</span>
-<span style="color: #68d391;">ORDER BY</span> <span style="color: #68d391;">CASE</span> age_range 
-  <span style="color: #68d391;">WHEN</span> <span style="color: #f6ad55;">'0_2y'</span> <span style="color: #68d391;">THEN</span> <span style="color: #f6ad55;">1</span> <span style="color: #718096;">-- Highest priority for 21 months</span>
-  <span style="color: #68d391;">WHEN</span> <span style="color: #f6ad55;">'0_5y'</span> <span style="color: #68d391;">THEN</span> <span style="color: #f6ad55;">2</span>
-<span style="color: #68d391;">END</span> <span style="color: #68d391;">LIMIT</span> <span style="color: #f6ad55;">1</span>;
-
-<span style="color: #718096;">-- Kết quả: L=0.3809, M=10.9451, S=0.13058 (from optimal '0_2y' range)</span>
-<span style="color: #718096;">-- Tổng số records: 938 | Age ranges: 0_13w(71), 0_2y(49), 0_5y(305), 2_5y(513)</span>
-</pre>
-                    </div>
+                    <p class="small mb-0">BMI được tính với độ chính xác đầy đủ (7,9 ÷ 0,75² = 14,044…), không làm tròn trước khi tính Z-score.</p>
                 </div>
             </div>
         </div>
@@ -1336,15 +1146,15 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
             <h2 class="section-header"><i class="fas fa-child"></i> Ví dụ thực tế</h2>
             <div class="p-4">
                 <div class="example-box">
-                    <h4><i class="fas fa-user-circle"></i> Trường hợp: Bé K'Thùy Linh</h4>
+                    <h4><i class="fas fa-user-circle"></i> Trường hợp minh hoạ: Bé A (nữ, 21 tháng — số liệu giả định)</h4>
                     <div class="row">
                         <div class="col-md-6">
                             <h6>Thông tin cơ bản:</h6>
                             <ul>
-                                <li>Tuổi: 21 tháng</li>
+                                <li>Tuổi: 639 ngày (20,99 tháng)</li>
                                 <li>Giới tính: Nữ</li>
-                                <li>Cân nặng: 7.9 kg</li>
-                                <li>Chiều cao: 75 cm</li>
+                                <li>Cân nặng: 7,9 kg</li>
+                                <li>Chiều dài: 75 cm</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
@@ -1366,7 +1176,7 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                                         </tr>
                                         <tr>
                                             <td>H/A</td>
-                                            <td>-2.83</td>
+                                            <td>-2.82</td>
                                             <td>SDD thấp còi vừa</td>
                                         </tr>
                                         <tr>
@@ -1381,15 +1191,12 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                     </div>
                     
                     <div class="warning-box mt-3">
-                        <h6><i class="fas fa-search"></i> Áp dụng quy tắc ưu tiên:</h6>
+                        <h6><i class="fas fa-search"></i> Áp dụng quy tắc tổng hợp (xét từ trên xuống):</h6>
                         <ol>
-                            <li>❌ H/A &lt; -2SD <strong>VÀ</strong> W/H &lt; -2SD? → KHÔNG (W/H = -1.68 > -2SD)</li>
-                            <li>❌ W/H &lt; -3SD? → KHÔNG (-1.68 > -3SD)</li>
-                            <li>❌ H/A &lt; -3SD? → KHÔNG (-2.83 > -3SD)</li>
-                            <li>❌ W/A &lt; -3SD? → KHÔNG (-2.69 > -3SD)</li>
-                            <li>❌ Béo phì? → KHÔNG</li>
-                            <li>❌ W/H gầy còm? → KHÔNG (W/H bình thường)</li>
-                            <li><strong>✅ H/A thấp còi: -3SD ≤ -2.83 &lt; -2SD → ĐÚNG</strong></li>
+                            <li>✅ Có đủ W/A, H/A, W/H → tiếp tục</li>
+                            <li>❌ H/A &lt; -2SD <strong>VÀ</strong> W/H &lt; -2SD? → KHÔNG (W/H = -1.68)</li>
+                            <li>❌ W/H &lt; -2SD? → KHÔNG (-1.68)</li>
+                            <li><strong>✅ H/A &lt; -2SD? → ĐÚNG (-2.82); không dưới -3SD nên mức độ vừa</strong></li>
                         </ol>
                         <h5 class="text-warning mt-3">
                             <i class="fas fa-diagnoses"></i> Kết luận cuối cùng: "Suy dinh dưỡng thấp còi" 🟠
@@ -1405,7 +1212,7 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                             <h6 class="text-primary">📊 Ý nghĩa Z-Score:</h6>
                             <ul style="font-size: 0.9em;">
                                 <li><strong>Z = -2.69 (W/A):</strong> Cân nặng thấp hơn 99.6% trẻ cùng tuổi</li>
-                                <li><strong>Z = -2.83 (H/A):</strong> Chiều cao thấp hơn 99.8% trẻ cùng tuổi</li>
+                                <li><strong>Z = -2.82 (H/A):</strong> Chiều cao thấp hơn 99.8% trẻ cùng tuổi</li>
                                 <li><strong>Z = -1.68 (W/H):</strong> Tỷ lệ cân nặng/chiều cao bình thường</li>
                             </ul>
                         </div>
@@ -1439,13 +1246,12 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h6><i class="fas fa-database"></i> <strong>LMS Parameters Database</strong></h6>
+                        <h6><i class="fas fa-database"></i> <strong>Dữ liệu tham số LMS trong hệ thống</strong></h6>
                         <ul style="font-size: 0.9em;">
-                            <li><strong>Table:</strong> <code>who_zscore_lms</code> (938 records)</li>
-                            <li><strong>Coverage:</strong> Boys & Girls, 0-60 months</li>
-                            <li><strong>Indicators:</strong> WFA, HFA, WFH, WFL, BMI</li>
-                            <li><strong>Parameters:</strong> L (power), M (median), S (coefficient of variation)</li>
-                            <li><strong>Precision:</strong> L,S (6 decimal), M (4 decimal)</li>
+                            <li><strong>0–5 tuổi:</strong> bảng <code>who2006_lms</code> — 13.366 dòng; W/A, H/A, BMI/A theo từng ngày (0–1.826), WFL 45–110 cm và WFH 65–120 cm theo từng 0,1 cm</li>
+                            <li><strong>5–19 tuổi:</strong> bảng <code>who_zscore_lms</code> (chuẩn <code>who2007</code>) — 798 dòng theo từng tháng</li>
+                            <li><strong>Nguồn:</strong> gói R chính thức <code>anthro</code> / <code>anthroplus</code> của WHO, lưu tại thư mục <code>zscore/</code></li>
+                            <li><strong>Nạp lại:</strong> <code>php artisan who:import-2006</code>, <code>php artisan who:import-2007</code></li>
                         </ul>
                     </div>
                 </div>
@@ -1456,7 +1262,8 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                         <li><strong>WHO Technical Report:</strong> <a href="https://www.who.int/tools/child-growth-standards/standards" target="_blank" style="color: #856404;">https://www.who.int/tools/child-growth-standards/standards</a></li>
                         <li><strong>LMS Method Paper:</strong> Cole, T.J. & Green, P.J. (1992). Smoothing reference centile curves: the LMS method and penalized likelihood. <em>Statistics in Medicine</em>, 11(10), 1305-1319.</li>
                         <li><strong>WHO Software:</strong> WHO Anthro (v3.2.2) - <a href="https://www.who.int/tools/child-growth-standards/software" target="_blank" style="color: #856404;">https://www.who.int/tools/child-growth-standards/software</a></li>
-                        <li><strong>Implementation Note:</strong> Hệ thống này tuân thủ 100% thuật toán và tham số L,M,S chính thức của WHO Child Growth Standards 2006</li>
+                        <li><strong>WHO Growth Reference 2007:</strong> <a href="https://www.who.int/tools/growth-reference-data-for-5to19-years" target="_blank" style="color: #856404;">https://www.who.int/tools/growth-reference-data-for-5to19-years</a> — phần mềm WHO AnthroPlus</li>
+                        <li><strong>Đối chiếu:</strong> thuật toán bám theo mã nguồn của WHO Anthro / AnthroPlus (tra theo ngày tuổi, hiệu chỉnh ngoài ±3SD, mốc 731 ngày)</li>
                     </ul>
                 </div>
             </div>
@@ -1500,11 +1307,14 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
                             <dt>Coefficient of Variation (S)</dt>
                             <dd>Hệ số biến thiên - đo độ phân tán của dữ liệu</dd>
                             
-                            <dt>Interpolation</dt>
-                            <dd>Nội suy tuyến tính để tìm giá trị L,M,S cho tuổi không có sẵn</dd>
-                            
-                            <dt>Age Range Optimization</dt>
-                            <dd>Chọn bộ tham số WHO tối ưu dựa trên độ tuổi của trẻ</dd>
+                            <dt>Nội suy (Interpolation)</dt>
+                            <dd>Tính L, M, S nằm giữa 2 mốc của bảng WHO: giữa 2 tháng (trẻ 5–19 tuổi) hoặc giữa 2 mốc 0,1 cm (cân nặng theo chiều dài/cao)</dd>
+
+                            <dt>Hiệu chỉnh ±3SD</dt>
+                            <dd>Cách WHO tính lại Z-score ở hai đầu phân phối (ngoài ±3SD) cho các chỉ số liên quan cân nặng</dd>
+
+                            <dt>Snapshot Z-score</dt>
+                            <dd>Z-score được tính một lần khi lưu phiếu và lưu cố định, mọi màn hình đọc lại giá trị này</dd>
                         </dl>
                     </div>
                 </div>
@@ -1519,7 +1329,7 @@ $lms = WHOZScoreLMS::getLMSForAge('wfa', 'F', 21, $optimalRange);
             <p class="mb-0">
                 <i class="fas fa-info-circle"></i> 
                 Hệ thống đánh giá tình trạng dinh dưỡng trẻ em - Trung tâm Y tế khu vực Đức Trọng | 
-                <i class="fas fa-code"></i> Implementation: Laravel 8 + WHO LMS Database (938 records)
+                <i class="fas fa-code"></i> WHO Child Growth Standards 2006 &amp; WHO Growth Reference 2007 (LMS)
             </p>
         </div>
     </footer>

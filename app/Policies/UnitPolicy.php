@@ -27,7 +27,7 @@ class UnitPolicy
     }
     protected function is_super_admin_province($user)
     {
-        return ($user->unit->unit_type->role == 'super_admin_province') ? true : false;
+        return $user->unit?->unit_type?->role === 'super_admin_province';
     }
 
     /**

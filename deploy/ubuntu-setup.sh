@@ -157,6 +157,10 @@ CÒN 3 VIỆC PHẢI LÀM TAY:
    sudo -u www-data php artisan who:import-2006
    sudo -u www-data php artisan who:import-2007
 
+   Nạp địa bàn 2026 và chuyển dữ liệu vừa nhập sang (bắt buộc sau data:import)
+   sudo -u www-data php artisan diaban:import-2026
+   sudo -u www-data php artisan diaban:backfill-2026
+
 3) Chép ảnh người dùng đã tải lên (không nằm trong git)
    scp -r public/uploads root@<ip>:${APP_DIR}/public/
    cd ${APP_DIR} && sudo -u www-data php artisan storage:link

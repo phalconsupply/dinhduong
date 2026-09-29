@@ -78,10 +78,8 @@ class TestFinalKetqua extends Command
         $this->line("   - Code: " . $nutrition_status['code'] . "\n");
 
         $this->info("⚙️ PHƯƠNG PHÁP TÍNH TOÁN:");
-        $current_method = isUsingLMS() ? 'WHO LMS 2006' : 'SD Bands Legacy';
-        $this->line("   - Method: " . $current_method);
-        $this->line("   - Using LMS: " . (isUsingLMS() ? 'YES' : 'NO'));
-        $this->line("   - Tiêu chuẩn: " . (isUsingLMS() ? 'WHO Child Growth Standards 2006 (LMS Method)' : 'SD Bands Method (Legacy)') . "\n");
+        $this->line("   - Method: WHO LMS (Z-score đóng băng trong phiếu)");
+        $this->line("   - Tiêu chuẩn: " . ($history->getWhoStandard() ?? 'không áp dụng') . "\n");
 
         $this->info("📋 BẢNG KẾT QUẢ NHƯ TRONG KETQUA.BLADE.PHP:");
         $this->line("┌─────────────────────────────┬─────────────┬─────────────┬─────────────────────────────────────┐");

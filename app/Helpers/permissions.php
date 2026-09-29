@@ -15,10 +15,10 @@ function is_roles($roles){
     return Auth::user()->hasAnyRole($roles);
 }
 function is_super_admin_province(){
-    return Auth::user()->hasRole('manager') && Auth::user()->unit->unit_type->role == 'super_admin_province';
+    return Auth::user()->hasRole('manager') && Auth::user()->unit?->unit_type?->role === 'super_admin_province';
 }
 function admin_province(){
-    return Auth::user()->hasRole('manager') && Auth::user()->unit->unit_type->role == 'admin_province';
+    return Auth::user()->hasRole('manager') && Auth::user()->unit?->unit_type?->role === 'admin_province';
 }
 
 

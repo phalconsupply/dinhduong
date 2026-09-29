@@ -98,6 +98,21 @@ Cả hai lệnh đều có `--dry-run`.
 Chỉ chạy `who:backfill-zscores` khi cần **tính lại** snapshot — dữ liệu nhập ở bước 3
 đã mang sẵn snapshot nên bình thường không cần.
 
+### 4.1. Địa bàn hành chính 2026
+
+```bash
+php artisan diaban:import-2026      # 34 tỉnh, 3.321 xã, 10.598 dòng ánh xạ xã cũ → mới
+php artisan diaban:backfill-2026    # chuyển loại đơn vị + điền địa bàn 2026 cho dữ liệu đã nhập
+```
+
+Nguồn là `database/data/diaphan_2026/` (xem `docs/phien-dia-phuong-cu-moi.md`). Như bảng
+WHO, danh mục địa bàn **không** nằm trong file `data:export` mà được nạp lại từ nguồn.
+
+`diaban:backfill-2026` **bắt buộc** chạy sau mỗi lần `data:import`: bảng `unit_types`
+trong file xuất cũ vẫn mang loại "cấp quận/huyện", lệnh này chuyển chúng thành cấp
+phường/xã (và bãi bỏ loại cấp phường/xã cũ). Chạy lại bao nhiêu lần cũng an toàn; cuối lệnh
+in danh sách hồ sơ chưa xác định được xã mới (nếu có) để chọn lại trên form sửa hồ sơ.
+
 ---
 
 ## 5. Hoàn tất
@@ -119,10 +134,13 @@ php artisan tinker --execute="
   echo 'Có snapshot: '.App\Models\History::whereNotNull('z_engine')->count().PHP_EOL;
   echo 'LMS 0-5: '.DB::table('who2006_lms')->count().PHP_EOL;
   echo 'LMS 5-19: '.DB::table('who_zscore_lms')->where('standard','who2007')->count().PHP_EOL;
+  echo 'Xã 2026: '.DB::table('vn_wards')->count().PHP_EOL;
+  echo 'Hồ sơ có xã 2026: '.App\Models\History::whereNotNull('ward_code_2026')->count().PHP_EOL;
 "
 ```
 
-Kỳ vọng: `470 / 470 / 13366 / 798`.
+Kỳ vọng: `400 / 400 / 13366 / 798 / 3321 / 400` (Eloquent không đếm 70 hồ sơ đã xoá mềm;
+đếm thô bảng `history` ra 470).
 
 Kiểm tra bằng mắt:
 

@@ -72,7 +72,7 @@
                             <span class="">{{$row->bmi ?? '#'}}</span>
                         </td>
                         <td><span class="small">{{$row->address ?? '#'}}</span><br>
-                            <span class="small">{{$row->ward->full_name ?? '#'}}, {{$row->district->full_name ?? '#'}}, {{$row->province->full_name ?? '#'}}</span>
+                            @include('admin.partials.dia-ban', ['m' => $row])
                         </td>
 
                         <td>

@@ -62,11 +62,11 @@
                                                     <input name="address" id="address" type="text" class="form-control ps-5" value="{{old('address')}}" placeholder="Địa chỉ" required>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            <div class="col-md-6 mb-3">
                                                 <label class="form-label">Tỉnh/TP<span class="text-danger">*</span></label>
                                                 <div class="form-icon position-relative">
                                                     <i data-feather="map-pin" class="fea icon-sm icons"></i>
-                                                    <select name="province_code" id="province_code" class="pl-45px form-select form-control " aria-label="Default select example" required>
+                                                    <select name="province_code" id="province_code" data-wards-url="{{ route('admin.ajax_get_ward_by_province') }}" class="pl-45px form-select form-control " aria-label="Default select example" required>
                                                         <option>Tỉnh/thành phố</option>
                                                         @foreach($provinces as $province)
                                                             <option value="{{ $province->code }}" @if(old('province_code') == $province->code) selected @endif>{{ $province->name }}</option>
@@ -74,23 +74,11 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
-                                                <label class="form-label">Quận/Huyện<span id="required_district_code" class="text-danger">*</span></label>
-                                                <div class="form-icon position-relative">
-                                                    <i data-feather="map-pin" class="fea icon-sm icons"> </i>
-                                                    <select name="district_code" id="district_code" class="pl-45px form-select form-control " aria-label="Default select example" required>
-                                                        <option value="">Quận/huyện</option>
-                                                        @foreach(old('districts') ?? [] as $district)
-                                                            <option value="{{ $district->code }}" @if($district->code == old('district_code')) selected @endif>{{ $district->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <label class="form-label">Phường/Xã<span id="required_ward_code" class="text-danger">*</span></label>
                                                 <div class="form-icon position-relative">
                                                     <i data-feather="map-pin" class="fea icon-sm icons"> </i>
-                                                    <select name="ward_code" id="ward_code" class="pl-45px form-select form-control " aria-label="Default select example" required>
+                                                    <select name="ward_code" id="ward_code" data-placeholder="Phường/xã" class="pl-45px form-select form-control " aria-label="Default select example" required>
                                                         <option value="">Phường/xã</option>
                                                         @foreach(old('wards') ?? [] as $ward)
                                                             <option value="{{ $ward->code }}" @if($ward->code == old('ward_code')) selected @endif>{{ $ward->name }}</option>
@@ -142,6 +130,7 @@
 @endsection
 
 @push('foot')
+    <script src="{{ asset('web/js/dia-ban-2026.js') }}"></script>
     <script>
         $(document).ready(function() {
 {{--            @if(old('level') == 'district')--}}
@@ -176,62 +165,6 @@
             //         $('#ward_code').attr('required', true);
             //     }
             // });
-            // Khi có thay đổi trong select province
-            $('#province_code').change(function() {
-                var province_code = $(this).val(); // Lấy giá trị province id được chọn
-                // Gửi yêu cầu Ajax
-                $.ajax({
-                    url: '{{route('web.ajax_get_district_by_province')}}', // Đường dẫn tới route xử lý lấy danh sách district
-                    method: 'GET',
-                    data: { province_code: province_code }, // Truyền province id qua request
-                    success: function(response) {
-                        // Xử lý khi nhận được danh sách district từ server
-                        var districtSelect = $('#district_code'); // Select element cho district
-
-                        // Xóa tất cả các option cũ trong select district
-                        districtSelect.find('option').remove();
-
-                        // Thêm các option mới cho district từ danh sách nhận được
-                        districtSelect.append('<option value="">Chọn quận huyện</option>');
-                        $.each(response.districts, function(key, value) {
-                            districtSelect.append('<option value="' + value.code + '">' + value.name + '</option>');
-                        });
-
-                    },
-                    error: function(xhr, status, error) {
-                        // Xử lý khi có lỗi xảy ra trong yêu cầu Ajax
-                        console.log(error);
-                    }
-                });
-            });
-
-            $(document).on('change','#district_code',function() {
-                var district_code = $(this).val(); // Lấy giá trị province id được chọn
-                console.log(district_code)
-                // Gửi yêu cầu Ajax
-                $.ajax({
-                    url: '{{route('web.ajax_get_ward_by_district')}}', // Đường dẫn tới route xử lý lấy danh sách district
-                    method: 'GET',
-                    data: { district_code: district_code }, // Truyền province id qua request
-                    success: function(response) {
-                        // Xử lý khi nhận được danh sách district từ server
-                        var wardSelect = $('#ward_code'); // Select element cho district
-
-                        // Xóa tất cả các option cũ trong select district
-                        wardSelect.find('option').remove();
-
-                        // Thêm các option mới cho district từ danh sách nhận được
-                        wardSelect.append('<option value="">Chọn phường xã</option>');
-                        $.each(response.wards, function(key, value) {
-                            wardSelect.append('<option value="' + value.code + '">' + value.name + '</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        // Xử lý khi có lỗi xảy ra trong yêu cầu Ajax
-                        console.log(error);
-                    }
-                });
-            });
         });
     </script>
 @endpush

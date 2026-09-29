@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\District;
 use App\Models\Ethnic;
 use App\Models\History;
-use App\Models\Province;
-use App\Models\Ward;
+use App\Models\VnProvince;
+use App\Models\VnWard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -24,26 +23,12 @@ class StatisticsTabController extends Controller
         $user = Auth::user();
         
         // Get filter data
-        $provinces = Province::byUserRole($user)->select('name','code')->get();
-        $districts = [];
-        $wards = [];
+        $provinces = VnProvince::byUserRole($user)->select('name','code')->orderBy('name')->get();
+        $wards = VnWard::theoTinh($request->get('province_code'), $user, true);
         $ethnics = Ethnic::all();
 
-        if($request->has('province_code')){
-            $districts = District::byUserRole($user)
-                ->select('name','code')
-                ->where('province_code', $request->get('province_code'))
-                ->get();
-        }
-        if($request->has('district_code')){
-            $wards = Ward::byUserRole($user)
-                ->select('name','code')
-                ->where('district_code', $request->get('district_code'))
-                ->get();
-        }
-
         return view('admin.statistics.index', compact(
-            'provinces', 'districts', 'wards', 'ethnics'
+            'provinces', 'wards', 'ethnics'
         ));
     }
 
@@ -296,15 +281,8 @@ class StatisticsTabController extends Controller
         }
 
         // Apply location filters
-        if ($request->filled('province_code')) {
-            $query->where('province_code', $request->province_code);
-        }
-        if ($request->filled('district_code')) {
-            $query->where('district_code', $request->district_code);
-        }
-        if ($request->filled('ward_code')) {
-            $query->where('ward_code', $request->ward_code);
-        }
+        // Lọc theo địa bàn 2026 (tham số province_code / ward_code mang mã mới)
+        $query->filterDiaBan($request);
 
         // Apply ethnic filters
         if ($request->filled('ethnic_id') && $request->get('ethnic_id') != 'all') {
@@ -887,31 +865,4 @@ class StatisticsTabController extends Controller
         ]);
     }
 
-    /**
-     * Get districts for a province (AJAX helper)
-     */
-    public function getDistricts($provinceCode)
-    {
-        $user = Auth::user();
-        $districts = District::byUserRole($user)
-            ->select('name','code')
-            ->where('province_code', $provinceCode)
-            ->get();
-
-        return response()->json($districts);
-    }
-
-    /**
-     * Get wards for a district (AJAX helper)
-     */
-    public function getWards($districtCode)
-    {
-        $user = Auth::user();
-        $wards = Ward::byUserRole($user)
-            ->select('name','code')
-            ->where('district_code', $districtCode)
-            ->get();
-
-        return response()->json($wards);
-    }
 }

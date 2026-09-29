@@ -153,14 +153,16 @@ Theo WHO:
 
 ## 📊 Testing & Validation
 
-### **File Test Có Sẵn**
+### **Công cụ kiểm tra hiện có**
 
-File: `test_age_calculation.php` (root directory)
+Tuổi được tính trong `WHO2006ZScoreService::ageInDaysBetween()` (số ngày) và
+`WHO2006ZScoreService::ageInMonths()` (ngày ÷ 30,4375). Đối chiếu tuổi đã lưu với tuổi tính lại:
 
 ```bash
-# Chạy test
-php test_age_calculation.php
+php artisan who:check-age-calc
 ```
+
+> Script `test_age_calculation.php` ở thư mục gốc đã được dọn (09/2026).
 
 **Kết quả test mẫu:**
 ```
@@ -632,7 +634,7 @@ WHO Anthro: 5.9 tháng
 - **WHO Anthro software thực tế sử dụng: `age = days / 30.4375`** (DECIMAL MONTHS)
 - Hệ thống hiện tại dùng: `diffInMonths()` (COMPLETED CALENDAR MONTHS)
 
-**Chi tiết phân tích:** Xem file `Document/WHO_ANTHRO_LOGIC_PHAT_HIEN.md`
+**Chi tiết phân tích:** tài liệu `WHO_ANTHRO_LOGIC_PHAT_HIEN.md` đã được dọn (09/2026); kết luận của nó đã áp dụng vào `WHO2006ZScoreService`.
 
 ---
 
@@ -682,8 +684,8 @@ $decimalMonths = $totalDays / 30.4375; // WHO decimal months
 ## 📞 Liên Hệ & Hỗ Trợ
 
 **⚠️ QUAN TRỌNG:**
-- Xem chi tiết phân tích: `Document/WHO_ANTHRO_LOGIC_PHAT_HIEN.md`
-- Test file: `test_who_anthro_logic.php`
+- Cài đặt hiện tại: `app/Services/WHO2006ZScoreService.php` (tra LMS theo ngày tuổi)
+- Kiểm tra: `php artisan who:check-age-calc`
 - WHO Official Formula: `age_months = total_days / 30.4375`
 
 ---

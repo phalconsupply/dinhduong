@@ -3,19 +3,21 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\WHOZScoreLMS;
-use App\Models\WHOPercentileLMS;
 use App\Services\WHO2006ZScoreService;
 use App\Services\WHO2007ZScoreService;
+use App\Models\Concerns\HasDiaBan2026;
+use App\Support\DiaBanScope;
 
 class History extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasDiaBan2026;
     protected $table = 'history'; // Tên của bảng trong cơ sở dữ liệu
 
     protected $fillable = [ // Các cột có thể được gán giá trị thông qua Mass Assignment
@@ -39,6 +41,9 @@ class History extends Model
         "province_code",
         "district_code",
         "ward_code",
+        // Địa bàn 2026 (tỉnh + xã) — dùng cho mọi màn hình; 3 cột trên là địa bàn cũ
+        "province_code_2026",
+        "ward_code_2026",
         "ethnic_id",
         'created_by',
         'is_risk',
@@ -207,20 +212,6 @@ class History extends Model
         return $this->belongsTo(Ethnic::class, 'ethnic_id', 'id');
 
     }
-    public function province()
-    {
-        return $this->belongsTo(Province::class, 'province_code', 'code');
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class, 'district_code', 'code');
-    }
-
-    public function ward()
-    {
-        return $this->belongsTo(Ward::class, 'ward_code', 'code');
-    }
     
     /**
      * Get age group key for advice configuration
@@ -283,463 +274,16 @@ class History extends Model
         return $str_tuoi.' ' .$str_thang;
     }
 
-    public function BMIForAge(){
-        $age = $this->age;
-        $gender = $this->gender;
-        // Bảng đơn giản hóa chứa cả 2 chuẩn và tháng 60 có mặt ở CẢ HAI,
-        // nên buộc phải lọc theo chuẩn của bản ghi, nếu không sẽ tra ra dòng nhập nhằng.
-        $standard = $this->getWhoStandard();
-
-        // WHO Standards: Sử dụng tuổi thập phân với interpolation
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return BMIForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $age)->first();
-        }
-
-        // Tuổi thập phân: nội suy tuyến tính giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-
-        $lower = BMIForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $lowerAge)->first();
-        $upper = BMIForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        $interpolated->Year_Month = round($age) . 'M'; // Approximate display
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
-    }
-
-    public function WeightForAge(){
-        $age = $this->age;
-        $gender = $this->gender;
-        // Xem ghi chú ở BMIForAge() về lý do phải lọc theo chuẩn
-        $standard = $this->getWhoStandard();
-
-        // WHO Standards: Sử dụng tuổi thập phân với interpolation
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return WeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $age)->first();
-        }
-
-        // Tuổi thập phân: nội suy tuyến tính giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-
-        $lower = WeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $lowerAge)->first();
-        $upper = WeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        $interpolated->Year_Month = round($age) . 'M'; // Approximate display
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
-    }
-
-     public function HeightForAge(){
-        $age = $this->age;
-        $gender = $this->gender;
-        // Xem ghi chú ở BMIForAge() về lý do phải lọc theo chuẩn
-        $standard = $this->getWhoStandard();
-
-        // WHO Standards: Sử dụng tuổi thập phân với interpolation
-        // Nếu tuổi là số nguyên, tìm exact match
-        if (floor($age) == $age) {
-            return HeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $age)->first();
-        }
-
-        // Tuổi thập phân: nội suy tuyến tính giữa 2 điểm
-        $lowerAge = floor($age);
-        $upperAge = ceil($age);
-
-        $lower = HeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $lowerAge)->first();
-        $upper = HeightForAge::where('gender', $gender)->where('standard', $standard)->where('Months', $upperAge)->first();
-        
-        if (!$lower || !$upper) {
-            return null;
-        }
-        
-        // Tính tỷ lệ nội suy
-        $ratio = $age - $lowerAge;
-        
-        // Nội suy tất cả các giá trị SD
-        $interpolated = new \stdClass();
-        $interpolated->gender = $gender;
-        $interpolated->Months = $age;
-        $interpolated->Year_Month = round($age) . 'M'; // Approximate display
-        
-        $columns = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($columns as $column) {
-            $lowerValue = $lower->{$column};
-            $upperValue = $upper->{$column};
-            $interpolated->{$column} = $lowerValue + $ratio * ($upperValue - $lowerValue);
-        }
-        
-        return $interpolated;
-    }
-    
-    public function WeightForHeight(){
-        $height = $this->height;
-        $gender = $this->gender;
-        $age = $this->age;  // Lấy age để filter theo age range
-        
-        // Kiểm tra nếu height hoặc gender null → return null
-        if ($height === null || $gender === null) {
-            return null;
-        }
-        
-        // ════════════════════════════════════════════════════════════════════
-        // WHO LENGTH/HEIGHT MEASUREMENT STANDARDS
-        // ════════════════════════════════════════════════════════════════════
-        // Database có 2 bảng riêng:
-        //   - [0-24 months]:  Weight-for-LENGTH (đo nằm - recumbent)
-        //   - [24-60 months]: Weight-for-HEIGHT (đo đứng - standing)
-        //
-        // Conversion: Length = Height + 0.7 cm
-        //
-        // Auto-adjustment strategy:
-        //   - Age < 24 → Giả định đo NẰM → Dùng bảng Length [0-24]
-        //   - Age ≥ 24 → Giả định đo ĐỨNG → Dùng bảng Height [24-60]
-        //
-        // LIMITATION: Nếu đo sai loại (VD: trẻ 26 tháng đo nằm thay vì đứng)
-        // sẽ có sai lệch ~0.7cm. Để chính xác 100%, cần thêm field 
-        // measurement_position ('recumbent'/'standing') vào histories table.
-        // ════════════════════════════════════════════════════════════════════
-        
-        $adjustedHeight = $height;
-        
-        // IMPORTANT: Filter theo age range để chọn đúng bảng (Length vs Height)
-        // Đây là bug fix quan trọng - trước đây thiếu filter này!
-        
-        // Theo WHO: KHÔNG làm tròn height, sử dụng linear interpolation
-        // Thử tìm exact match trước - PHẢI FILTER THEO AGE RANGE!
-        $exact = WeightForHeight::where('gender', $gender)
-            ->where('cm', $adjustedHeight)
-            ->where('fromAge', '<=', $age)
-            ->where('toAge', '>=', $age)
-            ->first();
-        
-        if ($exact) {
-            return $exact;  // Tìm thấy exact match → return luôn
-        }
-        
-        // Không tìm thấy exact → Linear Interpolation theo hướng dẫn WHO
-        // Tìm 2 giá trị gần nhất (lower và upper) - FILTER THEO AGE RANGE!
-        $lower = WeightForHeight::where('gender', $gender)
-            ->where('cm', '<=', $adjustedHeight)
-            ->where('fromAge', '<=', $age)
-            ->where('toAge', '>=', $age)
-            ->orderBy('cm', 'desc')
-            ->first();
-        
-        $upper = WeightForHeight::where('gender', $gender)
-            ->where('cm', '>=', $adjustedHeight)
-            ->where('fromAge', '<=', $age)
-            ->where('toAge', '>=', $age)
-            ->orderBy('cm', 'asc')
-            ->first();
-        
-        if (!$lower || !$upper || $lower->cm == $upper->cm) {
-            return null;  // Không đủ dữ liệu để interpolate
-        }
-        
-        // Linear interpolation: Z(x) = Z(x1) + [(x - x1) / (x2 - x1)] × [Z(x2) - Z(x1)]
-        $ratio = ($adjustedHeight - $lower->cm) / ($upper->cm - $lower->cm);
-        
-        // Tạo WeightForHeight model instance để tương thích với code existing
-        $interpolated = new WeightForHeight();
-        $interpolated->cm = $adjustedHeight;  // Sử dụng adjustedHeight
-        $interpolated->gender = $gender;
-        $interpolated->fromAge = $lower->fromAge;
-        $interpolated->toAge = $lower->toAge;
-        
-        // Interpolate tất cả các SD thresholds
-        $fields = ['-3SD', '-2SD', '-1SD', 'Median', '1SD', '2SD', '3SD'];
-        foreach ($fields as $field) {
-            $interpolated->{$field} = $lower->{$field} + $ratio * ($upper->{$field} - $lower->{$field});
-        }
-        
-        // Set exists = true để model có thể access như array
-        $interpolated->exists = true;
-        
-        return $interpolated;
-    }
-
-    public function check_bmi_for_age(){
-        $bmi = $this->bmi;
-        $row = $this->BMIForAge();
-        $text = 'Chưa có dữ liệu';
-        $color = '#9E9E9E'; // WHO Gray
-        $result = 'unknown';
-        $zscore_category = 'N/A';
-        if ($row) {
-            if ($row->{'-2SD'} <= $bmi && $bmi <= $row->{'2SD'}) {
-                $result = 'normal';
-                $text = 'Trẻ bình thường';
-                $color = '#4CAF50'; // WHO Green
-                
-                // Xác định chính xác trong khoảng nào
-                if ($bmi >= $row->Median && $bmi <= $row->{'1SD'}) {
-                    $zscore_category = 'Median đến +1SD';
-                } else if ($bmi > $row->{'1SD'} && $bmi <= $row->{'2SD'}) {
-                    $zscore_category = '+1SD đến +2SD';
-                } else if ($bmi >= $row->{'-1SD'} && $bmi < $row->Median) {
-                    $zscore_category = '-1SD đến Median';
-                } else if ($bmi >= $row->{'-2SD'} && $bmi < $row->{'-1SD'}) {
-                    $zscore_category = '-2SD đến -1SD';
-                }
-            } else if ($bmi < $row->{'-3SD'}) {
-                $result = 'wasted_severe';
-                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '< -3SD';
-            } else if ($bmi < $row->{'-2SD'}) {
-                $result = 'wasted_moderate';
-                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '-3SD đến -2SD';
-            } else if ($bmi > $row->{'3SD'}) {
-                $result = 'obese';
-                $text = 'Trẻ béo phì';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '> +3SD';
-            } else if ($bmi >= $row->{'2SD'}) {
-                $result = 'overweight';
-                $text = 'Trẻ thừa cân';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '+2SD đến +3SD';
-            }
-        }
-
-        return [
-            'result' => $result,
-            'text'   => $text,
-            'color'  => $color,
-            'zscore_category' => $zscore_category
-        ];
-
-    }
-
-    public function check_weight_for_age(){
-        $weight = $this->weight;
-        $row = $this->WeightForAge();
-        $text = 'Chưa có dữ liệu';
-        $color = '#9E9E9E'; // WHO Gray
-        $result = 'unknown';
-        $zscore_category = 'N/A';
-        if($row){
-            if ($row->{'-2SD'} <= $weight && $weight <= $row->{'2SD'}) {
-                $result = 'normal';
-                $text = 'Trẻ bình thường';
-                $color = '#4CAF50'; // WHO Green
-                
-                // Xác định chính xác trong khoảng nào
-                if ($weight >= $row->Median && $weight <= $row->{'1SD'}) {
-                    $zscore_category = 'Median đến +1SD';
-                } else if ($weight > $row->{'1SD'} && $weight <= $row->{'2SD'}) {
-                    $zscore_category = '+1SD đến +2SD';
-                } else if ($weight >= $row->{'-1SD'} && $weight < $row->Median) {
-                    $zscore_category = '-1SD đến Median';
-                } else if ($weight >= $row->{'-2SD'} && $weight < $row->{'-1SD'}) {
-                    $zscore_category = '-2SD đến -1SD';
-                }
-            } else if ($weight < $row->{'-3SD'}) {
-                $result = 'underweight_severe';
-                $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ nặng';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '< -3SD';
-            } else if ($weight < $row->{'-2SD'}) {
-                $result = 'underweight_moderate';
-                $text = 'Trẻ suy dinh dưỡng thể nhẹ cân, mức độ vừa';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '-3SD đến -2SD';
-            } else if ($weight > $row->{'3SD'}) {
-                $result = 'obese';
-                $text = 'Trẻ béo phì';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '> +3SD';
-            } else if ($weight >= $row->{'2SD'}) {
-                $result = 'overweight';
-                $text = 'Trẻ thừa cân';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '+2SD đến +3SD';
-            }
-        }
-
-        // Thêm Z-score vào kết quả
-        $zscore = $this->getWeightForAgeZScore();
-        
-        return [
-            'text' => $text, 
-            'color' => $color, 
-            'result' => $result, 
-            'zscore_category' => $zscore_category,
-            'zscore' => $zscore
-        ];
-    }
-
-    public function check_height_for_age(){
-        $height = $this->height;
-        $row = $this->HeightForAge();
-        $text = 'Chưa có dữ liệu';
-        $color = '#9E9E9E'; // WHO Gray
-        $result = 'unknown';
-        $zscore_category = 'N/A';
-        if($row){
-            if ($row->{'-2SD'} <= $height && $height <= $row->{'2SD'}) {
-                $result = 'normal';
-                $text = 'Trẻ bình thường';
-                $color = '#4CAF50'; // WHO Green
-                
-                // Xác định chính xác trong khoảng nào
-                if ($height >= $row->Median && $height <= $row->{'1SD'}) {
-                    $zscore_category = 'Median đến +1SD';
-                } else if ($height > $row->{'1SD'} && $height <= $row->{'2SD'}) {
-                    $zscore_category = '+1SD đến +2SD';
-                } else if ($height >= $row->{'-1SD'} && $height < $row->Median) {
-                    $zscore_category = '-1SD đến Median';
-                } else if ($height >= $row->{'-2SD'} && $height < $row->{'-1SD'}) {
-                    $zscore_category = '-2SD đến -1SD';
-                }
-            } else if ($height < $row->{'-3SD'}) {
-                $result = 'stunted_severe';
-                $text = 'Trẻ suy dinh dưỡng thể còi, mức độ nặng';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '< -3SD';
-            } else if ($height < $row->{'-2SD'}) {
-                $result = 'stunted_moderate';
-                $text = 'Trẻ suy dinh dưỡng thể thấp còi, mức độ vừa';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '-3SD đến -2SD';
-            } else if ($height >= $row->{'3SD'}) {
-                $result = 'above_3sd';
-                $text = 'Trẻ cao bất thường';
-                $color = '#2196F3'; // WHO Blue
-                $zscore_category = '≥ +3SD';
-            } else if ($height > $row->{'2SD'}) {
-                $result = 'above_2sd';
-                $text = 'Trẻ cao hơn bình thường';
-                $color = '#00BCD4'; // WHO Cyan
-                $zscore_category = '+2SD đến +3SD';
-            }
-        }
-        
-        // Thêm Z-score vào kết quả
-        $zscore = $this->getHeightForAgeZScore();
-        
-        return [
-            'text' => $text, 
-            'color' => $color, 
-            'result' => $result, 
-            'zscore_category' => $zscore_category,
-            'zscore' => $zscore
-        ];
-    }
-    
-    public function check_weight_for_height(){
-        $weight = $this->weight;
-        $row = $this->WeightForHeight();
-        $text = 'Chưa có dữ liệu';
-        $color = '#9E9E9E'; // WHO Gray
-        $result = 'unknown';
-        $zscore_category = 'N/A';
-        if($row){
-            if ($row['-2SD'] <= $weight && $weight <= $row['2SD']) {
-                $result = 'normal';
-                $text = 'Trẻ bình thường';
-                $color = '#4CAF50'; // WHO Green
-                
-                // Xác định chính xác trong khoảng nào
-                if ($weight >= $row['Median'] && $weight <= $row['1SD']) {
-                    $zscore_category = 'Median đến +1SD';
-                } else if ($weight > $row['1SD'] && $weight <= $row['2SD']) {
-                    $zscore_category = '+1SD đến +2SD';
-                } else if ($weight >= $row['-1SD'] && $weight < $row['Median']) {
-                    $zscore_category = '-1SD đến Median';
-                } else if ($weight >= $row['-2SD'] && $weight < $row['-1SD']) {
-                    $zscore_category = '-2SD đến -1SD';
-                }
-            } else if ($weight < $row['-3SD']) {
-                $result = 'underweight_severe';
-                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ nặng';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '< -3SD';
-            } else if ($weight < $row['-2SD']) {
-                $result = 'underweight_moderate';
-                $text = 'Trẻ suy dinh dưỡng thể gầy còm, mức độ vừa';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '-3SD đến -2SD';
-            } else if ($weight >= $row['3SD']) {
-                $result = 'obese';
-                $text = 'Trẻ béo phì';
-                $color = '#F44336'; // WHO Red
-                $zscore_category = '≥ +3SD';
-            } else if ($weight > $row['2SD']) {
-                $result = 'overweight';
-                $text = 'Trẻ thừa cân';
-                $color = '#FF9800'; // WHO Orange
-                $zscore_category = '+2SD đến +3SD';
-            }
-        }
-        
-        // Thêm Z-score vào kết quả
-        $zscore = $this->getWeightForHeightZScore();
-        
-        return [
-            'text' => $text, 
-            'color' => $color, 
-            'result' => $result, 
-            'zscore_category' => $zscore_category,
-            'zscore' => $zscore
-        ];
-    }
-
     /**
      * Xác định tình trạng dinh dưỡng tổng hợp cho trẻ dưới 5 tuổi
      * Dựa trên Z-score của Weight-for-Age (W/A), Height-for-Age (H/A), Weight-for-Height (W/H)
      * 
      * @return array ['text' => string, 'color' => string, 'code' => string]
      */
-    public function get_nutrition_status($wfa = null, $hfa = null, $wfh = null)
+    public function get_nutrition_status(array $wfa, array $hfa, array $wfh)
     {
-        // Cho phép truyền sẵn kết quả 3 chỉ số để dùng lại đúng bộ Z-score đã tính
-        // (lệnh backfill truyền vào kết quả của engine WHO 2006 chuẩn hoá).
-        // Không truyền thì giữ nguyên hành vi cũ: tự tính theo đường cũ.
-        $wfa = $wfa ?? $this->check_weight_for_age();      // Cân nặng/tuổi
-        $hfa = $hfa ?? $this->check_height_for_age();      // Chiều cao/tuổi
-        $wfh = $wfh ?? $this->check_weight_for_height();   // Cân nặng/chiều cao
+        // Nhận kết quả phân loại 3 chỉ số (classifyByZScore / check_*_auto),
+        // để trang kết quả và lệnh backfill dùng chung đúng một bộ quy tắc.
 
         $text = 'Chưa xác định';
         $color = '#9E9E9E'; // WHO Gray
@@ -747,7 +291,7 @@ class History extends Model
         
         // Kiểm tra dữ liệu có đủ không
         if ($wfa['result'] === 'unknown' || $hfa['result'] === 'unknown' || $wfh['result'] === 'unknown') {
-            return ['text' => 'Chưa có đủ dữ liệu', 'color' => 'gray', 'code' => 'unknown'];
+            return ['text' => 'Chưa có đủ dữ liệu', 'color' => '#9E9E9E', 'code' => 'unknown'];
         }
         
         // 1. SUY DINH DƯỠNG PHỐI HỢP (vừa thấp còi vừa gầy còm)
@@ -838,315 +382,15 @@ class History extends Model
 
     public function scopeByUserRole(Builder $query, $user = null)
     {
-        $user = $user ?: Auth::user();
-
-        if ($user && $user->role !== 'admin') {
-            $unit_role = $user->unit->unit_type->role ?? null;
-
-            switch ($unit_role) {
-                case 'super_admin_province':
-                case 'manager_province':
-                    $query->where("province_code", $user->unit_province_code);
-                    break;
-
-                case 'admin_province':
-                    $query->where("province_code", $user->unit_province_code)
-                        ->where("unit_id", $user->unit_id);
-                    break;
-
-                case 'admin_district':
-                    $query->where("district_code", $user->unit_district_code)
-                        ->where("unit_id", $user->unit_id);
-                    break;
-
-                case 'admin_ward':
-                    $query->where("ward_code", $user->unit_ward_code)
-                        ->where("unit_id", $user->unit_id);
-                    break;
-
-                case 'manager_district':
-                    $query->where("district_code", $user->unit_district_code);
-                    break;
-
-                case 'manager_ward':
-                    $query->where("ward_code", $user->unit_ward_code);
-                    break;
-
-                default:
-                    $query->whereRaw('1 = 0'); // Không có quyền
-                    break;
-            }
-        }
-
-        return $query;
+        return DiaBanScope::hoSo($query, $user);
     }
 
-    /**
-     * Tính Z-score theo phương pháp WHO (dựa trên SD bands)
-     * Công thức này chính xác hơn (Value - Median) / SD
-     */
-    public function calculateZScore($value, $refRow)
+    /** Lọc theo tham số province_code / ward_code (mã 2026) của form lọc. */
+    public function scopeFilterDiaBan(Builder $query, $thamSo)
     {
-        // Hỗ trợ cả array và object
-        $median = is_array($refRow) ? $refRow['Median'] : $refRow->Median ?? null;
-        
-        if (!$refRow || !$median || $value === null) return null;
-        
-        $sd0neg = is_array($refRow) ? ($refRow['-1SD'] ?? null) : ($refRow->{'-1SD'} ?? null);
-        $sd1neg = is_array($refRow) ? ($refRow['-2SD'] ?? null) : ($refRow->{'-2SD'} ?? null);
-        $sd2neg = is_array($refRow) ? ($refRow['-3SD'] ?? null) : ($refRow->{'-3SD'} ?? null);
-        $sd0pos = is_array($refRow) ? ($refRow['1SD'] ?? null) : ($refRow->{'1SD'} ?? null);
-        $sd1pos = is_array($refRow) ? ($refRow['2SD'] ?? null) : ($refRow->{'2SD'} ?? null);
-        $sd2pos = is_array($refRow) ? ($refRow['3SD'] ?? null) : ($refRow->{'3SD'} ?? null);
-        
-        // Kiểm tra dữ liệu đầy đủ
-        if (!$sd0neg || !$sd1neg || !$sd2neg || !$sd0pos || !$sd1pos || !$sd2pos) {
-            return null;
-        }
-        
-        // Trường hợp Value = Median
-        if ($value == $median) return 0;
-        
-        // Trường hợp Value > Median (Z dương)
-        if ($value > $median) {
-            if ($value <= $sd0pos) {
-                // 0 < Z <= 1
-                return ($value - $median) / ($sd0pos - $median);
-            } elseif ($value <= $sd1pos) {
-                // 1 < Z <= 2
-                return 1 + ($value - $sd0pos) / ($sd1pos - $sd0pos);
-            } elseif ($value <= $sd2pos) {
-                // 2 < Z <= 3
-                return 2 + ($value - $sd1pos) / ($sd2pos - $sd1pos);
-            } else {
-                // Z > 3 (extrapolation)
-                return 3 + ($value - $sd2pos) / ($sd2pos - $sd1pos);
-            }
-        }
-        
-        // Trường hợp Value < Median (Z âm)
-        else {
-            if ($value >= $sd0neg) {
-                // -1 <= Z < 0
-                return -($median - $value) / ($median - $sd0neg);
-            } elseif ($value >= $sd1neg) {
-                // -2 <= Z < -1
-                return -1 - ($sd0neg - $value) / ($sd0neg - $sd1neg);
-            } elseif ($value >= $sd2neg) {
-                // -3 <= Z < -2
-                return -2 - ($sd1neg - $value) / ($sd1neg - $sd2neg);
-            } else {
-                // Z < -3 (extrapolation)
-                return -3 - ($sd2neg - $value) / ($sd1neg - $sd2neg);
-            }
-        }
+        return DiaBanScope::locTheoThamSo($query, is_array($thamSo) ? $thamSo : $thamSo->all());
     }
 
-    /**
-     * Lấy Z-score Weight-for-Age
-     */
-    public function getWeightForAgeZScore()
-    {
-        $waRow = $this->WeightForAge();
-        return $this->calculateZScore($this->weight, $waRow);
-    }
-
-    /**
-     * Lấy Z-score Height-for-Age
-     */
-    public function getHeightForAgeZScore()
-    {
-        $haRow = $this->HeightForAge();
-        return $this->calculateZScore($this->height, $haRow);
-    }
-
-    /**
-     * Lấy Z-score Weight-for-Height
-     */
-    public function getWeightForHeightZScore()
-    {
-        $whRow = $this->WeightForHeight();
-        return $this->calculateZScore($this->weight, $whRow);
-    }
-
-    /**
-     * Lấy Z-score BMI-for-Age
-     */
-    public function getBMIForAgeZScore()
-    {
-        $bmiRow = $this->BMIForAge();
-        return $this->calculateZScore($this->bmi, $bmiRow);
-    }
-
-    // ==================== WHO LMS METHOD (NEW) ====================
-    
-    /**
-     * Tính Z-score theo phương pháp WHO LMS (Lambda-Mu-Sigma)
-     * Công thức: Z = ((X/M)^L - 1) / (L*S)
-     * Nếu L ≈ 0: Z = ln(X/M) / S
-     * 
-     * @param string $indicator 'wfa', 'hfa', 'bmi', 'wfh', 'wfl'
-     * @param float $value Giá trị đo (weight, height, hoặc BMI)
-     * @return float|null Z-score hoặc null nếu không tính được
-     */
-    public function calculateZScoreLMS($indicator, $value)
-    {
-        if ($value === null || $this->gender === null || $this->age === null) {
-            return null;
-        }
-        
-        // Map gender: 0 (Female) -> F, 1 (Male) -> M
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $ageInMonths = $this->age;
-        
-        // Lấy L, M, S parameters
-        $lms = null;
-        
-        if (in_array($indicator, ['wfa', 'hfa', 'bmi'])) {
-            // Age-based indicators
-            $lms = WHOZScoreLMS::getLMSForAge($indicator, $sex, $ageInMonths);
-        } else {
-            // Height-based indicators (wfh, wfl)
-            $lms = WHOZScoreLMS::getLMSForHeight($indicator, $sex, $this->height, $ageInMonths);
-        }
-        
-        if (!$lms) {
-            return null;
-        }
-        
-        // Tính Z-score bằng LMS method
-        return WHOZScoreLMS::calculateZScore($value, $lms['L'], $lms['M'], $lms['S']);
-    }
-    
-    /**
-     * Lấy Z-score Weight-for-Age theo LMS method
-     */
-    public function getWeightForAgeZScoreLMS()
-    {
-        return $this->calculateZScoreLMS('wfa', $this->weight);
-    }
-    
-    /**
-     * Lấy Z-score Height-for-Age theo LMS method
-     */
-    public function getHeightForAgeZScoreLMS()
-    {
-        return $this->calculateZScoreLMS('hfa', $this->height);
-    }
-    
-    /**
-     * Lấy Z-score BMI-for-Age theo LMS method
-     */
-    public function getBMIForAgeZScoreLMS()
-    {
-        return $this->calculateZScoreLMS('bmi', $this->bmi);
-    }
-    
-    /**
-     * Lấy Z-score Weight-for-Height theo LMS method
-     * Tự động chọn WFL (< 24 months) hoặc WFH (>= 24 months)
-     */
-    public function getWeightForHeightZScoreLMS()
-    {
-        if ($this->age === null || $this->height === null || $this->weight === null) {
-            return null;
-        }
-        
-        // WHO: < 24 months dùng WFL (recumbent length), >= 24 months dùng WFH (standing height)
-        $indicator = ($this->age < 24) ? 'wfl' : 'wfh';
-        
-        return $this->calculateZScoreLMS($indicator, $this->weight);
-    }
-
-    /**
-     * Lấy thông tin chi tiết LMS cho Weight-for-Age
-     */
-    public function getWeightForAgeZScoreLMSDetails()
-    {
-        if ($this->weight === null || $this->gender === null || $this->age === null) {
-            return null;
-        }
-        
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $lms = WHOZScoreLMS::getLMSForAge('wfa', $sex, $this->age);
-        
-        if ($lms) {
-            $lms['indicator'] = 'wfa';
-            $lms['sex'] = $sex;
-            $lms['age_months'] = $this->age;
-            $lms['value'] = $this->weight;
-        }
-        
-        return $lms;
-    }
-
-    /**
-     * Lấy thông tin chi tiết LMS cho Height-for-Age
-     */
-    public function getHeightForAgeZScoreLMSDetails()
-    {
-        if ($this->height === null || $this->gender === null || $this->age === null) {
-            return null;
-        }
-        
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $lms = WHOZScoreLMS::getLMSForAge('hfa', $sex, $this->age);
-        
-        if ($lms) {
-            $lms['indicator'] = 'hfa';
-            $lms['sex'] = $sex;
-            $lms['age_months'] = $this->age;
-            $lms['value'] = $this->height;
-        }
-        
-        return $lms;
-    }
-
-    /**
-     * Lấy thông tin chi tiết LMS cho BMI-for-Age
-     */
-    public function getBMIForAgeZScoreLMSDetails()
-    {
-        if ($this->bmi === null || $this->gender === null || $this->age === null) {
-            return null;
-        }
-        
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $lms = WHOZScoreLMS::getLMSForAge('bmi', $sex, $this->age);
-        
-        if ($lms) {
-            $lms['indicator'] = 'bmi';
-            $lms['sex'] = $sex;
-            $lms['age_months'] = $this->age;
-            $lms['value'] = $this->bmi;
-        }
-        
-        return $lms;
-    }
-
-    /**
-     * Lấy thông tin chi tiết LMS cho Weight-for-Height
-     */
-    public function getWeightForHeightZScoreLMSDetails()
-    {
-        if ($this->age === null || $this->height === null || $this->weight === null || $this->gender === null) {
-            return null;
-        }
-        
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $indicator = ($this->age < 24) ? 'wfl' : 'wfh';
-        $lms = WHOZScoreLMS::getLMSForHeight($indicator, $sex, $this->height, $this->age);
-        
-        if ($lms) {
-            $lms['indicator'] = $indicator;
-            $lms['sex'] = $sex;
-            $lms['age_months'] = $this->age;
-            $lms['height'] = $this->height;
-            $lms['value'] = $this->weight;
-        }
-        
-        return $lms;
-    }
     
     /**
      * Phân loại dinh dưỡng dựa trên Z-score (WHO standard)
@@ -1520,85 +764,6 @@ class History extends Model
         
         return compact('result', 'text', 'color', 'zscore_category');
     }
-    
-    /**
-     * Check Weight-for-Age sử dụng LMS method
-     */
-    public function check_weight_for_age_lms()
-    {
-        $zscore = $this->getWeightForAgeZScoreLMS();
-        $lmsInfo = $this->getWeightForAgeZScoreLMSDetails();
-        $classification = $this->classifyByZScore($zscore, 'wfa');
-        $classification['zscore'] = $zscore;
-        $classification['lms_info'] = $lmsInfo;
-        return $classification;
-    }
-    
-    /**
-     * Check Height-for-Age sử dụng LMS method
-     */
-    public function check_height_for_age_lms()
-    {
-        $zscore = $this->getHeightForAgeZScoreLMS();
-        $lmsInfo = $this->getHeightForAgeZScoreLMSDetails();
-        $classification = $this->classifyByZScore($zscore, 'hfa');
-        $classification['zscore'] = $zscore;
-        $classification['lms_info'] = $lmsInfo;
-        return $classification;
-    }
-    
-    /**
-     * Check BMI-for-Age sử dụng LMS method
-     */
-    public function check_bmi_for_age_lms()
-    {
-        $zscore = $this->getBMIForAgeZScoreLMS();
-        $lmsInfo = $this->getBMIForAgeZScoreLMSDetails();
-        $classification = $this->classifyByZScore($zscore, 'bmi');
-        $classification['zscore'] = $zscore;
-        $classification['lms_info'] = $lmsInfo;
-        return $classification;
-    }
-    
-    /**
-     * Check Weight-for-Height sử dụng LMS method
-     */
-    public function check_weight_for_height_lms()
-    {
-        $zscore = $this->getWeightForHeightZScoreLMS();
-        $lmsInfo = $this->getWeightForHeightZScoreLMSDetails();
-        // WFH/WFL uses same classification as wfh
-        $classification = $this->classifyByZScore($zscore, 'wfh');
-        $classification['zscore'] = $zscore;
-        $classification['lms_info'] = $lmsInfo;
-        return $classification;
-    }
-    
-    /**
-     * So sánh kết quả giữa phương pháp cũ (SD Bands) và mới (LMS)
-     * Dùng để debug và validation
-     */
-    public function compareCalculationMethods()
-    {
-        return [
-            'weight_for_age' => [
-                'old' => $this->check_weight_for_age(),
-                'lms' => $this->check_weight_for_age_lms(),
-            ],
-            'height_for_age' => [
-                'old' => $this->check_height_for_age(),
-                'lms' => $this->check_height_for_age_lms(),
-            ],
-            'bmi_for_age' => [
-                'old' => $this->check_bmi_for_age(),
-                'lms' => $this->check_bmi_for_age_lms(),
-            ],
-            'weight_for_height' => [
-                'old' => $this->check_weight_for_height(),
-                'lms' => $this->check_weight_for_height_lms(),
-            ],
-        ];
-    }
 
     /**
      * Auto-select Z-score calculation method based on setting
@@ -1688,60 +853,208 @@ class History extends Model
     }
 
     /**
-     * Tham số LMS thực sự đã dùng, để bảng chi tiết trên trang kết quả khớp với
-     * con số đang hiển thị thay vì hiện LMS của đường tính cũ.
+     * Kết quả từng chỉ số ĐÚNG NHƯ trang kết quả hiển thị: đọc snapshot Z-score,
+     * chỉ gồm chỉ số WHO có chuẩn cho lứa tuổi (cân nặng/tuổi chỉ khi có
+     * Z-score, cân nặng/chiều cao chỉ với 0-5 tuổi). Dùng cho danh sách hồ sơ,
+     * dashboard, xuất Excel — không dùng các hàm check_*() cũ tra bảng SD theo
+     * tháng làm tròn, vốn cho kết quả khác trang kết quả.
+     *
+     * @return array<string, array> wfa / hfa / wfh / bmi => ['label' => ..., + kết quả check_*_auto()]
      */
+    public function ketQuaChiSo(): array
+    {
+        if ($this->getWhoStandard() === null) {
+            return [];
+        }
+
+        $kq = [];
+        $wfa = $this->check_weight_for_age_auto();
+        if ($wfa['zscore'] !== null) {
+            $kq['wfa'] = ['label' => 'Cân nặng theo tuổi'] + $wfa;
+        }
+        $kq['hfa'] = ['label' => 'Chiều cao theo tuổi'] + $this->check_height_for_age_auto();
+        if ($this->getWhoStandard() !== 'who2007') {
+            $kq['wfh'] = ['label' => 'Cân nặng theo chiều cao'] + $this->check_weight_for_height_auto();
+        }
+        $kq['bmi'] = ['label' => 'BMI theo tuổi'] + $this->check_bmi_for_age_auto();
+
+        return $kq;
+    }
+
+    /**
+     * Dữ liệu biểu đồ tăng trưởng WHO — dùng chung cho trang kết quả và bản in
+     * (partial sections.bieu-do-who), nên hai nơi luôn vẽ giống hệt nhau.
+     *
+     * Đường chuẩn sinh từ CHÍNH bộ LMS mà engine Z-score dùng (who2006_lms cho
+     * 0-5 tuổi, WHO Reference 2007 cho 5-19 tuổi), đúng giới tính của trẻ, lấy
+     * mẫu từng tháng / từng cm. Trước đây 0-5 tuổi vẽ bằng toạ độ chép tay: chỉ
+     * 6 điểm/đường nối thẳng, luôn là số của bé trai, và mỗi trang một bộ số khác
+     * nhau — nên chấm của trẻ lệch khỏi vị trí đúng với Z-score đã tính.
+     *
+     * Chỉ trả về chỉ số WHO có chuẩn cho lứa tuổi này: 5-19 tuổi không có cân
+     * nặng/chiều cao, cân nặng/tuổi chỉ tới 10 tuổi.
+     *
+     * @return array<string, array>|null khoá hfa / wfa / wfh / bmi, mỗi khoá gồm
+     *   title, x_label, y_label, x_min, x_max, y_min, y_max,
+     *   series ['-3SD' => [{x,y}...], ..., '3SD' => [...]], point {x,y}|null
+     */
+    public function getWhoChartSeries(): ?array
+    {
+        $chuan = $this->getWhoStandard();
+        if (!in_array($chuan, ['who2006', 'who2007'], true) || $this->gender === null) {
+            return null;
+        }
+
+        $sex = $this->gender == 1 ? 'M' : 'F';
+        $be = $this->gender == 1 ? 'bé trai' : 'bé gái';
+        $ngayTuoi = $this->getAgeInDays();
+        $thangTuoi = $ngayTuoi !== null
+            ? WHO2006ZScoreService::ageInMonths($ngayTuoi)
+            : ($this->age !== null ? (float) $this->age : null);
+        $chieuCao = $this->height !== null ? (float) $this->height : null;
+        $canNang = $this->weight !== null ? (float) $this->weight : null;
+        $bmi = $this->bmi !== null ? (float) $this->bmi : null;
+
+        $bieuDo = [];
+
+        if ($chuan === 'who2006') {
+            $thang = range(0, 60);
+            $lmsTheoThang = function (string $chiSo) use ($sex, $thang) {
+                $ngay = array_map(fn ($t) => min(1826, (int) round($t * 30.4375)), $thang);
+                $dong = DB::table('who2006_lms')
+                    ->where('indicator', $chiSo)->where('sex', $sex)
+                    ->whereIn('age_in_days', $ngay)
+                    ->get(['age_in_days', 'L', 'M', 'S'])->keyBy('age_in_days');
+                $kq = [];
+                foreach ($thang as $i => $t) {
+                    if ($r = $dong->get($ngay[$i])) {
+                        $kq[$t] = [(float) $r->L, (float) $r->M, (float) $r->S];
+                    }
+                }
+                return $kq;
+            };
+
+            $bieuDo['hfa'] = self::bieuDoWho("Chiều cao theo tuổi ({$be})", 'Tháng tuổi', 'Chiều cao (cm)',
+                $lmsTheoThang('hfa'), $thangTuoi, $chieuCao);
+            $bieuDo['wfa'] = self::bieuDoWho("Cân nặng theo tuổi ({$be})", 'Tháng tuổi', 'Cân nặng (kg)',
+                $lmsTheoThang('wfa'), $thangTuoi, $canNang);
+
+            // Nằm đo chiều dài (<731 ngày) hay đứng đo chiều cao: chọn bảng như engine
+            $nam = $ngayTuoi !== null && $ngayTuoi < WHO2006ZScoreService::LENGTH_HEIGHT_SWITCH_DAYS;
+            $chiSoCao = $nam ? 'wfl' : 'wfh';
+            [$tuCm, $denCm] = $nam ? [45, 110] : [65, 120];
+            $dong = DB::table('who2006_lms')
+                ->where('indicator', $chiSoCao)->where('sex', $sex)
+                ->whereIn('length_mm', array_map(fn ($cm) => $cm * 10, range($tuCm, $denCm)))
+                ->get(['length_mm', 'L', 'M', 'S']);
+            $lmsTheoCm = [];
+            foreach ($dong as $r) {
+                $lmsTheoCm[intdiv((int) $r->length_mm, 10)] = [(float) $r->L, (float) $r->M, (float) $r->S];
+            }
+            ksort($lmsTheoCm);
+            $bieuDo['wfh'] = self::bieuDoWho(
+                ($nam ? 'Cân nặng theo chiều dài' : 'Cân nặng theo chiều cao') . " ({$be})",
+                $nam ? 'Chiều dài (cm)' : 'Chiều cao (cm)', 'Cân nặng (kg)',
+                $lmsTheoCm, $chieuCao, $canNang
+            );
+
+            $bieuDo['bmi'] = self::bieuDoWho("BMI theo tuổi ({$be})", 'Tháng tuổi', 'BMI (kg/m²)',
+                $lmsTheoThang('bmi'), $thangTuoi, $bmi);
+        } else {
+            $tuoi2007 = $this->age !== null ? (float) $this->age : $thangTuoi;
+            $cauHinh = [
+                'hfa' => [228, 'Chiều cao theo tuổi', 'Chiều cao (cm)', $chieuCao],
+                'wfa' => [120, 'Cân nặng theo tuổi', 'Cân nặng (kg)', $canNang],
+                'bmi' => [228, 'BMI theo tuổi', 'BMI (kg/m²)', $bmi],
+            ];
+            foreach ($cauHinh as $chiSo => [$thangMax, $tieuDe, $nhanY, $giaTri]) {
+                if ($tuoi2007 === null || !WHO2007ZScoreService::indicatorApplies($chiSo, $tuoi2007)) {
+                    continue;
+                }
+                $lmsTheoThang = [];
+                for ($t = 60; $t <= $thangMax; $t++) {
+                    if ($lms = WHO2007ZScoreService::lmsInterpolated($chiSo, $sex, (float) $t)) {
+                        $lmsTheoThang[$t] = [$lms['L'], $lms['M'], $lms['S']];
+                    }
+                }
+                $bieuDo[$chiSo] = self::bieuDoWho("{$tieuDe} ({$be})", 'Tháng tuổi', $nhanY,
+                    $lmsTheoThang, $tuoi2007, $giaTri);
+            }
+        }
+
+        $bieuDo = array_filter($bieuDo);
+        return $bieuDo ?: null;
+    }
+
+    /**
+     * Một biểu đồ: 7 đường -3SD..+3SD từ LMS theo trục x, kèm điểm đo của trẻ.
+     *
+     * @param array<int|float, array{0: float, 1: float, 2: float}> $lmsTheoX x => [L, M, S]
+     */
+    private static function bieuDoWho(string $tieuDe, string $nhanX, string $nhanY, array $lmsTheoX, ?float $x, ?float $y): ?array
+    {
+        if (!$lmsTheoX) {
+            return null;
+        }
+
+        $mocSD = ['-3SD' => -3, '-2SD' => -2, '-1SD' => -1, 'Median' => 0, '1SD' => 1, '2SD' => 2, '3SD' => 3];
+        $series = [];
+        foreach ($lmsTheoX as $xi => [$l, $m, $s]) {
+            foreach ($mocSD as $ten => $z) {
+                $giaTri = WHO2006ZScoreService::valueAtZ($z, $l, $m, $s);
+                if ($giaTri !== null) {
+                    $series[$ten][] = ['x' => $xi, 'y' => round($giaTri, 2)];
+                }
+            }
+        }
+
+        $xs = array_keys($lmsTheoX);
+        $xMin = min($xs);
+        $xMax = max($xs);
+        $diem = ($x !== null && $y !== null && $y > 0) ? ['x' => round($x, 2), 'y' => round($y, 2)] : null;
+
+        // Trục y ôm trọn dải -3SD..+3SD và điểm đo (kể cả khi trẻ nằm ngoài ±3SD)
+        $cacY = array_merge(array_column($series['-3SD'] ?? [], 'y'), array_column($series['3SD'] ?? [], 'y'));
+        if ($diem && $diem['x'] >= $xMin && $diem['x'] <= $xMax) {
+            $cacY[] = $diem['y'];
+        }
+        // Làm tròn biên trục theo bước chẵn để vạch chia không ra số lẻ (41, 128...)
+        $dai = max($cacY) - min($cacY);
+        $buoc = $dai > 50 ? 10 : ($dai > 20 ? 5 : 2);
+
+        return [
+            'title'   => $tieuDe,
+            'x_label' => $nhanX,
+            'y_label' => $nhanY,
+            'x_min'   => $xMin,
+            'x_max'   => $xMax,
+            'y_min'   => max(0, floor(min($cacY) / $buoc) * $buoc),
+            'y_max'   => ceil(max($cacY) / $buoc) * $buoc,
+            'series'  => $series,
+            'point'   => $diem,
+        ];
+    }
+
     /**
      * Tham số LMS thực sự đã dùng, tự chọn chuẩn theo bản ghi.
      * Dùng cho bảng chi tiết trên trang kết quả.
      */
     /**
-     * Sinh đường chuẩn cho biểu đồ tăng trưởng 5-19 tuổi từ chính bộ LMS trong DB.
+     * Giá trị chuẩn (trung vị M của LMS) tại tuổi / chiều cao của trẻ — đúng bộ
+     * LMS đã dùng tính Z-score. Chỉ số không có chuẩn cho lứa tuổi thì bỏ qua.
      *
-     * Biểu đồ 0-5 tuổi đang dùng mảng toạ độ hard-code trong blade, chỉ phủ 0-60
-     * tháng. Với 5-19 thì sinh từ dữ liệu thật, vừa đúng vừa không phải chép tay
-     * hàng trăm con số.
-     *
-     * @return array|null ['hfa' => ['x_min','x_max','series'=>['-3SD'=>[{x,y}...]]], 'bmi' => ...]
+     * @return array<string, float> wfa (kg), wfh (kg), hfa (cm)
      */
-    public function getWho2007ChartSeries(): ?array
+    public function trungViChuan(): array
     {
-        if ($this->getWhoStandard() !== 'who2007' || $this->gender === null) {
-            return null;
-        }
-
-        $sex = $this->gender == 1 ? 'M' : 'F';
-        $mocSD = ['-3SD' => -3, '-2SD' => -2, '-1SD' => -1, 'Median' => 0, '1SD' => 1, '2SD' => 2, '3SD' => 3];
-        $ketQua = [];
-
-        foreach (['hfa' => 228, 'bmi' => 228, 'wfa' => 120] as $chiSo => $thangMax) {
-            $series = [];
-
-            // Lấy mẫu mỗi 3 tháng để đường đủ mượt mà không nặng trang
-            for ($thang = 60; $thang <= $thangMax; $thang += 3) {
-                $lms = WHO2007ZScoreService::lmsInterpolated($chiSo, $sex, (float) $thang);
-                if ($lms === null) {
-                    continue;
-                }
-
-                foreach ($mocSD as $ten => $z) {
-                    $giaTri = WHO2006ZScoreService::valueAtZ($z, $lms['L'], $lms['M'], $lms['S']);
-                    if ($giaTri !== null) {
-                        $series[$ten][] = ['x' => $thang, 'y' => round($giaTri, 2)];
-                    }
-                }
-            }
-
-            if ($series) {
-                $ketQua[$chiSo] = [
-                    'x_min'  => 60,
-                    'x_max'  => $thangMax,
-                    'series' => $series,
-                ];
+        $kq = [];
+        foreach (['wfa' => 'z_wfa', 'wfh' => 'z_wfh', 'hfa' => 'z_hfa'] as $chiSo => $cot) {
+            $lms = $this->getWhoLMSDetails($cot);
+            if (isset($lms['M'])) {
+                $kq[$chiSo] = (float) $lms['M'];
             }
         }
-
-        return $ketQua ?: null;
+        return $kq;
     }
 
     public function getWhoLMSDetails(string $column): ?array
@@ -1845,104 +1158,11 @@ class History extends Model
             return $this->get_nutrition_status_5_19();
         }
 
-        // Lấy kết quả các chỉ số với auto-switching
-        $wfa = $this->check_weight_for_age_auto();      // Cân nặng/tuổi
-        $hfa = $this->check_height_for_age_auto();      // Chiều cao/tuổi
-        $wfh = $this->check_weight_for_height_auto();   // Cân nặng/chiều cao
-        
-        $text = 'Chưa xác định';
-        $color = '#9E9E9E'; // WHO Gray
-        $code = 'unknown';
-        
-        // Kiểm tra dữ liệu có đủ không
-        if ($wfa['result'] === 'unknown' || $hfa['result'] === 'unknown' || $wfh['result'] === 'unknown') {
-            return ['text' => 'Chưa có đủ dữ liệu', 'color' => '#9E9E9E', 'code' => 'unknown'];
-        }
-        
-        // 1. SUY DINH DƯỠNG PHỐI HỢP (vừa thấp còi vừa gầy còm)
-        // Cả H/A và W/H đều < -2SD
-        if (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe']) && 
-            in_array($wfh['result'], ['wasted_moderate', 'wasted_severe'])) {
-            $text = 'Suy dinh dưỡng phối hợp';
-            $color = '#F44336'; // WHO Red
-            $code = 'malnutrition_combined';
-        }
-        // 2. SDD GẦY CÒM (W/H < -2SD nhưng H/A bình thường)
-        elseif (in_array($wfh['result'], ['wasted_moderate', 'wasted_severe'])) {
-            if ($wfh['result'] === 'wasted_severe') {
-                $text = 'Suy dinh dưỡng gầy còm nặng';
-                $color = '#F44336'; // WHO Red
-                $code = 'wasted_severe';
-            } else {
-                $text = 'Suy dinh dưỡng gầy còm';
-                $color = '#FF9800'; // WHO Orange
-                $code = 'wasted';
-            }
-        }
-        // 3. SDD THẤP CÒI (H/A < -2SD nhưng W/H bình thường)
-        elseif (in_array($hfa['result'], ['stunted_moderate', 'stunted_severe'])) {
-            if ($hfa['result'] === 'stunted_severe') {
-                $text = 'Suy dinh dưỡng thấp còi nặng';
-                $color = '#F44336'; // WHO Red
-                $code = 'stunted_severe';
-            } else {
-                $text = 'Suy dinh dưỡng thấp còi';
-                $color = '#FF9800'; // WHO Orange
-                $code = 'stunted';
-            }
-        }
-        // 4. SDD NHẸ CÂN (W/A < -2SD)
-        elseif (in_array($wfa['result'], ['underweight_moderate', 'underweight_severe'])) {
-            if ($wfa['result'] === 'underweight_severe') {
-                $text = 'Suy dinh dưỡng nhẹ cân nặng';
-                $color = '#F44336'; // WHO Red
-                $code = 'underweight_severe';
-            } else {
-                $text = 'Suy dinh dưỡng nhẹ cân';
-                $color = '#FF9800'; // WHO Orange
-                $code = 'underweight';
-            }
-        }
-        // 5. BÉO PHÌ (W/A > +3SD hoặc W/H > +3SD)
-        elseif ($wfa['result'] === 'obese' || $wfh['result'] === 'obese') {
-            $text = 'Béo phì';
-            $color = '#F44336'; // WHO Red
-            $code = 'obese';
-        }
-        // 6. THỪA CÂN (W/A > +2SD hoặc W/H > +2SD)
-        elseif ($wfa['result'] === 'overweight' || $wfh['result'] === 'overweight') {
-            $text = 'Thừa cân';
-            $color = '#FF9800'; // WHO Orange
-            $code = 'overweight';
-        }
-        // 7. CHIỀU CAO VƯỢT CHUẨN (H/A > +2SD hoặc +3SD)
-        elseif (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) {
-            $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-            $color = '#00BCD4'; // WHO Cyan
-            $code = 'over_standard';
-        }
-        // 8. BÌNH THƯỜNG (tất cả chỉ số trong khoảng -2SD đến +2SD)
-        elseif ($wfa['result'] === 'normal' && $hfa['result'] === 'normal' && $wfh['result'] === 'normal') {
-            $text = 'Bình thường';
-            $color = '#4CAF50'; // WHO Green
-            $code = 'normal';
-        }
-        // 9. CÓ CHỈ SỐ VƯỢT TIÊU CHUẨN KHÁC (fallback cho các trường hợp còn lại có chỉ số cao)
-        else {
-            // Kiểm tra nếu có bất kỳ chỉ số nào vượt chuẩn
-            $hasHighIndicator = false;
-            if (in_array($wfa['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
-            if (in_array($hfa['result'], ['above_2sd', 'above_3sd'])) $hasHighIndicator = true;
-            if (in_array($wfh['result'], ['overweight', 'obese', 'above_2sd', 'above_3sd'])) $hasHighIndicator = true;
-            
-            if ($hasHighIndicator) {
-                $text = 'Trẻ bình thường, và có chỉ số vượt tiêu chuẩn';
-                $color = '#00BCD4'; // WHO Cyan
-                $code = 'over_standard';
-            }
-        }
-        
-        return ['text' => $text, 'color' => $color, 'code' => $code];
+        return $this->get_nutrition_status(
+            $this->check_weight_for_age_auto(),
+            $this->check_height_for_age_auto(),
+            $this->check_weight_for_height_auto()
+        );
     }
 
 }

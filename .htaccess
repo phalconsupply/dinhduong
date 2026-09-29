@@ -1,0 +1,15 @@
+# Dùng khi DocumentRoot trỏ vào thư mục gốc dự án thay vì public/
+# (vd. vhost tự sinh của Laragon, hoặc hosting không đổi được DocumentRoot).
+# Mọi request được chuyển vào public/, nên .env, storage/, vendor/... không
+# bao giờ bị truy cập trực tiếp. Khi DocumentRoot đã là public/ thì file này
+# không được đọc tới và không có tác dụng gì.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Phòng khi mod_rewrite tắt: chặn các file nhạy cảm ở thư mục gốc
+<FilesMatch "^(\.env.*|composer\.(json|lock|phar)|artisan|.*\.(sql|zip|md|txt|log|csv|xlsx))$">
+    Require all denied
+</FilesMatch>

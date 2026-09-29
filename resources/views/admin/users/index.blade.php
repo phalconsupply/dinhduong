@@ -87,8 +87,7 @@
                                                     <span class="badge bg-{{v('role.color.'.$user->role)}}">{{v('role.'.$user->role)}}</span>
                                                 </td>
                                                 <td><span class="small">{{$user->address ?? '#'}}</span><br>
-                                                    <span class="small">{{$user->ward->full_name ?? '#'}}, {{$user->district->full_name ?? '#'}}</span><br>
-                                                    <span class="small">{{$user->province->full_name ?? '#'}}</span>                                                </td>
+                                                    @include('admin.partials.dia-ban', ['m' => $user])                                                </td>
                                                 <td>
                                                     @if($user->is_active == 1)
                                                         <span class="badge bg-success">Hoạt động</span>

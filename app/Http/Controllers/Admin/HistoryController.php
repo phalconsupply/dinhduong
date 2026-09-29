@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Models\District;
 use App\Models\Ethnic;
 use App\Models\History;
-use App\Models\Province;
-use App\Models\Ward;
+use App\Models\VnProvince;
+use App\Models\VnWard;
+use App\Support\DiaBanScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -40,18 +40,8 @@ class HistoryController extends Controller
             $history->whereDate('created_at', '<=', $request->to_date);
         }
 
-        // Lọc theo địa bàn
-        if ($request->filled('province_code')) {
-            $history->where('province_code', $request->province_code);
-        }
-
-        if ($request->filled('district_code')) {
-            $history->where('district_code', $request->district_code);
-        }
-
-        if ($request->filled('ward_code')) {
-            $history->where('ward_code', $request->ward_code);
-        }
+        // Lọc theo địa bàn 2026
+        $history->filterDiaBan($request);
         if ($request->filled('ethnic_id') && $request->get('ethnic_id') != 'all') {
             if($request->get('ethnic_id') == 'ethnic_minority'){
                 $history->where('ethnic_id', '<>', 1);
@@ -73,19 +63,11 @@ class HistoryController extends Controller
         // Sắp xếp và phân trang
         $history = $history->orderBy('created_at', 'desc')->paginate(25);
 
-        $provinces = Province::byUserRole($user)->select('name','code')->get();
-        $districts = [];
-        $wards = [];
-
-        if($request->has('province_code')){
-            $districts = District::byUserRole($user)->select('name','code')->where('province_code', $request->get('province_code'))->get();
-        }
-        if($request->has('district_code')){
-            $wards     = Ward::byUserRole($user)->select('name','code')->where('district_code', $request->get('district_code'))->get();
-        }
+        $provinces = VnProvince::byUserRole($user)->select('name','code')->orderBy('name')->get();
+        $wards = VnWard::theoTinh($request->get('province_code'), $user, true);
         $ethnics = Ethnic::get();
 
-        return view('admin.history.index', compact('history', 'user', 'provinces', 'districts', 'wards', 'ethnics'));
+        return view('admin.history.index', compact('history', 'user', 'provinces', 'wards', 'ethnics'));
     }
 
     public function export(Request $request)
@@ -123,40 +105,11 @@ class HistoryController extends Controller
                 return redirect()->back()->with('error', 'Bạn không có quyền xóa bản ghi này (không thuộc đơn vị nào).');
             }
             
-            $unit_role =  $user->unit->unit_type->role;
-            switch ($unit_role) {
-                case 'super_admin_province':
-                    //ĐƠn vị chủ quản cấp tỉnh được xoá khảo xác toàn tỉnh
-                    $is_delete = $history->province_code === $user->unit_province_code;
-                    break;
-                case 'admin_province':
-                    //đơn vị cấp tỉnh chỉ xoá được khảo sát do đơn vị đó tạo
-                    $is_delete = ($history->unit_id === $user->unit_id) && ($history->province_code === $user->unit_province_code);
-                    break;
-                case 'admin_district':
-                    //đơn vị cấp huyện chỉ xoá được khảo sát do đơn vị mình tạo
-                    $is_delete = ($history->unit_id === $user->unit_id) && ($history->district_code === $user->unit_district_code);
-                    break;
-                case 'admin_ward':
-                    //đơn vị cấp xã chỉ xoá được khảo sát do đơn vị mình tạo
-                    $is_delete = ($history->unit_id === $user->unit_id) && ($history->ward_code === $user->unit_ward_code);
-                    break;
-                case 'manager_province':
-                    //đơn vị tuyền tỉnh xoá được toàn tỉnh
-                    $is_delete = $history->province_code === $user->unit_province_code;
-                    break;
-                case 'manager_district':
-                    //Đơn vị tuyến huyện xoá được toàn huyện
-                    $is_delete = $history->district_code === $user->unit_district_code;
-                    break;
-                case 'manager_ward':
-                    //Đơn vị tuyến xã xoá được toàn xã
-                    $is_delete = $history->ward_code === $user->unit_ward_code;
-                    break;
-                default:
-                    abort(403);
-                    break;
+            $unit_role = DiaBanScope::vaiTro($user);
+            if (!in_array($unit_role, array_merge(DiaBanScope::CAP_TINH, DiaBanScope::CAP_XA), true)) {
+                abort(403);
             }
+            $is_delete = DiaBanScope::duocXoa($user, $history);
         }else{
             $is_delete = true;
         }

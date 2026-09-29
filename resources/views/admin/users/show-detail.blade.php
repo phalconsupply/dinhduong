@@ -48,7 +48,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Địa chỉ</th>
-                                    <td>{{$user->address}}, <span class="small">{{$user->ward->full_name ?? '#'}}, {{$user->district->full_name ?? '#'}}, {{$user->province->full_name ?? '#'}}</td>
+                                    <td>{{$user->address}}, <span class=\"small\">{{ $user->dia_ban ?: $user->dia_ban_cu ?: '#' }}</span></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Được tạo bởi</th>

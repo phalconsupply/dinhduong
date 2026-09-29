@@ -172,14 +172,25 @@
                                             </div>
                                             
                                             <div class="clearfix"></div>
+                                            @if($item->exists && $item->can_chon_xa_moi)
+                                                {{-- Hồ sơ cũ mà xã cũ bị tách / không ánh xạ được sang địa bàn 2026 --}}
+                                                <div class="alert alert-warning small">
+                                                    Hồ sơ này lập theo địa bàn cũ: <strong>{{ $item->dia_ban_cu }}</strong>.
+                                                    Không xác định được xã tương ứng theo địa bàn mới (sau sáp nhập 01/7/2025) —
+                                                    vui lòng chọn lại Tỉnh/Thành phố và Phường/Xã.
+                                                    @if($goiY = $item->ungVienXaMoi())
+                                                        Gợi ý: {{ implode(', ', $goiY) }}.
+                                                    @endif
+                                                </div>
+                                            @endif
                                             <div class="row">
-                                                <div class="col-xs-12 col-sm-4">
+                                                <div class="col-xs-12 col-sm-6">
                                                     <div class="form-floating-group">
                                                         <label for="province_code">Tỉnh/Thành phố <span class="required">*</span></label>
-                                                        <select name="province_code" id="province_code" class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%;" required>
+                                                        <select name="province_code" id="province_code" data-wards-url="{{ route('web.ajax_get_ward_by_province') }}" class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%;" required>
                                                             <option value="">Chọn Tỉnh/thành phố</option>
                                                             @foreach($provinces as $province)
-                                                                <option value="{{ $province->code }}" @if(old('province_code', $item->province_code) == $province->code) selected @endif>{{ $province->name }}</option>
+                                                                <option value="{{ $province->code }}" @if(old('province_code', $item->province_code_2026) == $province->code) selected @endif>{{ $province->name }}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="input-icon">
@@ -187,27 +198,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-4">
-                                                    <div class="form-floating-group">
-                                                        <label for="district_code">Quận / Huyện <span class="required">*</span></label>
-                                                        <select name="district_code" id="district_code" class="form-control" aria-label="Default select example" required="">
-                                                            <option value="">Chọn Quận/huyện</option>
-                                                            @foreach(session('districts', []) as $district)
-                                                                <option value="{{ $district->code }}" @if(old('district_code', $item->district_code) == $district->code) selected @endif>{{ $district->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="input-icon">
-                                                            <i class="fas fa-building"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-4">
+                                                <div class="col-xs-12 col-sm-6">
                                                     <div class="form-floating-group">
                                                         <label for="ward_code">Phường / Xã <span class="required">*</span></label>
-                                                        <select name="ward_code" id="ward_code" class="form-control" aria-label="Default select example" required="">
+                                                        <select name="ward_code" id="ward_code" data-placeholder="Chọn Phường/Xã" class="form-control" aria-label="Default select example" required="">
                                                             <option value="">Chọn Phường/Xã</option>
                                                             @foreach(session('wards', []) as $ward)
-                                                                <option value="{{ $ward->code }}" @if(old('ward_code', $item->ward_code) == $ward->code) selected @endif>{{ $ward->name }}</option>
+                                                                <option value="{{ $ward->code }}" @if(old('ward_code', $item->ward_code_2026) == $ward->code) selected @endif>{{ $ward->name }}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="input-icon">
@@ -445,68 +442,9 @@
 @endsection
 
 @push('foot')
+    <script src="{{ asset('web/js/dia-ban-2026.js') }}"></script>
     <!-- controler monthAction 550 -->
     <script type="text/javascript">
-        $(document).ready(function() {
-            // Khi có thay đổi trong select province
-            $('#province_code').change(function () {
-                var province_code = $(this).val(); // Lấy giá trị province id được chọn
-                // Gửi yêu cầu Ajax
-                $.ajax({
-                    url: '{{route('web.ajax_get_district_by_province')}}', // Đường dẫn tới route xử lý lấy danh sách district
-                    method: 'GET',
-                    data: {province_code: province_code}, // Truyền province id qua request
-                    success: function (response) {
-                        // Xử lý khi nhận được danh sách district từ server
-                        var districtSelect = $('#district_code'); // Select element cho district
-                        var wardSelect = $('#ward_code'); // Select element cho district
-
-                        // Xóa tất cả các option cũ trong select district
-                        districtSelect.find('option').remove();
-                        wardSelect.find('option').remove();
-                        wardSelect.append('<option value="">Chọn phường xã</option>');
-
-                        // Thêm các option mới cho district từ danh sách nhận được
-                        districtSelect.append('<option value="">Chọn quận huyện</option>');
-                        $.each(response.districts, function (key, value) {
-                            districtSelect.append('<option value="' + value.code + '">' + value.name + '</option>');
-                        });
-
-                    },
-                    error: function (xhr, status, error) {
-                        // Xử lý khi có lỗi xảy ra trong yêu cầu Ajax
-                        console.log(error);
-                    }
-                });
-            });
-            $(document).on('change','#district_code',function() {
-                var district_code = $(this).val(); // Lấy giá trị province id được chọn
-                console.log(district_code)
-                // Gửi yêu cầu Ajax
-                $.ajax({
-                    url: '{{route('web.ajax_get_ward_by_district')}}', // Đường dẫn tới route xử lý lấy danh sách district
-                    method: 'GET',
-                    data: { district_code: district_code }, // Truyền province id qua request
-                    success: function(response) {
-                        // Xử lý khi nhận được danh sách district từ server
-                        var wardSelect = $('#ward_code'); // Select element cho district
-
-                        // Xóa tất cả các option cũ trong select district
-                        wardSelect.find('option').remove();
-
-                        // Thêm các option mới cho district từ danh sách nhận được
-                        wardSelect.append('<option value="">Chọn phường xã</option>');
-                        $.each(response.wards, function(key, value) {
-                            wardSelect.append('<option value="' + value.code + '">' + value.name + '</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        // Xử lý khi có lỗi xảy ra trong yêu cầu Ajax
-                        console.log(error);
-                    }
-                });
-            });
-        });
 
         $(window).load(function() {
             document.getElementById("age").addEventListener("change", age19);

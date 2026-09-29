@@ -67,8 +67,7 @@
                         <span class="small">{{$user->birthday_f() ?? '#'}}</span>
                     </td>
                     <td><span class="small">{{$user->address ?? '#'}}</span><br>
-                        <span class="small">{{$user->ward->full_name ?? '#'}}, {{$user->district->full_name ?? '#'}}</span><br>
-                        <span class="small">{{$user->province->full_name ?? '#'}}</span>
+                        @include('admin.partials.dia-ban', ['m' => $user])
                     </td>
                     <td>
                         <span class="">{{$user->department}}</span><br>

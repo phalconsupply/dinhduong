@@ -10,8 +10,8 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin'], f
     Route::match(['get','post'],'/auth/login', 'AuthController@login')->name('admin.auth.login');
     Route::get('/auth/logout', 'AuthController@logout')->name('admin.auth.logout');
 
-    Route::get('/ajax_get_district_by_province', 'AjaxController@ajax_get_district_by_province')->name('admin.ajax_get_district_by_province');
-    Route::get('/ajax_get_ward_by_district', 'AjaxController@ajax_get_ward_by_district')->name('admin.ajax_get_ward_by_district');
+    // Địa bàn 2026: tỉnh → xã (không còn cấp huyện)
+    Route::get('/ajax_get_ward_by_province', 'AjaxController@ajax_get_ward_by_province')->name('admin.ajax_get_ward_by_province');
 
 });
 
@@ -31,14 +31,6 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
     Route::post('/statistics/clear-cache', 'StatisticsTabController@clearCache')->name('admin.statistics.clear_cache');
     Route::get('/statistics/cell-details', 'StatisticsTabCellDetailController@getCellDetails')->name('admin.statistics.cell_details');
     
-    // Helper routes for location cascade
-    Route::get('/get-districts/{provinceCode}', 'StatisticsTabController@getDistricts')->name('admin.get_districts');
-    Route::get('/get-wards/{districtCode}', 'StatisticsTabController@getWards')->name('admin.get_wards');
-    
-    // Legacy Statistics Routes (kept for backward compatibility)
-    Route::get('/statistics/legacy', 'DashboardController@statistics')->name('admin.dashboard.statistics_legacy');
-    Route::get('/statistics/export-csv', 'DashboardController@exportMeanStatisticsCSV')->name('admin.dashboard.export_mean_csv');
-    Route::get('/statistics/get-cell-details', 'DashboardController@getCellDetails')->name('admin.dashboard.get_cell_details');
     //Media
     Route::get('/media', 'MediaController@index')->name('admin.media.index');
 
@@ -78,8 +70,6 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
         Route::get('/setting/advices', 'SettingController@advices')->name('admin.setting.advices');
         Route::post('/setting/advices', 'SettingController@update_advices')->name('admin.setting.update_advices');
         Route::post('/setting', 'SettingController@update')->name('admin.setting.update');
-        Route::get('/setting/zscore-info', 'SettingController@zscoreInfo')->name('admin.setting.zscore_info');
-        Route::get('/setting/compare-methods', 'SettingController@compareMethods')->name('admin.setting.compare_methods');
     });
 });
 

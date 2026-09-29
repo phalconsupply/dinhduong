@@ -41,15 +41,8 @@ class StatisticsTabCellDetailController extends Controller
         }
         
         // Apply location filters
-        if ($request->filled('province_code')) {
-            $query->where('province_code', $request->province_code);
-        }
-        if ($request->filled('district_code')) {
-            $query->where('district_code', $request->district_code);
-        }
-        if ($request->filled('ward_code')) {
-            $query->where('ward_code', $request->ward_code);
-        }
+        // Lọc theo địa bàn 2026 (tham số province_code / ward_code mang mã mới)
+        $query->filterDiaBan($request);
         
         // Apply ethnic filter
         if ($request->filled('ethnic_id') && $request->get('ethnic_id') != 'all') {
@@ -100,9 +93,8 @@ class StatisticsTabCellDetailController extends Controller
                 'cal_date' => $child->cal_date ? $child->cal_date->format('d/m/Y') : '',
                 'zscore' => $zscore ? round($zscore, 2) : 'N/A',
                 'zscore_type' => $zscoreType,
-                'province_code' => $child->province_code,
-                'district_code' => $child->district_code,
-                'ward_code' => $child->ward_code,
+                'province_code' => $child->province_code_2026,
+                'ward_code' => $child->ward_code_2026,
             ];
         })->values();
         

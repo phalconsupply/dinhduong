@@ -18,3 +18,6 @@ yarn-error.log
 /.idea
 /.vscode
 storage/app/data-export/
+
+# Shapefile/FileGDB gốc địa phận 2026 (212MB) — bản gốc ở dự án ksk
+database/data/diaphan_2026/GDB_SHP/

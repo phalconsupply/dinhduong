@@ -34,8 +34,7 @@
                 </td>
 
                 <td><span class="small">{{$unit->address ?? '#'}}</span><br>
-                    <span class="small">{{$unit->ward->full_name ?? '#'}}, {{$unit->district->full_name ?? '#'}}</span><br>
-                    <span class="small">{{$unit->province->full_name ?? '#'}}</span>
+                    @include('admin.partials.dia-ban', ['m' => $unit])
                 </td>
                 <td>
                     <span class="badge bg-success">{{$unit->unit_type->name}}</span>

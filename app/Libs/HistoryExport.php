@@ -32,21 +32,13 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles
             $query->whereDate('created_at', '<=', $this->request['to_date']);
         }
 
-        if (!empty($this->request['province_code'])) {
-            $query->where('province_code', $this->request['province_code']);
-        }
+        $query->filterDiaBan($this->request);
 
-        if (!empty($this->request['district_code'])) {
-            $query->where('district_code', $this->request['district_code']);
-        }
-
-        if (!empty($this->request['ward_code'])) {
-            $query->where('ward_code', $this->request['ward_code']);
-        }
-
-        $histories = $query->get();
+        $histories = $query->with(['ward', 'province', 'oldWard', 'oldDistrict', 'oldProvince'])->get();
 
         return $histories->map(function ($item) {
+            // Cùng kết quả với trang kết quả; chỉ số không áp dụng cho lứa tuổi để trống
+            $chiSo = $item->ketQuaChiSo();
             return [
                 $item->id,
                 $item->fullname,
@@ -57,17 +49,18 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles
                 $item->bmi,
                 $item->cal_date_f() ?? '',
                 $item->birthday_f() ?? '',
-                $item->check_weight_for_age()['text'] ?? '',
-                $item->check_height_for_age()['text'] ?? '',
-                $item->check_weight_for_height()['text'] ?? '',
-                $item->nutrition_status ?? 'Chưa xác định',
+                $chiSo['wfa']['text'] ?? '',
+                $chiSo['hfa']['text'] ?? '',
+                $chiSo['wfh']['text'] ?? '',
+                $chiSo['bmi']['text'] ?? '',
+                $item->get_nutrition_status_auto()['text'] ?? 'Chưa xác định',
                 v("gender.{$item->gender}"),
                 $item->get_age(),
                 optional($item->ethnic)->name,
                 $item->address,
                 optional($item->ward)->full_name,
-                optional($item->district)->full_name,
                 optional($item->province)->full_name,
+                $item->dia_ban_cu,
                 optional($item->creator)->name ?? 'Khách vãng lai',
                 optional(optional($item->creator)->unit)->name,
                 $item->created_at?->format('d-m-Y'),
@@ -90,14 +83,15 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles
             'Cân nặng theo tuổi',
             'Chiều cao theo tuổi',
             'Cân nặng theo chiều cao',
+            'BMI theo tuổi',
             'Trạng thái',
             'Giới tính',
             'Tuổi',
             'Dân tộc',
             'Địa chỉ',
             'Phường/Xã',
-            'Quận/Huyện',
             'Tỉnh/Thành',
+            'Địa bàn cũ (trước 7/2025)',
             'Người lập',
             'Đơn vị',
             'Ngày lập',
@@ -107,7 +101,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles
     public function styles(Worksheet $sheet)
     {
         // Tự động wrap text nếu cần
-        $sheet->getStyle('A1:W1000')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A1:X1000')->getAlignment()->setWrapText(true);
 
         // Đặt chiều cao dòng
         foreach (range(1, 1000) as $row) {
@@ -115,7 +109,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles
         }
 
         // Cài đặt chiều rộng cho các cột nếu cần
-        foreach (range('A', 'W') as $col) {
+        foreach (range('A', 'X') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 

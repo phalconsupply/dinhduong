@@ -1,0 +1,5 @@
+{
+  "method": "Isolated original JS functions with minimal jQuery mock; not a browser test",
+  "adult_submit_validation": "TypeError: Cannot read properties of undefined (reading 'replace')",
+  "age_150_4": "12 tuổi 6 tháng"
+}
