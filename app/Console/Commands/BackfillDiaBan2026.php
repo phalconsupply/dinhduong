@@ -133,12 +133,14 @@ class BackfillDiaBan2026 extends Command
         $tuDong = "'" . implode("','", VnWardMapping::DUNG_TU_DONG) . "'";
 
         // Xã: chỉ khi ánh xạ chắc chắn. Tỉnh: mọi trường hợp có ánh xạ.
+        // users.ward_code là INT: so thẳng với '' thì MariaDB (strict) báo lỗi 1292 trong UPDATE,
+        // nên ép về CHAR trước khi so.
         $soDong = DB::update("
             UPDATE {$bang} t
             JOIN vn_ward_mappings m ON m.old_ward_code = {$bieuThuc}
             SET t.province_code_2026 = m.new_province_code,
                 t.ward_code_2026 = IF(m.status IN ({$tuDong}), m.new_ward_code, NULL)
-            WHERE t.ward_code IS NOT NULL AND t.ward_code <> '' {$dieuKienTrong}
+            WHERE t.ward_code IS NOT NULL AND CAST(t.ward_code AS CHAR) <> '' {$dieuKienTrong}
         ");
         $this->line(sprintf('  %-8s %5d dòng cập nhật', $bang, $soDong));
     }
