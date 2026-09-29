@@ -69,7 +69,7 @@
     }
 
     function selectFileWithLFM(id, type) {
-        var route_prefix = '/laravel-filemanager';
+        var route_prefix = '/filemanager';
         var target_input = $('#' + id);
         var target_preview = $('#preview-' + id);
         

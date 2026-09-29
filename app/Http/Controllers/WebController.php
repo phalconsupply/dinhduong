@@ -48,7 +48,10 @@ class WebController extends Controller
         return view('form-wizard', compact('slug', 'provinces', 'ethnics', 'item', 'category'));
     }
 
-    public function form($slug = '', Request $request){
+    // Request dat TRUOC tham so tuy chon: PHP 8 canh bao Deprecated neu tham so
+    // co gia tri mac dinh dung truoc tham so bat buoc. Laravel van khop dung vi
+    // no tiem phu thuoc theo kieu, roi moi dien tham so tu route.
+    public function form(Request $request, $slug = ''){
         $provinces = Province::select('name','code')->get();
         $ethnics = Ethnic::where('active',1)->get();
         $item = new History();

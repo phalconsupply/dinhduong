@@ -25,10 +25,19 @@ Route::get('/', [WebController::class, 'index'])->name('index');
 // Wizard form route (NEW DESIGN)
 Route::get('/wizard', [WebController::class, 'formWizard'])->name('form.wizard');
 
-// Laravel FileManager routes (must be before wildcard routes)
-Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web']], function () {
-    \UniSharp\LaravelFilemanager\Lfm::routes();
-});
+// KHÔNG đăng ký Lfm::routes() ở đây.
+//
+// Package tự đăng ký route của nó khi config('lfm.use_package_routes') = true,
+// tại prefix 'filemanager' với middleware ['web','auth'] (xem config/lfm.php).
+// Đăng ký thêm lần nữa ở đây gây ra HAI vấn đề:
+//
+//   1. Trùng tên route nên `php artisan route:cache` THẤT BẠI — production
+//      chạy mà không có route cache.
+//   2. Đăng ký thủ công dùng middleware ['web'] KHÔNG CÓ 'auth', nên toàn bộ
+//      trình quản lý file mở công khai: /laravel-filemanager trả về HTTP 200
+//      cho người chưa đăng nhập, duyệt và tải file lên được.
+//
+// Đường dẫn đúng là /filemanager. Các view tham chiếu tới nó đã sửa theo.
 
 // Specific routes MUST come BEFORE wildcard routes
 Route::get('/ketqua', [WebController::class, 'result'])->name('result');
