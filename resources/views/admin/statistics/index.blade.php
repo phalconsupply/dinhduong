@@ -68,6 +68,31 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <label class="form-label small" for="loc_ngay">Lọc ngày theo:</label>
+                            <select name="loc_ngay" id="loc_ngay" class="form-select filter-input">
+                                <option value="created_at" @if(request()->get('loc_ngay', 'created_at') == 'created_at') selected @endif>Ngày nhập phiếu</option>
+                                <option value="cal_date" @if(request()->get('loc_ngay') == 'cal_date') selected @endif>Ngày cân đo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small" for="unit_id">Đơn vị nhập liệu:</label>
+                            <select name="unit_id" id="unit_id" class="form-select filter-input">
+                                <option value="">Tất cả</option>
+                                @foreach($units as $unit)
+                                    <option value="{{ $unit->id }}" @if($unit->id == request()->get('unit_id')) selected @endif>{{ $unit->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- Chỉ dùng cho tab Báo cáo nghiên cứu 5-19: cách gom "địa bàn" ở bảng 3.1 và 3.9 --}}
+                        <div class="col-md-2 tab-chi-5-19">
+                            <label class="form-label small" for="nhom_dia_ban">Nhóm địa bàn theo:</label>
+                            <select name="nhom_dia_ban" id="nhom_dia_ban" class="form-select filter-input">
+                                @foreach(\App\Services\BaoCao519Service::NHOM_DIA_BAN as $khoa => $nhan)
+                                    <option value="{{ $khoa }}" @if(request()->get('nhom_dia_ban', 'xa') == $khoa) selected @endif>{{ $nhan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,6 +169,17 @@
                             <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
                         </span>
                     </button>
+                    <button class="nav-link position-relative tab-chi-5-19"
+                            id="bao-cao-5-19-tab"
+                            data-bs-toggle="pill"
+                            data-bs-target="#bao-cao-5-19"
+                            data-tab="bao-cao-5-19"
+                            type="button" role="tab">
+                        <i class="uil uil-file-graph"></i> Báo cáo nghiên cứu
+                        <span class="loading-spinner d-none">
+                            <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
+                        </span>
+                    </button>
                 </nav>
 
                 {{-- Tab Content --}}
@@ -195,6 +231,14 @@
                         <div class="text-center py-5 text-muted">
                             <i class="uil uil-chart-pie" style="font-size: 3rem;"></i>
                             <p class="mt-2">Nhấn vào tab để tải dữ liệu WHO Combined</p>
+                        </div>
+                    </div>
+
+                    {{-- Báo cáo nghiên cứu 5-19 (bảng 3.1–3.9, 3.13) --}}
+                    <div class="tab-pane fade" id="bao-cao-5-19" role="tabpanel">
+                        <div class="text-center py-5 text-muted">
+                            <i class="uil uil-file-graph" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Nhấn vào tab để tải bảng báo cáo nghiên cứu</p>
                         </div>
                     </div>
                 </div>
@@ -404,7 +448,8 @@ function loadTabData(tabName) {
 
     // Show/hide Quick Stats based on tab type
     const quickStatsContainer = document.getElementById('quick-stats-container');
-    quickStatsContainer.style.display = tabName === 'mean-stats' ? 'none' : 'flex';
+    // Tab báo cáo nghiên cứu tự có phần cỡ mẫu, không dùng thẻ tổng quan
+    quickStatsContainer.style.display = (tabName === 'mean-stats' || tabName === 'bao-cao-5-19') ? 'none' : 'flex';
 
     document.querySelectorAll('[data-tab] .loading-spinner').forEach(sp => sp.classList.add('d-none'));
     showTabLoading(tab, true);

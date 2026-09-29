@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ethnic;
 use App\Models\History;
+use App\Models\Unit;
 use App\Models\VnProvince;
+use App\Services\BaoCao519Service;
+use App\Support\DiaBanScope;
 use App\Models\VnWard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,9 +29,10 @@ class StatisticsTabController extends Controller
         $provinces = VnProvince::byUserRole($user)->select('name','code')->orderBy('name')->get();
         $wards = VnWard::theoTinh($request->get('province_code'), $user, true);
         $ethnics = Ethnic::all();
+        $units = DiaBanScope::donVi(Unit::query(), $user)->orderBy('name')->get(['id', 'name']);
 
         return view('admin.statistics.index', compact(
-            'provinces', 'wards', 'ethnics'
+            'provinces', 'wards', 'ethnics', 'units'
         ));
     }
 
@@ -227,6 +231,57 @@ class StatisticsTabController extends Controller
     }
 
     /**
+     * Bảng báo cáo nghiên cứu 5-<19 tuổi (bảng 3.1–3.9, 3.13 của
+     * docs/baocao/ket-qua-du-kien.pdf). Luôn tính trên đối tượng 5-19,
+     * địa bàn gom theo tham số nhom_dia_ban (xa | tinh | don_vi).
+     */
+    public function getBaoCao519(Request $request, BaoCao519Service $baoCao)
+    {
+        $request->merge(['doi_tuong' => '5-19']);
+        $cacheKey = 'statistics_bao_cao_5_19_' . md5(json_encode($request->all()) . auth()->id());
+
+        $stats = Cache::remember($cacheKey, 300, function () use ($request, $baoCao) {
+            $query = $this->getBaseQuery($request, Auth::user());
+
+            return $baoCao->tinh($query, (string) $request->get('nhom_dia_ban', 'xa'));
+        });
+
+        $dieuKien = $this->moTaBoLoc($request);
+
+        return response()->json([
+            'success' => true,
+            'data' => ['n' => $stats['n']],
+            'html' => view('admin.statistics.tabs.bao-cao-5-19', compact('stats', 'dieuKien'))->render(),
+        ]);
+    }
+
+    /** Điều kiện lọc đang áp dụng, dạng chữ để ghi kèm bảng báo cáo */
+    private function moTaBoLoc(Request $request): array
+    {
+        $ds = [];
+        if ($request->filled('from_date') || $request->filled('to_date')) {
+            $ngay = fn ($d) => $d ? Carbon::parse($d)->format('d/m/Y') : '…';
+            $ds[] = ($request->get('loc_ngay') === 'cal_date' ? 'Ngày cân đo' : 'Ngày nhập phiếu')
+                . ': ' . $ngay($request->from_date) . ' – ' . $ngay($request->to_date);
+        }
+        if ($request->filled('province_code')) {
+            $ds[] = 'Tỉnh/TP: ' . (VnProvince::where('code', $request->province_code)->value('name') ?? $request->province_code);
+        }
+        if ($request->filled('ward_code')) {
+            $ds[] = 'Phường/Xã: ' . (VnWard::where('code', $request->ward_code)->value('full_name') ?? $request->ward_code);
+        }
+        if ($request->filled('unit_id')) {
+            $ds[] = 'Đơn vị: ' . (Unit::whereKey($request->unit_id)->value('name') ?? '#' . $request->unit_id);
+        }
+        $danToc = $request->get('ethnic_id');
+        if ($danToc && $danToc !== 'all') {
+            $ds[] = 'Dân tộc: ' . ($danToc === 'ethnic_minority' ? 'Dân tộc thiểu số' : (Ethnic::whereKey($danToc)->value('name') ?? $danToc));
+        }
+
+        return $ds;
+    }
+
+    /**
      * Get base query with filters applied
      */
     /**
@@ -272,12 +327,18 @@ class StatisticsTabController extends Controller
         // Trước đây không hề lọc tuổi, nên hồ sơ 5-19 sẽ lẫn vào thống kê 0-5.
         $query->where('who_standard', $this->doiTuong($request) === '5-19' ? 'who2007' : 'who2006');
 
-        // Apply date filters
+        // Lọc ngày theo ngày cân đo (cal_date) hoặc ngày nhập phiếu (created_at, mặc định cũ)
+        $cotNgay = $request->get('loc_ngay') === 'cal_date' ? 'cal_date' : 'created_at';
         if ($request->filled('from_date')) {
-            $query->whereDate('created_at', '>=', $request->from_date);
+            $query->whereDate($cotNgay, '>=', $request->from_date);
         }
         if ($request->filled('to_date')) {
-            $query->whereDate('created_at', '<=', $request->to_date);
+            $query->whereDate($cotNgay, '<=', $request->to_date);
+        }
+
+        // Đơn vị nhập liệu (trạm y tế, trường học… được tạo thành đơn vị)
+        if ($request->filled('unit_id')) {
+            $query->where('unit_id', (int) $request->get('unit_id'));
         }
 
         // Apply location filters
