@@ -60,6 +60,13 @@ class WebController extends Controller
             'tu-5-19-tuoi' => 2,
             'tu-19-tuoi' => 3,
         ];
+        // Route wildcard /{slug} nuốt mọi đường dẫn chưa khớp, nên slug lạ sẽ
+        // làm $slug_ids[$slug] báo lỗi và trả HTTP 500. Mọi URL sai đều 500
+        // thay vì 404 — vừa sai vừa làm nhiễu log.
+        if (!isset($slug_ids[$slug])) {
+            abort(404);
+        }
+
         $category = $slug_ids[$slug];
         if($request->get('edit')){
             $item = History::where('uid', $request->get('edit'))->first();
