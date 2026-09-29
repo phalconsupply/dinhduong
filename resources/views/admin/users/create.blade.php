@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="layout-specing">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-12 d-lg-block d-none">
+                <div class="col-lg-12 col-md-12 col-12">
                     <div class="card border-bottom pb-4">
 
                         <div class="card-body">
@@ -190,8 +190,6 @@
                                         </div>
                                         </div>
                                     </div>
-
-                                </div>
                                 <div class="row mt-3">
                                     <div class="col-8 ta-r">
                                         <input type="submit" id="submit" name="send" class="btn btn-sm btn-primary" value="Thêm tài khoản">

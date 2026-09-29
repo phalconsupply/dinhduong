@@ -12,27 +12,29 @@
                             
                             <!-- Progress Steps -->
                             <div class="form-progress-wrapper">
-                                <div class="form-steps">
-                                    <div class="step active" data-step="1">
+                                {{-- div role=navigation thay vì <nav>: web/js/b47b5bf.js (template cũ) ép mọi thẻ <nav>
+                                     thành position:fixed khi cuộn quá 103px, làm thanh này đè lên nội dung --}}
+                                <div class="form-steps" role="navigation" aria-label="Các phần của biểu mẫu">
+                                    <a href="#phan-thong-tin" class="step active" data-step="1" aria-current="step">
                                         <div class="step-icon">
                                             <i class="fas fa-user"></i>
                                         </div>
                                         <div class="step-label">Thông tin cá nhân</div>
                                         <div class="step-connector"></div>
-                                    </div>
-                                    <div class="step" data-step="2">
+                                    </a>
+                                    <a href="#phan-dia-chi" class="step" data-step="2">
                                         <div class="step-icon">
                                             <i class="fas fa-map-marker-alt"></i>
                                         </div>
                                         <div class="step-label">Địa chỉ</div>
                                         <div class="step-connector"></div>
-                                    </div>
-                                    <div class="step" data-step="3">
+                                    </a>
+                                    <a href="#phan-chi-so" class="step" data-step="3">
                                         <div class="step-icon">
                                             <i class="fas fa-weight"></i>
                                         </div>
                                         <div class="step-label">Chỉ số sức khỏe</div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                     
@@ -50,7 +52,7 @@
                                     
                                     <!-- Personal Information Section - 2/3 width -->
                                     <div class="col-xs-12 col-md-8">
-                                        <div class="form-section-card">
+                                        <div class="form-section-card" id="phan-thong-tin" data-buoc="1">
                                             <div class="card-header">
                                                 <div class="card-icon">
                                                     <i class="fas fa-user-circle"></i>
@@ -60,28 +62,28 @@
                                             <div class="card-body">
                                                 <div class="pro5-input">
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12">
                                                 <div class="form-floating-group">
                                                     <label for="last-name">Họ và tên <span class="required">*</span></label>
-                                                    <input type="text" name="fullname" value="{{old('fullname', $item->fullname)}}" class="form-control" id="last-name" placeholder="Nhập họ và tên" required>
+                                                    <input type="text" name="fullname" value="{{old('fullname', $item->fullname)}}" class="form-control @error('fullname') is-invalid @enderror" id="last-name" placeholder="Nhập họ và tên" maxlength="50" autocomplete="name" required @error('fullname') aria-invalid="true" @enderror>
                                                     <div class="input-icon">
                                                         <i class="fas fa-user"></i>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group">
                                                     <label for="id_number">Mã định danh (CCCD)</label>
-                                                    <input type="text" name="id_number" value="{{old('id_number', $item->id_number)}}" class="form-control" id="id_number" placeholder="Nhập số CCCD">
+                                                    <input type="text" inputmode="numeric" pattern="[0-9]{10,12}" maxlength="12" name="id_number" value="{{old('id_number', $item->id_number)}}" class="form-control" id="id_number" placeholder="Nhập số CCCD" title="10–12 chữ số">
                                                     <div class="input-icon">
                                                         <i class="fas fa-id-card"></i>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group">
                                                     <label for="phone">Số điện thoại</label>
-                                                    <input type="number" minlength="10" maxlength="11" name="phone" value="{{old('phone', $item->phone)}}" class="form-control" id="phone" placeholder="Nhập số điện thoại">
+                                                    <input type="tel" inputmode="tel" autocomplete="tel" pattern="[0-9]{10,12}" maxlength="12" name="phone" value="{{old('phone', $item->phone)}}" class="form-control" id="phone" placeholder="Nhập số điện thoại" title="10–12 chữ số">
                                                     <div class="input-icon">
                                                         <i class="fas fa-phone"></i>
                                                     </div>
@@ -91,7 +93,7 @@
 
                                         <div class="clearfix"></div>
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group">
                                                     <label for="gender">Giới tính <span class="required">*</span></label>
                                                     <select name="gender" id="gender" class="form-control" style="width: 100%;">
@@ -103,12 +105,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group">
                                                     <label for="ethnic_id">Dân tộc <span class="required">*</span></label>
                                                     <select name="ethnic_id" id="ethnic_id" class="form-control" required="">
                                                         @foreach($ethnics as $ethnic)
-                                                            <option value="{{ $ethnic->id }}" @if(old('ethnic_id') && old('ethnic_id', $item->ethnic_id) == $ethnic->id) selected @endif>{{ $ethnic->name }}</option>
+                                                            <option value="{{ $ethnic->id }}" @if(old('ethnic_id', $item->ethnic_id) == $ethnic->id) selected @endif>{{ $ethnic->name }}</option>
                                                         @endforeach
                                                     </select>
                                                     <div class="input-icon">
@@ -116,30 +118,25 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="clearfix"></div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-4">
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group calendar-group-modern">
                                                     <label for="cal-date">Ngày cân đo <span class="required">*</span></label>
-                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/YYYY'))}}" class="form-control" id="cal-date" placeholder="Chọn ngày cân đo" required>
+                                                    <input type="text" name="cal_date" value="{{old('cal_date', $item?->cal_date?->format('d/m/Y'))}}" class="form-control" id="cal-date" placeholder="Chọn ngày cân đo" required>
                                                     <div class="input-icon">
                                                         <i class="fas fa-calendar-day"></i>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-4">
-                                                @if($category != 3)
+                                            <div class="col-xs-12 col-sm-6">
                                                 <div class="form-floating-group calendar-group-modern">
                                                     <label for="calendar-birth">Ngày sinh <span class="required">*</span></label>
-                                                    <input type="text" name="birthday" value="{{old('birthday', $item?->birthday?->format('d/m/YYYY'))}}" class="form-control" id="calendar-birth" placeholder="Chọn ngày sinh" required>
+                                                    <input type="text" name="birthday" value="{{old('birthday', $item?->birthday?->format('d/m/Y'))}}" class="form-control" id="calendar-birth" placeholder="Chọn ngày sinh" required>
                                                     <div class="input-icon">
                                                         <i class="fas fa-birthday-cake"></i>
                                                     </div>
                                                     <input id="over19" type="hidden" name="over19" value="{{old('over19', $item->over19)}}" />
                                                 </div>
-                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -150,7 +147,7 @@
                                 <!-- End BLOCK 1 -->
                                 
                                 <!-- BLOCK 2: Address (Full Width) -->
-                                <div class="form-section-card">
+                                <div class="form-section-card" id="phan-dia-chi" data-buoc="2">
                                     <div class="card-header">
                                         <div class="card-icon">
                                             <i class="fas fa-map-marked-alt"></i>
@@ -163,7 +160,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-floating-group">
                                                         <label for="address">Địa chỉ <span class="required">*</span></label>
-                                                        <input type="text" name="address" value="{{old('address', $item->address)}}" class="form-control" id="address" placeholder="Nhập địa chỉ" required>
+                                                        <input type="text" name="address" value="{{old('address', $item->address)}}" class="form-control @error('address') is-invalid @enderror" id="address" placeholder="Nhập địa chỉ (tối đa 500 ký tự)" maxlength="500" required @error('address') aria-invalid="true" @enderror>
                                                         <div class="input-icon">
                                                             <i class="fas fa-home"></i>
                                                         </div>
@@ -219,7 +216,7 @@
                                 <!-- End BLOCK 2 -->
                                     
                                 <!-- BLOCK 3: Birth Information (left) + Health Measurements (right) - Equal Width -->
-                                <div class="row">
+                                <div class="row" id="phan-chi-so" data-buoc="3">
                                     {{-- Thông tin lúc sinh chỉ dùng cho trẻ 0-5 tuổi; với đối
                                          tượng 5-19 tuổi nó không tham gia đánh giá nào nên ẩn đi.
                                          Khi ẩn, khối đo lường chiếm trọn chiều ngang. --}}
@@ -269,7 +266,7 @@
                                     @endif
 
                                     <!-- Health Measurements Section -->
-                                    <div class="col-xs-12 {{ $category == 1 ? 'col-md-6' : 'col-md-12' }}">
+                                    <div class="col-xs-12 col-md-6">
                                         <div class="form-section-card">
                                             <div class="card-header">
                                                 <div class="card-icon">
@@ -284,7 +281,7 @@
                                                     <div class="measurement-card weight">
                                                         <div class="measurement-icon">⚖️</div>
                                                         <div class="measurement-value">
-                                                            <input id="weight-user-profile" min="0" type="number" step="0.1" required name="weight" value="{{old('weight', $item->weight)}}" placeholder="0.0">
+                                                            <input id="weight-user-profile" aria-label="Cân nặng (kg)" inputmode="decimal" min="0" type="number" step="0.1" required name="weight" value="{{old('weight', $item->weight)}}" placeholder="0.0">
                                                             <span class="unit">kg</span>
                                                         </div>
                                                         <div class="measurement-label">Cân nặng</div>
@@ -294,7 +291,7 @@
                                                     <div class="measurement-card height">
                                                         <div class="measurement-icon">📏</div>
                                                         <div class="measurement-value">
-                                                            <input id="length-user-profile" type="number" step="0.1" min="0" required name="height" value="{{old('height', $item->height)}}" placeholder="0.0">
+                                                            <input id="length-user-profile" aria-label="Chiều cao (cm)" inputmode="decimal" type="number" step="0.1" min="0" required name="height" value="{{old('height', $item->height)}}" placeholder="0.0">
                                                             <span class="unit">cm</span>
                                                         </div>
                                                         <div class="measurement-label">Chiều cao</div>
@@ -304,19 +301,19 @@
                                                     <div class="measurement-card age">
                                                         <div class="measurement-icon">🎂</div>
                                                         <div class="measurement-value">
-                                                            <input name="age_show" value="{{old('age_show', $item->age_show)}}" id="age_show" type="text" readonly placeholder="--">
-                                                            <span class="unit">tuổi</span>
+                                                            <output id="age-display" class="age-output" for="calendar-birth cal-date" aria-live="polite">{{ old('age_show', $item->age_show) ?: '--' }}</output>
                                                         </div>
                                                         <div class="measurement-label">Tuổi</div>
+                                                        <input name="age_show" value="{{old('age_show', $item->age_show)}}" id="age_show" type="hidden">
                                                         <input name="age" value="{{old('age',  $item->age)}}" id="age" type="hidden" readonly>
-                                                        <input type="hidden" name="realAge" id="real-age" value="0">
+                                                        <input type="hidden" name="realAge" id="real-age" value="{{ old('realAge', $item->realAge) }}">
                                                     </div>
                                                     
                                                     <!-- BMI Card -->
                                                     <div class="measurement-card bmi" id="bmi-card">
                                                         <div class="measurement-icon">📊</div>
                                                         <div class="measurement-value">
-                                                            <input id="bmi-user-profile" type="text" name="bmi" value="{{old('bmi', $item->bmi)}}" readonly="" placeholder="--">
+                                                            <input id="bmi-user-profile" aria-label="Chỉ số BMI (tự tính)" type="text" name="bmi" value="{{old('bmi', $item->bmi)}}" readonly="" placeholder="--">
                                                             <span class="unit">BMI</span>
                                                         </div>
                                                         <div class="measurement-label">Chỉ số BMI</div>
@@ -326,8 +323,8 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Classification Info Panel -->
-                                    <div class="col-xs-12 col-md-6">
+                                    <!-- Classification Info Panel: toàn hàng ở 0-5 tuổi (đã có 2 thẻ phía trên), nửa hàng ở biểu mẫu còn lại -->
+                                    <div class="col-xs-12 {{ $category == 1 ? 'col-md-12' : 'col-md-6' }}">
                                         <div class="form-section-card classification-info-panel">
                                             <div class="card-header">
                                                 <div class="card-icon">
@@ -376,8 +373,8 @@
                                                         </div>
                                                         <div class="info-content">
                                                             <h6 class="info-title">Phương pháp tính toán</h6>
-                                                            <p class="info-value">WHO LMS 2006</p>
-                                                            <small class="info-detail">Lambda-Mu-Sigma Method</small>
+                                                            <p class="info-value" id="calculation-method-info">{{ [1 => 'WHO 2006 — LMS', 2 => 'WHO 2007 — LMS', 3 => 'Không áp dụng chuẩn WHO trẻ em'][$category] ?? '--' }}</p>
+                                                            <small class="info-detail" id="calculation-method-detail">{{ $category == 3 ? 'Ngoài phạm vi 0–19 tuổi' : 'Lambda-Mu-Sigma' }}</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -434,8 +431,6 @@
             </div>
         </div>
         <!-- Validate end -->
-                    </div>
-                </div>
             </section>
         </div>
     </div>
@@ -443,24 +438,61 @@
 
 @push('foot')
     <script src="{{ asset('web/js/dia-ban-2026.js') }}"></script>
+    <script>
+        // Lỗi validation từ server: đánh dấu từng ô (is-invalid, aria-invalid, aria-describedby),
+        // chèn thông báo ngay dưới ô và đưa focus tới phần tóm tắt lỗi. Sửa ô nào thì gỡ lỗi ô đó.
+        (function () {
+            var nguon = document.getElementById('loi-theo-truong');
+            if (!nguon) return;
+            var loi = JSON.parse(nguon.textContent || '{}');
+            var oDanXuat = {age: 'birthday', realAge: 'birthday', thumb: null};
+            var daGan = {};
+            Object.keys(loi).forEach(function (truong) {
+                var ten = oDanXuat.hasOwnProperty(truong) ? oDanXuat[truong] : truong;
+                var o = ten ? document.querySelector('[name="' + ten + '"]') : document.getElementById('avatar-wapper');
+                if (!o || daGan[ten || truong]) return;
+                daGan[ten || truong] = true;
+                var idLoi = 'loi-' + (ten || truong);
+                var tb = document.createElement('div');
+                tb.className = 'loi-truong';
+                tb.id = idLoi;
+                tb.textContent = loi[truong];
+                var khung = o.closest('.form-floating-group, .measurement-card, .pro5-avatar') || o.parentNode;
+                khung.appendChild(tb);
+                o.classList.add('is-invalid');
+                o.setAttribute('aria-invalid', 'true');
+                o.setAttribute('aria-describedby', ((o.getAttribute('aria-describedby') || '') + ' ' + idLoi).trim());
+                var go = function () {
+                    o.classList.remove('is-invalid');
+                    o.removeAttribute('aria-invalid');
+                    if (tb.parentNode) tb.parentNode.removeChild(tb);
+                };
+                o.addEventListener('input', go, {once: true});
+                o.addEventListener('change', go, {once: true});
+            });
+            var tomTat = document.getElementById('tom-tat-loi');
+            if (tomTat) tomTat.focus();
+        })();
+    </script>
     <!-- controler monthAction 550 -->
     <script type="text/javascript">
 
         $(window).load(function() {
-            document.getElementById("age").addEventListener("change", age19);
-
-            function age19() {
-                var a = document.getElementById("age").value;
-                if (a < 19) {
-                    alert('Bé nhỏ hơn 19 tuổi. Vui lòng chọn độ tuổi thích hợp!!');
-                    $("#age").val('');
-                }
-            }
 
             var getMonthUrl = "{{url('/ajax/tinh-ngay-sinh')}}";
             var gMonth;
 
+            // Hiển thị tuổi cho người dùng đọc; ô ẩn #age_show mang cùng chuỗi đi lưu
+            function hienTuoi(chuoi, laLoi) {
+                $('#age_show').val(laLoi ? '' : chuoi);
+                $('#age-display').text(chuoi || '--').toggleClass('age-output--error', !!laLoi);
+            }
+
             function getMonthAjax(birthdate, date) {
+                // Ngày vừa đổi: tuổi cũ không còn đúng, xoá trước khi tính lại
+                $('#age').val('');
+                $('#real-age').val('');
+                hienTuoi('Đang tính…');
                 $.ajax({
                     url: getMonthUrl,
                     data: {
@@ -470,29 +502,28 @@
                     success: function(response) {
                         var months = response;
                         var age = Math.floor(months / 12);
-                        $("#addon3").text('tuổi');
                         // Ô #age LUÔN mang tuổi theo THÁNG THẬP PHÂN — đây là đơn vị
                         // mà engine WHO dùng để tra bảng. Ô #age_show chỉ để người
                         // dùng đọc. Trước đây với category 2 và tuổi >= 72 tháng, #age
                         // bị gán bằng số NĂM nên engine tra sai hoàn toàn.
-                        $("#addon3").text('tháng');
 
                         if (category == 1) {
                             // Dưới 60 tháng: chuẩn WHO 2006 (0-5 tuổi)
                             if (months < 60) {
-                                $("#age_show").val(months + ' tháng');
+                                hienTuoi(months + ' tháng');
                                 $("#age").val(months);
                             } else {
                                 $("#calendar-birth").val("");
                                 $('#age').val('');
                                 $('#real-age').val('');
+                                hienTuoi('--');
                                 alert('Trẻ đã từ 5 tuổi (60 tháng) trở lên. Vui lòng dùng biểu mẫu "Từ 5 đến 19 tuổi".');
                                 return false;
                             }
                         } else if (category == 2) {
                             // Từ 60 tháng đến dưới 19 tuổi (228 tháng): chuẩn WHO 2007
                             if (months >= 60 && months < 229) {
-                                $("#age_show").val(moTaTuoi(months));
+                                hienTuoi(moTaTuoi(months));
                                 $("#age").val(months);
                             } else {
                                 $("#calendar-birth").val("");
@@ -505,8 +536,11 @@
                             }
                         } else if (category == 3) {
                             if (months >= 229) {
-                                $('#age').val(age);
+                                hienTuoi(moTaTuoi(months));
+                                $('#age').val(months);
+                                $('#over19').val('1');
                             } else {
+                                $("#calendar-birth").val("");
                                 $('#age').val('');
                                 $('#real-age').val('');
                                 alert('Bé nhỏ hơn 19 tuổi. Vui lòng chọn độ tuổi thích hợp!!');
@@ -520,13 +554,13 @@
                         updateClassificationInfo(months);
                     },
                     error: function(jqXHR, textStatus) {
+                        $('#age').val('');
+                        hienTuoi('Không tính được tuổi', true);
                         if (jqXHR.status == 401) {
-                            $('#age').val('');
                             alert(jqXHR.responseText);
                         } else {
-                            // alert('Không thể kiểm tra tuổi của đối tượng, có thể xảy ra lỗi kết nối đến hệ thống. Xin vui lòng kiểm tra lại');
+                            alert('Không tính được tuổi của đối tượng — có thể do lỗi kết nối. Vui lòng kiểm tra lại ngày sinh, ngày cân đo rồi chọn lại.');
                         }
-
                     }
                 })
             }
@@ -666,7 +700,10 @@
                 }
             });
 
-            $("#last-name").focus();
+            // Có lỗi validation thì focus đã nằm ở phần tóm tắt lỗi, không cướp lại
+            if (!document.getElementById('tom-tat-loi')) {
+                $("#last-name").focus();
+            }
             // $("#calendar-birth").val("");
             var availableCities = [
                 "AN GIANG",
@@ -743,20 +780,6 @@
                 },
             });
 
-            if (category === 3) {
-                $("#age").change(function() {
-                    var date = new Date();
-                    var age = $("#age").val()
-                    var year = date.getFullYear() - parseInt(age);
-                    // $('#real-age').val(age);
-                    $('#real-age').attr('value', age);
-                    // $("#calendar-birth").val('01/01/' + year);
-                    $('#calendar-birth').attr('value', '01/01/' + year);
-                    // $("#over19").val("1");
-                    $('#over19').attr('value', '1');
-                });
-            }
-
             function checkValidateBeforeSubmitForm() {
                 var isValid = true;
                 var invalidCounter = 0;
@@ -765,7 +788,7 @@
                     return d instanceof Date && !isNaN(d);
                 }
 
-                var ngaySinhVal = $('#calendar-birth').val();
+                var ngaySinhVal = $('#calendar-birth').val() || '';
                 //regex convert 20/09/2018 to 09/20/2018
                 var ngaySinhCheck = new Date(ngaySinhVal.replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3"));
                 console.log('ngaySinhVal', ngaySinhVal);
@@ -786,8 +809,9 @@
                     event.preventDefault();
                 };
 
-                if ($('#real-age').val() == "") {
-                    alert("VUI LÒNG KIỂM TRA LẠI ĐƯỜNG TRUYỀN VÀ NHẬP LẠI NGÀY THÁNG NĂM SINH CỦA ĐỐI TƯỢNG");
+                if (!$('#real-age').val() || !$('#age').val()) {
+                    event.preventDefault();
+                    alert("Chưa tính được tuổi của đối tượng. Vui lòng kiểm tra lại ngày sinh, ngày cân đo và đường truyền.");
                     return false;
                 }
             });
@@ -803,8 +827,26 @@
             }
         });
 
+        // Thanh bước: đánh dấu phần người dùng đang nhập (không phải wizard nhiều trang)
+        document.querySelector('.pro5-form').addEventListener('focusin', function (e) {
+            var phan = e.target.closest('[data-buoc]');
+            if (!phan) return;
+            document.querySelectorAll('.form-steps .step').forEach(function (buoc) {
+                var dung = buoc.getAttribute('data-step') === phan.getAttribute('data-buoc');
+                buoc.classList.toggle('active', dung);
+                if (dung) { buoc.setAttribute('aria-current', 'step'); } else { buoc.removeAttribute('aria-current'); }
+            });
+        });
+
         document.getElementById('avatar-wapper').addEventListener('click', function() {
             document.getElementById('avatar-input').click();
+        });
+        // Bàn phím: Enter / Space trên khung ảnh cũng mở hộp chọn tệp
+        document.getElementById('avatar-wapper').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                document.getElementById('avatar-input').click();
+            }
         });
 
         document.getElementById('avatar-input').addEventListener('change', function(event) {
@@ -896,27 +938,15 @@
             let measurementMethod = '';
             let measurementMethodDetail = '';
             
-            if (ageInWeeks <= 13) {
-                ageGroup = 'Trẻ sơ sinh (0-13 tuần)';
-                ageGroupDetail = 'Giai đoạn tăng trưởng cực nhanh';
-                standardTable = 'Bảng 0_13w (0-13 tuần)';
-                standardTableDetail = 'Dữ liệu theo tuần, độ chính xác cao';
-                measurementMethod = 'Chiều dài nằm';
-                measurementMethodDetail = 'WFL - Weight for Length';
-            } else if (ageInMonths <= 24) {
-                ageGroup = 'Trẻ nhỏ (0-2 tuổi)';
-                ageGroupDetail = 'Giai đoạn tăng trưởng nhanh';
-                standardTable = 'Bảng 0_2y (0-24 tháng)';
-                standardTableDetail = 'Dữ liệu theo tháng, ưu tiên cho trẻ nhỏ';
-                measurementMethod = 'Chiều dài nằm';
-                measurementMethodDetail = 'WFL - Weight for Length';
-            } else if (ageInMonths < 60) {
-                ageGroup = 'Trẻ lớn (2-5 tuổi)';
-                ageGroupDetail = 'Giai đoạn ổn định tăng trưởng';
+            // Mốc nằm/đứng của WHO là 731 ngày tuổi (≈ 24,02 tháng), không phải 24 tháng tròn
+            const duoiMocNam = ageInMonths * 30.4375 < 731;
+            if (ageInMonths < 60) {
+                ageGroup = ageInWeeks <= 13 ? 'Trẻ sơ sinh (0-13 tuần)' : (duoiMocNam ? 'Trẻ dưới 2 tuổi' : 'Trẻ 2-5 tuổi');
+                ageGroupDetail = duoiMocNam ? 'Giai đoạn tăng trưởng nhanh' : 'Giai đoạn ổn định tăng trưởng';
                 standardTable = 'WHO 2006 (0-60 tháng)';
-                standardTableDetail = 'Đánh giá: CN/T, CC/T, CN/CC, BMI/T';
-                measurementMethod = 'Chiều cao đứng';
-                measurementMethodDetail = 'WFH - Weight for Height';
+                standardTableDetail = 'Tra theo ngày tuổi — CN/T, CC/T, CN/CC, BMI/T';
+                measurementMethod = duoiMocNam ? 'Chiều dài nằm' : 'Chiều cao đứng';
+                measurementMethodDetail = duoiMocNam ? 'Cân nặng theo chiều dài (dưới 731 ngày tuổi)' : 'Cân nặng theo chiều cao (từ 731 ngày tuổi)';
             } else if (ageInMonths < 120) {
                 // Từ 60 tháng trở lên chuyển sang WHO Reference 2007.
                 // Cân nặng theo tuổi chỉ có chuẩn tới 120 tháng nên phải nói rõ
@@ -951,6 +981,8 @@
             }
             
             // Cập nhật giao diện
+            document.getElementById('calculation-method-info').textContent =
+                ageInMonths < 60 ? 'WHO 2006 — LMS' : (ageInMonths < 229 ? 'WHO 2007 — LMS' : 'Không áp dụng chuẩn WHO trẻ em');
             document.getElementById('age-group-info').textContent = ageGroup;
             document.getElementById('age-group-detail').textContent = ageGroupDetail;
             document.getElementById('standard-table-info').textContent = standardTable;
@@ -962,7 +994,7 @@
             const ageGroupCard = document.querySelector('.age-group-card .info-icon');
             if (ageInWeeks <= 13) {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e53)';
-            } else if (ageInMonths <= 24) {
+            } else if (duoiMocNam) {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
             } else if (ageInMonths < 60) {
                 ageGroupCard.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
@@ -982,8 +1014,11 @@
         
         .classification-display {
             display: grid;
+            /* Tự dàn 1-4 cột theo độ rộng thẻ (thẻ rộng cả hàng ở biểu mẫu 0-5 tuổi) */
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
             gap: 1rem;
         }
+        .classification-display .info-content { min-width: 0; overflow-wrap: anywhere; }
         
         .info-card {
             display: flex;

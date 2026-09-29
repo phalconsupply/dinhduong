@@ -1,6 +1,6 @@
 <div class="row row-cols-xl-4 row-cols-md-2 row-cols-1">
     <div class="col mt-4">
-        <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+        <div class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
             <div class="d-flex align-items-center">
                 <div class="icon text-center rounded-pill">
                     <i class="uil uil-history fs-4 mb-0"></i>
@@ -12,11 +12,11 @@
                     </p>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
     <!--end col-->
     <div class="col mt-4">
-        <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+        <div class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
             <div class="d-flex align-items-center">
                 <div class="icon text-center rounded-pill">
                     <i class="uil uil-history fs-4 mb-0"></i>
@@ -27,11 +27,11 @@
                     </p>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
     <!--end col-->
     <div class="col mt-4">
-        <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+        <div class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
             <div class="d-flex align-items-center">
                 <div class="icon text-center rounded-pill">
                     <i class="uil uil-user-circle fs-4 mb-0 text-danger"></i>
@@ -43,11 +43,11 @@
                     </p>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
     <!--end col-->
     <div class="col mt-4">
-        <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+        <div class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
             <div class="d-flex align-items-center">
                 <div class="icon text-center rounded-pill">
                     <i class="uil uil-user-circle fs-4 mb-0 text-success"></i>
@@ -59,7 +59,7 @@
                     </p>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
     <!--end col-->
 

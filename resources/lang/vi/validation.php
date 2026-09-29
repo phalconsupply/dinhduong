@@ -34,7 +34,7 @@ return [
     'date_format'          => 'Trường :attribute không giống với định dạng :format.',
     'different'            => 'Trường :attribute và :other phải khác nhau.',
     'digits'               => 'Độ dài của trường :attribute phải gồm :digits chữ số.',
-    'digits_between'       => 'Độ dài của trường :attribute phải nằm trong khoảng :min and :max chữ số.',
+    'digits_between'       => 'Độ dài của trường :attribute phải nằm trong khoảng :min đến :max chữ số.',
     'dimensions'           => 'Trường :attribute có kích thước không hợp lệ.',
     'distinct'             => 'Trường :attribute có giá trị trùng lặp.',
     'email'                => 'Trường :attribute phải là một địa chỉ email hợp lệ.',
@@ -142,5 +142,20 @@ return [
     */
 
     'attributes' => [
+        'fullname'      => 'họ và tên',
+        'phone'         => 'số điện thoại',
+        'cccd'          => 'CCCD',
+        'gender'        => 'giới tính',
+        'ethnic_id'     => 'dân tộc',
+        'cal_date'      => 'ngày cân đo',
+        'birthday'      => 'ngày sinh',
+        'age'           => 'tuổi',
+        'realAge'       => 'tuổi',
+        'address'       => 'địa chỉ',
+        'province_code' => 'tỉnh/thành phố',
+        'ward_code'     => 'phường/xã',
+        'weight'        => 'cân nặng',
+        'height'        => 'chiều cao',
+        'thumb'         => 'ảnh đại diện',
     ],
 ];

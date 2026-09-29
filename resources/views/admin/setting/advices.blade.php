@@ -98,7 +98,7 @@
     <section class="container-fluid">
         <div class="layout-specing">
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-12 d-lg-block d-none">
+                <div class="col-lg-3 col-12 mb-3 mb-lg-0">
                     @include('admin.setting.sidebar')
                 </div><!--end col-->
 

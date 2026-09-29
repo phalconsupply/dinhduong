@@ -76,7 +76,7 @@
         {{-- Tab Navigation --}}
         <div class="card">
             <div class="card-body p-0">
-                <nav class="nav nav-pills nav-justified bg-light p-2 mb-0" id="statistics-tabs" role="tablist">
+                <nav class="nav nav-pills tab-khoi nav-justified bg-light p-2 mb-0" id="statistics-tabs" role="tablist">
                     <button class="nav-link active position-relative" 
                             id="weight-age-tab" 
                             data-bs-toggle="pill" 
@@ -217,7 +217,7 @@
                     <div class="card-body text-center">
                         <i class="uil uil-exclamation-triangle text-warning" style="font-size: 2rem;"></i>
                         <h5 class="mt-2" id="total-risk">-</h5>
-                        <small class="text-muted">Trẻ có nguy cơ</small>
+                        <small class="text-muted" id="total-risk-label">Trẻ có nguy cơ</small>
                     </div>
                 </div>
             </div>
@@ -226,7 +226,7 @@
                     <div class="card-body text-center">
                         <i class="uil uil-check-circle text-success" style="font-size: 2rem;"></i>
                         <h5 class="mt-2" id="total-normal">-</h5>
-                        <small class="text-muted">Trẻ bình thường</small>
+                        <small class="text-muted" id="total-normal-label">Trẻ bình thường</small>
                     </div>
                 </div>
             </div>
@@ -289,7 +289,8 @@
     min-height: 500px;
 }
 
-.spinner-border {
+/* Chỉ spinner lớn trong vùng nội dung; spinner-border-sm trên nút tab giữ cỡ 1rem */
+.spinner-border:not(.spinner-border-sm) {
     width: 3rem;
     height: 3rem;
 }
@@ -376,118 +377,109 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+// Mỗi lần tải tab/bộ lọc là một "lượt". Lượt mới huỷ request của lượt cũ, và
+// phản hồi của lượt cũ (nếu vẫn về muộn) bị bỏ qua — không ghi đè kết quả mới (UI-17).
+let luotTaiHienTai = 0;
+let dieuKhienTai = null;
+
 function loadTabData(tabName) {
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
     // Convert tab name to match HTML IDs
     const tabId = tabName.replace('weight-for-age', 'weight-age')
                          .replace('height-for-age', 'height-age')
                          .replace('weight-for-height', 'weight-height')
-                         .replace('bmi-for-age', 'bmi-age')
-                         .replace('mean-stats', 'mean-stats')  // Keep as-is
-                         .replace('who-combined', 'who-combined'); // Keep as-is
+                         .replace('bmi-for-age', 'bmi-age');
     const tabContent = document.getElementById(tabId);
-    
+
     if (!tab || !tabContent) {
         console.error('Tab or content not found:', { tabName, tabId, tab, tabContent });
         return;
     }
-    
+
+    if (dieuKhienTai) {
+        dieuKhienTai.abort();
+    }
+    dieuKhienTai = new AbortController();
+    const luot = ++luotTaiHienTai;
+
     // Show/hide Quick Stats based on tab type
     const quickStatsContainer = document.getElementById('quick-stats-container');
-    if (tabName === 'mean-stats') {
-        quickStatsContainer.style.display = 'none';
-    } else {
-        quickStatsContainer.style.display = 'flex';
-    }
-    
-    // Show loading state
+    quickStatsContainer.style.display = tabName === 'mean-stats' ? 'none' : 'flex';
+
+    document.querySelectorAll('[data-tab] .loading-spinner').forEach(sp => sp.classList.add('d-none'));
     showTabLoading(tab, true);
-    
-    // Get filter data
+
     const formData = new FormData(document.getElementById('statistics-filter'));
     const params = new URLSearchParams(formData);
-    
-    // Make AJAX request with proper base URL
     const url = `{{ url('/admin/statistics') }}/get-${tabName}?${params.toString()}`;
-    
+
     fetch(url, {
         method: 'GET',
+        signal: dieuKhienTai.signal,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.success) {
-            // Set HTML and execute any scripts in it
-            tabContent.innerHTML = data.html;
-            
-            // Execute scripts in the inserted HTML
-            const scripts = tabContent.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => {
-                    newScript.setAttribute(attr.name, attr.value);
-                });
-                newScript.textContent = oldScript.textContent;
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
-            updateQuickStats(data.data);
-            
-            // Initialize charts based on tab type - wait for DOM to be ready
-            setTimeout(() => {
-                if (tabName === 'mean-stats') {
-                    console.log('=== Initializing Mean Stats charts ===');
-                    console.log('Data received:', data.data);
-                    console.log('Function exists?', typeof window.initializeMeanStatsCharts);
-                    
-                    if (typeof window.initializeMeanStatsCharts === 'function') {
-                        try {
-                            window.initializeMeanStatsCharts(data.data);
-                            console.log('Mean Stats charts initialized successfully');
-                        } catch (error) {
-                            console.error('Error initializing Mean Stats charts:', error);
-                        }
-                    } else {
-                        console.error('initializeMeanStatsCharts function not found!');
-                    }
-                } else if (tabName === 'who-combined') {
-                    console.log('=== Initializing WHO Combined charts ===');
-                    console.log('Data received:', data.data);
-                    console.log('Function exists?', typeof window.initializeWhoCombinedCharts);
-                    
-                    if (typeof window.initializeWhoCombinedCharts === 'function') {
-                        try {
-                            window.initializeWhoCombinedCharts(data.data);
-                            console.log('WHO Combined charts initialized successfully');
-                        } catch (error) {
-                            console.error('Error initializing WHO Combined charts:', error);
-                        }
-                    } else {
-                        console.error('initializeWhoCombinedCharts function not found!');
-                    }
+        if (luot !== luotTaiHienTai) {
+            return; // đã có lượt tải mới hơn
+        }
+        if (!data.success) {
+            showError(tabContent, data.message || 'Có lỗi xảy ra khi tải dữ liệu');
+            return;
+        }
+
+        tabContent.innerHTML = data.html;
+        // Chạy các script đi kèm HTML của tab
+        tabContent.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            newScript.textContent = oldScript.textContent;
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+        updateQuickStats(tabName, data.data);
+        updateLastUpdated();
+
+        // Script của tab chạy đồng bộ khi chèn; chờ 1 khung hình để bố cục xong rồi vẽ biểu đồ
+        requestAnimationFrame(() => {
+            if (luot !== luotTaiHienTai) {
+                return;
+            }
+            try {
+                if (tabName === 'mean-stats' && typeof window.initializeMeanStatsCharts === 'function') {
+                    window.initializeMeanStatsCharts(data.data);
+                } else if (tabName === 'who-combined' && typeof window.initializeWhoCombinedCharts === 'function') {
+                    window.initializeWhoCombinedCharts(data.data);
                 } else if (typeof initializeCharts === 'function') {
                     initializeCharts(tabName, data.data);
                 }
-                
-                // Make table cells clickable for Cell-Detail feature
-                if (typeof makeTableCellsClickable === 'function') {
-                    makeTableCellsClickable();
-                    console.log('Cell-Detail feature enabled for tab:', tabName);
-                }
-            }, 500);
-        } else {
-            showError(tabContent, data.message || 'Có lỗi xảy ra khi tải dữ liệu');
-        }
+            } catch (error) {
+                console.error('Lỗi vẽ biểu đồ tab ' + tabName + ':', error);
+            }
+            if (typeof makeTableCellsClickable === 'function') {
+                makeTableCellsClickable();
+            }
+        });
     })
     .catch(error => {
+        if (error.name === 'AbortError' || luot !== luotTaiHienTai) {
+            return;
+        }
         console.error('Error loading tab:', error);
         showError(tabContent, 'Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại.');
+        // Lỗi: giữ nguyên mốc "cập nhật lần cuối" của lần tải thành công trước (UI-18)
     })
     .finally(() => {
-        showTabLoading(tab, false);
-        updateLastUpdated();
+        if (luot === luotTaiHienTai) {
+            showTabLoading(tab, false);
+        }
     });
 }
 
@@ -523,99 +515,41 @@ function reloadCurrentTab() {
     }
 }
 
-function updateQuickStats(data) {
-    // Update quick stats based on current tab data
-    if (data && typeof data === 'object') {
-        const totalElement = document.getElementById('total-records');
-        const riskElement = document.getElementById('total-risk');
-        const normalElement = document.getElementById('total-normal');
-        
-        let totalCount = 0;
-        let riskCount = 0;
-        let normalCount = 0;
-        
-        // Check for total.total (Weight/Height for Age, Weight for Height)
-        if (data.total && data.total.total) {
-            totalCount = data.total.total;
-            normalCount = data.total.normal || 0;
-            
-            // Risk = severe + moderate (or stunted, wasted)
-            riskCount = (data.total.severe || 0) + 
-                       (data.total.moderate || 0) + 
-                       (data.total.wasted_severe || 0) + 
-                       (data.total.wasted_moderate || 0) + 
-                       (data.total.overweight || 0);
-        }
-        // Check for Mean Stats structure
-        else if (data['0-5m'] || data['6-11m'] || data['12-23m']) {
-            // Mean stats has different structure - calculate from all age groups
-            const ageGroups = ['0-5m', '6-11m', '12-23m', '24-35m', '36-47m', '48-60m'];
-            let atRiskCount = 0;
-            let normalCountEstimate = 0;
-            
-            ageGroups.forEach(group => {
-                if (data[group] && data[group].total) {
-                    const groupTotal = data[group].total;
-                    const count = groupTotal.count || groupTotal.weight?.count || groupTotal.height?.count || 0;
-                    totalCount += count;
-                    
-                    // Estimate risk based on Z-scores
-                    // If mean Z-score < -2, consider whole group at risk
-                    // If mean Z-score between -2 and -1, consider 30% at risk
-                    // If mean Z-score > -1, consider normal
-                    const waZscore = groupTotal.wa_zscore?.mean || 0;
-                    const haZscore = groupTotal.ha_zscore?.mean || 0;
-                    const whZscore = groupTotal.wh_zscore?.mean || 0;
-                    
-                    const avgZscore = (waZscore + haZscore + whZscore) / 3;
-                    
-                    if (avgZscore < -2) {
-                        atRiskCount += count;
-                    } else if (avgZscore < -1) {
-                        atRiskCount += Math.floor(count * 0.3); // Estimate 30% at risk
-                        normalCountEstimate += Math.ceil(count * 0.7);
-                    } else {
-                        normalCountEstimate += count;
-                    }
-                }
-            });
-            
-            riskCount = atRiskCount;
-            normalCount = normalCountEstimate;
-        }
-        // Check for WHO Combined structure
-        else if (data.all && data.all.stats) {
-            const stats = data.all.stats;
-            if (stats.total && stats.total.n) {
-                totalCount = stats.total.n;
-                
-                // Calculate risk from WHO Combined percentages
-                // Risk = sum of children below -2SD across W/A, H/A, W/H
-                const waLt2sdPct = stats.total.wa.lt_2sd_pct || 0;
-                const haLt2sdPct = stats.total.ha.lt_2sd_pct || 0;
-                const whLt2sdPct = stats.total.wh.lt_2sd_pct || 0;
-                
-                // Average the percentages (not perfect but gives estimate)
-                const avgRiskPct = (waLt2sdPct + haLt2sdPct + whLt2sdPct) / 3;
-                riskCount = Math.round((totalCount * avgRiskPct) / 100);
-                normalCount = totalCount - riskCount;
-            }
-        }
-        
-        totalElement.textContent = totalCount.toLocaleString();
-        
-        // For Mean Stats and WHO Combined, show calculated values even if 0
-        // Only show "-" if we couldn't calculate (no data structure match)
-        if (data['0-5m'] || data['6-11m'] || data['12-23m'] || (data.all && data.all.stats)) {
-            riskElement.textContent = riskCount.toLocaleString();
-            normalElement.textContent = normalCount.toLocaleString();
-        } else {
-            riskElement.textContent = riskCount > 0 ? riskCount.toLocaleString() : '-';
-            normalElement.textContent = normalCount > 0 ? normalCount.toLocaleString() : '-';
-        }
-        
-        updateLastUpdated();
+// Thẻ tổng quan chỉ hiển thị số đếm thật do backend trả về (UI-19); 0 là 0,
+// "-" chỉ khi tab không có số liệu tương ứng (UI-18).
+function updateQuickStats(tabName, data) {
+    const hien = (id, giaTri) => {
+        document.getElementById(id).textContent =
+            (giaTri === null || giaTri === undefined) ? '-' : Number(giaTri).toLocaleString('vi-VN');
+    };
+    const nhan = (id, chu) => { document.getElementById(id).textContent = chu; };
+
+    let tong = null, nguyCo = null, binhThuong = null;
+    let nhanNguyCo = 'Trẻ có nguy cơ', nhanBinhThuong = 'Trẻ bình thường';
+
+    if (data && data.total && data.total.total !== undefined) {
+        // Tab từng chỉ số: số trẻ theo phân loại của chính chỉ số đó
+        tong = data.total.total;
+        binhThuong = data.total.normal ?? 0;
+        nguyCo = (data.total.severe || 0) + (data.total.moderate || 0) +
+                 (data.total.wasted_severe || 0) + (data.total.wasted_moderate || 0) +
+                 (data.total.overweight || 0);
+        nhanNguyCo = 'Có nguy cơ theo chỉ số này';
+        nhanBinhThuong = 'Bình thường theo chỉ số này';
+    } else if (data && data.tong_quan) {
+        // WHO Combined: số trẻ DUY NHẤT có ít nhất một chỉ số < -2SD
+        tong = data.tong_quan.n;
+        nguyCo = data.tong_quan.duoi_2sd;
+        binhThuong = data.tong_quan.khong_duoi_2sd;
+        nhanNguyCo = 'Trẻ có ≥ 1 chỉ số < -2SD';
+        nhanBinhThuong = 'Trẻ không có chỉ số < -2SD';
     }
+
+    hien('total-records', tong);
+    hien('total-risk', nguyCo);
+    hien('total-normal', binhThuong);
+    nhan('total-risk-label', nhanNguyCo);
+    nhan('total-normal-label', nhanBinhThuong);
 }
 
 function updateLastUpdated() {

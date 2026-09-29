@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 
-<head lang="vi">
+<head>
     <title>{{$setting['site-title']}}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta http-equiv="cleartype" content="on">
@@ -20,35 +20,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Font Awesome for Modern Form Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tailwind CSS for Wizard Form -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons for Modern UI -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Modern Layout CSS (WHO Statistics Style) -->
     <link rel="stylesheet" href="{{asset('/web/css/modern-layout.css')}}?v=2.2" />
     <!-- Clean Form Design CSS - NEW SIMPLIFIED VERSION -->
-    <link rel="stylesheet" href="{{asset('/web/css/form-clean.css')}}?v=2.2" />
-    <!-- Tailwind Wizard Form CSS -->
-    <link rel="stylesheet" href="{{asset('/web/css/form-tailwind.css')}}" />
+    <link rel="stylesheet" href="{{asset('/web/css/form-clean.css')}}?v=2.6" />
     <style>
-        /* Force clear cache and test grid */
-        .row {
-            display: flex !important;
-            flex-wrap: wrap !important;
-        }
-        
-        /* Test col-md-4 and col-md-8 */
-        @media (min-width: 768px) {
-            .col-md-4 {
-                flex: 0 0 33.333333% !important;
-                max-width: 33.333333% !important;
-            }
-            .col-md-8 {
-                flex: 0 0 66.666667% !important;
-                max-width: 66.666667% !important;
-            }
-        }
-        
         .chosen-container-multi .chosen-choices {
             border-radius: 5px;
             min-height: 50px;
@@ -93,8 +69,19 @@
             font-weight: 600;
         }
 
-        .dropdown:hover .dropdown-content {
+        /* Mở bằng click/bàn phím (lớp .mo do script bên dưới gắn); hover chỉ trên thiết bị có chuột */
+        .dropdown.mo .dropdown-content {
             display: block;
+        }
+        @media (hover: hover) {
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+        }
+        .dropdown > a:focus-visible,
+        .dropdown-content a:focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
         }
 
         .dropdown > a:after {
@@ -120,6 +107,8 @@
         }
     </style>
     @stack('head')
+    <!-- Preflight Tailwind bản tĩnh: nạp cuối cùng để giữ thứ tự cascade như khi còn dùng Play CDN -->
+    <link rel="stylesheet" href="{{asset('/web/css/tailwind-preflight.css')}}?v=1" />
 </head>
 
 <body>
@@ -180,10 +169,10 @@
                     </a>
                 </li>
                 <li class="dropdown @if(in_array($slug, ['who-statistics', 'kythuatcando', 'huong-dan'])) current @endif">
-                    <a href="#">
-                        <i class="fas fa-book"></i> Documents
+                    <a href="#menu-tai-lieu" id="nut-tai-lieu" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-tai-lieu">
+                        <i class="fas fa-book" aria-hidden="true"></i> Documents
                     </a>
-                    <div class="dropdown-content">
+                    <div class="dropdown-content" id="menu-tai-lieu" aria-labelledby="nut-tai-lieu">
                         <a href="/who-statistics.php" @if($slug == 'who-statistics') class="active" @endif>
                             <i class="fas fa-book-medical"></i> Chỉ dẫn phân loại WHO
                         </a>
@@ -196,6 +185,36 @@
                     </div>
                 </li>
             </ul>
+            <script>
+                // Menu "Documents": mở bằng click / Enter / Space, đóng bằng Escape hoặc click ra ngoài.
+                // Trên màn hình hẹp, thanh menu cuộn ngang sẽ cắt menu con nên dùng định vị fixed.
+                (function () {
+                    var nut = document.getElementById('nut-tai-lieu');
+                    if (!nut) return;
+                    var muc = nut.parentElement, menu = document.getElementById('menu-tai-lieu');
+                    function datMo(mo) {
+                        muc.classList.toggle('mo', mo);
+                        nut.setAttribute('aria-expanded', mo ? 'true' : 'false');
+                        if (mo && window.innerWidth < 768) {
+                            var r = nut.getBoundingClientRect();
+                            menu.style.position = 'fixed';
+                            menu.style.top = r.bottom + 'px';
+                            menu.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 228)) + 'px';
+                        } else {
+                            menu.style.position = menu.style.top = menu.style.left = '';
+                        }
+                    }
+                    nut.addEventListener('click', function (e) { e.preventDefault(); datMo(!muc.classList.contains('mo')); });
+                    nut.addEventListener('keydown', function (e) {
+                        if (e.key === ' ') { e.preventDefault(); datMo(!muc.classList.contains('mo')); }
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && muc.classList.contains('mo')) { datMo(false); nut.focus(); }
+                    });
+                    document.addEventListener('click', function (e) { if (!muc.contains(e.target)) datMo(false); });
+                    window.addEventListener('scroll', function () { if (window.innerWidth < 768) datMo(false); }, {passive: true});
+                })();
+            </script>
         </div>
     </div>
 </header>

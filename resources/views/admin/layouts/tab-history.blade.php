@@ -37,15 +37,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($history as $row)
+                @forelse($history as $row)
                     <tr>
                         <td class="text-center">{{$row->id}}</td>
                         <td class="text-center">
-                            @if($row->thumb)
-                                <a href="{{route('admin.users.show', $row)}}"><img src="{{$row->thumb}}" class="img-thumbnail" width="80px" /></a>
-                            @else
-                                <a href="{{route('admin.users.show', $row)}}"><img src="{{v('user.avatar')}}" class="img-thumbnail" width="80px" /></a>
-                            @endif
+                            @include('admin.partials.anh-ho-so', ['m' => $row])
                         </td>
                         <td>
                             <span class="small">{{$row->fullname}}</span><br>
@@ -61,8 +57,7 @@
                             <span class="small">Cân nặng:{{$row->weight}} kg</span>
                         </td>
                         <td>
-                            <span class="small">{{$row->birthday_f() ?? '#'}}</span><br>
-                            <span class="small">{{$row->cal_date_f() ?? '#'}}</span>
+                            @include('admin.partials.ngay-can-sinh', ['m' => $row])
                         </td>
                         <td>
                             <span class="badge bg-{{v('gender.color.'.$row->gender)}}">{{v('gender.'.$row->gender)}}</span><br>
@@ -96,7 +91,9 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr><td colspan="11" class="text-center text-muted py-4">Không có khảo sát nào phù hợp.</td></tr>
+                @endforelse
                 </tbody>
             </table>
             <div class="mt-2 d-flex">

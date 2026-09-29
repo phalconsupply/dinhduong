@@ -28,6 +28,7 @@
 
             </div>
         </div>
+        <div class="table-responsive">
         <table id="history-table" class="table table-center bg-white mb-0">
             <thead>
             <tr>
@@ -111,6 +112,7 @@
             @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 @endsection
 

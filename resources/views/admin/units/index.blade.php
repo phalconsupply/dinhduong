@@ -47,8 +47,8 @@
                 </div>
             </div>
         </div>
-
-        @endsection
+    </div>
+@endsection
 
 @push('foot')
     <script>

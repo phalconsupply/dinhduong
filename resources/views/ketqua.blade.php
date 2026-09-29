@@ -456,7 +456,7 @@
                                     <div class="chart-item" data-chart="heightForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-ruler-vertical"></i> Chiều cao theo tuổi</h4>
-                                            <button class="btn-zoom" onclick="zoomChart('heightForAge')">
+                                            <button type="button" class="btn-zoom" onclick="zoomChart('heightForAge')" aria-label="Phóng to biểu đồ chiều cao theo tuổi">
                                                 <i class="fas fa-search-plus"></i>
                                             </button>
                                         </div>
@@ -471,7 +471,7 @@
                                     <div class="chart-item" data-chart="weightForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-weight"></i> Cân nặng theo tuổi</h4>
-                                            <button class="btn-zoom" onclick="zoomChart('weightForAge')">
+                                            <button type="button" class="btn-zoom" onclick="zoomChart('weightForAge')" aria-label="Phóng to biểu đồ cân nặng theo tuổi">
                                                 <i class="fas fa-search-plus"></i>
                                             </button>
                                         </div>
@@ -487,7 +487,7 @@
                                     <div class="chart-item" data-chart="weightForHeight">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-balance-scale"></i> Cân nặng theo chiều cao</h4>
-                                            <button class="btn-zoom" onclick="zoomChart('weightForHeight')">
+                                            <button type="button" class="btn-zoom" onclick="zoomChart('weightForHeight')" aria-label="Phóng to biểu đồ cân nặng theo chiều cao">
                                                 <i class="fas fa-search-plus"></i>
                                             </button>
                                         </div>
@@ -503,7 +503,7 @@
                                     <div class="chart-item" data-chart="bmiForAge">
                                         <div class="chart-header">
                                             <h4><i class="fas fa-calculator"></i> BMI theo tuổi</h4>
-                                            <button class="btn-zoom" onclick="zoomChart('bmiForAge')">
+                                            <button type="button" class="btn-zoom" onclick="zoomChart('bmiForAge')" aria-label="Phóng to biểu đồ BMI theo tuổi">
                                                 <i class="fas fa-search-plus"></i>
                                             </button>
                                         </div>
@@ -659,12 +659,12 @@
     </div><!-- .main-content-wrapper -->
 
     <!-- Chart Zoom Modal -->
-    <div id="chartModal" class="chart-modal">
+    <div id="chartModal" class="chart-modal" role="dialog" aria-modal="true" aria-labelledby="modalChartTitle" aria-hidden="true">
         <div class="chart-modal-content">
             <div class="chart-modal-header">
                 <h3 id="modalChartTitle">Biểu đồ</h3>
-                <button class="chart-modal-close" onclick="closeChartModal()">
-                    <i class="fas fa-times"></i>
+                <button type="button" class="chart-modal-close" onclick="closeChartModal()" aria-label="Đóng biểu đồ phóng to">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="chart-modal-body">
@@ -758,7 +758,7 @@
         /* Info Grid for Survey Information */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
             gap: 20px;
         }
 
@@ -799,6 +799,14 @@
             color: #6b7280;
             margin-top: 4px;
         }
+
+        /* Văn bản tự do dài (tên, địa chỉ, kết luận, lời khuyên) xuống dòng thay vì
+           kéo giãn thẻ ra ngoài khung đang bị cắt; bảng có vùng cuộn ngang riêng (UI-28) */
+        .info-item { min-width: 0; }
+        .info-item .info-value,
+        .table-modern td,
+        .nuti-recommendations { overflow-wrap: anywhere; }
+        .results-table { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
         /* Modern Table */
         .table-modern {
@@ -1428,9 +1436,13 @@
             
             // Set title
             modalTitle.textContent = chartTitles[chartType] || 'Biểu đồ';
-            
+
+            // Nhớ nút đã mở để trả focus khi đóng
+            nutMoBieuDo = document.activeElement;
+
             // Show modal
             modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
             
             // Get original chart
             let originalChart;
@@ -1488,11 +1500,18 @@
             
             // Prevent body scroll when modal is open
             document.body.style.overflow = 'hidden';
+            modal.querySelector('.chart-modal-close').focus();
         }
+
+        let nutMoBieuDo = null;
 
         function closeChartModal() {
             const modal = document.getElementById('chartModal');
+            if (!modal.classList.contains('active')) {
+                return;
+            }
             modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
             
             // Destroy modal chart
             if (currentChartInstance) {
@@ -1502,6 +1521,12 @@
             
             // Restore body scroll
             document.body.style.overflow = 'auto';
+
+            // Trả focus về nút đã mở hộp
+            if (nutMoBieuDo && document.contains(nutMoBieuDo)) {
+                nutMoBieuDo.focus();
+            }
+            nutMoBieuDo = null;
         }
 
         // Close modal when clicking outside
@@ -1511,10 +1536,20 @@
             }
         });
 
-        // Close modal with ESC key
+        // ESC đóng hộp; Tab không đi ra trang phía sau khi hộp đang mở
         document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('chartModal');
+            if (!modal || !modal.classList.contains('active')) {
+                return;
+            }
             if (e.key === 'Escape') {
                 closeChartModal();
+            } else if (e.key === 'Tab') {
+                const coTheFocus = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+                const dau = coTheFocus[0], cuoi = coTheFocus[coTheFocus.length - 1];
+                if (e.shiftKey && document.activeElement === dau) { e.preventDefault(); cuoi.focus(); }
+                else if (!e.shiftKey && document.activeElement === cuoi) { e.preventDefault(); dau.focus(); }
+                else if (!modal.contains(document.activeElement)) { e.preventDefault(); dau.focus(); }
             }
         });
 

@@ -1,6 +1,6 @@
 
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="vi" dir="ltr">
 
 <head>
     @include('admin.layouts.head')
@@ -44,6 +44,21 @@
 <!-- JAVASCRIPT -->
 <script src="{{ asset('admin-assets/js/jquery-1.12.4.min.js') }}"></script>
 <script src="{{ asset('admin-assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    // Dropdown trong bảng cuộn (.table-responsive) dùng định vị "fixed" theo viewport,
+    // để menu thao tác không bị khung cuộn cắt. Tạo instance ở pha capture, trước
+    // handler data-api của Bootstrap, nên áp dụng cả cho bảng nạp bằng AJAX.
+    ['click', 'keydown'].forEach(function (loaiSuKien) {
+        document.addEventListener(loaiSuKien, function (e) {
+            var nut = e.target.closest && e.target.closest('.table-responsive [data-bs-toggle="dropdown"]');
+            if (nut && !bootstrap.Dropdown.getInstance(nut)) {
+                bootstrap.Dropdown.getOrCreateInstance(nut, {
+                    popperConfig: function (cauHinh) { return Object.assign({}, cauHinh, {strategy: 'fixed'}); }
+                });
+            }
+        }, true);
+    });
+</script>
 <script src="{{ asset('admin-assets/libs/feather-icons/feather.min.js') }}"></script>
 <script src="{{ asset('admin-assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{asset('admin-assets/libs/tiny-slider/min/tiny-slider.js')}}"></script>

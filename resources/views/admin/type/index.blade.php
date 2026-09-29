@@ -14,6 +14,7 @@
                 <div class="col-12 ">
                     <div class="card">
                         <div class="card-body p-0">
+                            <div class="table-responsive">
                             <table  id="transactions-table"  class="table bg-white mb-0" >
                                 <thead>
                                 <tr>
@@ -43,6 +44,7 @@
 
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>

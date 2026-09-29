@@ -1,7 +1,7 @@
 <div class="top-header">
     <div class="header-bar d-flex justify-content-between">
         <div class="d-flex align-items-center">
-            <a href="#" class="logo-icon me-3">
+            <a href="{{ route('admin.dashboard.index') }}" class="logo-icon me-3" aria-label="Về trang tổng quan">
                 <img src=" {{$setting['logo-light']}}" height="30" class="small" alt="">
             </a>
             <a id="close-sidebar" class="btn btn-icon btn-soft-light" href="javascript:void(0)">

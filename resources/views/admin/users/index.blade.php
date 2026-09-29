@@ -82,7 +82,11 @@
                                                     <span class="small">{{$user->birthday_f() ?? '#'}}</span>
                                                 </td>
                                                 <td>
-                                                    <span class=""><a href="{{route('admin.units.show_history', $user->unit_id)}}">{{$user->unit->name}}</a></span><br>
+                                                    @if($user->unit)
+                                                        <span class=""><a href="{{route('admin.units.show_history', $user->unit_id)}}">{{$user->unit->name}}</a></span><br>
+                                                    @else
+                                                        <span class="text-muted">Chưa gán đơn vị</span><br>
+                                                    @endif
                                                     <span>{{$user->department}}</span><br>
                                                     <span class="badge bg-{{v('role.color.'.$user->role)}}">{{v('role.'.$user->role)}}</span>
                                                 </td>
@@ -146,6 +150,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
 <div class="modal fade" id="DetailModal" tabindex="-1" aria-labelledby="DetailModal" aria-hidden="true">

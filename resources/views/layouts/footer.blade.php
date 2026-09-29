@@ -42,11 +42,11 @@
                     <li><a href="/tu-0-5-tuoi">Đánh giá 0-5 tuổi</a></li>
                     <li><a href="/tu-5-19-tuoi">Đánh giá 5-19 tuổi</a></li>
                     @if(auth()->check())
-                        <li><a href="/admin">Quản trị hệ thống</a></li>
-                        <li><a href="/admin/history">Lịch sử khảo sát</a></li>
-                        <li><a href="/admin/dashboard/statistics">Thống kê</a></li>
+                        <li><a href="{{ route('admin.dashboard.index') }}">Quản trị hệ thống</a></li>
+                        <li><a href="{{ route('admin.history.index') }}">Lịch sử khảo sát</a></li>
+                        <li><a href="{{ route('admin.dashboard.statistics') }}">Thống kê</a></li>
                     @else
-                        <li><a href="/auth/login">Đăng nhập</a></li>
+                        <li><a href="{{ route('admin.auth.login') }}">Đăng nhập</a></li>
                     @endif
                 </ul>
             </div>
@@ -55,11 +55,9 @@
             <div class="footer-section">
                 <h3><i class="fas fa-headset"></i> Hỗ trợ</h3>
                 <ul>
-                    <li><a href="#">Hướng dẫn sử dụng</a></li>
-                    <li><a href="#">Câu hỏi thường gặp</a></li>
-                    <li><a href="#">Tiêu chuẩn WHO</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
-                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="/huong-dan-danh-gia-dinh-duong.html">Hướng dẫn đánh giá dinh dưỡng</a></li>
+                    <li><a href="/who-statistics.php">Tiêu chuẩn WHO</a></li>
+                    <li><a href="/kythuatcando.php">Kỹ thuật cân đo</a></li>
                 </ul>
             </div>
         </div>
@@ -175,13 +173,6 @@
 <script src="{{asset('/web/frontend/js/custom2.js')}}"></script>
 <script src="{{asset('/web/frontend/plugins/datatimepickerbootstrap/moment.min.js')}}"></script>
 <script src="{{asset('/web/frontend/plugins/datatimepickerbootstrap/bootstrap-datetimepicker.min.js')}}"></script>
-
-<!-- Initialize Lucide Icons for Wizard Form -->
-<script>
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-</script>
 
 @stack('foot')
 </body>

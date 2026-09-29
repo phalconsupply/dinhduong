@@ -52,10 +52,9 @@ class AuthController extends Controller
                 return redirect()->back()->withInput()->withErrors('Tài khoản hoặc mật khẩu không đúng!');
             }
         }
-        $data = array(
-            "title"    => 'Đăng nhập',
-        );
-        return view('auth.login', compact('data'));
+        // Không có giao diện đăng nhập riêng cho khu công khai: dùng trang đăng
+        // nhập quản trị (trước đây gọi view auth.login không tồn tại → HTTP 500)
+        return redirect()->route('admin.auth.login');
     }
     public function register(Request $request)
     {

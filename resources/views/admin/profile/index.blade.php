@@ -12,7 +12,7 @@
                 <nav aria-label="breadcrumb" class="d-inline-block">
                     <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
                         <li class="breadcrumb-item text-capitalize"><a href="{{url('/')}}">Trang chủ</a></li>
-                        <li class="breadcrumb-item text-capitalize"><a href="#">Tài khoản</a></li>
+                        <li class="breadcrumb-item text-capitalize"><a href="{{ route('admin.profile.index') }}">Tài khoản</a></li>
                         <li class="breadcrumb-item text-capitalize active" aria-current="page">Chi tiết</li>
                     </ul>
                 </nav>
@@ -29,7 +29,7 @@
                         </li><!--end nav item-->
 
                         <li class="nav-item">
-                            <a class="nav-link rounded " id="info-tab"  href="{{route('admin.profile.changepassword')}}" role="tab" >
+                            <a class="nav-link rounded " id="password-tab"  href="{{route('admin.profile.changepassword')}}" role="tab" >
                                 <div class="text-center py-2">
                                     <h6 class="mb-0"><i class="ti ti-lock icons icon-sm"></i> Đổi mật khẩu</h6>
                                 </div>

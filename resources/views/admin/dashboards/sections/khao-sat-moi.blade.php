@@ -26,15 +26,11 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($new_survey as $row)
+        @forelse($new_survey as $row)
             <tr>
                 <td class="">{{$row->id}}</td>
                 <td class="">
-                    @if($row->thumb)
-                        <a href="{{route('admin.users.show', $row)}}"><img src="{{$row->thumb}}" class="img-thumbnail" width="80px" /></a>
-                    @else
-                        <a href="{{route('admin.users.show', $row)}}"><img src="{{v('user.avatar')}}" class="img-thumbnail" width="80px" /></a>
-                    @endif
+                    @include('admin.partials.anh-ho-so', ['m' => $row])
                 </td>
                 <td>
                     <span class="small">{{$row->fullname}}</span><br>
@@ -47,30 +43,13 @@
                     <span class="small">BMI: {{$row->bmi}}</span>
                 </td>
                 <td>
-                    <span class="small">{{$row->birthday_f() ?? '#'}}</span><br>
-                    <span class="small">{{$row->cal_date_f() ?? '#'}}</span>
+                    @include('admin.partials.ngay-can-sinh', ['m' => $row])
                 </td>
                 <td>
                     @include('admin.partials.ket-qua-chi-so', ['m' => $row])
                 </td>
                 <td>
-                    @php
-                        $nutritionStatus = $row->nutrition_status ?? '';
-                        $isEmpty = in_array($nutritionStatus, ['', null, 'Chưa xác định', 'Chưa có đủ dữ liệu']);
-                        
-                        // Kiểm tra nếu có chứa "gầy còm" (case-insensitive)
-                        $isWasted = !$isEmpty && stripos($nutritionStatus, 'gầy còm') !== false;
-                    @endphp
-
-                    @if($isEmpty)
-                        <span class="badge bg-secondary">Chưa xác định</span>
-                    @elseif($isWasted)
-                        {{-- Bôi đỏ các trường hợp gầy còm --}}
-                        <span class="badge bg-danger">{{ $nutritionStatus }}</span>
-                    @else
-                        {{-- Hiển thị bình thường cho các trường hợp khác --}}
-                        <span class="small">{{ $nutritionStatus }}</span>
-                    @endif
+                    @include('admin.partials.trang-thai-dd', ['m' => $row])
                 </td>
                 <td>
                     <span class="badge bg-{{v('gender.color.'.$row->gender)}}">{{v('gender.'.$row->gender)}}</span><br>
@@ -106,7 +85,9 @@
                     </div>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr><td colspan="11" class="text-center text-muted py-4">Không có khảo sát nào phù hợp.</td></tr>
+        @endforelse
         </tbody>
     </table>
     <div class="mt-2 d-flex">

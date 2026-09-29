@@ -9,10 +9,18 @@
         margin: 0;
         padding: 0;
     }
+    /* Khổ in A4 (19 cm vùng in ≈ 720px); khi xem trên màn hình hẹp thì co theo màn hình */
     .nuti-print {
         width: 720px;
+        max-width: 100%;
+        box-sizing: border-box;
         margin: 0 auto;
         padding: 0;
+    }
+    @media screen and (max-width: 760px) {
+        .nuti-print { padding: 0 12px; }
+        .nuti-print .print-chart { width: 100% !important; }
+        .nuti-print .print-name, .nuti-print .print-recommendation { overflow-wrap: anywhere; }
     }
     figure {
         margin: 0;
@@ -184,13 +192,15 @@
         margin: 0px;
         font-family: "Times New Roman";
     }
+    /* flex (không phải -webkit-box cũ) để chữ co theo khổ giấy, không tràn mép phải */
     .print-recommendation > ul > li{
         margin-top: 5px;
         color: #000 !important;
-        display: -webkit-box;
+        display: flex;
     }
     .print-recommendation > ul > li::before{
         content: "-";
+        flex: 0 0 auto;
         margin-right: 10px;
         height: 10px;
         display: block;
@@ -209,7 +219,7 @@
     }
     table{
         font-size: 15px;
-        width: 720px;
+        width: 100%;
         margin-left: 0px;
     }
     table tr th{

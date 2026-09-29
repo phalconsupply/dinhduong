@@ -105,15 +105,11 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($history as $row)
+                                    @forelse($history as $row)
                                         <tr>
                                             <td class="">{{$row->id}}</td>
                                             <td class="">
-                                                @if($row->thumb)
-                                                    <a href="{{route('admin.users.show', $row)}}"><img src="{{$row->thumb}}" class="img-thumbnail" width="80px" /></a>
-                                                @else
-                                                    <a href="{{route('admin.users.show', $row)}}"><img src="{{v('user.avatar')}}" class="img-thumbnail" width="80px" /></a>
-                                                @endif
+                                                @include('admin.partials.anh-ho-so', ['m' => $row])
                                             </td>
                                             <td>
                                                 <span class="small">{{$row->fullname}}</span><br>
@@ -126,33 +122,13 @@
                                                 <span class="small">BMI: {{$row->bmi}}</span>
                                             </td>
                                             <td>
-                                                <span class="small">{{$row->birthday_f() ?? '#'}}</span><br>
-                                                <span class="small">{{$row->cal_date_f() ?? '#'}}</span>
+                                                @include('admin.partials.ngay-can-sinh', ['m' => $row])
                                             </td>
                                             <td>
                                                 @include('admin.partials.ket-qua-chi-so', ['m' => $row])
                                             </td>
                                             <td>
-                                                @php
-                                                    // Lấy trạng thái dinh dưỡng với màu WHO chuẩn
-                                                    $nutritionStatusData = $row->get_nutrition_status_auto();
-                                                    $nutritionStatus = $nutritionStatusData['text'] ?? ($row->nutrition_status ?? 'Chưa xác định');
-                                                    $statusColor = $nutritionStatusData['color'] ?? '#9E9E9E';
-                                                    
-                                                    // Xác định class badge dựa trên màu WHO
-                                                    $badgeClass = 'bg-secondary'; // default
-                                                    if ($statusColor === '#F44336') { // WHO Red - Nguy hiểm
-                                                        $badgeClass = 'bg-danger';
-                                                    } elseif ($statusColor === '#FF9800') { // WHO Orange - Cảnh báo
-                                                        $badgeClass = 'bg-warning';
-                                                    } elseif ($statusColor === '#4CAF50') { // WHO Green - Bình thường
-                                                        $badgeClass = 'bg-success';
-                                                    } elseif ($statusColor === '#00BCD4') { // WHO Cyan - Cao hơn bình thường
-                                                        $badgeClass = 'bg-info';
-                                                    }
-                                                @endphp
-
-                                                <span class="badge {{ $badgeClass }}">{{ $nutritionStatus }}</span>
+                                                @include('admin.partials.trang-thai-dd', ['m' => $row])
                                             </td>
                                             <td>
                                                 <span class="badge bg-{{v('gender.color.'.$row->gender)}}">{{v('gender.'.$row->gender)}}</span><br>
@@ -188,7 +164,9 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr><td colspan="11" class="text-center text-muted py-4">Không có khảo sát nào phù hợp.</td></tr>
+                                    @endforelse
                                     </tbody>
                                 </table>
                                 <div class="mt-2 d-flex">

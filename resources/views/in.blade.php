@@ -1,8 +1,9 @@
 
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="vi">
+<head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{$setting['site-title']}} - Kết quả đánh giá tình trạng dinh dưỡng</title>
     <link href="{{asset($setting['logo-light'])}}" rel="shortcut icon" type="image/x-icon">
     @include("sections.in-style")
@@ -463,10 +464,10 @@
             $bmiAdvice = $bmiResult ? ($advices[$ageGroup]['bmi_for_age'][$bmiResult] ?? '') : '';
         @endphp
         <ul>
-            @if($waAdvice)<li>{{ $waAdvice }}</li>@endif
-            @if($whAdvice)<li>{{ $whAdvice }}</li>@endif
-            @if($haAdvice)<li>{{ $haAdvice }}</li>@endif
-            @if($bmiAdvice)<li>{{ $bmiAdvice }}</li>@endif
+            @if($waAdvice)<li>{{ ltrim($waAdvice, "- \t") }}</li>@endif
+            @if($whAdvice)<li>{{ ltrim($whAdvice, "- \t") }}</li>@endif
+            @if($haAdvice)<li>{{ ltrim($haAdvice, "- \t") }}</li>@endif
+            @if($bmiAdvice)<li>{{ ltrim($bmiAdvice, "- \t") }}</li>@endif
         </ul>
 
         <p class="amz-contact-expert">Hãy liên hệ Chuyên gia Dinh dưỡng theo số <strong>{{$setting['phone']}}</strong> để được tư vấn thêm.</p>

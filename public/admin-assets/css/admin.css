@@ -18,9 +18,8 @@
 .font-size-12{
     font-size: 12px;
 }
-.table-responsive, .dataTables_scrollBody {
-    overflow: visible !important;
-}
+/* Bảng cuộn ngang trong khung của nó (không ép overflow: visible nữa).
+   Menu thao tác trong bảng dùng popper "fixed" — xem admin/layouts/app-full. */
 .dt-button-collection .dropdown-menu {
     position:relative !important
 }
@@ -39,10 +38,13 @@
 .w-100px{ width: 100px !important;}
 .w-50px{ width: 50px !important;}
 
-.nav-pills .nav-link{
+/* Tab kiểu gạch chân mặc định cho admin. Cần !important vì bootstrap.min.css của theme đặt
+   .nav-pills .nav-link.active{color:#fff !important}. Nhóm tab dạng khối (nền màu, chữ trắng)
+   thêm class .tab-khoi để không bị kiểu này đè — vd. trang thống kê. */
+.nav-pills:not(.tab-khoi) .nav-link{
     border-radius: 0 !important;
 }
-.nav-pills .nav-link.active{
+.nav-pills:not(.tab-khoi) .nav-link.active{
     background: none;
     color: #2f55d4 !important;
     border-bottom: 2px solid #2f55d4;
@@ -60,4 +62,4 @@
 }
 
 .ta-r{ text-align: right}
-.pl-45px{padding-left: 45px; !important;}
+.pl-45px{padding-left: 45px !important;}

@@ -911,7 +911,6 @@
                         </table>
                     </div>
                 </section>
-                </section>
                 
                 <section class="section">
                     <h3 style="font-size: 1.5em; color: #667eea; margin-bottom: 15px;">Minh Họa Tác Động Của Lỗi</h3>

@@ -621,6 +621,54 @@ class StatisticsTabController extends Controller
             'female' => $femaleStats,
             // View dung co nay de chon cot BMI (5-19) hay cot can nang/chieu cao (0-5)
             'doi_tuong' => $la519 ? '5-19' : '0-5',
+            'tong_quan' => $this->demTreDuoi2SD($records, $ageGroups, $la519),
+        ];
+    }
+
+    /**
+     * Số trẻ DUY NHẤT có ít nhất một chỉ số dưới -2SD — dùng cho thẻ tổng quan.
+     *
+     * Không suy ra từ trung bình các tỷ lệ của từng chỉ số: một trẻ có thể thuộc
+     * nhiều nhóm cùng lúc, nên trung bình tỷ lệ không phải số trẻ.
+     * 0-5 tuổi xét CN/T, CC/T, CN/CC; 5-19 tuổi xét CC/T, BMI/T (CN/T tới 10 tuổi).
+     */
+    private function demTreDuoi2SD($records, array $ageGroups, bool $la519): array
+    {
+        $coDuLieu = 0;
+        $duoi2SD = 0;
+
+        foreach ($records as $record) {
+            $ageInt = floor($record->age);
+            $trongNhom = false;
+            foreach ($ageGroups as $group) {
+                if ($ageInt >= $group['min'] && $ageInt <= $group['max']) {
+                    $trongNhom = true;
+                    break;
+                }
+            }
+            if (!$trongNhom) {
+                continue;
+            }
+
+            $cacZ = $la519
+                ? [$record->getHeightForAgeZScoreAuto(), $record->getBMIForAgeZScoreAuto(), $record->getWeightForAgeZScoreAuto()]
+                : [$record->getWeightForAgeZScoreAuto(), $record->getHeightForAgeZScoreAuto(), $record->getWeightForHeightZScoreAuto()];
+            // cùng ngưỡng loại giá trị bất thường như bảng chi tiết
+            $cacZ = array_filter($cacZ, fn ($z) => $z !== null && $z >= -6 && $z <= 6);
+            if (!$cacZ) {
+                continue;
+            }
+
+            $coDuLieu++;
+            if (min($cacZ) < -2) {
+                $duoi2SD++;
+            }
+        }
+
+        return [
+            'n' => $coDuLieu,
+            'duoi_2sd' => $duoi2SD,
+            'khong_duoi_2sd' => $coDuLieu - $duoi2SD,
         ];
     }
 

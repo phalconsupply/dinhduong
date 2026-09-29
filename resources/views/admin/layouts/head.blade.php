@@ -22,5 +22,5 @@
 <link href="{{ asset('admin-assets/libs/@iconscout/unicons/css/line.css') }}" type="text/css" rel="stylesheet" />
 <!-- Style Css-->
 <link href="{{ asset('admin-assets/css/style.css') }}" class="theme-opt" rel="stylesheet" type="text/css" />
-<link href="{{ asset('admin-assets/css/admin.css') }}" class="theme-opt" rel="stylesheet" type="text/css" />
+<link href="{{ asset('admin-assets/css/admin.css') }}?v=3" class="theme-opt" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.css" integrity="sha512-8D+M+7Y6jVsEa7RD6Kv/Z7EImSpNpQllgaEIQAtqHcI0H6F4iZknRj0Nx1DCdB+TwBaS+702BGWYC0Ze2hpExQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />

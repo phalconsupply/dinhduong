@@ -601,17 +601,37 @@
         font-size: 18px;
     }
     
+    /* Giữ 3 bước trên một hàng, thu nhỏ — xếp dọc chiếm ~340px trước nội dung form */
+    .form-progress-wrapper {
+        padding: 16px 12px;
+    }
+
     .form-steps {
-        flex-direction: column;
-        gap: 25px;
+        gap: 8px;
+        align-items: flex-start;
     }
-    
+
     .step {
-        width: 100%;
+        min-width: 0;
     }
-    
+
+    .step-icon {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 6px;
+    }
+
+    .step-icon i {
+        font-size: 18px;
+    }
+
+    .step-label {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
     .step-connector {
-        display: none;
+        top: 22px;
     }
     
     .form-floating-group .form-control {
@@ -666,10 +686,15 @@
    ======================================== */
 
 /* Ensure blocks stack vertically and don't overlap */
-.pro5-form > .row,
 .pro5-form > .form-section-card,
 .pro5-form > .submit-button-wrapper {
     display: block;
+}
+
+/* .row giữ display:flex của flexbox-grid.css — đặt display:block ở đây sẽ làm các cột xếp dọc */
+.pro5-form > .row,
+.pro5-form > .form-section-card,
+.pro5-form > .submit-button-wrapper {
     width: 100%;
     clear: both !important;
     position: relative;
@@ -753,4 +778,99 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Tuổi là kết quả tính toán: hiển thị bằng <output> tự xuống dòng thay vì input 80px
+   (chuỗi như "12 tuổi 6 tháng" đã gồm đơn vị) — UI-08 */
+.measurement-value .age-output {
+    display: block;
+    min-width: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #1e293b;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+.measurement-value .age-output.age-output--error {
+    font-size: 14px;
+    color: #b91c1c;
+}
+
+/* Lưới chỉ số co được theo thẻ: 1fr mặc định không nhỏ hơn nội dung tối thiểu
+   (input 80px + đơn vị + padding) nên tràn khi thẻ chỉ rộng nửa hàng ở tablet */
+.measurement-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.measurement-card {
+    min-width: 0;
+    padding: 16px 10px;
+}
+.measurement-value {
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.measurement-value input {
+    width: 100%;
+    max-width: 80px;
+    min-width: 0;
+}
+@media (max-width: 767px) {
+    .measurement-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Không cắt nội dung thẻ/biểu mẫu: popup chọn ngày và gợi ý địa chỉ mở tràn ra
+   ngoài thẻ sẽ bị cắt nếu tổ tiên có overflow:hidden (UI-10). Bo góc chuyển sang
+   chính phần tiêu đề thay vì dựa vào việc cắt của thẻ. */
+.form-section-card { overflow: visible; }
+.form-section-card .card-header { border-radius: 11px 11px 0 0; }
+.pro5-form { overflow: visible; }
+
+/* Viền focus nhìn thấy được khi dùng bàn phím (các ô đo lường đặt outline:none) — UI-25 */
+.measurement-value input:focus-visible,
+#avatar-wapper:focus-visible,
+.btn-submit-form:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* Thanh bước là liên kết tới từng phần của biểu mẫu (UI-32) */
+.form-steps a.step { text-decoration: none; color: inherit; }
+.form-steps a.step:focus-visible { outline: 3px solid #fff; outline-offset: 4px; border-radius: 8px; }
+
+/* ========================================
+   LỖI VALIDATION THEO TRƯỜNG (UI-14)
+   ======================================== */
+.pro5-form .form-control.is-invalid,
+.pro5-form .is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+.loi-truong {
+    color: #b91c1c;
+    font-size: 13px;
+    margin-top: 6px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.measurement-card .loi-truong {
+    text-align: center;
+}
+#tom-tat-loi:focus {
+    outline: 3px solid #b91c1c;
+    outline-offset: 2px;
+}
+#tom-tat-loi .danh-sach-loi {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+#tom-tat-loi .danh-sach-loi a {
+    color: inherit;
+    text-decoration: underline;
+}
+/* Nhảy từ phần tóm tắt tới ô lỗi: chừa chỗ cho header dính phía trên */
+.pro5-form [id] {
+    scroll-margin-top: 170px;
 }

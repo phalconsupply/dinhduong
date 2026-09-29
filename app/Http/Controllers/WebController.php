@@ -92,10 +92,9 @@ class WebController extends Controller
             'thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,avif,webp|max:2048',
         ];
 
-        if($request->slug == 'tu-0-5-tuoi' || $request->slug == 'tu-5-19-tuoi'){
-            $rules['age'] = 'required|numeric';
-            $rules['birthday'] = 'required|date_format:d/m/Y';
-        }
+        // Cả 3 biểu mẫu (kể cả người lớn) tính tuổi từ ngày sinh + ngày cân đo
+        $rules['age'] = 'required|numeric';
+        $rules['birthday'] = 'required|date_format:d/m/Y';
         if($request->phone){
             $rules['phone'] = 'digits_between:10,12';
         }
@@ -103,7 +102,12 @@ class WebController extends Controller
             $rules['cccd'] = 'digits_between:10,12';
         }
 
-        $validator = Validator::make($request->all(), $rules);
+        // age/realAge do trang tự tính từ ngày sinh + ngày cân đo: báo theo cách người nhập hiểu được
+        $tuoiChuaTinh = 'Chưa tính được tuổi — kiểm tra lại ngày sinh và ngày cân đo.';
+        $validator = Validator::make($request->all(), $rules, [
+            'age.required' => $tuoiChuaTinh,
+            'realAge.required' => $tuoiChuaTinh,
+        ]);
         if ($validator->fails()) {
             // Log validation errors for debugging
             \Log::error('Form Validation Failed', [
