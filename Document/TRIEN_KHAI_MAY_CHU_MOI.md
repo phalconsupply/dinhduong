@@ -155,3 +155,82 @@ Trong lúc dựng quy trình, bốn thứ cản trở việc triển khai từ s
 Hai khác biệt còn lại giữa cấu trúc sinh từ migration và CSDL cũ, đều **an toàn vì
 rộng hơn**: `users.id` là `bigint` thay vì `int`, và `users.name` là `varchar(255)`
 thay vì `varchar(32)`.
+
+---
+
+## 8. Đã kiểm chứng thực tế trên Laragon (29/09/2026)
+
+Toàn bộ quy trình ở trên đã được chạy thật một lần nữa trên môi trường **hoàn toàn khác**
+với máy phát triển gốc, để chắc rằng nó không phụ thuộc vào đặc thù của XAMPP:
+
+| | Máy gốc (XAMPP) | Máy mới (Laragon) |
+|---|---|---|
+| Web server | Apache 2.4 | Apache 2.4.68 |
+| PHP | 8.2.12 | **8.3.33** |
+| CSDL | **MariaDB** | **MySQL 8.4.3** |
+| Nguồn mã | thư mục làm việc | **`git clone` sạch từ repo** |
+
+Kết quả: chạy được trọn vẹn, log Laravel và log lỗi Apache đều **trống**.
+
+**Kiểm chứng sau khi dựng xong:**
+
+| Hạng mục | Kết quả |
+|---|---|
+| `php artisan migrate` từ số 0 | 20/20 migration |
+| Dữ liệu nhập vào | 12.009 dòng, đủ 470 hồ sơ |
+| Đối chiếu từng hồ sơ với file nguồn | **470/470 trùng khít từng trường** |
+| Bộ dữ liệu vàng của WHO (5-19) | 2.101 ô so sánh, lệch lớn nhất **0,0000** |
+| Snapshot khớp số hiển thị | 400 hồ sơ, 0 ô lệch |
+| Thống kê tách 2 đối tượng | 0-5 → 400 hồ sơ / 5-19 → đúng số |
+| Trang cấu hình lời khuyên | có tab 5-19, 18 ô BMI, dữ liệu 0-5 còn nguyên |
+
+### 8.1. Hai điều cần làm thêm trên Laragon
+
+**Bật extension `zip`.** Laragon không bật sẵn, mà `maatwebsite/excel` cần nó — `composer
+install` sẽ dừng lại. File `php_zip.dll` đã có sẵn trong thư mục `ext/`, chỉ cần bỏ chú thích:
+
+```ini
+; C:\laragonin\php\php-<phiên bản>\php.ini
+extension=zip
+```
+
+Các extension còn lại (gd, mbstring, pdo_mysql, exif, fileinfo, intl, curl, openssl) Laragon
+đã bật sẵn.
+
+**Dùng `--fresh` khi nhập dữ liệu lần đầu.** Migration `add_zscore_method_setting` chèn sẵn
+1 dòng vào bảng `settings`, nên `data:import` mặc định coi bảng đó "đã có dữ liệu" và **bỏ
+qua** — mất toàn bộ 40 dòng cấu hình, trong đó có 82 KB lời khuyên. Trên CSDL vừa migrate
+xong, luôn chạy:
+
+```bash
+php artisan data:import <file>.json --fresh
+```
+
+### 8.2. Về MySQL 8.4
+
+Chuỗi migration chạy y hệt trên MariaDB và MySQL 8.4, không phải sửa gì.
+
+Một lưu ý khi **tự kiểm tra** dữ liệu hai bên: `group_concat_max_len` mặc định của MySQL 8.4
+là 1024 còn MariaDB là 1.048.576, nên mọi checksum kiểu `MD5(GROUP_CONCAT(...))` sẽ ra khác
+nhau **dù dữ liệu giống hệt** — chuỗi bị cắt ở hai độ dài khác nhau. Hãy dùng cách cộng dồn
+theo từng dòng (`SUM(CRC32(...))`) hoặc đối chiếu trực tiếp với file JSON.
+
+### 8.3. Đường dẫn truy cập
+
+DocumentRoot mặc định của Laragon là `C:\laragon\www`, nên dự án chạy được ngay tại:
+
+```
+http://localhost/dinhduong/public
+```
+
+Muốn dùng tên đẹp `http://dinhduong.test` thì bấm **Reload** trong Laragon (menu chuột phải
+ở khay hệ thống) — Laragon sẽ tự tạo vhost trỏ vào thư mục `public/` và tự thêm dòng vào
+file hosts. Nhớ sửa `APP_URL` trong `.env` cho khớp rồi `php artisan config:clear`.
+
+### 8.4. Tệp không nằm trong git, phải chép tay
+
+```bash
+public/uploads/     # ảnh người dùng tải lên (1,2 MB) — ảnh đại diện trẻ, logo đơn vị
+```
+
+Sau khi chép xong nhớ chạy `php artisan storage:link`.
