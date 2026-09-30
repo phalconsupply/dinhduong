@@ -254,11 +254,23 @@ class WebController extends Controller
     }
 
 
+    /**
+     * Tuổi theo tháng thập phân giữa ngày sinh và ngày cân đo.
+     *
+     * Trả về null khi ngày không hợp lệ. Trước đây gọi thẳng
+     * Carbon::createFromFormat() nên đầu vào rỗng hoặc sai định dạng làm bung
+     * ngoại lệ "Not enough data available to satisfy format" → HTTP 500 trên
+     * một endpoint công khai; bot quét là sinh lỗi 500 và đầy log.
+     *
+     * @return float|null
+     */
     public function tinh_so_thang($begin, $end){
-        // Ngày sinh của người dùng
-        $dob = Carbon::createFromFormat('d/m/Y',  $begin);
-        // Ngày hiện tại (ngày cân đo)
-        $now = Carbon::createFromFormat('d/m/Y', $end);
+        $dob = $this->docNgay($begin);   // Ngày sinh
+        $now = $this->docNgay($end);     // Ngày cân đo
+
+        if ($dob === null || $now === null) {
+            return null;
+        }
         
         // Tính tuổi theo chuẩn WHO - DECIMAL MONTHS
         // WHO Child Growth Standards (2006): "age is expressed as decimal months"
@@ -271,8 +283,33 @@ class WebController extends Controller
         // Làm tròn đến 2 chữ số thập phân theo chuẩn WHO
         return round($decimalMonths, 2);
     }
+    /** Đọc ngày dạng d/m/Y, trả null nếu không hợp lệ (không ném ngoại lệ) */
+    private function docNgay($gia_tri): ?Carbon
+    {
+        if (!is_string($gia_tri) || trim($gia_tri) === '') {
+            return null;
+        }
+
+        try {
+            $ngay = Carbon::createFromFormat('d/m/Y', trim($gia_tri));
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        // createFromFormat có thể trả về đối tượng ứng với chuỗi sai (vd 32/13/2020)
+        return ($ngay && $ngay->format('d/m/Y') === trim($gia_tri)) ? $ngay : null;
+    }
+
     public function ajax_tinh_ngay_sinh(Request $request){
-        return $this->tinh_so_thang($request->input('birthday'), $request->input('date'));
+        $thang = $this->tinh_so_thang($request->input('birthday'), $request->input('date'));
+
+        if ($thang === null) {
+            return response()->json([
+                'error' => 'Ngày sinh hoặc ngày cân đo không hợp lệ (cần dạng dd/mm/yyyy).',
+            ], 422);
+        }
+
+        return $thang;
     }
 
 
