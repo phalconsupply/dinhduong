@@ -94,6 +94,30 @@ final class DiaBanScope
         return $query->whereRaw('1 = 0');
     }
 
+    /**
+     * Đơn vị người dùng được chọn trong bộ lọc — khớp phạm vi hồ sơ ở hoSo():
+     * cấp tỉnh xem mọi đơn vị trong tỉnh, tuyến xã mọi đơn vị trong xã, còn
+     * admin_province / admin_ward chỉ thấy phiếu của chính đơn vị mình.
+     */
+    public static function donVi(Builder $query, $user = null): Builder
+    {
+        if (!$user = self::nguoiDung($user)) {
+            return $query;
+        }
+        switch (self::vaiTro($user)) {
+            case 'super_admin_province':
+            case 'manager_province':
+                return $query->where('province_code_2026', $user->unit_province_code_2026);
+            case 'manager_ward':
+                return $query->where('ward_code_2026', $user->unit_ward_code_2026);
+            case 'admin_province':
+            case 'admin_ward':
+                return $query->where('id', $user->unit_id);
+            default:
+                return $query->whereRaw('1 = 0');
+        }
+    }
+
     /** Người dùng có được xoá hồ sơ này không (chưa xét quy tắc nhân viên chỉ xoá phiếu của mình). */
     public static function duocXoa($user, History $history): bool
     {

@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin',  '
     Route::get('/statistics/get-bmi-for-age', 'StatisticsTabController@getBmiForAge')->name('admin.statistics.bmi_for_age');
     Route::get('/statistics/get-mean-stats', 'StatisticsTabController@getMeanStats')->name('admin.statistics.mean_stats');
     Route::get('/statistics/get-who-combined', 'StatisticsTabController@getWhoCombined')->name('admin.statistics.who_combined');
+    Route::get('/statistics/get-bao-cao-5-19', 'StatisticsTabController@getBaoCao519')->name('admin.statistics.bao_cao_5_19');
     Route::post('/statistics/clear-cache', 'StatisticsTabController@clearCache')->name('admin.statistics.clear_cache');
     Route::get('/statistics/cell-details', 'StatisticsTabCellDetailController@getCellDetails')->name('admin.statistics.cell_details');
     

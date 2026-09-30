@@ -31,13 +31,20 @@ class StatisticsTabCellDetailController extends Controller
         
         // Get base query with filters
         $query = History::query()->byUserRole($user);
-        
-        // Apply date filters
+
+        // Cùng bộ lọc với StatisticsTabController::getBaseQuery — lệch ở đây thì
+        // danh sách chi tiết không khớp con số trong ô vừa bấm.
+        $query->where('who_standard', $request->get('doi_tuong') === '5-19' ? 'who2007' : 'who2006');
+
+        $cotNgay = $request->get('loc_ngay') === 'cal_date' ? 'cal_date' : 'created_at';
         if ($request->filled('from_date')) {
-            $query->whereDate('created_at', '>=', $request->from_date);
+            $query->whereDate($cotNgay, '>=', $request->from_date);
         }
         if ($request->filled('to_date')) {
-            $query->whereDate('created_at', '<=', $request->to_date);
+            $query->whereDate($cotNgay, '<=', $request->to_date);
+        }
+        if ($request->filled('unit_id')) {
+            $query->where('unit_id', (int) $request->get('unit_id'));
         }
         
         // Apply location filters
