@@ -870,7 +870,109 @@
     color: inherit;
     text-decoration: underline;
 }
-/* Nhảy từ phần tóm tắt tới ô lỗi: chừa chỗ cho header dính phía trên */
+/* Nhảy tới một phần / ô lỗi: chừa chỗ cho header dính và thanh ba bước dính phía trên.
+   --cao-header và --cao-thanh-buoc do script ở form.blade.php đo theo màn hình thật. */
 .pro5-form [id] {
-    scroll-margin-top: 170px;
+    scroll-margin-top: calc(var(--cao-header, 154px) + var(--cao-thanh-buoc, 64px) + 16px);
+}
+
+/* ========================================
+   THANH BA BƯỚC DÍNH KHI CUỘN
+   ======================================== */
+.form-progress-wrapper {
+    position: sticky;
+    top: var(--cao-header, 0px);
+    z-index: 90; /* dưới header (1000) và lịch chọn ngày (1000) */
+    transition: box-shadow .25s ease, border-radius .25s ease;
+}
+
+/* Đã dính: thu thành dải mỏng để không chiếm nửa màn hình dưới header vốn đã cao.
+   Phần chiều cao giảm đi được bù bằng margin-bottom (script) nên nội dung không bị giật. */
+.form-progress-wrapper.dang-dinh {
+    padding: 8px 16px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 6px 18px rgba(46, 38, 120, 0.35);
+}
+.form-progress-wrapper.dang-dinh .form-steps {
+    justify-content: center;
+    gap: 6px;
+}
+.form-progress-wrapper.dang-dinh .step {
+    flex: 0 1 auto;
+    flex-direction: row;
+    gap: 8px;
+    padding: 4px 14px 4px 4px;
+    border-radius: 999px;
+    transition: background-color .2s ease;
+}
+.form-progress-wrapper.dang-dinh .step-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    border-width: 2px;
+    flex: 0 0 auto;
+}
+.form-progress-wrapper.dang-dinh .step-icon i {
+    font-size: 14px;
+}
+.form-progress-wrapper.dang-dinh .step.active .step-icon {
+    transform: none;
+}
+.form-progress-wrapper.dang-dinh .step.active {
+    background: rgba(255, 255, 255, 0.18);
+}
+.form-progress-wrapper.dang-dinh .step-label {
+    font-size: 13px;
+    text-align: left;
+    line-height: 1.2;
+}
+.form-progress-wrapper.dang-dinh .step-connector {
+    display: none;
+}
+
+/* Bước đã qua: icon sáng hơn, đường nối tới bước sau được tô (hiệu ứng tiến trình) */
+.step-icon,
+.step-connector {
+    transition: background-color .3s ease, border-color .3s ease, transform .3s ease;
+}
+.step.xong .step-icon {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: #ffffff;
+}
+.step.xong .step-connector {
+    background: rgba(255, 255, 255, 0.85);
+}
+.form-steps a.step:hover .step-icon {
+    border-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .form-progress-wrapper.dang-dinh {
+        padding: 6px 8px;
+        border-radius: 0 0 10px 10px;
+    }
+    .form-progress-wrapper.dang-dinh .form-steps {
+        gap: 2px;
+    }
+    .form-progress-wrapper.dang-dinh .step {
+        flex: 1 1 0;
+        padding: 3px 6px 3px 3px;
+        gap: 6px;
+    }
+    .form-progress-wrapper.dang-dinh .step-icon {
+        width: 28px;
+        height: 28px;
+    }
+    .form-progress-wrapper.dang-dinh .step-label {
+        font-size: 11.5px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .form-progress-wrapper,
+    .step-icon,
+    .step-connector,
+    .form-progress-wrapper.dang-dinh .step {
+        transition: none;
+    }
 }

@@ -21,9 +21,9 @@
     <!-- Font Awesome for Modern Form Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Modern Layout CSS (WHO Statistics Style) -->
-    <link rel="stylesheet" href="{{asset('/web/css/modern-layout.css')}}?v=2.2" />
+    <link rel="stylesheet" href="{{asset('/web/css/modern-layout.css')}}?v=2.3" />
     <!-- Clean Form Design CSS - NEW SIMPLIFIED VERSION -->
-    <link rel="stylesheet" href="{{asset('/web/css/form-clean.css')}}?v=2.6" />
+    <link rel="stylesheet" href="{{asset('/web/css/form-clean.css')}}?v=2.7" />
     <style>
         .chosen-container-multi .chosen-choices {
             border-radius: 5px;

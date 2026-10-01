@@ -474,6 +474,115 @@
             if (tomTat) tomTat.focus();
         })();
     </script>
+    <script>
+        // Thanh ba bước (Thông tin cá nhân → Địa chỉ → Chỉ số sức khỏe): mục lục của MỘT trang, không phải wizard.
+        //  - Dính dưới header khi cuộn, thu gọn thành dải mỏng (CSS .dang-dinh).
+        //  - Bấm bước: trang trượt tới phần đó rồi đặt con trỏ vào ô nhập đầu tiên.
+        //  - Bước sáng theo phần đang xem (cuộn) hoặc ô đang nhập (focus); các bước trước đánh dấu "xong".
+        (function () {
+            var thanh = document.querySelector('.form-progress-wrapper');
+            var header = document.querySelector('.main-header');
+            var cacBuoc = Array.prototype.slice.call(document.querySelectorAll('.form-steps .step'));
+            var cacPhan = Array.prototype.slice.call(document.querySelectorAll('.pro5-form [data-buoc]'));
+            if (!thanh || !cacBuoc.length || !cacPhan.length) return;
+
+            var giamChuyenDong = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var goc = document.documentElement;
+            // Mốc phía trên thanh: khi mốc trôi lên khuất sau header thì thanh đang dính
+            var moc = document.createElement('div');
+            moc.setAttribute('aria-hidden', 'true');
+            thanh.parentNode.insertBefore(moc, thanh);
+
+            var caoHeader = 0, dangDinh = false, dangTruot = false;
+            var lePhuGoc = parseFloat(getComputedStyle(thanh).marginBottom) || 0;
+
+            function datBuoc(so) {
+                cacBuoc.forEach(function (buoc) {
+                    var n = +buoc.getAttribute('data-step');
+                    buoc.classList.toggle('active', n === so);
+                    buoc.classList.toggle('xong', n < so);
+                    if (n === so) { buoc.setAttribute('aria-current', 'step'); } else { buoc.removeAttribute('aria-current'); }
+                });
+            }
+
+            // Bật/tắt dạng thu gọn; phần chiều cao mất đi bù vào margin-bottom để nội dung phía dưới đứng yên
+            function capNhatDinh(dinh) {
+                thanh.classList.remove('dang-dinh');
+                thanh.style.marginBottom = '';
+                if (dinh) {
+                    var caoDay = thanh.offsetHeight;
+                    thanh.classList.add('dang-dinh');
+                    thanh.style.marginBottom = (lePhuGoc + caoDay - thanh.offsetHeight) + 'px';
+                }
+                dangDinh = dinh;
+                goc.style.setProperty('--cao-thanh-buoc', (dinh ? thanh.offsetHeight : 64) + 'px');
+            }
+
+            function doHeader() {
+                caoHeader = header && getComputedStyle(header).position === 'sticky' ? header.offsetHeight : 0;
+                goc.style.setProperty('--cao-header', caoHeader + 'px');
+                capNhatDinh(moc.getBoundingClientRect().top < caoHeader);
+            }
+
+            // Phần đang xem = phần cuối cùng có mép trên đã lên tới dưới thanh dính
+            function theoCuon() {
+                var dinh = moc.getBoundingClientRect().top < caoHeader;
+                if (dinh !== dangDinh) capNhatDinh(dinh);
+                if (dangTruot) return; // đang trượt do bấm bước: giữ nguyên bước đã chọn
+                var vach = caoHeader + thanh.offsetHeight + 40;
+                var so = 1;
+                cacPhan.forEach(function (phan) {
+                    if (phan.getBoundingClientRect().top <= vach) so = +phan.getAttribute('data-buoc');
+                });
+                if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+                    so = cacPhan.length; // chạm đáy trang: phần cuối dù ngắn vẫn được sáng
+                }
+                datBuoc(so);
+            }
+
+            var cho = false;
+            window.addEventListener('scroll', function () {
+                if (cho) return;
+                cho = true;
+                requestAnimationFrame(function () { cho = false; theoCuon(); });
+            }, {passive: true});
+            window.addEventListener('resize', doHeader);
+            if (window.ResizeObserver && header) new ResizeObserver(doHeader).observe(header);
+
+            cacBuoc.forEach(function (buoc) {
+                buoc.addEventListener('click', function (e) {
+                    var phan = document.querySelector(buoc.getAttribute('href'));
+                    if (!phan) return;
+                    e.preventDefault();
+                    datBuoc(+buoc.getAttribute('data-step'));
+                    if (!dangDinh) capNhatDinh(true); // đo đúng khoảng chừa theo dạng thu gọn trước khi trượt
+                    dangTruot = true;
+                    phan.scrollIntoView({behavior: giamChuyenDong ? 'auto' : 'smooth', block: 'start'});
+
+                    var xong = function () {
+                        window.removeEventListener('scrollend', xong);
+                        clearTimeout(henGio);
+                        dangTruot = false;
+                        theoCuon();
+                        // Đặt con trỏ vào ô nhập đầu tiên (bỏ qua ô ẩn / ô ngày bật lịch) để nhập liền
+                        var o = phan.querySelector('input:not([type=hidden]):not([type=file]):not([readonly]):not(.date):not([id^=cal]), select, textarea');
+                        if (o && !o.disabled) o.focus({preventScroll: true});
+                    };
+                    var henGio = setTimeout(xong, giamChuyenDong ? 50 : 900);
+                    window.addEventListener('scrollend', xong);
+                });
+            });
+
+            // Đang gõ ở phần nào thì sáng bước đó (kể cả khi Tab qua các phần)
+            document.querySelector('.pro5-form').addEventListener('focusin', function (e) {
+                var phan = e.target.closest('[data-buoc]');
+                if (phan && !dangTruot) datBuoc(+phan.getAttribute('data-buoc'));
+            });
+
+            doHeader();
+            theoCuon();
+        })();
+    </script>
     <!-- controler monthAction 550 -->
     <script type="text/javascript">
 
@@ -827,16 +936,6 @@
             }
         });
 
-        // Thanh bước: đánh dấu phần người dùng đang nhập (không phải wizard nhiều trang)
-        document.querySelector('.pro5-form').addEventListener('focusin', function (e) {
-            var phan = e.target.closest('[data-buoc]');
-            if (!phan) return;
-            document.querySelectorAll('.form-steps .step').forEach(function (buoc) {
-                var dung = buoc.getAttribute('data-step') === phan.getAttribute('data-buoc');
-                buoc.classList.toggle('active', dung);
-                if (dung) { buoc.setAttribute('aria-current', 'step'); } else { buoc.removeAttribute('aria-current'); }
-            });
-        });
 
         document.getElementById('avatar-wapper').addEventListener('click', function() {
             document.getElementById('avatar-input').click();

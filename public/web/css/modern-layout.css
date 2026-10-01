@@ -241,6 +241,9 @@ body {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     overflow: hidden;
+    /* clip cắt giống hidden nhưng không tạo khung cuộn, nên thanh ba bước
+       position:sticky bên trong vẫn dính theo cửa sổ (hidden làm sticky mất tác dụng) */
+    overflow: clip;
 }
 
 .content-body {
