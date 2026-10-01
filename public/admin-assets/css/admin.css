@@ -63,3 +63,91 @@
 
 .ta-r{ text-align: right}
 .pl-45px{padding-left: 45px !important;}
+
+/* ========================================
+   MENU NGANG TRÊN HEADER (thay sidebar trái)
+   Theme đặt .header-bar cao cố định 71px + padding lớn cho hàng icon;
+   ở đây header chứa cả menu nên để cao tự do (menu thu gọn mở ra bên dưới).
+   ======================================== */
+.page-wrapper .page-content .top-header .header-bar.admin-topnav {
+    height: auto;
+    min-height: 70px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.admin-topnav .navbar-brand {
+    padding: 0;
+    gap: 8px;
+}
+.admin-topnav .navbar-brand img {
+    height: 34px;
+    width: auto;
+}
+.admin-topnav .navbar-brand .ten-he-thong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #3c4858;
+    max-width: 190px;
+    white-space: normal;
+    line-height: 1.25;
+}
+.admin-topnav .navbar-nav .nav-link {
+    color: #3c4858;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+.admin-topnav .navbar-nav .nav-link:hover,
+.admin-topnav .navbar-nav .nav-link:focus-visible,
+.admin-topnav .navbar-nav .nav-link.show {
+    color: #2f55d4;
+    background: rgba(47, 85, 212, .08);
+}
+.admin-topnav .navbar-nav .nav-link.active {
+    color: #2f55d4;
+    background: rgba(47, 85, 212, .12);
+    font-weight: 600;
+}
+.admin-topnav .navbar-nav .nav-link:focus-visible,
+.admin-topnav .navbar-toggler:focus-visible {
+    outline: 2px solid #2f55d4;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+.admin-topnav .dropdown-item.active,
+.admin-topnav .dropdown-item:active {
+    background: rgba(47, 85, 212, .12);
+    color: #2f55d4;
+}
+.admin-topnav .navbar-toggler {
+    border: 0;
+}
+/* Màn hình hẹp: menu thu vào nút ☰, mở thành danh sách dọc ngay dưới header */
+@media (max-width: 1199.98px) {
+    .admin-topnav .navbar-collapse {
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        border-top: 1px solid #e9ecef;
+        margin-top: 10px;
+        padding-top: 6px;
+    }
+    .admin-topnav .navbar-nav .dropdown-menu {
+        box-shadow: none !important;
+        padding-left: 1.25rem;
+    }
+}
+
+/* bootstrap.min.css của theme cho .alert-light chữ trắng (#fff) và .alert.alert-light nền trắng (#fff):
+   mọi ghi chú dùng alert-light (tab thống kê W/A, BMI/A, WHO Combined…) không đọc được.
+   Dùng đúng selector .alert.alert-light để ngang độ ưu tiên với theme. */
+.alert.alert-light {
+    color: #3c4858;
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+.alert-light .alert-link {
+    color: #2f55d4;
+}

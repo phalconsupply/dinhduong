@@ -11,7 +11,7 @@
                     @include('admin.setting.sidebar')
                 </div><!--end col-->
 
-                <div class=" col-lg-8 col-12">
+                <div class=" col-lg-9 col-12">
 
                     <div class="card border-bottom pb-4">
                         <div class="card-body">

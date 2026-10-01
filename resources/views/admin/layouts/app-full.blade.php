@@ -20,11 +20,8 @@
 </div> -->
 <!-- Loader -->
 
-<div class="page-wrapper toggled">
-    <!-- sidebar-wrapper -->
-    @include('admin.layouts.nav')
-    <!-- sidebar-wrapper  -->
-
+{{-- Không còn sidebar: menu nằm trong header (admin.layouts.header), nên bỏ class "toggled" của theme để nội dung không chừa 300px bên trái --}}
+<div class="page-wrapper">
     <!-- Start Page Content -->
     <main class="page-content bg-light">
         <!-- Top Header -->
