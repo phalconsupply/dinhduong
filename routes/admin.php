@@ -5,7 +5,6 @@ use App\Models\Unit;
 Route::model('unit', 'App\Models\Unit');
 
 Route::group(['prefix' => 'admin', 'namespace'=>'App\Http\Controllers\Admin'], function () {
-    Route::get('/test', 'DashboardController@test')->name('admin.test.index');
     //admin Auth
     Route::match(['get','post'],'/auth/login', 'AuthController@login')->name('admin.auth.login');
     Route::get('/auth/logout', 'AuthController@logout')->name('admin.auth.logout');

@@ -1,7 +1,9 @@
 @php
     $seg = Request::segment(1);
     $prefix = 'web';
-    if($seg == 'admin'){
+    // Layout admin dựng menu từ Auth::user(); khách chưa đăng nhập (vd. bot quét /admin/...)
+    // mà dùng layout này thì lỗi hasRole() on null và trả 500 thay vì 404.
+    if($seg == 'admin' && Auth::check()){
         $prefix = 'admin';
         $layout= 'admin.layouts.app-full';
     }else{
