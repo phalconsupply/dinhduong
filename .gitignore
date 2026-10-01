@@ -21,3 +21,7 @@ storage/app/data-export/
 
 # Shapefile/FileGDB gốc địa phận 2026 (212MB) — bản gốc ở dự án ksk
 database/data/diaphan_2026/GDB_SHP/
+
+# File thu thập hiện trường — chứa dữ liệu cá nhân của trẻ (họ tên, CCCD,
+# ngày sinh, địa chỉ). Chuyển sang máy chủ bằng scp, không commit.
+DB/mau-thu-thap*.csv
