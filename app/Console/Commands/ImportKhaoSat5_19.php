@@ -33,8 +33,9 @@ class ImportKhaoSat5_19 extends Command
     protected $signature = 'khaosat:import-5-19
                             {file=DB/mau-thu-thap-utf-8.csv : Đường dẫn CSV, tương đối gốc project}
                             {--dry-run : Chỉ kiểm tra và báo cáo, không ghi DB}
-                            {--unit-id=68440 : ID đơn vị thực hiện cân đo}
-                            {--unit-name=TRUNG TÂM Y TẾ KHU VỰC ĐỨC TRỌNG : Tên đơn vị, dùng khi phải tạo mới}
+                            {--unit-id= : ID đơn vị thực hiện cân đo; bỏ trống thì tra theo --unit-name}
+                            {--unit-name= : Tên đơn vị; bắt buộc khi đơn vị chưa có trong bảng units}
+                            {--unit-ward= : Mã xã 2026 nơi đặt đơn vị, dùng khi phải tạo mới}
                             {--created-by=1 : ID người dùng ghi vào created_by}';
 
     protected $description = 'Nạp phiếu cân đo 5–19 tuổi từ CSV thu thập hiện trường';
@@ -48,6 +49,20 @@ class ImportKhaoSat5_19 extends Command
 
     /** Giá trị đơn vị dùng để đánh dấu "không có số điện thoại" trong file nguồn */
     private const PHONE_RONG = ['—', '-', '', 'n/a'];
+
+    /** Các từ chỉ cấp hành chính đứng trước tên, dùng trong nhiều biểu thức */
+    private const CAP_HANH_CHINH = 'Xã|Phường|Thị trấn|Thị xã|Tỉnh|Thành phố|TT|TP';
+
+    /**
+     * Tiếng Việt có hai lối đặt dấu thanh trên vần oa/oe/uy: "Hoà Ninh" và
+     * "Hòa Ninh" là cùng một xã nhưng khác chuỗi byte. Đưa về một dạng để so
+     * khớp, nếu không thì bản ghi ghi theo lối kia sẽ không tìm thấy xã.
+     */
+    private const DAU_THANH = [
+        'oà' => 'òa', 'oá' => 'óa', 'oả' => 'ỏa', 'oã' => 'õa', 'oạ' => 'ọa',
+        'oè' => 'òe', 'oé' => 'óe', 'oẻ' => 'ỏe', 'oẽ' => 'õe', 'oẹ' => 'ọe',
+        'uỳ' => 'ùy', 'uý' => 'úy', 'uỷ' => 'ủy', 'uỹ' => 'ũy', 'uỵ' => 'ụy',
+    ];
 
     /**
      * Dân tộc trong file nguồn không khớp được tên nào trong bảng ethnics
@@ -105,8 +120,8 @@ class ImportKhaoSat5_19 extends Command
 
         $this->dungChiMuc();
 
-        $unitId = (int) $this->option('unit-id');
-        if (!$this->baoDamDonVi($unitId)) {
+        $unitId = $this->baoDamDonVi();
+        if ($unitId === null) {
             return self::FAILURE;
         }
 
@@ -257,43 +272,94 @@ class ImportKhaoSat5_19 extends Command
     {
         $s = trim((string) $s);
         $s = preg_replace('/\s*\(\d+\)\s*$/u', '', $s);
-        $s = preg_replace('/^(Xã|Phường|Thị trấn|Tỉnh|Thành phố)\s+/ui', '', $s);
+        $s = preg_replace('/^(' . self::CAP_HANH_CHINH . ')\s+/ui', '', $s);
+        $s = strtr($s, self::DAU_THANH);
         $s = preg_replace('/[\s\-–—.]+/u', '', $s);
 
         return mb_strtolower($s);
     }
 
     /** Tạo đơn vị cân đo nếu chưa có; trả false khi không tạo được */
-    private function baoDamDonVi(int $unitId): bool
+    private function baoDamDonVi(): ?int
     {
-        if (DB::table('units')->where('id', $unitId)->exists()) {
-            $this->line("Đơn vị id={$unitId} đã có, dùng lại.");
-            return true;
+        $id = $this->option('unit-id') !== null && $this->option('unit-id') !== ''
+            ? (int) $this->option('unit-id')
+            : null;
+        $ten = trim((string) $this->option('unit-name'));
+
+        // 1. Có --unit-id và đơn vị đã tồn tại: dùng lại, không đụng tên
+        if ($id !== null && DB::table('units')->where('id', $id)->exists()) {
+            $this->line("Đơn vị id={$id} đã có, dùng lại.");
+            return $id;
+        }
+
+        // 2. Không có --unit-id: tra theo tên
+        if ($id === null) {
+            if ($ten === '') {
+                $this->error('Phải truyền --unit-id hoặc --unit-name để biết đơn vị thực hiện cân đo.');
+                return null;
+            }
+            $co = DB::table('units')->whereRaw('LOWER(name) = ?', [mb_strtolower($ten)])->first();
+            if ($co) {
+                $this->line("Đơn vị \"{$co->name}\" đã có (id={$co->id}), dùng lại.");
+                return (int) $co->id;
+            }
+        }
+
+        if ($ten === '') {
+            $this->error("Đơn vị id={$id} chưa có trong bảng units — cần --unit-name để tạo mới.");
+            return null;
+        }
+
+        // Nơi đặt đơn vị. Mặc định lấy theo xã của phần lớn hồ sơ sẽ nạp thì
+        // không đáng tin, nên bắt buộc chỉ rõ bằng --unit-ward.
+        $maXa = trim((string) $this->option('unit-ward'));
+        if ($maXa === '') {
+            $this->error('Thiếu --unit-ward: cần mã xã 2026 nơi đặt đơn vị để tạo mới.');
+            return null;
+        }
+        $xa = DB::table('vn_wards')->where('code', $maXa)->first();
+        if (!$xa) {
+            $this->error("Không có xã mã {$maXa} trong vn_wards.");
+            return null;
         }
 
         if ($this->option('dry-run')) {
-            $this->line("Đơn vị id={$unitId} chưa có — sẽ được tạo khi chạy thật.");
-            return true;
+            $this->line(sprintf(
+                'Sẽ tạo đơn vị "%s" tại %s (%s) khi chạy thật%s.',
+                $ten,
+                $xa->full_name,
+                $maXa,
+                $id !== null ? " với id={$id}" : ' với id tự sinh'
+            ));
+            // Trong chế độ chạy thử, id chưa tồn tại cũng không sao: không ghi DB
+            return $id ?? 0;
         }
 
-        // Đơn vị đặt tại xã Đức Trọng, tỉnh Lâm Đồng (địa bàn 2026).
         // type_id trỏ vào unit_types: 3 = "Đơn vị cấp phường/xã" (role admin_ward),
         // loại cấp xã còn hiệu lực — 4 và 7 đã bị bãi bỏ (deleted_at khác NULL).
-        DB::table('units')->insert([
-            'id' => $unitId,
-            'name' => $this->option('unit-name'),
-            'province_code_2026' => '68',
-            'ward_code_2026' => '24958',
+        $ban = [
+            'name' => $ten,
+            'province_code_2026' => $xa->province_code,
+            'ward_code_2026' => $xa->code,
             'type_id' => 3,
             'is_active' => 1,
-            'note' => "Mã đơn vị cân đo trong file thu thập: {$unitId}",
             'created_by' => (int) $this->option('created-by'),
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
-        $this->info("Đã tạo đơn vị id={$unitId}: {$this->option('unit-name')}");
+        ];
+        if ($id !== null) {
+            // id do người gọi chỉ định thường là mã cơ sở y tế ghi trong file thu thập
+            $ban['id'] = $id;
+            $ban['note'] = "Mã đơn vị cân đo trong file thu thập: {$id}";
+            DB::table('units')->insert($ban);
+        } else {
+            $id = (int) DB::table('units')->insertGetId($ban);
+        }
 
-        return true;
+        $this->info("Đã tạo đơn vị id={$id}: {$ten} — {$xa->full_name}");
+
+        return $id;
     }
 
     /**
@@ -415,60 +481,101 @@ class ImportKhaoSat5_19 extends Command
     }
 
     /**
-     * Tách "Xã Đức Trọng, Tỉnh Lâm Đồng" thành mã tỉnh + mã xã 2026.
+     * Rút mã tỉnh + mã xã 2026 ra khỏi ô địa chỉ.
      *
-     * Ưu tiên khớp xã trong đúng tỉnh mà file ghi. Nếu không có, tin TÊN XÃ và
-     * tìm toàn quốc — file nguồn có 12 bản ghi ghi sai tên tỉnh. Trường hợp tên
-     * xã trùng ở nhiều tỉnh thì tra DOI_CHIEU_XA.
+     * Ô này không có khuôn cố định giữa các đơn vị thu thập — đã gặp đủ dạng:
+     *
+     *   Xã Đức Trọng, Tỉnh Lâm Đồng                      (chỉ có xã)
+     *   Thôn Hiệp Thành 2, xã Gia Hiệp, tỉnh Lâm Đồng    (xã ở giữa)
+     *   Số nhà 11, Xóm 1, Xã Di Linh, Tỉnh Lâm Đồng      (xã ở đoạn thứ ba)
+     *   Tổ 5-Xã Di Linh-Tỉnh Lâm Đồng                    (ngăn bằng gạch nối)
+     *   132- Thôn Kala Krọt, xã Bảo Thuận, tỉnh Lâm Đồng (gạch nối trong số nhà)
+     *   Thôn Đồng Lạc, Bảo Thuận, tỉnh Lâm Đồng          (tên xã không có tiền tố)
+     *
+     * Nên không thể tin vị trí: tách thành đoạn rồi dò NGƯỢC TỪ CUỐI, vì tên xã
+     * luôn đứng sau phần địa chỉ chi tiết và trước tên tỉnh.
      *
      * @return array{tinh:?string,xa:?string}
      */
     private function docDiaBan(string $diaChi, int $soDong): array
     {
-        $phan = array_map('trim', explode(',', preg_replace('/\s+/u', ' ', $diaChi)));
-        $tenXa = $phan[0] ?? '';
-        $tenTinh = $phan[1] ?? '';
-        if ($tenXa === '') {
+        $s = preg_replace('/\s+/u', ' ', trim($diaChi));
+        if ($s === '') {
             return ['tinh' => null, 'xa' => null];
         }
 
-        $kXa = $this->chuanHoa($tenXa);
-        $maTinh = $this->tinh[$this->chuanHoa($tenTinh)] ?? null;
+        // Gạch nối chỉ là dấu ngăn khi đứng ngay trước một từ chỉ cấp hành chính;
+        // "132- Thôn Kala Krọt" thì gạch nối thuộc về số nhà, không được tách.
+        $s = preg_replace('/\s*[-–—]\s*(?=(' . self::CAP_HANH_CHINH . ')\b)/ui', ',', $s);
 
-        // 1. Xã nằm đúng trong tỉnh mà file ghi
-        if ($maTinh !== null && isset($this->xaTheoTinh[$maTinh . '|' . $kXa])) {
-            $w = $this->xaTheoTinh[$maTinh . '|' . $kXa];
-            return ['tinh' => $w->province_code, 'xa' => $w->code];
+        $doan = array_values(array_filter(
+            array_map('trim', explode(',', $s)),
+            fn ($x) => $x !== ''
+        ));
+        if (!$doan) {
+            return ['tinh' => null, 'xa' => null];
         }
 
-        // 2. Đối chiếu tay cho tên xã trùng nhiều tỉnh
-        $tenGon = preg_replace('/^(Xã|Phường|Thị trấn)\s+/ui', '', $tenXa);
-        if (isset(self::DOI_CHIEU_XA[$tenGon])) {
-            [$ma, $canCu] = self::DOI_CHIEU_XA[$tenGon];
+        // Đoạn nào là tên tỉnh thì lấy ra khỏi danh sách ứng viên tên xã
+        $maTinh = null;
+        $tenTinh = '';
+        for ($i = count($doan) - 1; $i >= 0; $i--) {
+            $k = $this->chuanHoa($doan[$i]);
+            if (isset($this->tinh[$k])) {
+                $maTinh = $this->tinh[$k];
+                $tenTinh = $doan[$i];
+                unset($doan[$i]);
+                break;
+            }
+        }
+        $doan = array_values($doan);
+
+        // 1. Dò ngược từ cuối, khớp xã trong đúng tỉnh mà file ghi
+        if ($maTinh !== null) {
+            for ($i = count($doan) - 1; $i >= 0; $i--) {
+                $w = $this->xaTheoTinh[$maTinh . '|' . $this->chuanHoa($doan[$i])] ?? null;
+                if ($w) {
+                    return ['tinh' => $w->province_code, 'xa' => $w->code];
+                }
+            }
+        }
+
+        // 2. Đối chiếu tay cho tên xã trùng ở nhiều tỉnh
+        foreach (array_reverse($doan) as $ten) {
+            $gon = preg_replace('/^(' . self::CAP_HANH_CHINH . ')\s+/ui', '', $ten);
+            if (!isset(self::DOI_CHIEU_XA[$gon])) {
+                continue;
+            }
+            [$ma, $canCu] = self::DOI_CHIEU_XA[$gon];
             $w = DB::table('vn_wards')->where('code', $ma)->first();
             if ($w) {
-                $this->canhBao[] = "dòng {$soDong}: '{$diaChi}' → xã {$w->full_name} mã {$w->code} ({$canCu})";
+                $this->canhBao[] = "dòng {$soDong}: '{$s}' → xã {$w->full_name} mã {$w->code} ({$canCu})";
                 return ['tinh' => $w->province_code, 'xa' => $w->code];
             }
         }
 
-        // 3. Tin tên xã, tìm toàn quốc — chỉ nhận khi duy nhất một xã trùng tên
-        $ung = $this->xaToanQuoc[$kXa] ?? [];
-        $duyNhat = [];
-        foreach ($ung as $w) {
-            $duyNhat[$w->code] = $w;
-        }
-        if (count($duyNhat) === 1) {
+        // 3. Tin tên xã, tìm toàn quốc — chỉ nhận khi đúng một xã trùng tên.
+        //    File Đức Trọng có 12 bản ghi ghi sai tên tỉnh.
+        foreach (array_reverse($doan) as $ten) {
+            $duyNhat = [];
+            foreach ($this->xaToanQuoc[$this->chuanHoa($ten)] ?? [] as $w) {
+                $duyNhat[$w->code] = $w;
+            }
+            if (count($duyNhat) !== 1) {
+                continue;
+            }
             $w = reset($duyNhat);
             if ($maTinh !== null && $w->province_code !== $maTinh) {
-                $this->canhBao[] = "dòng {$soDong}: file ghi '{$tenTinh}' nhưng '{$tenXa}' thuộc mã tỉnh {$w->province_code} — gán theo tên xã";
+                $this->canhBao[] = "dòng {$soDong}: file ghi '{$tenTinh}' nhưng '{$ten}' thuộc mã tỉnh {$w->province_code} — gán theo tên xã";
             }
             return ['tinh' => $w->province_code, 'xa' => $w->code];
         }
 
-        $this->canhBao[] = count($duyNhat) === 0
-            ? "dòng {$soDong}: không tìm thấy xã '{$tenXa}' trong vn_wards, để trống địa bàn"
-            : sprintf("dòng %d: xã '%s' trùng tên ở %d tỉnh, chưa có đối chiếu tay — để trống địa bàn", $soDong, $tenXa, count($duyNhat));
+        $this->canhBao[] = sprintf(
+            "dòng %d: không nhận ra xã nào trong '%s' — để trống địa bàn",
+            $soDong,
+            $s
+        );
 
         return ['tinh' => null, 'xa' => null];
     }
